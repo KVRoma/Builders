@@ -1,0 +1,204 @@
+﻿<Window x:Class="Builders.Views.QuotationView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Builders.Views"   
+        xmlns:UI="clr-namespace:Builders.Commands"
+        mc:Ignorable="d"
+        Title="{Binding WindowName}" 
+        MinHeight="500"
+        MinWidth="950"
+        Height="700" 
+        Width="950" 
+        Style="{StaticResource WindowStyle}">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0" 
+                    Orientation="Horizontal">
+            <Image Source="Logo.jpg"/>
+            <Image Source="LogoText.jpg"/>
+            <Label Content="Select Id Claent" VerticalAlignment="Center" Style="{StaticResource LabelHeder1}"/>
+            <ComboBox Margin="2" 
+                      VerticalAlignment="Center" 
+                      VerticalContentAlignment="Center"
+                      Width="250"
+                      ItemsSource="{Binding Clients}" 
+                      SelectedItem="{Binding ClientSelect, Mode=TwoWay}" 
+                      DisplayMemberPath="NumberComboBox"/>            
+        </StackPanel>
+        
+        <TextBlock Grid.Row="1" 
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Text="Material" 
+                   Foreground="Red" 
+                   FontSize="20" 
+                   FontWeight="Bold"/>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Label Content="QTY" 
+                   Margin="730,0,0,0"                   
+                   Style="{StaticResource LabelBold}"/>
+            <Label Content="Price" 
+                   Margin="20,0,0,0" 
+                   Style="{StaticResource LabelBold}"/>
+            <Label Content="Total" 
+                   Margin="20,0,0,0" 
+                   Style="{StaticResource LabelBold}"/>
+        </StackPanel>
+
+        <ListBox Grid.Row="3" ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                 ItemsSource="{Binding QuotationsMaterial, UpdateSourceTrigger=PropertyChanged}" 
+                 SelectedItem="{Binding MaterialQuotationSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource BorderRadius}">
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,5">                        
+                        <TextBlock Width="150" Text="{Binding Path=Groupe, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Width="200" Text="{Binding Path=Item, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Width="350" Text="{Binding Path=Description, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Width="50" Margin="50,0,0,0" Text="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Width="50" Text="{Binding Path=Rate, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F2\}}"/>
+                        <TextBlock Width="50" Text="{Binding Path=Price, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F2\}}"/>
+                    </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <TextBlock Grid.Row="4" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Center"
+                   Text="Labour" 
+                   Foreground="Red" 
+                   FontSize="20" 
+                   FontWeight="Bold"/>
+
+        <StackPanel Grid.Row="5" Orientation="Horizontal">
+            <Label Content="QTY" 
+                   Margin="730,0,0,0"                   
+                   Style="{StaticResource LabelBold}"/>
+            <Label Content="Price" 
+                   Margin="20,0,0,0" 
+                   Style="{StaticResource LabelBold}"/>
+            <Label Content="Total" 
+                   Margin="20,0,0,0" 
+                   Style="{StaticResource LabelBold}"/>
+        </StackPanel>
+
+        <ListBox Grid.Row="6" ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                 ItemsSource="{Binding QuotationsLabour, UpdateSourceTrigger=PropertyChanged}" 
+                 SelectedItem="{Binding MaterialQuotationSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource BorderRadius}">
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+                            <TextBlock Width="150" Text="{Binding Path=Groupe, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Width="200" Text="{Binding Path=Item, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Width="350" Text="{Binding Path=Description, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Width="50" Margin="50,0,0,0" Text="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Width="50" Text="{Binding Path=Rate, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F2\}}"/>
+                            <TextBlock Width="50" Text="{Binding Path=Price, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F2\}}"/>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+
+        <Label Grid.Row="7" 
+               Content="Please select values..." 
+               FontSize="13"
+               Style="{StaticResource LabelBold}"/>
+        <StackPanel Grid.Row="8" Orientation="Horizontal">
+            <ComboBox Margin="5,5,5,0"                      
+                      Width="150"
+                      ItemsSource="{Binding DIC_Section}" 
+                      SelectedItem="{Binding DIC_SectionSelect, Mode=TwoWay}"
+                      UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+            <Label Content="QTY" 
+                   Margin="580,0,0,0"                   
+                   Style="{StaticResource LabelBold}"/>
+            <Label Content="Price" 
+                   Margin="70,0,0,0" 
+                   Style="{StaticResource LabelBold}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="9" 
+                    Orientation="Horizontal">
+            <ComboBox Margin="5" 
+                      HorizontalContentAlignment="Center" 
+                      Width="150"
+                      ItemsSource="{Binding DIC_Groupes}" 
+                      SelectedItem="{Binding DIC_GroupeSelect, Mode=TwoWay}" 
+                      DisplayMemberPath="NameGroupe"
+                      UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+            <ComboBox Margin="5" 
+                      HorizontalContentAlignment="Center" 
+                      Width="200"
+                      ItemsSource="{Binding DIC_Items}" 
+                      SelectedItem="{Binding DIC_ItemSelect, Mode=TwoWay}" 
+                      DisplayMemberPath="Name"
+                      UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+            <ComboBox Margin="5" 
+                      HorizontalContentAlignment="Center" 
+                      Width="320"
+                      ItemsSource="{Binding DIC_Descriptions}" 
+                      SelectedItem="{Binding DIC_DescriptionSelect, Mode=TwoWay}" 
+                      DisplayMemberPath="Name"
+                      UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+            <TextBox Margin="5" 
+                     Width="100"
+                     HorizontalContentAlignment="Center"
+                     Text="{Binding Quantity}"
+                     UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+            <TextBox Margin="10,5,5,5" 
+                     Width="100" 
+                     HorizontalContentAlignment="Center"
+                     Text="{Binding Rate, StringFormat=\{0:F2\}}"
+                     UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="10" 
+                    Style="{StaticResource FooterMenu}">
+            <Button Content="Add" 
+                    Foreground="Green"
+                    BorderBrush="Green"
+                    Style="{StaticResource FooterButton}" 
+                    Command="{Binding AddItem}"
+                    UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+            <Button Content="Edit" 
+                    Foreground="Brown"
+                    BorderBrush="Brown"
+                    Style="{StaticResource FooterButton}" 
+                    Command="{Binding InsItem}"/>
+            <Button Content="Del" 
+                    Foreground="Red" 
+                    BorderBrush="Red"
+                    Style="{StaticResource FooterButton}" 
+                    Command="{Binding DelItem}"/>
+            <Button Content="Other.." 
+                    Margin="50,0,0,0" 
+                    Foreground="Green"
+                    BorderBrush="Green"
+                    Style="{StaticResource FooterButton}" 
+                    Command="{Binding OtherQuotation}"/>
+        </StackPanel>
+    </Grid>
+    
+</Window>

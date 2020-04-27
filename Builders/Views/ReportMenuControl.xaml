@@ -1,0 +1,347 @@
+﻿<UserControl x:Class="Builders.Views.ReportMenuControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Builders.Views"             
+             mc:Ignorable="d" 
+             d:DesignHeight="550" 
+             d:DesignWidth="800">
+    
+    <Grid>
+        <Grid.RowDefinitions>            
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Border Grid.Row="0"                
+                Grid.Column="0" 
+                Style="{StaticResource BorderRadiusSearch}">
+            <StackPanel Orientation="Vertical">
+                <Label Content="Select dates please..." 
+                       Style="{StaticResource LabelBold}"/>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="From" 
+                           Width="50"
+                           HorizontalContentAlignment="Left"
+                           Style="{StaticResource LabelHeder2}"/>
+                    <DatePicker Style="{x:Null}" 
+                                Margin="5" 
+                                SelectedDate="{Binding ReportDateFrom}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="To"
+                           Width="50"
+                           HorizontalContentAlignment="Left"
+                           Style="{StaticResource LabelHeder2}"/>
+                    <DatePicker Style="{x:Null}" 
+                                Margin="5"
+                                SelectedDate="{Binding ReportDateTo}"/>
+                </StackPanel>
+                <Label Content="Select report option..." 
+                       Style="{StaticResource LabelBold}"/>
+                <RadioButton Content="Profits report" 
+                             Style="{StaticResource Report}"
+                             IsChecked="{Binding IsCheckedProfit}"/>
+                <RadioButton Content="Total report"
+                             Style="{StaticResource Report}"
+                             IsChecked="{Binding IsCheckedTotal}"/>
+                <RadioButton Content="Payroll report"
+                             Style="{StaticResource Report}"
+                             IsChecked="{Binding IsChackedPayroll}"/>
+                <Button Content="View" 
+                        Style="{StaticResource FooterButton}"
+                        Margin="5,20,5,5"
+                        Foreground="Green"
+                        BorderBrush="Green"
+                        IsEnabled="{Binding EnableReport}"
+                        Command="{Binding LoadReport}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Profit Report !!!  Visibility="{Binding IsVisibleProfitReport}" -->
+        <Border Style="{StaticResource BorderRadiusSearch}" 
+                Grid.Row="0"
+                Grid.Column="1" Visibility="{Binding IsVisibleProfitReport}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Column="0" 
+                            Grid.Row="0"
+                            Orientation="Vertical">
+                    <Label Content="Material Profits" 
+                           Style="{StaticResource ReportHeader}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Subtotal" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding MaterialReport.MaterialSubtotal, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="TAX" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding MaterialReport.MaterialTax, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,40">
+                        <Label Content="Total" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding MaterialReport.MaterialTotal, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Cost Subtotal" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding MaterialReport.CostMaterialSubtotal, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Cost TAX" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding MaterialReport.CostMaterialTax, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,40">
+                        <Label Content="Cost Total" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding MaterialReport.CostMaterialTotal, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Profit befor TAX" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding MaterialReport.ProfitBeforTax, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Profit TAX" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding MaterialReport.ProfitTax, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Profit Incl TAX" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding MaterialReport.ProfitInclTax, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Profit Discount" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding MaterialReport.ProfitDiscount, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Profit Total" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding MaterialReport.ProfitTotal, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" 
+                            Grid.Row="0"
+                            Orientation="Vertical">
+                    <Label Content="Labour Profits" 
+                           Style="{StaticResource ReportHeader}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Collected Total" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding LabourReport.CollectedSubtotal, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Collected GST" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding LabourReport.CollectedGST, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,40">
+                        <Label Content="Collected Grand Total" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding LabourReport.CollectedTotal, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Payout Total" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding LabourReport.PayoutSubtotal, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Payout GST" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding LabourReport.PayoutGST, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,40">
+                        <Label Content="Payout Grand Total" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding LabourReport.PayoutTotal, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Store Profit Total" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding LabourReport.StoreSubtotal, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Store Profit GST" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding LabourReport.StoreGST, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Store Profit Grand Total" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding LabourReport.StoreTotal, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Discount Deductions" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding LabourReport.Discount, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Total Labour Profit" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding LabourReport.ProfitTotal, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>                    
+                </StackPanel>
+                
+                <Label Grid.Row="1" 
+                       Grid.Column="0" 
+                       Content="{Binding CountReport}"
+                       Style="{StaticResource ReportItem}"
+                       Foreground="Red"/>
+            </Grid>
+            
+        </Border>
+
+        <!-- Total Report !!! Visibility="{Binding IsVisibleTotalReport}" -->
+        <Border Style="{StaticResource BorderRadiusSearch}" 
+                Grid.Row="0"
+                Grid.Column="1" Visibility="{Binding IsVisibleTotalReport}">            
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" 
+                       Content="Total Report" 
+                       Style="{StaticResource ReportHeader}"/>
+
+                <StackPanel Grid.Row="1" Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="TOTAL SALES" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding TotalReportForLabel.TotalSale}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="TOTAL MAT/LABOUR COST" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding TotalReportForLabel.TotalMaterialAndLabourCost}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="TOTAL GROSS PROFIT" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding TotalReportForLabel.TotalCrossProfit}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="TOTAL EXPENSES" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding TotalReportForLabel.TotalExpenses}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="TOTAL PROCESS FEES/REFUNDS" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding TotalReportForLabel.TotalProcessFees}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="NET STORE PROFIT" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding TotalReportForLabel.NetStoreProfit}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="NET STORE PROFIT - HALF" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding TotalReportForLabel.NetStoreProfitHalf}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="NET PROFIT" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding TotalReportForLabel.NetProfit}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="MATERIAL SPLIT" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding TotalReportForLabel.MaterialSplit}" Style="{StaticResource ReportItem}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <DataGrid Grid.Row="2" 
+                          AutoGenerateColumns="False"                          
+                          IsReadOnly="True" 
+                          ItemsSource="{Binding TotalReport, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Invoice Number"  Binding="{Binding Path=InvoiceNumber}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Invoice Date" Binding="{Binding Path=InvoiceDate, StringFormat=\{0:dd.MM.yyyy\}}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Name"  Binding="{Binding Path=PrimaryName}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Material Subtotal"  Binding="{Binding Path=MaterialSubtotal, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Material Tax"  Binding="{Binding Path=MaterialTax, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Material Grand Total"  Binding="{Binding Path=MaterialGrandTotal, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Labour Subtotal"  Binding="{Binding Path=LabourSubtotal, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Labour GST"  Binding="{Binding Path=LabourGST, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Labour Grand Total"  Binding="{Binding Path=LabourGrandTotal, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Material and Labour Grand Total"  Binding="{Binding Path=MaterialAndLabourGrandTotal, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Material Cost Subtotal"  Binding="{Binding Path=MaterialCostSubtotal, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Material Cost Tax"  Binding="{Binding Path=MaterialCostTax, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Material Discount Deductions"  Binding="{Binding Path=MaterialDiscountDeductions, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Material Cost Total"  Binding="{Binding Path=MaterialCostTotal, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Labour Payout Total Before GST"  Binding="{Binding Path=LabourPayoutTotalBeforeGST, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Labour Payout GST"  Binding="{Binding Path=LabourPayoutGST, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Labour Discount Deductions"  Binding="{Binding Path=LabourDiscountDeductions, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Labour Payout Total After GST"  Binding="{Binding Path=LabourPayoutTotalAfterGST, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Total Material Profits"  Binding="{Binding Path=TotalMaterialProfits, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Total Labour Profits"  Binding="{Binding Path=TotalLabourProfits, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Processing Fee Collected"  Binding="{Binding Path=ProcessingFeeCollected, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        <DataGridTextColumn Header="Total Profit"  Binding="{Binding Path=TotalProfit, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
+                        
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                    <Button Content="Expenses" 
+                            Style="{StaticResource FooterButton}"
+                            Foreground="Green"
+                            BorderBrush="Green"
+                            Command="{Binding LoadExpenses}"/>
+                    <Button Content="Print" 
+                            Style="{StaticResource FooterButton}"
+                            Foreground="Blue"
+                            BorderBrush="Blue"
+                            Command="{Binding ExportReport}"/>                    
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Payroll Report !!!  Visibility="{Binding IsVisiblePayrollReport}" -->
+        <Border Style="{StaticResource BorderRadiusSearch}" 
+                Grid.Row="0"
+                Grid.Column="1" Visibility="{Binding IsVisiblePayrollReport}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" 
+                       Content="Payroll Report with Work Order" 
+                       Style="{StaticResource ReportHeader}"/>
+
+                <DataGrid Grid.Row="1" 
+                          AutoGenerateColumns="False"                          
+                          IsReadOnly="True" 
+                          ItemsSource="{Binding ReportPayrollToWorks, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Date Invoice" Width="auto"  Binding="{Binding Path=DateInvoice, StringFormat=\{0:dd.MM.yyyy\}}" />
+                        <DataGridTextColumn Header="Number" Width="auto" Binding="{Binding Path=NumberInvoice}"/>
+                        <DataGridTextColumn Header="Contractor" Width="*" Binding="{Binding Path=Contractor}" />
+                        <DataGridTextColumn Header="Payout" Width="auto" Binding="{Binding Path=Payout, StringFormat='0.00'}" />
+                        <DataGridTextColumn Header="Ajust" Width="auto" Binding="{Binding Path=Adjust, StringFormat='0.00'}"/>
+                        <DataGridTextColumn Header="Total" Width="auto" Binding="{Binding Path=Total, StringFormat='0.00'}" />
+                        <DataGridTextColumn Header="TAX" Width="auto" Binding="{Binding Path=TAX}"/>
+                        <DataGridTextColumn Header="GST" Width="auto" Binding="{Binding Path=GST, StringFormat='0.00'}" />
+                        <DataGridTextColumn Header="TOTAL" Width="auto" Binding="{Binding Path=TotalContractor, StringFormat='0.00'}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Label Grid.Row="2" 
+                       Content="Payroll Report (total contractors)" 
+                       Style="{StaticResource ReportHeader}"/>
+                <DataGrid Grid.Row="3" 
+                          AutoGenerateColumns="False"                          
+                          IsReadOnly="True" 
+                          ItemsSource="{Binding ReportPayrolls, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Contractor" Width="*" Binding="{Binding Path=Contractor}" />
+                        <DataGridTextColumn Header="Payout" Width="auto" Binding="{Binding Path=Payout, StringFormat='0.00'}" />
+                        <DataGridTextColumn Header="Ajust" Width="auto" Binding="{Binding Path=Adjust, StringFormat='0.00'}"/>
+                        <DataGridTextColumn Header="Total" Width="auto" Binding="{Binding Path=Total, StringFormat='0.00'}" />
+                        <DataGridTextColumn Header="GST" Width="auto" Binding="{Binding Path=GST, StringFormat='0.00'}" />
+                        <DataGridTextColumn Header="TOTAL" Width="auto" Binding="{Binding Path=TotalContractor, StringFormat='0.00'}" />
+
+                    </DataGrid.Columns>
+                </DataGrid>
+
+            </Grid>
+
+        </Border>
+
+    </Grid>
+</UserControl>

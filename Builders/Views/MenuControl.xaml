@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="Builders.Views.MenuControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Builders.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="800">
+    
+        <Menu Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem Header="Load Client from .xls" Command="{Binding LoadClient}" Foreground="Green"/>
+                <MenuItem Header="Load Quotation from .xls" Command="{Binding LoadQuotation}" Foreground="Green" IsEnabled="{Binding EnableClient}"/>
+                <MenuItem Header="Load Expenses from .xls" Command="{Binding LaodExpensesFromXls}" Foreground="Green"/>
+                <MenuItem Header=""/>
+                <MenuItem Header="Load Image for select Client" Command="{Binding LoadFoto}" Foreground="Green" IsEnabled="{Binding EnableClient}"/>
+                <MenuItem Header=""/>
+                <MenuItem Header="Creat Template Quota" Command="{Binding TemplateQuotation}" Foreground="Blue"/>
+                <MenuItem Header="Creat Template Client" Command="{Binding TemplateClient }" Foreground="Blue"/>
+                <MenuItem Header="Creat Template Expenses" Command="{Binding TemplateExpenses }" Foreground="Blue"/>
+                <MenuItem Header=""/>
+                <Separator/>
+                <MenuItem Header="Exit" Command="{Binding ExitApp}" Foreground="Red"/>
+            </MenuItem>
+            <MenuItem Header="Dictionarys">
+                <MenuItem Header="Type of Client" Command="{Binding DIC_TypeOfClient}"/>
+                <MenuItem Header="How did they hear about us" Command="{Binding DIC_HearAboutsUs}"/>
+                <MenuItem Header="Material and Labour" Command="{Binding DIC_Quotation}"/>
+                <MenuItem Header="Contractors" Command="{Binding DIC_Contractors}"/>
+            </MenuItem>
+            <MenuItem Header="Info">            
+            </MenuItem>
+    </Menu>            
+    
+</UserControl>

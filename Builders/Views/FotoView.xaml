@@ -1,0 +1,79 @@
+﻿<Window x:Class="Builders.Views.FotoView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Builders.Views"
+        mc:Ignorable="d"
+        Title="{Binding NameWindow}" 
+        Style="{StaticResource WindowStyle}"
+        MinHeight="450"
+        MinWidth="800"
+        Height="450" 
+        Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>            
+        </Grid.RowDefinitions>
+        <Slider     Grid.Column="0" Grid.Row="0"
+                    Name="Slider" 
+                    Value="350" 
+                    Minimum="350" 
+                    Maximum="5000"                      
+                    IsSelectionRangeEnabled="True" 
+                    Orientation="Vertical" 
+                    TickPlacement="None"
+                    SelectionStart="350"
+                    SelectionEnd="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Value}" 
+                    Margin="10">
+        </Slider>
+        <ScrollViewer Grid.Column="1" Grid.Row="0" 
+                      HorizontalScrollBarVisibility="Visible"  
+                      VerticalScrollBarVisibility="Visible" Margin="5">
+            <Image Source="{Binding Image}"                    
+                   Height="{Binding ElementName=Slider,Path=Value, Mode=TwoWay}" 
+                   Width="{Binding ElementName=Slider,Path=Value, Mode=TwoWay}"
+                   Margin="5"/>
+        </ScrollViewer>
+        
+            <Grid Grid.ColumnSpan="2" Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" 
+                            Style="{StaticResource FooterMenu}">
+                    <Button Content="{Binding BackButton}" 
+                            Foreground="Green"
+                            BorderBrush="Green"
+                            Style="{StaticResource FooterButton}" 
+                            Command="{Binding BackFile}"/>
+                    <TextBlock VerticalAlignment="Center"
+                               FontWeight="Bold"
+                               Foreground="Blue"
+                               Text="{Binding SheetsCount}" 
+                               Margin="50,0,50,0"/>
+                    <Button Content="{Binding GoButton}" 
+                            Foreground="Green"
+                            BorderBrush="Green"
+                            Style="{StaticResource FooterButton}" 
+                            Command="{Binding GoFile}" />
+                </StackPanel>
+                <Button Grid.Column="1" 
+                        HorizontalAlignment="Right"
+                        Content="Del"                                
+                        Foreground="Red"
+                        BorderBrush="Red"
+                        Style="{StaticResource FooterButton}" 
+                        Command="{Binding DelFile}"/>
+            </Grid>
+        
+        
+
+    </Grid>
+</Window>

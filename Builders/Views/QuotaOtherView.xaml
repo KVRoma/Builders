@@ -1,0 +1,68 @@
+﻿<Window x:Class="Builders.Views.QuotaOtherView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Builders.Views"
+        mc:Ignorable="d"
+        Title="{Binding WindowName}" 
+        MinHeight="300" 
+        MinWidth="600" 
+        Height="300" 
+        Width="600" 
+        Style="{StaticResource WindowStyle}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.3*"/>
+            <RowDefinition Height="0.3*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Grid.Column="0" 
+               Content="Description" 
+               Style="{StaticResource LabelBold}"/>
+        <Label Grid.Row="1" Grid.Column="0" 
+               Content="Notes" 
+               Style="{StaticResource LabelBold}"/>
+        <Label Grid.Row="2" Grid.Column="0" 
+               Content="Discount Material" 
+               Style="{StaticResource LabelBold}"/>
+        <Label Grid.Row="3" Grid.Column="0" 
+               Content="Discount Labour" 
+               Style="{StaticResource LabelBold}"/>
+        <Label Grid.Row="4" Grid.Column="0" 
+               Content="Do You Want Financing?" 
+               Style="{StaticResource LabelBold}"/>
+        <Label Grid.Row="5" Grid.Column="0" 
+               Content="Amount Paid by Credit Card" 
+               Style="{StaticResource LabelBold}"/>
+
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Description}"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Notes}"/>
+        <TextBox Grid.Row="2" Grid.Column="1" HorizontalContentAlignment="Center" Text="{Binding DiscountMaterial}"/>
+        <TextBox Grid.Row="3" Grid.Column="1" HorizontalContentAlignment="Center" Text="{Binding DiscountLabour}"/>
+        <CheckBox Grid.Row="4" Grid.Column="1" 
+                  Content="Yes/No" 
+                  VerticalAlignment="Center" 
+                  HorizontalAlignment="Center" 
+                  FontWeight="Bold"
+                  IsChecked="{Binding Financing}"/>
+        <TextBox Grid.Row="5" Grid.Column="1" HorizontalContentAlignment="Center" Text="{Binding CreditCard}"/>
+        <Button Grid.Row="6" 
+                Grid.ColumnSpan="2" 
+                Content="Save" 
+                HorizontalAlignment="Right"
+                Style="{StaticResource FooterButton}" 
+                Foreground="Green" 
+                BorderBrush="Green"
+                Command="{Binding OkCommand}" 
+                CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"/>
+    </Grid>
+</Window>

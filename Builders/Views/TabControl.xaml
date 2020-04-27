@@ -1,0 +1,566 @@
+﻿<UserControl x:Class="Builders.Views.TabControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Builders.Views"             
+             mc:Ignorable="d" 
+             d:DesignHeight="450" 
+             d:DesignWidth="900">
+    <TabControl Grid.Row="1" ItemContainerStyle="{StaticResource TabItemStyle1}">
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal">                    
+                    <TextBlock Margin="15,0,0,0" Text="Client" FontWeight="Bold"/>
+                </StackPanel>
+            </TabItem.Header>
+            <TabItem.Content>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" Style="{StaticResource BorderRadiusSearch}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition MinWidth="200" Width="auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" 
+                                   Content="Enter to search..."
+                                   Style="{StaticResource LabelSearch}"/>
+                            <TextBox Grid.Column="1" 
+                                     HorizontalAlignment="Stretch"                                 
+                                     FontWeight="Bold"
+                                     Foreground="Blue">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Command="{Binding SearchClient}"
+                                                CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type TextBox}},Path=Text}"
+                                                Key="Return"/>
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <Label Grid.Column="2" 
+                                   Content="(search by Type of Client, Company, Name, Phone, Email)"
+                                   Style="{StaticResource LabelSearch}"/>
+                        </Grid>
+                    </Border>
+                    <DataGrid Grid.Row="1" 
+                              AutoGenerateColumns="False" 
+                              IsReadOnly="True" 
+                              ItemsSource="{Binding Clients, UpdateSourceTrigger=PropertyChanged}" 
+                              SelectedItem="{Binding ClientSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Id" Binding="{Binding Path=NumberClient}"/>
+                            <DataGridTextColumn Header="Date" Binding="{Binding Path=DateRegistration, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                            <DataGridTextColumn Header="Type of Client" Width="auto" Binding="{Binding Path=TypeOfClient}"/>
+                            <DataGridTextColumn Header="Company Name" Width="auto" Binding="{Binding Path=CompanyName}"/>
+                            <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=PrimaryFullName}"/>                            
+                            <DataGridTextColumn Header="Phone Number" Width="auto" Binding="{Binding Path=PrimaryPhoneNumber}"/>
+                            <DataGridTextColumn Header="Email" Width="auto" Binding="{Binding Path=PrimaryEmail}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <StackPanel Grid.Row="2" 
+                                Style="{StaticResource FooterMenu}">
+                        <Button Content="Add" 
+                                Foreground="Green"
+                                BorderBrush="Green"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding AddClient}"/>
+                        <Button Content="Edit" 
+                                Foreground="Brown"
+                                BorderBrush="Brown"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding InsClient}" 
+                                IsEnabled="{Binding EnableClient}"/>
+                        <Button Content="Del" 
+                                Foreground="Red"
+                                BorderBrush="Red"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding DelClient}"
+                                IsEnabled="{Binding EnableClient}"/>
+                        <Button Content="Image" 
+                                Foreground="Blue"
+                                BorderBrush="Blue"
+                                Margin="100,0,0,0"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding ViewFoto}"
+                                IsEnabled="{Binding EnableClient}"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem.Content>
+        </TabItem>
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal">
+
+                    <TextBlock Margin="15,0,0,0" Text="Quotation" FontWeight="Bold"/>
+                </StackPanel>
+            </TabItem.Header>
+            <TabItem.Content>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>                        
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <Border Grid.Row="0" Style="{StaticResource BorderRadiusSearch}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition MinWidth="200" Width="auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" 
+                                   Content="Enter to search..."
+                                   Style="{StaticResource LabelSearch}"/>
+                            <TextBox Grid.Column="1" 
+                                     HorizontalAlignment="Stretch"                                 
+                                     FontWeight="Bold"
+                                     Foreground="Blue">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Command="{Binding SearchQuotation}"
+                                                CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type TextBox}},Path=Text}"
+                                                Key="Return"/>
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <Label Grid.Column="2" 
+                                   Content="(search by Client Id, Name, Phone, Email)"
+                                   Style="{StaticResource LabelSearch}"/>
+                        </Grid>
+                    </Border>                    
+                    <DataGrid Grid.Row="1" 
+                              AutoGenerateColumns="False" 
+                              IsReadOnly="True" 
+                              ItemsSource="{Binding Quotations, UpdateSourceTrigger=PropertyChanged}" 
+                              SelectedItem="{Binding QuotationSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Id" Binding="{Binding Path=NumberQuota}"/>
+                            <DataGridTextColumn Header="Date" Binding="{Binding Path=QuotaDate, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                            <DataGridTextColumn Header="ClientId" Width="auto" Binding="{Binding Path=NumberClient}"/>                            
+                            <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=FullName}"/>
+                            <DataGridTextColumn Header="Phone" Width="*" Binding="{Binding Path=PhoneNumber}"/>
+                            <DataGridTextColumn Header="Email" Width="*" Binding="{Binding Path=Email}"/>
+                            <DataGridTextColumn Header="Material Total" Width="auto" Binding="{Binding Path=MaterialTotal}"/>
+                            <DataGridTextColumn Header="Labour Total" Width="auto" Binding="{Binding Path=LabourTotal}"/>
+                            <DataGridTextColumn Header="Grand Total" Width="auto" Binding="{Binding Path=InvoiceGrandTotal}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <StackPanel Grid.Row="2" 
+                                Style="{StaticResource FooterMenu}" Grid.ColumnSpan="2">
+                        <Button Content="Add" 
+                                Foreground="Green"
+                                BorderBrush="Green"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding AddQuotation}"/>
+                        <Button Content="Edit" 
+                                Foreground="Brown"
+                                BorderBrush="Brown"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding InsQuotation}"
+                                IsEnabled="{Binding EnableQuota}"/>
+                        <Button Content="Del" 
+                                Foreground="Red" 
+                                BorderBrush="Red"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding DelQuotation}"
+                                IsEnabled="{Binding EnableQuota}"/>
+                        <Button Content="Copy"
+                                Foreground="Blue"
+                                BorderBrush="Blue"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding CopyQuotation}"
+                                IsEnabled="{Binding EnableQuota}"/>
+                        <Button Content="Print" 
+                                Margin="100,0,0,0" 
+                                Foreground="Green"
+                                BorderBrush="Green"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding PrintQuotation}"
+                                IsEnabled="{Binding EnableQuota}"/>
+                        <ComboBox Margin="5" 
+                                  VerticalAlignment="Center" 
+                                  Width="150"
+                                  ItemsSource="{Binding NameQuota }" 
+                                  SelectedItem="{Binding NameQuotaSelect, Mode=TwoWay}"
+                                  IsEnabled="{Binding EnableQuota}"/>
+                        <Button Content="Payment" 
+                                Margin="100,0,0,0" 
+                                Width="80"
+                                Foreground="Green"
+                                BorderBrush="Green"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding PaymentQuotation}"
+                                IsEnabled="{Binding EnableQuota}"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem.Content>
+        </TabItem>
+        
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal">
+
+                    <TextBlock Margin="15,0,0,0" Text="Work Order" FontWeight="Bold"/>
+                </StackPanel>
+            </TabItem.Header>
+            <TabItem.Content>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" Style="{StaticResource BorderRadiusSearch}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition MinWidth="200" Width="auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" 
+                                   Content="Enter to search..."
+                                   Style="{StaticResource LabelSearch}"/>
+                            <TextBox Grid.Column="1" 
+                                     HorizontalAlignment="Stretch"                                 
+                                     FontWeight="Bold"
+                                     Foreground="Blue">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Command="{Binding SearchWorkOrder}"
+                                                CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type TextBox}},Path=Text}"
+                                                Key="Return"/>
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <Label Grid.Column="2" 
+                                   Content="(search by Quota Id, Name, Phone, Email)"
+                                   Style="{StaticResource LabelSearch}"/>
+                        </Grid>
+                    </Border>
+                    <DataGrid Grid.Row="1" 
+                              AutoGenerateColumns="False" 
+                              IsReadOnly="True" 
+                              ItemsSource="{Binding WorkOrders, UpdateSourceTrigger=PropertyChanged}" 
+                              SelectedItem="{Binding WorkOrderSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}"/>
+                            <DataGridTextColumn Header="Date" Binding="{Binding Path=DateWork, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                            <DataGridTextColumn Header="Quota Id" Binding="{Binding Path=NumberQuota}" />
+                            <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=FullName}"/>
+                            <DataGridTextColumn Header="Phone" Width="*" Binding="{Binding Path=PhoneNumber}"/>
+                            <DataGridTextColumn Header="Email" Width="*" Binding="{Binding Path=Email}"/>
+                            <DataGridTextColumn Header="Service Date" Width="auto" Binding="{Binding Path=DateServices, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                            <DataGridTextColumn Header="Completion Date" Width="auto" Binding="{Binding Path=DateCompletion, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <StackPanel Grid.Row="2" 
+                                Style="{StaticResource FooterMenu}">
+                        <Button Content="Add" 
+                                Foreground="Green"
+                                BorderBrush="Green"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding AddWorkOrder}"/>
+                        <Button Content="Edit" 
+                                Foreground="Brown"
+                                BorderBrush="Brown"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding InsWorkOrder}"
+                                IsEnabled="{Binding EnableWorkOrder}"/>
+                        <Button Content="Del" 
+                                Foreground="Red"
+                                BorderBrush="Red"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding DelWorkOrder}"
+                                IsEnabled="{Binding EnableWorkOrder}"/>
+                        <Button Content="Print" 
+                                Margin="100,0,0,0" 
+                                Foreground="Green"
+                                BorderBrush="Green"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding PrintWorkOrder}"
+                                IsEnabled="{Binding EnableWorkOrder}"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem.Content>
+        </TabItem>
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal">
+
+                    <TextBlock Margin="15,0,0,0" Text="Invoice" FontWeight="Bold"/>
+                </StackPanel>
+            </TabItem.Header>
+            <TabItem.Content>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" Style="{StaticResource BorderRadiusSearch}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition MinWidth="200" Width="auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" 
+                                   Content="Enter to search..."
+                                   Style="{StaticResource LabelSearch}"/>
+                            <TextBox Grid.Column="1" 
+                                     HorizontalAlignment="Stretch"                                 
+                                     FontWeight="Bold"
+                                     Foreground="Blue">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Command="{Binding SearchInvoice}"
+                                                CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type TextBox}},Path=Text}"
+                                                Key="Return"/>
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <Label Grid.Column="2" 
+                                   Content="(search by Quota Id, Name, Phone, Email)"
+                                   Style="{StaticResource LabelSearch}"/>
+                        </Grid>
+                    </Border>
+                    <DataGrid Grid.Row="1" 
+                              AutoGenerateColumns="False" 
+                              IsReadOnly="True" 
+                              ItemsSource="{Binding Invoices, UpdateSourceTrigger=PropertyChanged}" 
+                              SelectedItem="{Binding InvoiceSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Id" Binding="{Binding Path=NumberInvoice}"/>
+                            <DataGridTextColumn Header="Date" Binding="{Binding Path=DateInvoice, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                            <DataGridTextColumn Header="Quota Id" Width="auto" Binding="{Binding Path=NumberQuota}"/>
+                            <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=FullName}"/>
+                            <DataGridTextColumn Header="Phone" Width="*" Binding="{Binding Path=PhoneNumber}"/>
+                            <DataGridTextColumn Header="Email" Width="*" Binding="{Binding Path=Email}"/>
+                            <DataGridTextColumn Header="SO/Pick-Up #" Width="auto" Binding="{Binding Path=UpNumber}"/>
+                            <DataGridTextColumn Header="PO #" Width="auto" Binding="{Binding Path=OrderNumber}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <StackPanel Grid.Row="2" 
+                                Style="{StaticResource FooterMenu}">
+                        <Button Content="Add" 
+                                Foreground="Green"
+                                BorderBrush="Green"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding AddInvoice}"/>
+                        <Button Content="Edit" 
+                                Foreground="Brown"
+                                BorderBrush="Brown"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding InsInvoice}"
+                                IsEnabled="{Binding EnableInvoice}"/>
+                        <Button Content="Del" 
+                                Foreground="Red"
+                                BorderBrush="Red"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding DelInvoice}"
+                                IsEnabled="{Binding EnableInvoice}"/>
+                        <Button Content="Print" 
+                                Margin="100,0,0,0" 
+                                Foreground="Green"
+                                BorderBrush="Green"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding PrintInvoice}"
+                                IsEnabled="{Binding EnableInvoice}"/>                        
+                    </StackPanel>
+                </Grid>
+            </TabItem.Content>
+        </TabItem>
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="15,0,0,0" Text="Material Profit" FontWeight="Bold"/>
+                </StackPanel>
+            </TabItem.Header>
+            <TabItem.Content>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>                        
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" Style="{StaticResource BorderRadiusSearch}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition MinWidth="200" Width="auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" 
+                                   Content="Enter to search..."
+                                   Style="{StaticResource LabelSearch}"/>
+                            <TextBox Grid.Column="1" 
+                                     HorizontalAlignment="Stretch"                                 
+                                     FontWeight="Bold"
+                                     Foreground="Blue">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Command="{Binding SearchMaterialProfit}"
+                                                CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type TextBox}},Path=Text}"
+                                                Key="Return"/>
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <Label Grid.Column="2" 
+                                   Content="(search by Invoice Id, Name, Phone, Email)"
+                                   Style="{StaticResource LabelSearch}"/>
+                        </Grid>
+                    </Border>
+                    <DataGrid Grid.Row="1" 
+                              AutoGenerateColumns="False" 
+                              IsReadOnly="True" 
+                              ItemsSource="{Binding MaterialProfits, UpdateSourceTrigger=PropertyChanged}" 
+                              SelectedItem="{Binding MaterialProfitSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}"/>
+                            <DataGridTextColumn Header="Date" Binding="{Binding Path=InvoiceDate, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                            <DataGridTextColumn Header="Invoice Id" Binding="{Binding Path=InvoiceNumber}" />
+                            <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=FullName}"/>
+                            <DataGridTextColumn Header="Phone" Width="*" Binding="{Binding Path=PhoneNumber}"/>
+                            <DataGridTextColumn Header="Email" Width="*" Binding="{Binding Path=Email}"/>
+                            <DataGridTextColumn Header="Material Total" Binding="{Binding Path=MaterialTotal}" />
+                            <DataGridTextColumn Header="Cost Total" Binding="{Binding Path=CostMaterialTotal}" />
+                            <DataGridTextColumn Header="Material Profit" Binding="{Binding Path=ProfitTotal}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <StackPanel Grid.Row="2" 
+                                Style="{StaticResource FooterMenu}" 
+                                Grid.ColumnSpan="2">
+                        <Button Content="Edit" 
+                                Foreground="Brown"
+                                BorderBrush="Brown"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding InsMaterialProfit}"
+                                IsEnabled="{Binding EnableMaterialProfit}"/>
+                        <Button Content="Print" 
+                                Margin="100,0,0,0" 
+                                Foreground="Green"
+                                BorderBrush="Green"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding PrintMaterialProfit}"
+                                IsEnabled="{Binding EnableMaterialProfit}"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem.Content>
+        </TabItem>
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal">
+
+                    <TextBlock Margin="15,0,0,0" Text="Labour Profit" FontWeight="Bold"/>
+                </StackPanel>
+            </TabItem.Header>
+            <TabItem.Content>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>                        
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" Style="{StaticResource BorderRadiusSearch}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition MinWidth="200" Width="auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" 
+                                   Content="Enter to search..."
+                                   Style="{StaticResource LabelSearch}"/>
+                            <TextBox Grid.Column="1" 
+                                     HorizontalAlignment="Stretch"                                 
+                                     FontWeight="Bold"
+                                     Foreground="Blue">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Command="{Binding SearchLabourProfit}"
+                                                CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type TextBox}},Path=Text}"
+                                                Key="Return"/>
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <Label Grid.Column="2" 
+                                   Content="(search by Invoice Id, Name, Phone, Email)"
+                                   Style="{StaticResource LabelSearch}"/>
+                        </Grid>
+                    </Border>
+                    <DataGrid Grid.Row="1" 
+                              AutoGenerateColumns="False" 
+                              IsReadOnly="True" 
+                              ItemsSource="{Binding LabourProfits, UpdateSourceTrigger=PropertyChanged}" 
+                              SelectedItem="{Binding LabourProfitSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}"/>
+                            <DataGridTextColumn Header="Date" Binding="{Binding Path=InvoiceDate, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                            <DataGridTextColumn Header="Invoice Id" Binding="{Binding Path=InvoiceNumber}" />
+                            <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=FullName}"/>
+                            <DataGridTextColumn Header="Phone" Width="*" Binding="{Binding Path=PhoneNumber}"/>
+                            <DataGridTextColumn Header="Email" Width="*" Binding="{Binding Path=Email}"/>
+                            <DataGridTextColumn Header="Total" Binding="{Binding Path=StoreSubtotal}" />
+                            <DataGridTextColumn Header="GST" Binding="{Binding Path=StoreGST}" />
+                            <DataGridTextColumn Header="Grand Total" Binding="{Binding Path=StoreTotal}" />
+                            <DataGridTextColumn Header="Labour Profit" Binding="{Binding Path=ProfitTotal}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <StackPanel Grid.Row="2" Grid.ColumnSpan="2"
+                                Style="{StaticResource FooterMenu}" >
+                        <Button Content="Edit" 
+                                Foreground="Brown" 
+                                BorderBrush="Brown"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding InsLabourProfit}"
+                                IsEnabled="{Binding EnableLabourProfit}"/>
+                        <Button Content="Print" 
+                                Margin="100,0,0,0" 
+                                Foreground="Green"
+                                BorderBrush="Green"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding PrintLabourProfit}"
+                                IsEnabled="{Binding EnableLabourProfit}"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem.Content>
+        </TabItem>
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal">
+
+                    <TextBlock Margin="15,0,0,0" Text="ACCOUNTING TAB" FontWeight="Bold"/>
+                </StackPanel>
+            </TabItem.Header>
+            <TabItem.Content>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <local:ReportMenuControl Grid.Row="1" 
+                                             Visibility="{Binding IsVisibleMenuReport}"/>
+                    
+                </Grid>
+            </TabItem.Content>
+        </TabItem>
+    </TabControl>
+</UserControl>
