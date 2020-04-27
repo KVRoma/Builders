@@ -40,6 +40,8 @@ namespace Builders.Models
         public decimal Discount { get; set; }
         public decimal ProfitTotal { get; set; }
 
+        public bool Companion { get; set; }
+
         public virtual ICollection<Labour> Labours  { get; set; }
         public virtual ICollection<LabourContractor> LabourContractors { get; set; }
         public LabourProfit()

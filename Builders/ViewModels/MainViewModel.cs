@@ -499,10 +499,12 @@ namespace Builders.ViewModels
         private Command _insMaterialProfit;
         private Command _printMaterialProfit;
         private Command _searchMaterialProfit;
+        private Command _clickMaterialProfit;
         //*********************************
         private Command _insLabourProfit;
         private Command _printLabourProfit;
         private Command _searchLabourProfit;
+        private Command _clickLabourProfit;
         //*********************************
         private Command _loadReport;
         private Command _loadExpensesFromXls;
@@ -1972,6 +1974,18 @@ namespace Builders.ViewModels
                 MaterialProfits = MaterialProfits.Where(n => n.FullSearch.ToUpper().Contains(search.ToUpper()));
             }
         }));
+        public Command ClickMaterialProfit => _clickMaterialProfit ?? (_clickMaterialProfit = new Command(obj=> 
+        {
+            if (MaterialProfitSelect != null)
+            {
+                MaterialProfitSelect.Companion = (MaterialProfitSelect.Companion) ? (false) : (true);
+                db.Entry(MaterialProfitSelect).State = EntityState.Modified;
+                db.SaveChanges();
+
+                MaterialProfits = null;
+                MaterialProfits = db.MaterialProfits.Local.ToBindingList();
+            }
+        }));
         //**********************************
         public Command InsLabourProfit => _insLabourProfit ?? (_insLabourProfit = new Command(async obj =>
         {
@@ -2129,6 +2143,18 @@ namespace Builders.ViewModels
             else
             {
                 LabourProfits = LabourProfits.Where(n => n.FullSearch.ToUpper().Contains(search.ToUpper()));
+            }
+        }));
+        public Command ClickLabourPrifit => _clickLabourProfit ?? (_clickLabourProfit = new Command(obj=> 
+        {
+            if (LabourProfitSelect != null)
+            {
+                LabourProfitSelect.Companion = (LabourProfitSelect.Companion) ? (false) : (true);
+                db.Entry(LabourProfitSelect).State = EntityState.Modified;
+                db.SaveChanges();
+
+                LabourProfits = null;
+                LabourProfits = db.LabourProfits.Local.ToBindingList();
             }
         }));
         //**********************************

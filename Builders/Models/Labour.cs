@@ -19,7 +19,7 @@ namespace Builders.Models
         public decimal Price { get; set; }
         public int Percent { get; set; }
         public decimal Payout { get; set; }
-        public decimal Profit { get; set; }
+        public decimal Profit { get; set; }        
         
         public int? LabourProfitId { get; set; }
         public virtual LabourProfit LabourProfit  { get; set; }

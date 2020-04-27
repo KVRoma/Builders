@@ -423,20 +423,24 @@
                         </Grid>
                     </Border>
                     <DataGrid Grid.Row="1" 
-                              AutoGenerateColumns="False" 
-                              IsReadOnly="True" 
+                              AutoGenerateColumns="False"                               
+                              IsReadOnly="True"
                               ItemsSource="{Binding MaterialProfits, UpdateSourceTrigger=PropertyChanged}" 
                               SelectedItem="{Binding MaterialProfitSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2">
+                        <DataGrid.InputBindings>
+                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding ClickMaterialProfit}"/>
+                        </DataGrid.InputBindings>
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}"/>
+                            <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}" />
                             <DataGridTextColumn Header="Date" Binding="{Binding Path=InvoiceDate, StringFormat=\{0:dd.MM.yyyy\}}"/>
-                            <DataGridTextColumn Header="Invoice Id" Binding="{Binding Path=InvoiceNumber}" />
-                            <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=FullName}"/>
-                            <DataGridTextColumn Header="Phone" Width="*" Binding="{Binding Path=PhoneNumber}"/>
-                            <DataGridTextColumn Header="Email" Width="*" Binding="{Binding Path=Email}"/>
+                            <DataGridTextColumn Header="Invoice Id" Binding="{Binding Path=InvoiceNumber}"/>
+                            <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=FullName}" />
+                            <DataGridTextColumn Header="Phone" Width="*" Binding="{Binding Path=PhoneNumber}" />
+                            <DataGridTextColumn Header="Email" Width="*" Binding="{Binding Path=Email}" />
                             <DataGridTextColumn Header="Material Total" Binding="{Binding Path=MaterialTotal}" />
                             <DataGridTextColumn Header="Cost Total" Binding="{Binding Path=CostMaterialTotal}" />
-                            <DataGridTextColumn Header="Material Profit" Binding="{Binding Path=ProfitTotal}" />
+                            <DataGridTextColumn Header="Material Profit" Binding="{Binding Path=ProfitTotal}"/>
+                            <DataGridCheckBoxColumn Header="Companion" Binding="{Binding Path=Companion}"/>
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel Grid.Row="2" 
@@ -506,6 +510,9 @@
                               IsReadOnly="True" 
                               ItemsSource="{Binding LabourProfits, UpdateSourceTrigger=PropertyChanged}" 
                               SelectedItem="{Binding LabourProfitSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2">
+                        <DataGrid.InputBindings>
+                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding ClickLabourPrifit}"/>
+                        </DataGrid.InputBindings>
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}"/>
                             <DataGridTextColumn Header="Date" Binding="{Binding Path=InvoiceDate, StringFormat=\{0:dd.MM.yyyy\}}"/>
@@ -517,6 +524,7 @@
                             <DataGridTextColumn Header="GST" Binding="{Binding Path=StoreGST}" />
                             <DataGridTextColumn Header="Grand Total" Binding="{Binding Path=StoreTotal}" />
                             <DataGridTextColumn Header="Labour Profit" Binding="{Binding Path=ProfitTotal}" />
+                            <DataGridCheckBoxColumn Header="Companion" Binding="{Binding Path=Companion}"/>
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel Grid.Row="2" Grid.ColumnSpan="2"
