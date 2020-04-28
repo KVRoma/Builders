@@ -44,11 +44,13 @@ namespace Builders.ViewModels
         private bool isCheckedProfit;
         private bool isCheckedTotal;
         private bool isCheckedPayroll;
+        private bool isCheckedAmount;
         private bool enableReport;
         private Visibility isVisibleMenuReport;
         private Visibility isVisibleProfitReport;
         private Visibility isVisibleTotalReport;
         private Visibility isVisiblePayrollReport;
+        private Visibility isVisibleAmountReport;
         private DateTime reportDateFrom;
         private DateTime reportDateTo;
         private MaterialProfit materialReport;
@@ -56,6 +58,7 @@ namespace Builders.ViewModels
         private List<Report> totalReport;
         private List<ReportPayroll> reportPayrolls;
         private List<ReportPayrollToWork> reportPayrollToWorks;
+        private List<ReportAmount> reportAmounts;
         private ReportTotal totalReportForLabel;
         private string countReport;
         #endregion
@@ -309,13 +312,22 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(IsCheckedTotal));
             }
         }
-        public bool IsChackedPayroll
+        public bool IsCheckedPayroll
         {
             get { return isCheckedPayroll; }
             set
             {
                 isCheckedPayroll = value;
-                OnPropertyChanged(nameof(IsChackedPayroll));
+                OnPropertyChanged(nameof(IsCheckedPayroll));
+            }
+        }
+        public bool IsCheckedAmount
+        {
+            get { return isCheckedAmount; }
+            set
+            {
+                isCheckedAmount = value;
+                OnPropertyChanged(nameof(IsCheckedAmount));
             }
         }
         public bool EnableReport
@@ -326,7 +338,7 @@ namespace Builders.ViewModels
                 enableReport = value;
                 OnPropertyChanged(nameof(EnableReport));
             }
-        }
+        }        
         public Visibility IsVisibleMenuReport
         {
             get { return isVisibleMenuReport; }
@@ -361,6 +373,15 @@ namespace Builders.ViewModels
             {
                 isVisiblePayrollReport = value;
                 OnPropertyChanged(nameof(IsVisiblePayrollReport));
+            }
+        }
+        public Visibility IsVisibleAmountReport
+        {
+            get { return isVisibleAmountReport; }
+            set
+            {
+                isVisibleAmountReport = value;
+                OnPropertyChanged(nameof(IsVisibleAmountReport));
             }
         }
         public DateTime ReportDateFrom
@@ -440,6 +461,15 @@ namespace Builders.ViewModels
             {
                 reportPayrollToWorks = value;
                 OnPropertyChanged(nameof(ReportPayrollToWorks));
+            }
+        }
+        public List<ReportAmount> ReportAmounts
+        {
+            get { return reportAmounts; }
+            set
+            {
+                reportAmounts = value;
+                OnPropertyChanged(nameof(ReportAmounts));
             }
         }
         public ReportTotal TotalReportForLabel
@@ -1974,7 +2004,7 @@ namespace Builders.ViewModels
                 MaterialProfits = MaterialProfits.Where(n => n.FullSearch.ToUpper().Contains(search.ToUpper()));
             }
         }));
-        public Command ClickMaterialProfit => _clickMaterialProfit ?? (_clickMaterialProfit = new Command(obj=> 
+        public Command ClickMaterialProfit => _clickMaterialProfit ?? (_clickMaterialProfit = new Command(obj =>
         {
             if (MaterialProfitSelect != null)
             {
@@ -2145,7 +2175,7 @@ namespace Builders.ViewModels
                 LabourProfits = LabourProfits.Where(n => n.FullSearch.ToUpper().Contains(search.ToUpper()));
             }
         }));
-        public Command ClickLabourPrifit => _clickLabourProfit ?? (_clickLabourProfit = new Command(obj=> 
+        public Command ClickLabourPrifit => _clickLabourProfit ?? (_clickLabourProfit = new Command(obj =>
         {
             if (LabourProfitSelect != null)
             {
@@ -2164,36 +2194,47 @@ namespace Builders.ViewModels
             {
                 IsVisibleTotalReport = Visibility.Collapsed;
                 IsVisiblePayrollReport = Visibility.Collapsed;
+                IsVisibleAmountReport = Visibility.Collapsed;
                 IsVisibleProfitReport = Visibility.Visible;
                 MaterialReport = ReportMaterial(ReportDateFrom, ReportDateTo);
                 LabourReport = ReportLabour(ReportDateFrom, ReportDateTo);
                 CountReport = "Total for the selected period - " + MaterialReport?.InvoiceNumber;
             }
-            else if (IsChackedPayroll)
+            else if (IsCheckedPayroll)
             {
                 IsVisiblePayrollReport = Visibility.Visible;
                 IsVisibleProfitReport = Visibility.Collapsed;
                 IsVisibleTotalReport = Visibility.Collapsed;
+                IsVisibleAmountReport = Visibility.Collapsed;
                 ReportPayrollToWorks = ReportPayrollWork(ReportDateFrom, ReportDateTo);
                 ReportPayrolls = ReportPayroll(ReportPayrollToWorks);
+            }
+            else if (IsCheckedAmount)
+            {
+                IsVisibleAmountReport = Visibility.Visible;
+                IsVisiblePayrollReport = Visibility.Collapsed;
+                IsVisibleProfitReport = Visibility.Collapsed;
+                IsVisibleTotalReport = Visibility.Collapsed;
+                ReportAmounts = ReportAmountGet(ReportDateFrom, ReportDateTo);
             }
             else
             {
                 IsVisibleTotalReport = Visibility.Visible;
                 IsVisibleProfitReport = Visibility.Collapsed;
                 IsVisiblePayrollReport = Visibility.Collapsed;
+                IsVisibleAmountReport = Visibility.Collapsed;
                 TotalReport = ReportTotalGrid(ReportDateFrom, ReportDateTo);
                 TotalReportForLabel = ReportTotalLabel(ReportDateFrom, ReportDateTo, TotalReport);
             }
         }));
-        public Command LoadExpenses => _loadExpenses ?? (_loadExpenses = new Command(async obj=> 
+        public Command LoadExpenses => _loadExpenses ?? (_loadExpenses = new Command(async obj =>
         {
             var displayRootRegistry = (Application.Current as App).displayRootRegistry;
             var exp = new ExpensesViewModel(ReportDateFrom, ReportDateTo, ref db);
             await displayRootRegistry.ShowModalPresentation(exp);
             LoadReport.Execute("");
         }));
-        public Command LaodExpensesFromXls => _loadExpensesFromXls ?? (_loadExpensesFromXls = new Command(obj=> 
+        public Command LaodExpensesFromXls => _loadExpensesFromXls ?? (_loadExpensesFromXls = new Command(obj =>
         {
             string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
 
@@ -2205,7 +2246,7 @@ namespace Builders.ViewModels
             Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
             Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
             Excel.Worksheet ExcelWorkSheet;                           // Створюємо лист Excel            
-           
+
 
             try
             {
@@ -2223,16 +2264,16 @@ namespace Builders.ViewModels
                         expenses.Name = ExcelApp.Cells[i, 3].Value2?.ToString();
                         expenses.Description = ExcelApp.Cells[i, 4].Value2?.ToString();
                         expenses.Amounts = decimal.TryParse(ExcelApp.Cells[i, 5].Value2?.ToString(), out decimal result) ? (result) : 0m;
-                        
+
                         db.Expenses.Add(expenses);
                         expenses = null;
                     }
                 }
                 db.SaveChanges();
-                
+
 
                 ExcelApp.Sheets[2].Cells[1, 20] = 1;
-                
+
 
             }
             catch (Exception ex)
@@ -2242,7 +2283,7 @@ namespace Builders.ViewModels
                 ExcelApp.UserControl = true;
             }
         }));
-        public Command TemplateExpenses => _templateExpenses ?? (_templateExpenses = new Command(obj=> 
+        public Command TemplateExpenses => _templateExpenses ?? (_templateExpenses = new Command(obj =>
         {
             Excel.Application ExcelApp = new Excel.Application();
             Excel.Workbook ExcelWorkBook;
@@ -2314,11 +2355,12 @@ namespace Builders.ViewModels
             EnableReport = false;
             IsCheckedProfit = true;
             IsCheckedTotal = false;
-            IsChackedPayroll = false;
+            IsCheckedPayroll = false;
             IsVisibleMenuReport = Visibility.Visible;
             IsVisibleProfitReport = Visibility.Collapsed;
             IsVisibleTotalReport = Visibility.Collapsed;
             IsVisiblePayrollReport = Visibility.Collapsed;
+            IsVisibleAmountReport = Visibility.Collapsed;
             ReportDateFrom = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             ReportDateTo = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.DaysInMonth(DateTime.Today.Year, DateTime.Today.Month));
         }
@@ -2469,6 +2511,8 @@ namespace Builders.ViewModels
 
             MaterialProfits = null;
             MaterialProfits = db.MaterialProfits.Local.ToBindingList();
+
+           
         }
         private void MaterialProfitCalculate(MaterialProfit select)
         {
@@ -2623,6 +2667,8 @@ namespace Builders.ViewModels
             }
             LabourProfits = null;
             LabourProfits = db.LabourProfits.Local.ToBindingList();
+
+           
         }
         private void LabourProfitCalculate(LabourProfit select)
         {
@@ -2814,7 +2860,7 @@ namespace Builders.ViewModels
                         LabourSubtotal = labour.FirstOrDefault(l => l.InvoiceId == item.Id)?.CollectedSubtotal ?? 0m,
                         LabourGST = labour.FirstOrDefault(l => l.InvoiceId == item.Id)?.CollectedGST ?? 0m,
                         LabourGrandTotal = labour.FirstOrDefault(l => l.InvoiceId == item.Id)?.CollectedTotal ?? 0m,
-                        MaterialAndLabourGrandTotal = decimal.Round((material.FirstOrDefault(m => m.InvoiceId == item.Id)?.MaterialTotal ?? 0m) 
+                        MaterialAndLabourGrandTotal = decimal.Round((material.FirstOrDefault(m => m.InvoiceId == item.Id)?.MaterialTotal ?? 0m)
                                                     + (labour.FirstOrDefault(l => l.InvoiceId == item.Id)?.CollectedTotal ?? 0m), 2),
                         MaterialCostSubtotal = material.FirstOrDefault(m => m.InvoiceId == item.Id)?.CostMaterialSubtotal ?? 0m,
                         MaterialCostTax = material.FirstOrDefault(m => m.InvoiceId == item.Id)?.CostMaterialTax ?? 0m,
@@ -2827,7 +2873,7 @@ namespace Builders.ViewModels
                         TotalMaterialProfits = material.FirstOrDefault(m => m.InvoiceId == item.Id)?.ProfitTotal ?? 0m,
                         TotalLabourProfits = labour.FirstOrDefault(l => l.InvoiceId == item.Id)?.ProfitTotal ?? 0m,
                         ProcessingFeeCollected = fee,
-                        TotalProfit = decimal.Round((material.FirstOrDefault(m => m.InvoiceId == item.Id)?.ProfitTotal ?? 0m) 
+                        TotalProfit = decimal.Round((material.FirstOrDefault(m => m.InvoiceId == item.Id)?.ProfitTotal ?? 0m)
                                       + (labour.FirstOrDefault(l => l.InvoiceId == item.Id)?.ProfitTotal ?? 0m), 2)
                     };
                     reports.Add(report);
@@ -2911,20 +2957,20 @@ namespace Builders.ViewModels
                     ExcelApp.Cells[counter, 20] = item.TotalLabourProfits;
                     ExcelApp.Cells[counter, 21] = item.ProcessingFeeCollected;
                     counter++;
-                }                   
+                }
             }
-            
+
             if (expens.Count() > 0)
-            {               
+            {
                 List<Expenses> expensGruop = new List<Expenses>();
-                
+
                 var typeExpense = expens.Select(e => e.Type).Distinct();
                 foreach (var item in typeExpense)
                 {
                     var groupe = expens.Where(e => e.Type == item);
                     foreach (var query in groupe)
                     {
-                        expensGruop.Add(query);                        
+                        expensGruop.Add(query);
                     }
                 }
 
@@ -2958,11 +3004,11 @@ namespace Builders.ViewModels
             if (workOrder.Count() > 0)
             {
                 foreach (var item in workOrder)
-                {                    
+                {
                     foreach (var contractor in item.LabourContractors.OrderBy(c => c.Contractor))
                     {
                         ReportPayrollToWork payrollToWork = new ReportPayrollToWork()
-                        {                            
+                        {
                             NumberInvoice = item.InvoiceNumber,
                             DateInvoice = item.InvoiceDate,
                             Contractor = contractor.Contractor,
@@ -3014,6 +3060,35 @@ namespace Builders.ViewModels
             {
                 return null;
             }
+        }
+        /// <summary>
+        ///  Використовується для звіту по заданому проміжку дат. Вибирає всі платежі з привязкою до Quota
+        /// </summary>
+        /// <param name="dateFrom"></param>
+        /// <param name="dateTo"></param>
+        /// <returns></returns>
+        private List<ReportAmount> ReportAmountGet(DateTime dateFrom, DateTime dateTo)
+        {           
+            var quota = db.Quotations.Where(q=>q.Id > 0);
+            var payment = db.Payments.Where(p => p.PaymentDatePaid >= dateFrom && p.PaymentDatePaid <= dateTo);
+            List<ReportAmount> reports = new List<ReportAmount>();
+                          
+                foreach (var item in payment)
+                {
+                    ReportAmount amount = new ReportAmount()
+                    {
+                        QuotaDate = quota.FirstOrDefault(q => q.Id == item.QuotationId).QuotaDate,
+                        NumberQuota = quota.FirstOrDefault(q => q.Id == item.QuotationId).NumberQuota,
+                        FullNameQuota = quota.FirstOrDefault(q => q.Id == item.QuotationId).FullName,
+                        PaymentDatePaid = item.PaymentDatePaid,
+                        PaymentAmountPaid = item.PaymentAmountPaid,
+                        PaymentMethod = item.PaymentMethod,
+                        Balance = item.Balance
+                    };
+                    reports.Add(amount);
+                }
+            
+            return reports?.OrderBy(r=>r.PaymentDatePaid).ToList();
         }
     }
 }

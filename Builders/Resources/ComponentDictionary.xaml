@@ -213,6 +213,7 @@
         </Style.Triggers>
     </Style>
     <!--**********************************************************-->
+   
     <!--Cтиль для DataGrid перевертає текст в заголовку -->
     <Style x:Key="ColumnHeaderRotateStyle" TargetType="DataGridColumnHeader" >
         <Setter Property="ContentTemplate" >

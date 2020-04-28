@@ -7,9 +7,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="550" 
              d:DesignWidth="800">
-    
+
     <Grid>
-        <Grid.RowDefinitions>            
+        <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
@@ -43,15 +43,41 @@
                 </StackPanel>
                 <Label Content="Select report option..." 
                        Style="{StaticResource LabelBold}"/>
-                <RadioButton Content="Profits report" 
+                
+                <RadioButton Style="{StaticResource Report}"
+                             IsChecked="{Binding IsCheckedProfit}">
+                    <RadioButton.Content>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Profits report"/>
+                            <TextBlock Text="Dependent on Partner" FontSize="9" Foreground="Red" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </RadioButton.Content>
+                </RadioButton>
+                
+                <RadioButton Style="{StaticResource Report}"
+                             IsChecked="{Binding IsCheckedTotal}">
+                    <RadioButton.Content>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Total report"/>
+                            <TextBlock Text="Dependent on Partner" FontSize="9" Foreground="Red" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </RadioButton.Content>
+                </RadioButton>
+
+                <RadioButton Style="{StaticResource Report}"
+                             IsChecked="{Binding IsCheckedPayroll}">
+                    <RadioButton.Content>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Payroll report"/>
+                            <TextBlock Text="Dependent on Partner" FontSize="9" Foreground="Red" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </RadioButton.Content>
+                </RadioButton>
+                
+                <RadioButton Content="Amount report"
                              Style="{StaticResource Report}"
-                             IsChecked="{Binding IsCheckedProfit}"/>
-                <RadioButton Content="Total report"
-                             Style="{StaticResource Report}"
-                             IsChecked="{Binding IsCheckedTotal}"/>
-                <RadioButton Content="Payroll report"
-                             Style="{StaticResource Report}"
-                             IsChecked="{Binding IsChackedPayroll}"/>
+                             IsChecked="{Binding IsCheckedAmount}"/>
+                
                 <Button Content="View" 
                         Style="{StaticResource FooterButton}"
                         Margin="5,20,5,5"
@@ -178,22 +204,22 @@
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Total Labour Profit" Style="{StaticResource ReportItem}"/>
                         <Label Content="{Binding LabourReport.ProfitTotal, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
-                    </StackPanel>                    
+                    </StackPanel>
                 </StackPanel>
-                
+
                 <Label Grid.Row="1" 
                        Grid.Column="0" 
                        Content="{Binding CountReport}"
                        Style="{StaticResource ReportItem}"
                        Foreground="Red"/>
             </Grid>
-            
+
         </Border>
 
         <!-- Total Report !!! Visibility="{Binding IsVisibleTotalReport}" -->
         <Border Style="{StaticResource BorderRadiusSearch}" 
                 Grid.Row="0"
-                Grid.Column="1" Visibility="{Binding IsVisibleTotalReport}">            
+                Grid.Column="1" Visibility="{Binding IsVisibleTotalReport}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -271,7 +297,7 @@
                         <DataGridTextColumn Header="Total Labour Profits"  Binding="{Binding Path=TotalLabourProfits, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
                         <DataGridTextColumn Header="Processing Fee Collected"  Binding="{Binding Path=ProcessingFeeCollected, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
                         <DataGridTextColumn Header="Total Profit"  Binding="{Binding Path=TotalProfit, StringFormat='0.00'}" HeaderStyle="{StaticResource ColumnHeaderRotateStyle}"/>
-                        
+
                     </DataGrid.Columns>
                 </DataGrid>
 
@@ -285,7 +311,7 @@
                             Style="{StaticResource FooterButton}"
                             Foreground="Blue"
                             BorderBrush="Blue"
-                            Command="{Binding ExportReport}"/>                    
+                            Command="{Binding ExportReport}"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -341,6 +367,38 @@
 
             </Grid>
 
+        </Border>
+
+        <!-- Amount Report !!! Visibility="{Binding IsVisibleAmountReport}" -->
+        <Border Style="{StaticResource BorderRadiusSearch}" 
+                Grid.Row="0"
+                Grid.Column="1" Visibility="{Binding IsVisibleAmountReport}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" 
+                       Content="Amount Report" 
+                       Style="{StaticResource ReportHeader}"/>
+
+                <DataGrid Grid.Row="1" 
+                          AutoGenerateColumns="False"                          
+                          IsReadOnly="True" 
+                          ItemsSource="{Binding ReportAmounts, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGrid.Columns>                        
+                        <DataGridTextColumn Header="Date Paid" Width="auto"  Binding="{Binding Path=PaymentDatePaid, StringFormat=\{0:dd.MM.yyyy\}}" />
+                        <DataGridTextColumn Header="Amount Paid" Width="auto"  Binding="{Binding Path=PaymentAmountPaid, StringFormat='0.00'}"/>
+                        <DataGridTextColumn Header="Method" Width="auto"  Binding="{Binding Path=PaymentMethod}" />
+                        <DataGridTextColumn Header="Date Quota" Width="auto" Binding="{Binding Path=QuotaDate, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                        <DataGridTextColumn Header="Number Quota" Width="auto" Binding="{Binding Path=NumberQuota}"/>
+                        <DataGridTextColumn Header="Name Quota" Width="*" Binding="{Binding Path=FullNameQuota}"/>
+
+                    </DataGrid.Columns>
+                </DataGrid>
+
+            </Grid>
         </Border>
 
     </Grid>

@@ -119,6 +119,7 @@
     <Compile Include="Models\Quotation.cs" />
     <Compile Include="Models\Reciept.cs" />
     <Compile Include="Models\Report.cs" />
+    <Compile Include="Models\ReportAmount.cs" />
     <Compile Include="Models\ReportPayroll.cs" />
     <Compile Include="Models\ReportPayrollToWork.cs" />
     <Compile Include="Models\ReportTotal.cs" />
