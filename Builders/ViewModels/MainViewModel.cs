@@ -2709,7 +2709,7 @@ namespace Builders.ViewModels
         /// <returns></returns>
         private MaterialProfit ReportMaterial(DateTime dateFrom, DateTime dateTo)
         {
-            var filterMaterial = db.MaterialProfits.Where(m => m.InvoiceDate >= dateFrom && m.InvoiceDate <= dateTo);
+            var filterMaterial = db.MaterialProfits.Where(m => m.InvoiceDate >= dateFrom && m.InvoiceDate <= dateTo && m.Companion == true);
             if (filterMaterial.Count() > 0)
             {
                 MaterialProfit report = new MaterialProfit();
@@ -2745,7 +2745,7 @@ namespace Builders.ViewModels
         /// <returns></returns>
         private LabourProfit ReportLabour(DateTime dateFrom, DateTime dateTo)
         {
-            var filterLabour = db.LabourProfits.Where(l => l.InvoiceDate >= dateFrom && l.InvoiceDate <= dateTo);
+            var filterLabour = db.LabourProfits.Where(l => l.InvoiceDate >= dateFrom && l.InvoiceDate <= dateTo && l.Companion == true);
             if (filterLabour.Count() > 0)
             {
                 LabourProfit report = new LabourProfit();
@@ -2783,8 +2783,8 @@ namespace Builders.ViewModels
             var invoice = db.Invoices.Where(i => i.DateInvoice >= dateFrom && i.DateInvoice <= dateTo);
             if (invoice.Count() > 0)
             {
-                var material = db.MaterialProfits.Where(i => i.InvoiceDate >= dateFrom && i.InvoiceDate <= dateTo);
-                var labour = db.LabourProfits.Where(i => i.InvoiceDate >= dateFrom && i.InvoiceDate <= dateTo);
+                var material = db.MaterialProfits.Where(i => i.InvoiceDate >= dateFrom && i.InvoiceDate <= dateTo && i.Companion == true);
+                var labour = db.LabourProfits.Where(i => i.InvoiceDate >= dateFrom && i.InvoiceDate <= dateTo && i.Companion == true);
                 List<Report> reports = new List<Report>();
                 foreach (var item in invoice)
                 {
@@ -2808,25 +2808,27 @@ namespace Builders.ViewModels
                         InvoiceNumber = item.NumberInvoice,
                         InvoiceDate = item.DateInvoice,
                         PrimaryName = item.FullName,
-                        MaterialSubtotal = material.FirstOrDefault(m => m.InvoiceId == item.Id).MaterialSubtotal,
-                        MaterialTax = material.FirstOrDefault(m => m.InvoiceId == item.Id).MaterialTax,
-                        MaterialGrandTotal = material.FirstOrDefault(m => m.InvoiceId == item.Id).MaterialTotal,
-                        LabourSubtotal = labour.FirstOrDefault(l => l.InvoiceId == item.Id).CollectedSubtotal,
-                        LabourGST = labour.FirstOrDefault(l => l.InvoiceId == item.Id).CollectedGST,
-                        LabourGrandTotal = labour.FirstOrDefault(l => l.InvoiceId == item.Id).CollectedTotal,
-                        MaterialAndLabourGrandTotal = decimal.Round(material.FirstOrDefault(m => m.InvoiceId == item.Id).MaterialTotal + labour.FirstOrDefault(l => l.InvoiceId == item.Id).CollectedTotal, 2),
-                        MaterialCostSubtotal = material.FirstOrDefault(m => m.InvoiceId == item.Id).CostMaterialSubtotal,
-                        MaterialCostTax = material.FirstOrDefault(m => m.InvoiceId == item.Id).CostMaterialTax,
-                        MaterialDiscountDeductions = material.FirstOrDefault(m => m.InvoiceId == item.Id).ProfitDiscount,
-                        MaterialCostTotal = material.FirstOrDefault(m => m.InvoiceId == item.Id).CostMaterialTotal,
-                        LabourPayoutTotalBeforeGST = labour.FirstOrDefault(l => l.InvoiceId == item.Id).PayoutSubtotal,
-                        LabourPayoutGST = labour.FirstOrDefault(l => l.InvoiceId == item.Id).PayoutGST,
-                        LabourDiscountDeductions = labour.FirstOrDefault(l => l.InvoiceId == item.Id).Discount,
-                        LabourPayoutTotalAfterGST = labour.FirstOrDefault(l => l.InvoiceId == item.Id).PayoutTotal,
-                        TotalMaterialProfits = material.FirstOrDefault(m => m.InvoiceId == item.Id).ProfitTotal,
-                        TotalLabourProfits = labour.FirstOrDefault(l => l.InvoiceId == item.Id).ProfitTotal,
+                        MaterialSubtotal = material.FirstOrDefault(m => m.InvoiceId == item.Id)?.MaterialSubtotal ?? 0m,
+                        MaterialTax = material.FirstOrDefault(m => m.InvoiceId == item.Id)?.MaterialTax ?? 0m,
+                        MaterialGrandTotal = material.FirstOrDefault(m => m.InvoiceId == item.Id)?.MaterialTotal ?? 0m,
+                        LabourSubtotal = labour.FirstOrDefault(l => l.InvoiceId == item.Id)?.CollectedSubtotal ?? 0m,
+                        LabourGST = labour.FirstOrDefault(l => l.InvoiceId == item.Id)?.CollectedGST ?? 0m,
+                        LabourGrandTotal = labour.FirstOrDefault(l => l.InvoiceId == item.Id)?.CollectedTotal ?? 0m,
+                        MaterialAndLabourGrandTotal = decimal.Round((material.FirstOrDefault(m => m.InvoiceId == item.Id)?.MaterialTotal ?? 0m) 
+                                                    + (labour.FirstOrDefault(l => l.InvoiceId == item.Id)?.CollectedTotal ?? 0m), 2),
+                        MaterialCostSubtotal = material.FirstOrDefault(m => m.InvoiceId == item.Id)?.CostMaterialSubtotal ?? 0m,
+                        MaterialCostTax = material.FirstOrDefault(m => m.InvoiceId == item.Id)?.CostMaterialTax ?? 0m,
+                        MaterialDiscountDeductions = material.FirstOrDefault(m => m.InvoiceId == item.Id)?.ProfitDiscount ?? 0m,
+                        MaterialCostTotal = material.FirstOrDefault(m => m.InvoiceId == item.Id)?.CostMaterialTotal ?? 0m,
+                        LabourPayoutTotalBeforeGST = labour.FirstOrDefault(l => l.InvoiceId == item.Id)?.PayoutSubtotal ?? 0m,
+                        LabourPayoutGST = labour.FirstOrDefault(l => l.InvoiceId == item.Id)?.PayoutGST ?? 0m,
+                        LabourDiscountDeductions = labour.FirstOrDefault(l => l.InvoiceId == item.Id)?.Discount ?? 0m,
+                        LabourPayoutTotalAfterGST = labour.FirstOrDefault(l => l.InvoiceId == item.Id)?.PayoutTotal ?? 0m,
+                        TotalMaterialProfits = material.FirstOrDefault(m => m.InvoiceId == item.Id)?.ProfitTotal ?? 0m,
+                        TotalLabourProfits = labour.FirstOrDefault(l => l.InvoiceId == item.Id)?.ProfitTotal ?? 0m,
                         ProcessingFeeCollected = fee,
-                        TotalProfit = decimal.Round(material.FirstOrDefault(m => m.InvoiceId == item.Id).ProfitTotal + labour.FirstOrDefault(l => l.InvoiceId == item.Id).ProfitTotal, 2)
+                        TotalProfit = decimal.Round((material.FirstOrDefault(m => m.InvoiceId == item.Id)?.ProfitTotal ?? 0m) 
+                                      + (labour.FirstOrDefault(l => l.InvoiceId == item.Id)?.ProfitTotal ?? 0m), 2)
                     };
                     reports.Add(report);
                 }
@@ -2952,22 +2954,15 @@ namespace Builders.ViewModels
         {
             List<ReportPayrollToWork> reports = new List<ReportPayrollToWork>();
             //var workOrder = db.WorkOrders.Where(w => w.DateWork >= dateFrom && w.DateWork <= dateTo);
-            var workOrder = db.LabourProfits.Where(w => w.InvoiceDate >= dateFrom && w.InvoiceDate <= dateTo);
+            var workOrder = db.LabourProfits.Where(w => w.InvoiceDate >= dateFrom && w.InvoiceDate <= dateTo && w.Companion == true);
             if (workOrder.Count() > 0)
             {
                 foreach (var item in workOrder)
-                {
-                    //foreach (var contractor in item.WorkOrder_Contractors.OrderBy(c=>c.Contractor))
+                {                    
                     foreach (var contractor in item.LabourContractors.OrderBy(c => c.Contractor))
                     {
                         ReportPayrollToWork payrollToWork = new ReportPayrollToWork()
-                        {
-                            //WorkOrderId = item.Id,
-                            //QuotaId = item.QuotaId,
-                            //NumberQuota = item.NumberQuota,
-                            //DateWork = item.DateWork,
-                            //DateServices = item.DateServices,
-                            //DateCompletion = item.DateCompletion,
+                        {                            
                             NumberInvoice = item.InvoiceNumber,
                             DateInvoice = item.InvoiceDate,
                             Contractor = contractor.Contractor,

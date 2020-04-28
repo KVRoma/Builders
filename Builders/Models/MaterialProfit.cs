@@ -39,7 +39,7 @@ namespace Builders.Models
         public decimal ProfitDiscount { get; set; }
         public decimal ProfitTotal { get; set; }
 
-        public bool Companion { get; set; }
+        public bool Companion { get; set; } = true;
 
         public virtual ICollection<Material> Materials { get; set; }
         public MaterialProfit()

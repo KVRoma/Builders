@@ -440,7 +440,7 @@
                             <DataGridTextColumn Header="Material Total" Binding="{Binding Path=MaterialTotal}" />
                             <DataGridTextColumn Header="Cost Total" Binding="{Binding Path=CostMaterialTotal}" />
                             <DataGridTextColumn Header="Material Profit" Binding="{Binding Path=ProfitTotal}"/>
-                            <DataGridCheckBoxColumn Header="Companion" Binding="{Binding Path=Companion}"/>
+                            <DataGridCheckBoxColumn Header="Partner" Binding="{Binding Path=Companion}"/>
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel Grid.Row="2" 
@@ -524,7 +524,7 @@
                             <DataGridTextColumn Header="GST" Binding="{Binding Path=StoreGST}" />
                             <DataGridTextColumn Header="Grand Total" Binding="{Binding Path=StoreTotal}" />
                             <DataGridTextColumn Header="Labour Profit" Binding="{Binding Path=ProfitTotal}" />
-                            <DataGridCheckBoxColumn Header="Companion" Binding="{Binding Path=Companion}"/>
+                            <DataGridCheckBoxColumn Header="Partner" Binding="{Binding Path=Companion}"/>
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel Grid.Row="2" Grid.ColumnSpan="2"
