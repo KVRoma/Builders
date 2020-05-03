@@ -2319,7 +2319,7 @@ namespace Builders.ViewModels
                     PhoneNumber = addDebts.InvoiceSelect.PhoneNumber,
                     NameDebts = addDebts.NameDebts,
                     DescriptionDebts = addDebts.Description,
-                    AmountDebts = addDebts.Amount,
+                    AmountDebts = decimal.Round(addDebts.Amount, 2),
                     ReadOnly = false                                      
                 };
                 db.Debts.Add(debts);
@@ -2353,7 +2353,7 @@ namespace Builders.ViewModels
                         DebtSelect.PhoneNumber = insDebts.InvoiceSelect.PhoneNumber;
                         DebtSelect.NameDebts = insDebts.NameDebts;
                         DebtSelect.DescriptionDebts = insDebts.Description;
-                        DebtSelect.AmountDebts = insDebts.Amount;
+                        DebtSelect.AmountDebts = decimal.Round(insDebts.Amount, 2);
                         DebtSelect.ReadOnly = false;
                    
                     db.Entry(DebtSelect).State = EntityState.Modified;
@@ -2396,7 +2396,7 @@ namespace Builders.ViewModels
             {
                 DebtSelect.DatePayment = PayDebts.Date;
                 DebtSelect.DescriptionPayment = PayDebts.Description;
-                DebtSelect.AmountPayment = PayDebts.Amount;
+                DebtSelect.AmountPayment = decimal.Round(PayDebts.Amount, 2);
                 if (PayDebts.Amount != 0m)
                 {
                     DebtSelect.ColorPayment = "Silver";
@@ -2469,8 +2469,8 @@ namespace Builders.ViewModels
                 IsVisibleProfitReport = Visibility.Collapsed;
                 AmountDebtsReport = ReportAmountDebts(ReportDateFrom, ReportDateTo);
                 PaymentDebtsReport = ReportPaymentDebts(ReportDateFrom, ReportDateTo);
-                LabelAmountDebts = AmountDebtsReport.Select(a => a.AmountDebts)?.Sum() ?? 0m;
-                LabelPaymentDebts = PaymentDebtsReport.Select(p => p.AmountPayment)?.Sum() ?? 0m;
+                LabelAmountDebts = decimal.Round(AmountDebtsReport.Select(a => a.AmountDebts)?.Sum() ?? 0m ,2);
+                LabelPaymentDebts = decimal.Round(PaymentDebtsReport.Select(p => p.AmountPayment)?.Sum() ?? 0m ,2);
             }
             else
             {
