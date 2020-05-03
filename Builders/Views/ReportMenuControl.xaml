@@ -77,7 +77,11 @@
                 <RadioButton Content="Amount report"
                              Style="{StaticResource Report}"
                              IsChecked="{Binding IsCheckedAmount}"/>
-                
+
+                <RadioButton Content="Debts report"
+                             Style="{StaticResource Report}"
+                             IsChecked="{Binding IsCheckedDebts}"/>
+
                 <Button Content="View" 
                         Style="{StaticResource FooterButton}"
                         Margin="5,20,5,5"
@@ -399,6 +403,74 @@
                 </DataGrid>
 
             </Grid>
+        </Border>
+
+        <!-- Debts Report !!!  Visibility="{Binding IsVisibleDebtsReport}" -->
+        <Border Style="{StaticResource BorderRadiusSearch}" 
+                Grid.Row="0"
+                Grid.Column="1" Visibility="{Binding IsVisibleDebtsReport}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <Label Content="Amount Debts" 
+                           Style="{StaticResource ReportHeader}"/>
+                    <TextBlock Text="{Binding LabelAmountDebts, StringFormat='0.00'}"
+                               Margin="10,10,10,30"
+                               Foreground="Red"
+                               Background="{x:Null}"
+                               Style="{StaticResource TextBlockHEDER}"/>
+                </StackPanel>
+
+                <DataGrid Grid.Row="1" 
+                          AutoGenerateColumns="False"                          
+                          IsReadOnly="True" 
+                          ItemsSource="{Binding AmountDebtsReport, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Date" Binding="{Binding Path=InvoiceDate, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                        <DataGridTextColumn Header="Invoice Id" Binding="{Binding Path=InvoiceNumber}" />
+                        <DataGridTextColumn Header="Name" Width="auto" Binding="{Binding Path=FullName}"/>
+                        <DataGridTextColumn Header="Phone" Width="auto" Binding="{Binding Path=PhoneNumber}"/>
+                        <DataGridTextColumn Header="Email" Width="auto" Binding="{Binding Path=Email}"/>
+                        <DataGridTextColumn Header="Debt Name" Width="*" Binding="{Binding Path=NameDebts}" />
+                        <DataGridTextColumn Header="Description" Width="*" Binding="{Binding Path=DescriptionDebts}" />
+                        <DataGridTextColumn Header="Amount" Binding="{Binding Path=AmountDebts, StringFormat='0.00'}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <Label Content="Payment Debts" 
+                           Style="{StaticResource ReportHeader}"/>
+                    <TextBlock Text="{Binding LabelPaymentDebts, StringFormat='0.00'}"
+                               Margin="10,10,10,30"
+                               Foreground="Red"
+                               Background="{x:Null}"
+                               Style="{StaticResource TextBlockHEDER}"/>
+                </StackPanel>
+                <DataGrid Grid.Row="3" 
+                          AutoGenerateColumns="False"                          
+                          IsReadOnly="True" 
+                          ItemsSource="{Binding PaymentDebtsReport, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Date" Binding="{Binding Path=InvoiceDate, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                        <DataGridTextColumn Header="Invoice Id" Binding="{Binding Path=InvoiceNumber}" />
+                        <DataGridTextColumn Header="Name" Width="auto" Binding="{Binding Path=FullName}"/>
+                        <DataGridTextColumn Header="Phone" Width="auto" Binding="{Binding Path=PhoneNumber}"/>
+                        <DataGridTextColumn Header="Email" Width="auto" Binding="{Binding Path=Email}"/>
+                        <DataGridTextColumn Header="Debt Name" Width="*" Binding="{Binding Path=NameDebts}" />
+                        <DataGridTextColumn Header="Description" Width="*" Binding="{Binding Path=DescriptionDebts}" />
+                        <DataGridTextColumn Header="Amount" Width="auto" Binding="{Binding Path=AmountDebts, StringFormat='0.00'}" />
+                        <DataGridTextColumn Header="Date Payment" Width="auto" Binding="{Binding Path=DatePayment, StringFormat=\{0:dd.MM.yyyy\}}" />
+                        <DataGridTextColumn Header="Payment" Width="auto" Binding="{Binding Path=AmountPayment, StringFormat='0.00'}" />
+                        <DataGridTextColumn Header="Notes Payment" Width="*" Binding="{Binding Path=DescriptionPayment}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+            </Grid>
+
         </Border>
 
     </Grid>

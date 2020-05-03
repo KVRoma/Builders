@@ -48,12 +48,14 @@ namespace Builders.ViewModels
         private bool isCheckedTotal;
         private bool isCheckedPayroll;
         private bool isCheckedAmount;
+        private bool isCheckedDebts;
         private bool enableReport;
         private Visibility isVisibleMenuReport;
         private Visibility isVisibleProfitReport;
         private Visibility isVisibleTotalReport;
         private Visibility isVisiblePayrollReport;
         private Visibility isVisibleAmountReport;
+        private Visibility isVisibleDebtsReport;
         private DateTime reportDateFrom;
         private DateTime reportDateTo;
         private MaterialProfit materialReport;
@@ -63,7 +65,11 @@ namespace Builders.ViewModels
         private List<ReportPayrollToWork> reportPayrollToWorks;
         private List<ReportAmount> reportAmounts;
         private ReportTotal totalReportForLabel;
+        private List<Debts> amountDebtsReport;
+        private List<Debts> paymentDebtsReport;
         private string countReport;
+        private decimal labelAmountDebts;
+        private decimal labelPaymentDebts;
         #endregion
         #region Public Property
         public Client ClientSelect
@@ -368,6 +374,15 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(IsCheckedAmount));
             }
         }
+        public bool IsCheckedDebts
+        {
+            get { return isCheckedDebts; }
+            set
+            {
+                isCheckedDebts = value;
+                OnPropertyChanged(nameof(IsCheckedDebts));
+            }
+        }
         public bool EnableReport
         {
             get { return enableReport; }
@@ -420,6 +435,15 @@ namespace Builders.ViewModels
             {
                 isVisibleAmountReport = value;
                 OnPropertyChanged(nameof(IsVisibleAmountReport));
+            }
+        }
+        public Visibility IsVisibleDebtsReport
+        {
+            get { return isVisibleDebtsReport; }
+            set
+            {
+                isVisibleDebtsReport = value;
+                OnPropertyChanged(nameof(IsVisibleDebtsReport));
             }
         }
         public DateTime ReportDateFrom
@@ -510,6 +534,24 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(ReportAmounts));
             }
         }
+        public List<Debts> AmountDebtsReport
+        {
+            get { return amountDebtsReport; }
+            set 
+            {
+                amountDebtsReport = value;
+                OnPropertyChanged(nameof(AmountDebtsReport));
+            }
+        }
+        public List<Debts> PaymentDebtsReport
+        {
+            get { return paymentDebtsReport; }
+            set
+            {
+                paymentDebtsReport = value;
+                OnPropertyChanged(nameof(PaymentDebtsReport));
+            }
+        }
         public ReportTotal TotalReportForLabel
         {
             get { return totalReportForLabel; }
@@ -528,6 +570,25 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(CountReport));
             }
         }
+        public decimal LabelAmountDebts
+        {
+            get { return labelAmountDebts; }
+            set
+            {
+                labelAmountDebts = value;
+                OnPropertyChanged(nameof(LabelAmountDebts));
+            }
+        }
+        public decimal LabelPaymentDebts
+        {
+            get { return labelPaymentDebts; }
+            set 
+            {
+                labelPaymentDebts = value;
+                OnPropertyChanged(nameof(LabelPaymentDebts));
+            }
+        }
+        
         #endregion
         #region Private Command
         private Command _exitApp;
@@ -2371,6 +2432,7 @@ namespace Builders.ViewModels
         {
             if (IsCheckedProfit)
             {
+                IsVisibleDebtsReport = Visibility.Collapsed;
                 IsVisibleTotalReport = Visibility.Collapsed;
                 IsVisiblePayrollReport = Visibility.Collapsed;
                 IsVisibleAmountReport = Visibility.Collapsed;
@@ -2385,6 +2447,7 @@ namespace Builders.ViewModels
                 IsVisibleProfitReport = Visibility.Collapsed;
                 IsVisibleTotalReport = Visibility.Collapsed;
                 IsVisibleAmountReport = Visibility.Collapsed;
+                IsVisibleDebtsReport = Visibility.Collapsed;
                 ReportPayrollToWorks = ReportPayrollWork(ReportDateFrom, ReportDateTo);
                 ReportPayrolls = ReportPayroll(ReportPayrollToWorks);
             }
@@ -2394,7 +2457,20 @@ namespace Builders.ViewModels
                 IsVisiblePayrollReport = Visibility.Collapsed;
                 IsVisibleProfitReport = Visibility.Collapsed;
                 IsVisibleTotalReport = Visibility.Collapsed;
+                IsVisibleDebtsReport = Visibility.Collapsed;
                 ReportAmounts = ReportAmountGet(ReportDateFrom, ReportDateTo);
+            }
+            else if (IsCheckedDebts)
+            {
+                IsVisibleDebtsReport = Visibility.Visible;
+                IsVisibleTotalReport = Visibility.Collapsed;
+                IsVisiblePayrollReport = Visibility.Collapsed;
+                IsVisibleAmountReport = Visibility.Collapsed;
+                IsVisibleProfitReport = Visibility.Collapsed;
+                AmountDebtsReport = ReportAmountDebts(ReportDateFrom, ReportDateTo);
+                PaymentDebtsReport = ReportPaymentDebts(ReportDateFrom, ReportDateTo);
+                LabelAmountDebts = AmountDebtsReport.Select(a => a.AmountDebts)?.Sum() ?? 0m;
+                LabelPaymentDebts = PaymentDebtsReport.Select(p => p.AmountPayment)?.Sum() ?? 0m;
             }
             else
             {
@@ -2402,6 +2478,7 @@ namespace Builders.ViewModels
                 IsVisibleProfitReport = Visibility.Collapsed;
                 IsVisiblePayrollReport = Visibility.Collapsed;
                 IsVisibleAmountReport = Visibility.Collapsed;
+                IsVisibleDebtsReport = Visibility.Collapsed;
                 TotalReport = ReportTotalGrid(ReportDateFrom, ReportDateTo);
                 TotalReportForLabel = ReportTotalLabel(ReportDateFrom, ReportDateTo, TotalReport);
             }
@@ -2538,11 +2615,13 @@ namespace Builders.ViewModels
             IsCheckedProfit = true;
             IsCheckedTotal = false;
             IsCheckedPayroll = false;
+            IsCheckedDebts = false;
             IsVisibleMenuReport = Visibility.Visible;
             IsVisibleProfitReport = Visibility.Collapsed;
             IsVisibleTotalReport = Visibility.Collapsed;
             IsVisiblePayrollReport = Visibility.Collapsed;
             IsVisibleAmountReport = Visibility.Collapsed;
+            IsVisibleDebtsReport = Visibility.Collapsed;
             ReportDateFrom = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             ReportDateTo = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.DaysInMonth(DateTime.Today.Year, DateTime.Today.Month));
         }
@@ -3343,5 +3422,16 @@ namespace Builders.ViewModels
             
             return reports?.OrderBy(r=>r.PaymentDatePaid).ToList();
         }
+
+        private List<Debts> ReportAmountDebts(DateTime dateFrom, DateTime dateTo)
+        {
+            return db.Debts.Where(d => d.InvoiceDate >= dateFrom && d.InvoiceDate <= dateTo && d.Payment == false).ToList();
+        }
+
+        private List<Debts> ReportPaymentDebts(DateTime dateFrom, DateTime dateTo)
+        {
+            return db.Debts.Where(d => d.InvoiceDate >= dateFrom && d.InvoiceDate <= dateTo && d.Payment == true).ToList();
+        }
+    
     }
 }

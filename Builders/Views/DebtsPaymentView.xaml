@@ -35,11 +35,15 @@
         <TextBox Grid.Row="1" Grid.Column="1" 
                  TextWrapping="NoWrap"
                  AcceptsReturn="False"
+                  HorizontalContentAlignment="Center"
+                 VerticalContentAlignment="Center"
                  Text="{Binding Description}"
                  UI:FocusAdvancement.AdvancesByEnterKey="True"/>
         <TextBox Grid.Row="2" Grid.Column="1" 
                  TextWrapping="NoWrap"
                  AcceptsReturn="False"
+                 HorizontalContentAlignment="Center"
+                 VerticalContentAlignment="Center"
                  Text="{Binding Amount}"
                  UI:FocusAdvancement.AdvancesByEnterKey="True"/>
         <Button Grid.Row="3" Grid.ColumnSpan="2" 
