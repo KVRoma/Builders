@@ -33,6 +33,8 @@ namespace Builders.ViewModels
         private IEnumerable<MaterialProfit> materialProfits;
         private LabourProfit labourProfitSelect;
         private IEnumerable<LabourProfit> labourProfits;
+        private Debts debtSelect;
+        private IEnumerable<Debts> debts;
 
         private bool enableClient;
         private bool enableQuota;
@@ -40,6 +42,7 @@ namespace Builders.ViewModels
         private bool enableWorkOrder;
         private bool enableMaterialProfit;
         private bool enableLabourProfit;
+        private bool enableDebts;
 
         private bool isCheckedProfit;
         private bool isCheckedTotal;
@@ -238,6 +241,32 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(LabourProfits));
             }
         }
+        public Debts DebtSelect
+        {
+            get { return debtSelect; }
+            set
+            {
+                debtSelect = value;
+                OnPropertyChanged(nameof(DebtSelect));
+                if (DebtSelect != null && DebtSelect.ReadOnly == false)
+                {
+                    EnableDebts = true;
+                }
+                else
+                {
+                    EnableDebts = false;
+                }
+            }
+        }
+        public IEnumerable<Debts> Debts
+        {
+            get { return debts; }
+            set
+            {
+                debts = value;
+                OnPropertyChanged(nameof(Debts));
+            }
+        }
 
         public bool EnableClient
         {
@@ -293,6 +322,15 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(EnableLabourProfit));
             }
         }
+        public bool EnableDebts
+        {
+            get { return enableDebts; }
+            set 
+            {
+                enableDebts = value;
+                OnPropertyChanged(nameof(EnableDebts));
+            }
+        }
 
         public bool IsCheckedProfit
         {
@@ -338,7 +376,7 @@ namespace Builders.ViewModels
                 enableReport = value;
                 OnPropertyChanged(nameof(EnableReport));
             }
-        }        
+        }
         public Visibility IsVisibleMenuReport
         {
             get { return isVisibleMenuReport; }
@@ -536,6 +574,12 @@ namespace Builders.ViewModels
         private Command _searchLabourProfit;
         private Command _clickLabourProfit;
         //*********************************
+        private Command _addDebts;
+        private Command _insDebts;
+        private Command _delDebts;
+        private Command _paymentDebts;
+        private Command _searchDebts;
+        //**********************************
         private Command _loadReport;
         private Command _loadExpensesFromXls;
         private Command _loadExpenses;
@@ -1465,6 +1509,7 @@ namespace Builders.ViewModels
                 int? NewInvoiceId = db.Invoices.Local.ToBindingList().OrderByDescending(q => q.Id).FirstOrDefault().Id;
                 AddMaterialProfit(NewInvoiceId);
                 AddLabourProfit(NewInvoiceId);
+                AddDebtsTab(NewInvoiceId);
             }
         }));
         public Command InsInvoice => _insInvoice ?? (_insInvoice = new Command(async obj =>
@@ -1504,12 +1549,14 @@ namespace Builders.ViewModels
                 var labourPrifit = db.LabourProfits.FirstOrDefault(l => l.InvoiceId == InvoiceSelect.Id);
                 var labour = db.Labours.Where(l => l.LabourProfitId == labourPrifit.Id);
                 var labourCon = db.LabourContractors.Where(c => c.LabourProfitId == labourPrifit.Id);
+                var debts = db.Debts.Where(d => d.InvoiceId == InvoiceSelect.Id);
                 db.LabourContractors.RemoveRange(labourCon);
                 db.Labours.RemoveRange(labour);
                 db.LabourProfits.Remove(labourPrifit);
                 db.Materials.RemoveRange(material);
                 db.MaterialProfits.Remove(materialProfit);
-                db.Invoices.Remove(InvoiceSelect);
+                db.Debts.RemoveRange(debts);
+                db.Invoices.Remove(InvoiceSelect);     // Обовязково треба звертати увагу на залежність !!! ЧЕРГА !!!                
                 db.SaveChanges();
                 Invoices = null;
                 Invoices = db.Invoices.Local.ToBindingList();
@@ -1517,6 +1564,8 @@ namespace Builders.ViewModels
                 MaterialProfits = db.MaterialProfits.Local.ToBindingList();
                 LabourProfits = null;
                 LabourProfits = db.LabourProfits.Local.ToBindingList();
+                Debts = null;
+                Debts = db.Debts.Local.ToBindingList();
             }
         }));
         public Command PrintInvoice => _printInvoice ?? (_printInvoice = new Command(obj =>
@@ -2024,7 +2073,8 @@ namespace Builders.ViewModels
                 var displayRootRegistry = (Application.Current as App).displayRootRegistry;
                 var lp = new LabourProfitViewModel(ref db, LabourProfitSelect);
                 await displayRootRegistry.ShowModalPresentation(lp);
-                LabourProfitCalculate(LabourProfitSelect);
+                InsDebtsTab(LabourProfitSelect.InvoiceId);
+                LabourProfitCalculate(LabourProfitSelect);                
             }
         }));
         public Command PrintLabourProfit => _printLabourProfit ?? (_printLabourProfit = new Command(obj =>
@@ -2188,6 +2238,135 @@ namespace Builders.ViewModels
             }
         }));
         //**********************************
+        public Command AddDebts => _addDebts ?? (_addDebts = new Command(async obj =>
+        {
+            var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+            var addDebts = new DebtsViewModel(db, DebtSelect); 
+            
+            await displayRootRegistry.ShowModalPresentation(addDebts);
+            
+            if (addDebts.PressOk)
+            {
+                Debts debts = new Debts()
+                {
+                    InvoiceId = addDebts.InvoiceSelect.Id,
+                    InvoiceDate = addDebts.InvoiceSelect.DateInvoice,
+                    InvoiceNumber = addDebts.InvoiceSelect.NumberInvoice,
+                    FirstName = addDebts.InvoiceSelect.FirstName,
+                    LastName = addDebts.InvoiceSelect.LastName,
+                    Email = addDebts.InvoiceSelect.Email,
+                    PhoneNumber = addDebts.InvoiceSelect.PhoneNumber,
+                    NameDebts = addDebts.NameDebts,
+                    DescriptionDebts = addDebts.Description,
+                    AmountDebts = addDebts.Amount,
+                    ReadOnly = false                                      
+                };
+                db.Debts.Add(debts);
+                db.SaveChanges();
+                Debts = null;
+                Debts = db.Debts.Local.ToBindingList();
+            }
+
+        }));
+        public Command InsDebts => _insDebts ?? (_insDebts = new Command(async obj =>
+        {
+            if (DebtSelect != null && DebtSelect.ReadOnly == false)
+            {
+                var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                var insDebts = new DebtsViewModel(db, DebtSelect)
+                {                   
+                    NameDebts = DebtSelect.NameDebts,
+                    Description = DebtSelect.DescriptionDebts,
+                    Amount = DebtSelect.AmountDebts
+                };
+                await displayRootRegistry.ShowModalPresentation(insDebts);
+
+                if (insDebts.PressOk)               {
+                    
+                        DebtSelect.InvoiceId = insDebts.InvoiceSelect.Id;
+                        DebtSelect.InvoiceDate = insDebts.InvoiceSelect.DateInvoice;
+                        DebtSelect.InvoiceNumber = insDebts.InvoiceSelect.NumberInvoice;
+                        DebtSelect.FirstName = insDebts.InvoiceSelect.FirstName;
+                        DebtSelect.LastName = insDebts.InvoiceSelect.LastName;
+                        DebtSelect.Email = insDebts.InvoiceSelect.Email;
+                        DebtSelect.PhoneNumber = insDebts.InvoiceSelect.PhoneNumber;
+                        DebtSelect.NameDebts = insDebts.NameDebts;
+                        DebtSelect.DescriptionDebts = insDebts.Description;
+                        DebtSelect.AmountDebts = insDebts.Amount;
+                        DebtSelect.ReadOnly = false;
+                   
+                    db.Entry(DebtSelect).State = EntityState.Modified;
+                    db.SaveChanges();
+                    Debts = null;
+                    Debts = db.Debts.Local.ToBindingList();
+                }
+            }
+        }));
+        public Command DelDebts => _delDebts ?? (_delDebts = new Command(obj =>
+        {
+            if (DebtSelect != null && DebtSelect.ReadOnly == false)
+            {
+                db.Debts.Remove(DebtSelect);
+                db.SaveChanges();
+                Debts = null;
+                Debts = db.Debts.Local.ToBindingList();
+            }
+        }));
+        public Command PaymentDebts => _paymentDebts ?? (_paymentDebts = new Command(async obj =>
+        {
+            var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+            var PayDebts = new DebtsPaymentViewModel();
+            if (DebtSelect.DatePayment > DateTime.MinValue)
+            {
+                PayDebts.Date = DebtSelect.DatePayment;
+            }
+            if (DebtSelect.AmountPayment != 0m)
+            {
+                PayDebts.Amount = DebtSelect.AmountPayment;
+            }
+            else 
+            {
+                PayDebts.Amount = DebtSelect.AmountDebts;
+            }
+            PayDebts.Description = DebtSelect.DescriptionPayment;
+
+            await displayRootRegistry.ShowModalPresentation(PayDebts);
+            if (PayDebts.PressOk)
+            {
+                DebtSelect.DatePayment = PayDebts.Date;
+                DebtSelect.DescriptionPayment = PayDebts.Description;
+                DebtSelect.AmountPayment = PayDebts.Amount;
+                if (PayDebts.Amount != 0m)
+                {
+                    DebtSelect.ColorPayment = "Silver";
+                    DebtSelect.Payment = true;
+                }
+                else 
+                {
+                    DebtSelect.ColorPayment = "Red";
+                    DebtSelect.Payment = false;
+                }
+                
+                db.Entry(DebtSelect).State = EntityState.Modified;
+                db.SaveChanges();
+                Debts = null;
+                Debts = db.Debts.Local.ToBindingList();
+            }
+
+        }));
+        public Command SearchDebts => _searchDebts ?? (_searchDebts = new Command(obj=> 
+        {
+            string search = obj.ToString();
+            if (search == "")
+            {
+                Debts = db.Debts.Local.ToBindingList();
+            }
+            else
+            {
+                Debts = Debts.Where(n => n.FullSearch.ToUpper().Contains(search.ToUpper()));
+            }
+        }));
+        //**********************************
         public Command LoadReport => _loadReport ?? (_loadReport = new Command(obj =>
         {
             if (IsCheckedProfit)
@@ -2336,12 +2515,14 @@ namespace Builders.ViewModels
             db.WorkOrders.Load();
             db.MaterialProfits.Load();
             db.LabourProfits.Load();
+            db.Debts.Load();
             Clients = db.Clients.Local.ToBindingList();
             Quotations = db.Quotations.Local.ToBindingList();
             Invoices = db.Invoices.Local.ToBindingList();
             WorkOrders = db.WorkOrders.Local.ToBindingList();
             MaterialProfits = db.MaterialProfits.Local.ToBindingList();
             LabourProfits = db.LabourProfits.Local.ToBindingList();
+            Debts = db.Debts.Local.ToBindingList();
             ListLoaded();
             NameQuotaSelect = "ESTIMATE";
 
@@ -2351,6 +2532,7 @@ namespace Builders.ViewModels
             EnableWorkOrder = false;
             EnableMaterialProfit = false;
             EnableLabourProfit = false;
+            EnableDebts = false;
 
             EnableReport = false;
             IsCheckedProfit = true;
@@ -2711,6 +2893,77 @@ namespace Builders.ViewModels
                 LabourProfits = db.LabourProfits.Local.ToBindingList();
             }
 
+        }
+
+        private void AddDebtsTab(int? invoiceId)
+        {
+            var invoice = db.Invoices.FirstOrDefault(i => i.Id == invoiceId);
+            int? idLabour = db.LabourProfits.FirstOrDefault(l => l.InvoiceId == invoiceId).Id;
+            var contractor = db.LabourContractors.Where(c => c.LabourProfitId == idLabour);
+            List<Debts> debts = new List<Debts>();
+            if (contractor != null)
+            {
+                foreach (var item in contractor)
+                {
+                    Debts debt = new Debts() 
+                    {
+                        InvoiceDate = invoice.DateInvoice,
+                        InvoiceId = invoice.Id,
+                        InvoiceNumber = invoice.NumberInvoice,
+                        FirstName = invoice.FirstName,
+                        LastName = invoice.LastName,
+                        Email = invoice.Email,
+                        PhoneNumber = invoice.PhoneNumber,
+                        NameDebts = "Payment to the contractor",
+                        DescriptionDebts = item.Contractor,
+                        AmountDebts = item.TotalContractor,
+                        DatePayment = DateTime.MinValue
+                    };
+                    debts.Add(debt);
+                }
+                db.Debts.AddRange(debts);
+                db.SaveChanges();
+
+                Debts = null;
+                Debts = db.Debts.Local.ToBindingList();
+            }           
+        }
+        private void InsDebtsTab(int? invoiceId)
+        {
+            var invoice = db.Invoices.FirstOrDefault(i => i.Id == invoiceId);
+            int? idLabour = db.LabourProfits.FirstOrDefault(l => l.InvoiceId == invoiceId).Id;
+            var contractor = db.LabourContractors.Where(c => c.LabourProfitId == idLabour);
+
+            var labourDebts = db.Debts.Where(d => d.InvoiceId == invoiceId && d.ReadOnly == true);
+            db.Debts.RemoveRange(labourDebts);
+            db.SaveChanges();
+
+            List<Debts> debts = new List<Debts>();
+            if (contractor != null)
+            {
+                foreach (var item in contractor)
+                {
+                    Debts debt = new Debts()
+                    {
+                        InvoiceDate = invoice.DateInvoice,
+                        InvoiceId = invoice.Id,
+                        InvoiceNumber = invoice.NumberInvoice,
+                        FirstName = invoice.FirstName,
+                        LastName = invoice.LastName,
+                        Email = invoice.Email,
+                        PhoneNumber = invoice.PhoneNumber,
+                        NameDebts = "Payment to the contractor",
+                        DescriptionDebts = item.Contractor,
+                        AmountDebts = item.TotalContractor,
+                        DatePayment = DateTime.MinValue
+                    };
+                    debts.Add(debt);
+                }
+                db.Debts.AddRange(debts);
+                db.SaveChanges();
+                Debts = null;
+                Debts = db.Debts.Local.ToBindingList();
+            }
         }
         /// <summary>
         /// Відкриваємо файл по заданій масці

@@ -28,6 +28,10 @@ namespace Builders.Models
         {
             get { return NumberQuota + " " + FirstName + " " + LastName + " " + PhoneNumber + " " + Email; }
         }
+        public string NumberComboBox
+        {
+            get { return NumberInvoice + " " + FullName; }
+        }
         public DateTime DateInvoice { get; set; }
         public int? QuotaId { get; set; }
         public string NumberQuota { get; set; }        

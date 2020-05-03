@@ -463,6 +463,7 @@
                 </Grid>
             </TabItem.Content>
         </TabItem>
+        
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
@@ -546,6 +547,107 @@
                 </Grid>
             </TabItem.Content>
         </TabItem>
+
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal">
+
+                    <TextBlock Margin="15,0,0,0" Text="Debts" FontWeight="Bold"/>
+                </StackPanel>
+            </TabItem.Header>
+            <TabItem.Content>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" Style="{StaticResource BorderRadiusSearch}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition MinWidth="200" Width="auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" 
+                                   Content="Enter to search..."
+                                   Style="{StaticResource LabelSearch}"/>
+                            <TextBox Grid.Column="1" 
+                                     HorizontalAlignment="Stretch"                                 
+                                     FontWeight="Bold"
+                                     Foreground="Blue">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Command="{Binding SearchDebts}"
+                                                CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type TextBox}},Path=Text}"
+                                                Key="Return"/>
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <Label Grid.Column="2" 
+                                   Content="(search by Invoice Id, Name, Phone, Email)"
+                                   Style="{StaticResource LabelSearch}"/>
+                        </Grid>
+                    </Border>
+                    <DataGrid Grid.Row="1" 
+                              AutoGenerateColumns="False" 
+                              IsReadOnly="True" 
+                              ItemsSource="{Binding Debts, UpdateSourceTrigger=PropertyChanged}" 
+                              SelectedItem="{Binding DebtSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Foreground" Value="{Binding Path=ColorPayment}"/>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Style.Triggers>
+                                    <Trigger Property="DataGridRow.IsSelected" Value="False">
+                                        <Setter Property="Foreground" Value="{Binding Path=ColorPayment}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.CellStyle>
+                        <DataGrid.InputBindings>
+                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding PaymentDebts}"/>
+                        </DataGrid.InputBindings>
+                        <DataGrid.Columns>                            
+                            <DataGridTextColumn Header="Date" Binding="{Binding Path=InvoiceDate, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                            <DataGridTextColumn Header="Invoice Id" Binding="{Binding Path=InvoiceNumber}" />
+                            <DataGridTextColumn Header="Name" Width="auto" Binding="{Binding Path=FullName}"/>
+                            <DataGridTextColumn Header="Phone" Width="auto" Binding="{Binding Path=PhoneNumber}"/>
+                            <DataGridTextColumn Header="Email" Width="auto" Binding="{Binding Path=Email}"/>
+                            <DataGridTextColumn Header="Debt Name" Width="*" Binding="{Binding Path=NameDebts}" />
+                            <DataGridTextColumn Header="Description" Width="*" Binding="{Binding Path=DescriptionDebts}" />
+                            <DataGridTextColumn Header="Amount" Binding="{Binding Path=AmountDebts, StringFormat='0.00'}" />                            
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <StackPanel Grid.Row="2" Grid.ColumnSpan="2"
+                                Style="{StaticResource FooterMenu}" >
+                        <Button Content="Add" 
+                                Foreground="Green" 
+                                BorderBrush="Green"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding AddDebts}"/>
+                        <Button Content="Edit" 
+                                Foreground="Brown" 
+                                BorderBrush="Brown"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding InsDebts}"
+                                IsEnabled="{Binding EnableDebts}"/>
+                        <Button Content="Del" 
+                                Foreground="Red" 
+                                BorderBrush="Red"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding DelDebts}"
+                                IsEnabled="{Binding EnableDebts}"/>
+                        
+                    </StackPanel>
+                </Grid>
+            </TabItem.Content>
+        </TabItem>
+        
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">

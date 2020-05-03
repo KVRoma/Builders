@@ -28,6 +28,7 @@ namespace Builders.Models
         public DbSet<Labour> Labours { get; set; }
         public DbSet<LabourContractor> LabourContractors { get; set; }
         public DbSet<Expenses> Expenses { get; set; }
+        public DbSet<Debts> Debts { get; set; }
 
         public DbSet<DIC_TypeOfClient> DIC_TypeOfClients { get; set; }
         public DbSet<DIC_HearAboutsUs> DIC_HearAboutsUse { get; set; }

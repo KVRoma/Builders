@@ -42,7 +42,7 @@
                         <DataGridTextColumn Header="Percent" Width="auto" Binding="{Binding Path=Percent}"/>
                         <DataGridTextColumn Header="Payout" Width="auto" Binding="{Binding Path=Payout}"/>
                         <DataGridTextColumn Header="Adjust" Width="auto" Binding="{Binding Path=Adjust}"/>
-                        <DataGridTextColumn Header="Profit" Width="auto" Binding="{Binding Path=Profit}"/>
+                        <DataGridTextColumn Header="Profit" Width="auto" Binding="{Binding Path=Profit, StringFormat='0.00'}"/>
                     </DataGrid.Columns>
                 </DataGrid>
                 <Grid Grid.Row="2">
@@ -116,7 +116,7 @@
                         <DataGridTextColumn Header="Total" Width="auto" Binding="{Binding Path=Total}"/>
                         <DataGridTextColumn Header="TAX" Width="auto" Binding="{Binding Path=TAX}"/>
                         <DataGridTextColumn Header="GST" Width="auto" Binding="{Binding Path=GST}"/>
-                        <DataGridTextColumn Header="TOTAL" Width="auto" Foreground="Red" Binding="{Binding Path=TotalContractor}"/>
+                        <DataGridTextColumn Header="TOTAL" Width="auto" Foreground="Red" Binding="{Binding Path=TotalContractor, StringFormat='0.00'}"/>
                     </DataGrid.Columns>
                 </DataGrid>
                 <Grid Grid.Row="2">

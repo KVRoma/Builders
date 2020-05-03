@@ -35,8 +35,9 @@ namespace Builders
             displayRootRegistry.RegisterWindowType<MaterialProfitViewModel, MaterialProfitView>();
             displayRootRegistry.RegisterWindowType<LabourProfitViewModel, LabourProfitView>();
             displayRootRegistry.RegisterWindowType<FotoViewModel, FotoView>();
-            displayRootRegistry.RegisterWindowType<ExpensesViewModel, ExpensesView>();           
-            
+            displayRootRegistry.RegisterWindowType<ExpensesViewModel, ExpensesView>();
+            displayRootRegistry.RegisterWindowType<DebtsViewModel, DebtsView>();
+            displayRootRegistry.RegisterWindowType<DebtsPaymentViewModel, DebtsPaymentView>();
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -67,6 +68,8 @@ namespace Builders
             displayRootRegistry.UnregisterWindowType<LabourProfitViewModel>();
             displayRootRegistry.UnregisterWindowType<FotoViewModel>();
             displayRootRegistry.UnregisterWindowType<ExpensesViewModel>();
+            displayRootRegistry.UnregisterWindowType<DebtsViewModel>();
+            displayRootRegistry.UnregisterWindowType<DebtsPaymentViewModel>();
             
             base.OnExit(e);
         }

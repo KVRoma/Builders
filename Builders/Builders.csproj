@@ -95,6 +95,7 @@
     <Compile Include="Enums\EnumDictionary.cs" />
     <Compile Include="Models\BuilderContext.cs" />
     <Compile Include="Models\Client.cs" />
+    <Compile Include="Models\Debts.cs" />
     <Compile Include="Models\DIC_Area.cs" />
     <Compile Include="Models\DIC_Contractor.cs" />
     <Compile Include="Models\DIC_DescriptionQuotation.cs" />
@@ -128,6 +129,8 @@
     <Compile Include="Models\WorkOrder_Installation.cs" />
     <Compile Include="Models\WorkOrder_Work.cs" />
     <Compile Include="ViewModels\ClientViewModel.cs" />
+    <Compile Include="ViewModels\DebtsPaymentViewModel.cs" />
+    <Compile Include="ViewModels\DebtsViewModel.cs" />
     <Compile Include="ViewModels\DIC_addDescriptionViewModel.cs" />
     <Compile Include="ViewModels\DIC_addItemViewModel.cs" />
     <Compile Include="ViewModels\DIC_ClientViewModel.cs" />
@@ -147,6 +150,12 @@
     <Compile Include="ViewModels\WorkOrderViewModel.cs" />
     <Compile Include="Views\ClientView.xaml.cs">
       <DependentUpon>ClientView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DebtsPaymentView.xaml.cs">
+      <DependentUpon>DebtsPaymentView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DebtsView.xaml.cs">
+      <DependentUpon>DebtsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DIC_addDescriptionView.xaml.cs">
       <DependentUpon>DIC_addDescriptionView.xaml</DependentUpon>
@@ -210,6 +219,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ClientView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DebtsPaymentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DebtsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
