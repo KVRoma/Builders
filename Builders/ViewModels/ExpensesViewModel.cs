@@ -161,17 +161,19 @@ namespace Builders.ViewModels
         }));
         public Command InsCommand => _insCommand ?? (_insCommand = new Command(obj=> 
         {
-            VisibleView = Visibility.Collapsed;
-            VisibleAdd = Visibility.Visible;
+            if (ExpensesSelect.Count() > 0)
+            {
+                VisibleView = Visibility.Collapsed;
+                VisibleAdd = Visibility.Visible;
 
-            flagEdit = true;
+                flagEdit = true;
 
-            Date = ExpensesSelect[0].Date;
-            TypeSelect = ExpensesSelect[0].Type;
-            Name = ExpensesSelect[0].Name;
-            Description = ExpensesSelect[0].Description;
-            Amount = ExpensesSelect[0].Amounts;
-
+                Date = ExpensesSelect[0].Date;
+                TypeSelect = ExpensesSelect[0].Type;
+                Name = ExpensesSelect[0].Name;
+                Description = ExpensesSelect[0].Description;
+                Amount = ExpensesSelect[0].Amounts;
+            }
         }));
         public Command DelCommand => _delCommand ?? (_delCommand = new Command(obj=> 
         {
