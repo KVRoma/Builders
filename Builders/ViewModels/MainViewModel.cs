@@ -3422,12 +3422,22 @@ namespace Builders.ViewModels
             
             return reports?.OrderBy(r=>r.PaymentDatePaid).ToList();
         }
-
+        /// <summary>
+        /// Використовується для звіту по заданому проміжку дат. Вибирає всі несплачені платежі з Debts.
+        /// </summary>
+        /// <param name="dateFrom"></param>
+        /// <param name="dateTo"></param>
+        /// <returns></returns>
         private List<Debts> ReportAmountDebts(DateTime dateFrom, DateTime dateTo)
         {
             return db.Debts.Where(d => d.InvoiceDate >= dateFrom && d.InvoiceDate <= dateTo && d.Payment == false).ToList();
         }
-
+        /// <summary>
+        /// Використовується для звіту по заданому проміжку дат. Вибирає всі оплачені платежі з Debts.
+        /// </summary>
+        /// <param name="dateFrom"></param>
+        /// <param name="dateTo"></param>
+        /// <returns></returns>
         private List<Debts> ReportPaymentDebts(DateTime dateFrom, DateTime dateTo)
         {
             return db.Debts.Where(d => d.InvoiceDate >= dateFrom && d.InvoiceDate <= dateTo && d.Payment == true).ToList();
