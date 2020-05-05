@@ -417,7 +417,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Orientation="Horizontal">
-                    <Label Content="Amount Debts" 
+                    <Label Content="Active Debts" 
                            Style="{StaticResource ReportHeader}"/>
                     <TextBlock Text="{Binding LabelAmountDebts, StringFormat='0.00'}"
                                Margin="10,10,10,30"
@@ -438,7 +438,7 @@
                         <DataGridTextColumn Header="Email" Width="auto" Binding="{Binding Path=Email}"/>
                         <DataGridTextColumn Header="Debt Name" Width="*" Binding="{Binding Path=NameDebts}" />
                         <DataGridTextColumn Header="Description" Width="*" Binding="{Binding Path=DescriptionDebts}" />
-                        <DataGridTextColumn Header="Amount" Binding="{Binding Path=AmountDebts, StringFormat='0.00'}" />
+                        <DataGridTextColumn Header="Amount Paid" Binding="{Binding Path=AmountDebts, StringFormat='0.00'}" />
                     </DataGrid.Columns>
                 </DataGrid>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
@@ -462,7 +462,7 @@
                         <DataGridTextColumn Header="Email" Width="auto" Binding="{Binding Path=Email}"/>
                         <DataGridTextColumn Header="Debt Name" Width="*" Binding="{Binding Path=NameDebts}" />
                         <DataGridTextColumn Header="Description" Width="*" Binding="{Binding Path=DescriptionDebts}" />
-                        <DataGridTextColumn Header="Amount" Width="auto" Binding="{Binding Path=AmountDebts, StringFormat='0.00'}" />
+                        <DataGridTextColumn Header="Amount Paid" Width="auto" Binding="{Binding Path=AmountDebts, StringFormat='0.00'}" />
                         <DataGridTextColumn Header="Date Payment" Width="auto" Binding="{Binding Path=DatePayment, StringFormat=\{0:dd.MM.yyyy\}}" />
                         <DataGridTextColumn Header="Payment" Width="auto" Binding="{Binding Path=AmountPayment, StringFormat='0.00'}" />
                         <DataGridTextColumn Header="Notes Payment" Width="*" Binding="{Binding Path=DescriptionPayment}" />
