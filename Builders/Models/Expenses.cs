@@ -14,5 +14,12 @@ namespace Builders.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Amounts { get; set; }
+
+        public DateTime DatePaid { get; set; } = DateTime.MinValue;
+        public string NotesPaid { get; set; }
+        public decimal AmountPaid { get; set; } = 0m;
+
+        public bool Payment { get; set; } = false;
+        public string Color { get; set; } = "Red";
     }
 }

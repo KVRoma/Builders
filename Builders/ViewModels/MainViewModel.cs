@@ -49,6 +49,7 @@ namespace Builders.ViewModels
         private bool isCheckedPayroll;
         private bool isCheckedAmount;
         private bool isCheckedDebts;
+        private bool isCheckedExpenses;
         private bool enableReport;
         private Visibility isVisibleMenuReport;
         private Visibility isVisibleProfitReport;
@@ -56,6 +57,9 @@ namespace Builders.ViewModels
         private Visibility isVisiblePayrollReport;
         private Visibility isVisibleAmountReport;
         private Visibility isVisibleDebtsReport;
+        private Visibility isVisibleExpensesReport;
+        private Visibility isVisibleDateSelect;
+        private Visibility isVisibleDateSelectExpenses;
         private DateTime reportDateFrom;
         private DateTime reportDateTo;
         private MaterialProfit materialReport;
@@ -67,9 +71,19 @@ namespace Builders.ViewModels
         private ReportTotal totalReportForLabel;
         private List<Debts> amountDebtsReport;
         private List<Debts> paymentDebtsReport;
+        private List<Expenses> activeExpenses;
+        private Expenses activeExpenseSelect;
+        private List<Expenses> paymentExpenses;
+        private Expenses paymentExpenseSelect;
         private string countReport;
         private decimal labelAmountDebts;
         private decimal labelPaymentDebts;
+        private decimal labelActiveExpenses;
+        private decimal labelPaymentExpenses;
+        private int dateYearSelect;
+        private List<int> dateYears;
+        private EnumMonths dateMonthSelect;
+        private List<EnumMonths> dateMonths;
         #endregion
         #region Public Property
         public Client ClientSelect
@@ -383,6 +397,25 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(IsCheckedDebts));
             }
         }
+        public bool IsCheckedExpenses
+        {
+            get { return isCheckedExpenses; }
+            set
+            {
+                isCheckedExpenses = value;
+                OnPropertyChanged(nameof(IsCheckedExpenses));
+                if (IsCheckedExpenses)
+                {
+                    IsVisibleDateSelect = Visibility.Collapsed;
+                    IsVisibleDateSelectExpenses = Visibility.Visible;
+                }
+                else
+                {
+                    IsVisibleDateSelect = Visibility.Visible;
+                    IsVisibleDateSelectExpenses = Visibility.Collapsed;
+                }
+            }
+        }
         public bool EnableReport
         {
             get { return enableReport; }
@@ -444,6 +477,33 @@ namespace Builders.ViewModels
             {
                 isVisibleDebtsReport = value;
                 OnPropertyChanged(nameof(IsVisibleDebtsReport));
+            }
+        }
+        public Visibility IsVisibleExpensesReport
+        {
+            get { return isVisibleExpensesReport; }
+            set
+            {
+                isVisibleExpensesReport = value;
+                OnPropertyChanged(nameof(IsVisibleExpensesReport));
+            }
+        }
+        public Visibility IsVisibleDateSelect
+        {
+            get { return isVisibleDateSelect; }
+            set 
+            {
+                isVisibleDateSelect = value;
+                OnPropertyChanged(nameof(IsVisibleDateSelect));
+            }
+        }
+        public Visibility IsVisibleDateSelectExpenses
+        {
+            get { return isVisibleDateSelectExpenses; }
+            set
+            {
+                isVisibleDateSelectExpenses = value;
+                OnPropertyChanged(nameof(IsVisibleDateSelectExpenses));
             }
         }
         public DateTime ReportDateFrom
@@ -552,6 +612,42 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(PaymentDebtsReport));
             }
         }
+        public List<Expenses> ActiveExpenses
+        {
+            get { return activeExpenses; }
+            set 
+            {
+                activeExpenses = value;
+                OnPropertyChanged(nameof(ActiveExpenses));
+            }
+        }
+        public Expenses ActiveExpenseSelect
+        {
+            get { return activeExpenseSelect; }
+            set
+            {
+                activeExpenseSelect = value;
+                OnPropertyChanged(nameof(ActiveExpenseSelect));
+            }
+        }
+        public List<Expenses> PaymentExpenses
+        {
+            get { return paymentExpenses; }
+            set
+            {
+                paymentExpenses = value;
+                OnPropertyChanged(nameof(PaymentExpenses));
+            }
+        }
+        public Expenses PaymentExpenseSelect
+        {
+            get { return paymentExpenseSelect; }
+            set
+            {
+                paymentExpenseSelect = value;
+                OnPropertyChanged(nameof(PaymentExpenseSelect));
+            }
+        }
         public ReportTotal TotalReportForLabel
         {
             get { return totalReportForLabel; }
@@ -588,7 +684,61 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(LabelPaymentDebts));
             }
         }
-        
+        public decimal LabelActiveExpenses
+        {
+            get { return labelActiveExpenses; }
+            set
+            {
+                labelActiveExpenses = value;
+                OnPropertyChanged(nameof(LabelActiveExpenses));
+            }
+        }
+        public decimal LabelPaymentExpenses
+        {
+            get { return labelPaymentExpenses; }
+            set
+            {
+                labelPaymentExpenses = value;
+                OnPropertyChanged(nameof(LabelPaymentExpenses));
+            }
+        }
+        public int DateYearSelect
+        {
+            get { return dateYearSelect; }
+            set
+            {
+                dateYearSelect = value;
+                OnPropertyChanged(nameof(DateYearSelect));
+            }
+        }
+        public List<int> DateYears
+        {
+            get { return dateYears; }
+            set
+            {
+                dateYears = value;
+                OnPropertyChanged(nameof(DateYears));
+            }
+        }
+        public EnumMonths DateMonthSelect
+        {
+            get { return dateMonthSelect; }
+            set
+            {
+                dateMonthSelect = value;
+                OnPropertyChanged(nameof(DateMonthSelect));
+            }
+        }
+        public List<EnumMonths> DateMonths
+        {
+            get { return dateMonths; }
+            set
+            {
+                dateMonths = value;
+                OnPropertyChanged(nameof(DateMonths));
+            }
+        }
+
         #endregion
         #region Private Command
         private Command _exitApp;
@@ -644,6 +794,8 @@ namespace Builders.ViewModels
         private Command _loadReport;
         private Command _loadExpensesFromXls;
         private Command _loadExpenses;
+        private Command _paymentExpensesActive;
+        private Command _paymentExpensesPayment;
         private Command _templateExpenses;
         private Command _exportReport;
         //*************************************
@@ -2432,53 +2584,77 @@ namespace Builders.ViewModels
         {
             if (IsCheckedProfit)
             {
+                IsVisibleDateSelect = Visibility.Visible;                
                 IsVisibleDebtsReport = Visibility.Collapsed;
                 IsVisibleTotalReport = Visibility.Collapsed;
                 IsVisiblePayrollReport = Visibility.Collapsed;
                 IsVisibleAmountReport = Visibility.Collapsed;
                 IsVisibleProfitReport = Visibility.Visible;
+                IsVisibleExpensesReport = Visibility.Collapsed;
                 MaterialReport = ReportMaterial(ReportDateFrom, ReportDateTo);
                 LabourReport = ReportLabour(ReportDateFrom, ReportDateTo);
                 CountReport = "Total for the selected period - " + MaterialReport?.InvoiceNumber;
             }
             else if (IsCheckedPayroll)
             {
+                IsVisibleDateSelect = Visibility.Visible;
                 IsVisiblePayrollReport = Visibility.Visible;
                 IsVisibleProfitReport = Visibility.Collapsed;
                 IsVisibleTotalReport = Visibility.Collapsed;
                 IsVisibleAmountReport = Visibility.Collapsed;
                 IsVisibleDebtsReport = Visibility.Collapsed;
+                IsVisibleExpensesReport = Visibility.Collapsed;
                 ReportPayrollToWorks = ReportPayrollWork(ReportDateFrom, ReportDateTo);
                 ReportPayrolls = ReportPayroll(ReportPayrollToWorks);
             }
             else if (IsCheckedAmount)
             {
+                IsVisibleDateSelect = Visibility.Visible;
                 IsVisibleAmountReport = Visibility.Visible;
                 IsVisiblePayrollReport = Visibility.Collapsed;
                 IsVisibleProfitReport = Visibility.Collapsed;
                 IsVisibleTotalReport = Visibility.Collapsed;
                 IsVisibleDebtsReport = Visibility.Collapsed;
+                IsVisibleExpensesReport = Visibility.Collapsed;
                 ReportAmounts = ReportAmountGet(ReportDateFrom, ReportDateTo);
             }
             else if (IsCheckedDebts)
             {
+                IsVisibleDateSelect = Visibility.Visible;
                 IsVisibleDebtsReport = Visibility.Visible;
                 IsVisibleTotalReport = Visibility.Collapsed;
                 IsVisiblePayrollReport = Visibility.Collapsed;
                 IsVisibleAmountReport = Visibility.Collapsed;
                 IsVisibleProfitReport = Visibility.Collapsed;
+                IsVisibleExpensesReport = Visibility.Collapsed;
                 AmountDebtsReport = ReportAmountDebts(ReportDateFrom, ReportDateTo);
                 PaymentDebtsReport = ReportPaymentDebts(ReportDateFrom, ReportDateTo);
-                LabelAmountDebts = decimal.Round(AmountDebtsReport.Select(a => a.AmountDebts)?.Sum() ?? 0m ,2);
-                LabelPaymentDebts = decimal.Round(PaymentDebtsReport.Select(p => p.AmountPayment)?.Sum() ?? 0m ,2);
+                LabelAmountDebts = decimal.Round(AmountDebtsReport.Select(a => a.AmountDebts)?.Sum() ?? 0m, 2);
+                LabelPaymentDebts = decimal.Round(PaymentDebtsReport.Select(p => p.AmountPayment)?.Sum() ?? 0m, 2);
+            }
+            else if (IsCheckedExpenses)
+            {
+                IsVisibleExpensesReport = Visibility.Visible;
+                IsVisibleDateSelect = Visibility.Collapsed;
+                IsVisibleAmountReport = Visibility.Collapsed;
+                IsVisiblePayrollReport = Visibility.Collapsed;
+                IsVisibleProfitReport = Visibility.Collapsed;
+                IsVisibleTotalReport = Visibility.Collapsed;
+                IsVisibleDebtsReport = Visibility.Collapsed;
+                ActiveExpenses = ReportActivExpenses(DateYearSelect, DateMonthSelect);
+                PaymentExpenses = ReportPaymentExpenses(DateYearSelect, DateMonthSelect);
+                LabelActiveExpenses = decimal.Round(ActiveExpenses.Select(e => e.Amounts)?.Sum() ?? 0m, 2);
+                LabelPaymentExpenses = decimal.Round(PaymentExpenses.Select(e => e.AmountPaid)?.Sum() ?? 0m, 2);
             }
             else
             {
+                IsVisibleDateSelect = Visibility.Visible;
                 IsVisibleTotalReport = Visibility.Visible;
                 IsVisibleProfitReport = Visibility.Collapsed;
                 IsVisiblePayrollReport = Visibility.Collapsed;
                 IsVisibleAmountReport = Visibility.Collapsed;
                 IsVisibleDebtsReport = Visibility.Collapsed;
+                IsVisibleExpensesReport = Visibility.Collapsed;
                 TotalReport = ReportTotalGrid(ReportDateFrom, ReportDateTo);
                 TotalReportForLabel = ReportTotalLabel(ReportDateFrom, ReportDateTo, TotalReport);
             }
@@ -2537,6 +2713,90 @@ namespace Builders.ViewModels
                 MessageBox.Show(ex.ToString());
                 ExcelApp.Visible = true;
                 ExcelApp.UserControl = true;
+            }
+        }));
+        public Command PaymentExpensesActive => _paymentExpensesActive ?? (_paymentExpensesActive = new Command(async obj=> 
+        {
+            if (ActiveExpenseSelect != null)
+            {
+                var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                var pay = new DebtsPaymentViewModel();
+                pay.Date = DateTime.Today;
+                pay.Amount = ActiveExpenseSelect.Amounts;
+                await displayRootRegistry.ShowModalPresentation(pay);
+                
+                if (pay.PressOk)
+                {   
+                    if (pay.Amount != 0m)
+                    {
+                        ActiveExpenseSelect.DatePaid = pay.Date;
+                        ActiveExpenseSelect.AmountPaid = decimal.Round(pay.Amount, 2);
+                        ActiveExpenseSelect.NotesPaid = pay.Description;
+                        ActiveExpenseSelect.Payment = true;
+                        ActiveExpenseSelect.Color = "Silver";
+
+                        db.Entry(ActiveExpenseSelect).State = EntityState.Modified;
+                        db.SaveChanges();
+
+                        ActiveExpenses.Clear();
+                        PaymentExpenses.Clear();
+                        ActiveExpenses = ReportActivExpenses(DateYearSelect, DateMonthSelect);
+                        PaymentExpenses = ReportPaymentExpenses(DateYearSelect, DateMonthSelect);
+                        LabelActiveExpenses = decimal.Round(ActiveExpenses.Select(e => e.Amounts)?.Sum() ?? 0m, 2);
+                        LabelPaymentExpenses = decimal.Round(PaymentExpenses.Select(e => e.AmountPaid)?.Sum() ?? 0m, 2);
+                    }                 
+                }
+            }
+        }));
+        public Command PaymentExpensesPayment => _paymentExpensesPayment ?? (_paymentExpensesPayment = new Command(async obj=> 
+        {
+            if (PaymentExpenseSelect != null)
+            {
+                var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                var pay = new DebtsPaymentViewModel();
+                pay.Date = PaymentExpenseSelect.DatePaid;
+                pay.Amount = PaymentExpenseSelect.AmountPaid;
+                pay.Description = PaymentExpenseSelect.NotesPaid;
+                await displayRootRegistry.ShowModalPresentation(pay);
+                if (pay.PressOk)
+                {
+                    if (pay.Amount != 0m)
+                    {
+                        PaymentExpenseSelect.DatePaid = pay.Date;
+                        PaymentExpenseSelect.AmountPaid =decimal.Round(pay.Amount, 2);
+                        PaymentExpenseSelect.NotesPaid = pay.Description;
+                        PaymentExpenseSelect.Payment = true;
+                        PaymentExpenseSelect.Color = "Silver";
+
+                        db.Entry(PaymentExpenseSelect).State = EntityState.Modified;
+                        db.SaveChanges();
+
+                        ActiveExpenses.Clear();
+                        PaymentExpenses.Clear();
+                        ActiveExpenses = ReportActivExpenses(DateYearSelect, DateMonthSelect);
+                        PaymentExpenses = ReportPaymentExpenses(DateYearSelect, DateMonthSelect);
+                        LabelActiveExpenses = decimal.Round(ActiveExpenses.Select(e => e.Amounts)?.Sum() ?? 0m, 2);
+                        LabelPaymentExpenses = decimal.Round(PaymentExpenses.Select(e => e.AmountPaid)?.Sum() ?? 0m, 2);
+                    }
+                    else
+                    {
+                        PaymentExpenseSelect.DatePaid = DateTime.MinValue;
+                        PaymentExpenseSelect.AmountPaid = 0m;
+                        PaymentExpenseSelect.NotesPaid = "";
+                        PaymentExpenseSelect.Payment = false;
+                        PaymentExpenseSelect.Color = "Red";
+
+                        db.Entry(PaymentExpenseSelect).State = EntityState.Modified;
+                        db.SaveChanges();
+
+                        ActiveExpenses.Clear();
+                        PaymentExpenses.Clear();
+                        ActiveExpenses = ReportActivExpenses(DateYearSelect, DateMonthSelect);
+                        PaymentExpenses = ReportPaymentExpenses(DateYearSelect, DateMonthSelect);
+                        LabelActiveExpenses = decimal.Round(ActiveExpenses.Select(e => e.Amounts)?.Sum() ?? 0m, 2);
+                        LabelPaymentExpenses = decimal.Round(PaymentExpenses.Select(e => e.AmountPaid)?.Sum() ?? 0m, 2);
+                    }
+                }
             }
         }));
         public Command TemplateExpenses => _templateExpenses ?? (_templateExpenses = new Command(obj =>
@@ -2616,12 +2876,15 @@ namespace Builders.ViewModels
             IsCheckedTotal = false;
             IsCheckedPayroll = false;
             IsCheckedDebts = false;
+            IsVisibleDateSelect = Visibility.Visible;
+            IsVisibleDateSelectExpenses = Visibility.Collapsed;
             IsVisibleMenuReport = Visibility.Visible;
             IsVisibleProfitReport = Visibility.Collapsed;
             IsVisibleTotalReport = Visibility.Collapsed;
             IsVisiblePayrollReport = Visibility.Collapsed;
             IsVisibleAmountReport = Visibility.Collapsed;
             IsVisibleDebtsReport = Visibility.Collapsed;
+            IsVisibleExpensesReport = Visibility.Collapsed;
             ReportDateFrom = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             ReportDateTo = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.DaysInMonth(DateTime.Today.Year, DateTime.Today.Month));
         }
@@ -2713,6 +2976,30 @@ namespace Builders.ViewModels
             NameQuota.Add("APPROVED QUOTE");
             NameQuota.Add("REVISED AGREEMENT");
             NameQuota.Add("INVOICE");
+
+            DateYears = new List<int>();
+            var date = Quotations?.Select(q => q.QuotaDate);
+            if (date.Count() > 0)
+            {
+                int year = date.Min().Year;
+                for (int i = 0; i <= 5; i++)
+                {
+                    DateYears.Add(year + i);
+                }
+                DateYearSelect = DateTime.Today.Year;
+            }
+            else 
+            {
+                DateYears.Add(2020);
+            }
+
+            DateMonths = new List<EnumMonths>();
+            for (EnumMonths month = EnumMonths.January; month <= EnumMonths.December; month++)
+            {
+                DateMonths.Add(month);
+            }
+            DateMonthSelect = DateMonths.ElementAt(DateTime.Today.Month - 1);
+            
         }
 
         private void AddMaterialProfit(int? invoiceId)
@@ -3441,6 +3728,26 @@ namespace Builders.ViewModels
         private List<Debts> ReportPaymentDebts(DateTime dateFrom, DateTime dateTo)
         {
             return db.Debts.Where(d => d.InvoiceDate >= dateFrom && d.InvoiceDate <= dateTo && d.Payment == true).ToList();
+        }
+        /// <summary>
+        /// Використовується для звіту по заданому Year and Month. Вибирає всі неоплачені записи з Expenses.
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <returns></returns>
+        private List<Expenses> ReportActivExpenses(int year, EnumMonths month)
+        {
+            return db.Expenses.Where(e => e.Date.Year == year && e.Date.Month == (int)month && e.Payment == false).OrderBy(e=>e.Type).ThenBy(e=>e.Name).ToList();
+        }
+        /// <summary>
+        /// Використовується для звіту по заданому Year and Month. Вибирає всі оплачені записи з Expenses.
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <returns></returns>
+        private List<Expenses> ReportPaymentExpenses(int year, EnumMonths month)
+        {
+            return db.Expenses.Where(e => e.Date.Year == year && e.Date.Month == (int)month && e.Payment == true).OrderBy(e => e.Type).ThenBy(e => e.Name).ToList();
         }
     
     }

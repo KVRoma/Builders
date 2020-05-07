@@ -24,6 +24,11 @@
                   ItemsSource="{Binding Expenses, UpdateSourceTrigger=PropertyChanged}"                               
                   SelectionMode="Extended"
                   UI:MultiSelect.SelectedItems="{Binding ExpensesSelect}">
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Foreground" Value="{Binding Path=Color}"/>
+                </Style>
+            </DataGrid.RowStyle>
             <DataGrid.Columns>                
                 <DataGridTextColumn Header="Date" Width="auto" Binding="{Binding Path=Date, StringFormat=\{0:dd.MM.yyyy\}}"/>
                 <DataGridTextColumn Header="Type" Width="auto" Binding="{Binding Path=Type}"/>

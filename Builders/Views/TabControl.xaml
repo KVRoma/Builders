@@ -594,7 +594,7 @@
                               AutoGenerateColumns="False" 
                               IsReadOnly="True" 
                               ItemsSource="{Binding Debts, UpdateSourceTrigger=PropertyChanged}" 
-                              SelectedItem="{Binding DebtSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2">
+                              SelectedItem="{Binding DebtSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         <DataGrid.RowStyle>
                             <Style TargetType="DataGridRow">
                                 <Setter Property="Foreground" Value="{Binding Path=ColorPayment}"/>

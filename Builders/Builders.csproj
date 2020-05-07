@@ -93,6 +93,7 @@
     <Compile Include="DisplayRootRegistry.cs" />
     <Compile Include="Enums\EnumClient.cs" />
     <Compile Include="Enums\EnumDictionary.cs" />
+    <Compile Include="Enums\EnumMonths.cs" />
     <Compile Include="Models\BuilderContext.cs" />
     <Compile Include="Models\Client.cs" />
     <Compile Include="Models\Debts.cs" />

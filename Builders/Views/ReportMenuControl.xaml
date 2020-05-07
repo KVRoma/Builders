@@ -23,7 +23,10 @@
             <StackPanel Orientation="Vertical">
                 <Label Content="Select dates please..." 
                        Style="{StaticResource LabelBold}"/>
-                <StackPanel Orientation="Horizontal">
+                <!--Select Date From - To -->
+                
+                <!-- Date From - To !!!  Visibility="{Binding IsVisibleDateSelect}" -->
+                <StackPanel Orientation="Horizontal" Visibility="{Binding IsVisibleDateSelect}">
                     <Label Content="From" 
                            Width="50"
                            HorizontalContentAlignment="Left"
@@ -32,7 +35,8 @@
                                 Margin="5" 
                                 SelectedDate="{Binding ReportDateFrom}"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
+                <!-- Date From - To !!!  Visibility="{Binding IsVisibleDateSelect}" -->
+                <StackPanel Orientation="Horizontal" Visibility="{Binding IsVisibleDateSelect}">
                     <Label Content="To"
                            Width="50"
                            HorizontalContentAlignment="Left"
@@ -41,6 +45,35 @@
                                 Margin="5"
                                 SelectedDate="{Binding ReportDateTo}"/>
                 </StackPanel>
+                
+                <!--Select Date Year - Month -->
+
+                <!-- Date Year !!! Visibility="{Binding IsVisibleDateSelectExpenses}" -->
+                <StackPanel Orientation="Horizontal" Visibility="{Binding IsVisibleDateSelectExpenses}">
+                    <Label Content="Year"
+                           Width="70"
+                           HorizontalContentAlignment="Left"
+                           Style="{StaticResource LabelHeder2}"/>
+                    <ComboBox Margin="5" 
+                              VerticalAlignment="Center" 
+                              Width="100"
+                              ItemsSource="{Binding DateYears}" 
+                              SelectedItem="{Binding DateYearSelect, Mode=TwoWay}"/>
+                </StackPanel>
+                <!-- Date Year !!! Visibility="{Binding IsVisibleDateSelectExpenses}" -->
+                <StackPanel Orientation="Horizontal" Visibility="{Binding IsVisibleDateSelectExpenses}">
+                    <Label Content="Month"
+                           Width="70"
+                           HorizontalContentAlignment="Left"
+                           Style="{StaticResource LabelHeder2}"/>
+                    <ComboBox Margin="5" 
+                              VerticalAlignment="Center" 
+                              Width="100"
+                              ItemsSource="{Binding DateMonths}" 
+                              SelectedItem="{Binding DateMonthSelect, Mode=TwoWay}"/>
+                </StackPanel>
+                
+                
                 <Label Content="Select report option..." 
                        Style="{StaticResource LabelBold}"/>
                 
@@ -81,6 +114,10 @@
                 <RadioButton Content="Debts report"
                              Style="{StaticResource Report}"
                              IsChecked="{Binding IsCheckedDebts}"/>
+
+                <RadioButton Content="Expenses report"
+                             Style="{StaticResource Report}"
+                             IsChecked="{Binding IsCheckedExpenses}"/>
 
                 <Button Content="View" 
                         Style="{StaticResource FooterButton}"
@@ -466,6 +503,77 @@
                         <DataGridTextColumn Header="Date Payment" Width="auto" Binding="{Binding Path=DatePayment, StringFormat=\{0:dd.MM.yyyy\}}" />
                         <DataGridTextColumn Header="Payment" Width="auto" Binding="{Binding Path=AmountPayment, StringFormat='0.00'}" />
                         <DataGridTextColumn Header="Notes Payment" Width="*" Binding="{Binding Path=DescriptionPayment}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+            </Grid>
+
+        </Border>
+
+        <!-- Debts Report !!!  Visibility="{Binding IsVisibleExpensesReport}" -->
+        <Border Style="{StaticResource BorderRadiusSearch}" 
+                Grid.Row="0"
+                Grid.Column="1" Visibility="{Binding IsVisibleExpensesReport}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <Label Content="Active Expenses" 
+                           Style="{StaticResource ReportHeader}"/>
+                    <TextBlock Text="{Binding LabelActiveExpenses, StringFormat='0.00'}"
+                               Margin="10,10,10,30"
+                               Foreground="Red"
+                               Background="{x:Null}"
+                               Style="{StaticResource TextBlockHEDER}"/>
+                </StackPanel>
+
+                <DataGrid Grid.Row="1" 
+                              AutoGenerateColumns="False" 
+                              IsReadOnly="True" 
+                              ItemsSource="{Binding ActiveExpenses, UpdateSourceTrigger=PropertyChanged}" 
+                              SelectedItem="{Binding ActiveExpenseSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">                    
+                    <DataGrid.InputBindings>
+                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding PaymentExpensesActive}"/>
+                    </DataGrid.InputBindings>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Date" Width="auto" Binding="{Binding Path=Date, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                        <DataGridTextColumn Header="Type" Width="auto" Binding="{Binding Path=Type}" />
+                        <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=Name}"/>
+                        <DataGridTextColumn Header="Description" Width="*" Binding="{Binding Path=Description}"/>
+                        <DataGridTextColumn Header="Amounts" Width="auto" Binding="{Binding Path=Amounts, StringFormat='0.00'}"/>                        
+                    </DataGrid.Columns>
+                </DataGrid>
+                
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <Label Content="Payment Expenses" 
+                           Style="{StaticResource ReportHeader}"/>
+                    <TextBlock Text="{Binding LabelPaymentExpenses, StringFormat='0.00'}"
+                               Margin="10,10,10,30"
+                               Foreground="Red"
+                               Background="{x:Null}"
+                               Style="{StaticResource TextBlockHEDER}"/>
+                </StackPanel>
+                <DataGrid Grid.Row="3" 
+                              AutoGenerateColumns="False" 
+                              IsReadOnly="True" 
+                              ItemsSource="{Binding PaymentExpenses, UpdateSourceTrigger=PropertyChanged}" 
+                              SelectedItem="{Binding PaymentExpenseSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGrid.InputBindings>
+                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding PaymentExpensesPayment}"/>
+                    </DataGrid.InputBindings>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Date" Width="auto" Binding="{Binding Path=Date, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                        <DataGridTextColumn Header="Type" Width="auto" Binding="{Binding Path=Type}" />
+                        <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=Name}"/>
+                        <DataGridTextColumn Header="Description" Width="*" Binding="{Binding Path=Description}"/>
+                        <DataGridTextColumn Header="Amounts" Width="auto" Binding="{Binding Path=Amounts, StringFormat='0.00'}"/>
+                        <DataGridTextColumn Header="Date Paid" Width="auto" Binding="{Binding Path=DatePaid, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                        <DataGridTextColumn Header="Notes Paid" Width="*" Binding="{Binding Path=NotesPaid}"/>
+                        <DataGridTextColumn Header="Amounts Paid" Width="auto" Binding="{Binding Path=AmountPaid, StringFormat='0.00'}"/>
                     </DataGrid.Columns>
                 </DataGrid>
 
