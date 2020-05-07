@@ -142,6 +142,11 @@
                               IsReadOnly="True" 
                               ItemsSource="{Binding Quotations, UpdateSourceTrigger=PropertyChanged}" 
                               SelectedItem="{Binding QuotationSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Foreground" Value="{Binding Path=Color}"/>
+                            </Style>
+                        </DataGrid.RowStyle>
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Id" Binding="{Binding Path=NumberQuota}"/>
                             <DataGridTextColumn Header="Date" Binding="{Binding Path=QuotaDate, StringFormat=\{0:dd.MM.yyyy\}}"/>

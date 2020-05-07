@@ -86,6 +86,10 @@ namespace Builders.Models
             get { return ProjectTotal + FinancingFee + ProcessingFee; }
         }
 
+        public bool ActivQuota { get; set; } = false;
+        public bool PaidQuota { get; set; } = false;
+        public int SortingQuota { get; set; } = 3; // creation - 3, active - 1, paid - 2
+        public string Color { get; set; } = "Black";
        
 
         public ICollection<MaterialQuotation> MaterialQuotation { get; set; }

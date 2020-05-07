@@ -170,12 +170,13 @@ namespace Builders.ViewModels
             if (AmountPayment != 0m && MethodSelect != null)
             {
                 decimal sum = (Payments.Count() != 0) ? (Payments.Select(p => p.PaymentAmountPaid).Sum()) : (0m);
+                decimal balance = decimal.Round(quota.InvoiceGrandTotal - sum - AmountPayment, 2);
                 Payment pay = new Payment()
                 {
                     PaymentDatePaid = DatePayment,
                     PaymentAmountPaid = AmountPayment,
                     PaymentMethod = MethodSelect.Name,
-                    Balance = decimal.Round(quota.InvoiceGrandTotal - sum - AmountPayment, 2),
+                    Balance = balance,
                     QuotationId = quota.Id
                 };
                 db.Payments.Add(pay);
@@ -195,6 +196,23 @@ namespace Builders.ViewModels
                 Reciepts = null;
                 Reciepts = db.Reciepts.Local.ToBindingList().Where(r => r.QuotaId == quota.Id);
                 CountPay(Payments.Count());
+
+                if (balance <= 0)
+                {
+                    quota.SortingQuota = 2;
+                    quota.ActivQuota = true;
+                    quota.PaidQuota = true;
+                    quota.Color = "Silver";
+                }
+                else
+                {
+                    quota.SortingQuota = 1;
+                    quota.ActivQuota = true;
+                    quota.PaidQuota = false;
+                    quota.Color = "Blue";
+                }
+                db.Entry(quota).State = EntityState.Modified;
+                db.SaveChanges();
             }
 
         }));
@@ -220,6 +238,31 @@ namespace Builders.ViewModels
                 Reciepts = db.Reciepts.Local.ToBindingList().Where(r => r.QuotaId == quota.Id);
 
                 CountPay(Payments.Count());
+
+                if (PaymentSelect != null)
+                {
+                    if (PaymentSelect.Balance <= 0)
+                    {
+                        quota.SortingQuota = 2;
+                        quota.ActivQuota = true;
+                        quota.PaidQuota = true;
+                        quota.Color = "Silver";
+                    }
+                    else
+                    {
+                        quota.SortingQuota = 1;
+                        quota.ActivQuota = true;
+                        quota.PaidQuota = false;
+                        quota.Color = "Blue";
+                    }
+                }
+                else
+                {
+                    quota.SortingQuota = 3;
+                    quota.ActivQuota = false;
+                    quota.PaidQuota = false;
+                    quota.Color = "Black";
+                }
             }
         }));
         public Command PrintCommand => printCommand ?? (printCommand = new Command(obj=> 

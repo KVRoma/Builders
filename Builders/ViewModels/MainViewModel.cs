@@ -345,7 +345,7 @@ namespace Builders.ViewModels
         public bool EnableDebts
         {
             get { return enableDebts; }
-            set 
+            set
             {
                 enableDebts = value;
                 OnPropertyChanged(nameof(EnableDebts));
@@ -491,7 +491,7 @@ namespace Builders.ViewModels
         public Visibility IsVisibleDateSelect
         {
             get { return isVisibleDateSelect; }
-            set 
+            set
             {
                 isVisibleDateSelect = value;
                 OnPropertyChanged(nameof(IsVisibleDateSelect));
@@ -597,7 +597,7 @@ namespace Builders.ViewModels
         public List<Debts> AmountDebtsReport
         {
             get { return amountDebtsReport; }
-            set 
+            set
             {
                 amountDebtsReport = value;
                 OnPropertyChanged(nameof(AmountDebtsReport));
@@ -615,7 +615,7 @@ namespace Builders.ViewModels
         public List<Expenses> ActiveExpenses
         {
             get { return activeExpenses; }
-            set 
+            set
             {
                 activeExpenses = value;
                 OnPropertyChanged(nameof(ActiveExpenses));
@@ -678,7 +678,7 @@ namespace Builders.ViewModels
         public decimal LabelPaymentDebts
         {
             get { return labelPaymentDebts; }
-            set 
+            set
             {
                 labelPaymentDebts = value;
                 OnPropertyChanged(nameof(LabelPaymentDebts));
@@ -1088,12 +1088,16 @@ namespace Builders.ViewModels
                     var lab = db.Labours.Where(la => la.LabourProfitId == labprof.Id);
                     var labcontr = db.LabourContractors.Where(la => la.LabourProfitId == labprof.Id);
 
+                    var debts = db.Debts.Where(d => d.InvoiceId == item.Id);
+
                     db.Materials.RemoveRange(mat);
                     db.MaterialProfits.Remove(matprof);
 
                     db.Labours.RemoveRange(lab);
                     db.LabourContractors.RemoveRange(labcontr);
                     db.LabourProfits.Remove(labprof);
+
+                    db.Debts.RemoveRange(debts);
                 }
 
                 foreach (var item in order)
@@ -1113,7 +1117,7 @@ namespace Builders.ViewModels
                 db.Quotations.Remove(QuotationSelect);
                 db.SaveChanges();
                 Quotations = null;
-                Quotations = db.Quotations.Local.ToBindingList();
+                Quotations = db.Quotations.Local.ToBindingList().OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
             }
         }));
         public Command CopyQuotation => _copyQuotation ?? (_copyQuotation = new Command(async obj =>
@@ -1393,9 +1397,26 @@ namespace Builders.ViewModels
         {
             if (QuotationSelect != null)
             {
+                int? quotaId = QuotationSelect.Id;
                 var displayRootRegistry = (Application.Current as App).displayRootRegistry;
                 var payment = new PaymentViewModel(ref db, QuotationSelect);
                 await displayRootRegistry.ShowModalPresentation(payment);
+                Quotations = null;
+                Quotations = db.Quotations.Local.ToBindingList().OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
+
+                var quota = Quotations.Where(q => q.Id == quotaId);
+                if (quota != null)
+                {
+                    var quotaItem = quota.FirstOrDefault(i => i.Id == quotaId);
+                    var order = WorkOrders.FirstOrDefault(w => w.QuotaId == quotaId);
+                    if (quotaItem.PaidQuota && order == null)
+                    {
+                        var work = new WorkOrderViewModel(ref db, EnumClient.Add, null);
+                        work.Quotations = quota;
+                        work.QuotationSelect = quota.FirstOrDefault(q => q.Id == quotaId);
+                        work.CreatOrder.Execute("");
+                    }
+                }
             }
         }));
         public Command LoadQuotation => _loadQuotation ?? (_loadQuotation = new Command(obj =>
@@ -1646,11 +1667,11 @@ namespace Builders.ViewModels
             string search = obj.ToString();
             if (search == "")
             {
-                Quotations = db.Quotations.Local.ToBindingList();
+                Quotations = db.Quotations.Local.ToBindingList().OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
             }
             else
             {
-                Quotations = Quotations.Where(n => n.FullSearch.ToUpper().Contains(search.ToUpper()));
+                Quotations = Quotations.Where(n => n.FullSearch.ToUpper().Contains(search.ToUpper())).OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
             }
         }));
         public Command TemplateQuotation => _templateQuotation ?? (_templateQuotation = new Command(obj =>
@@ -2287,7 +2308,7 @@ namespace Builders.ViewModels
                 var lp = new LabourProfitViewModel(ref db, LabourProfitSelect);
                 await displayRootRegistry.ShowModalPresentation(lp);
                 InsDebtsTab(LabourProfitSelect.InvoiceId);
-                LabourProfitCalculate(LabourProfitSelect);                
+                LabourProfitCalculate(LabourProfitSelect);
             }
         }));
         public Command PrintLabourProfit => _printLabourProfit ?? (_printLabourProfit = new Command(obj =>
@@ -2454,10 +2475,10 @@ namespace Builders.ViewModels
         public Command AddDebts => _addDebts ?? (_addDebts = new Command(async obj =>
         {
             var displayRootRegistry = (Application.Current as App).displayRootRegistry;
-            var addDebts = new DebtsViewModel(db, DebtSelect); 
-            
+            var addDebts = new DebtsViewModel(db, DebtSelect);
+
             await displayRootRegistry.ShowModalPresentation(addDebts);
-            
+
             if (addDebts.PressOk)
             {
                 Debts debts = new Debts()
@@ -2472,7 +2493,7 @@ namespace Builders.ViewModels
                     NameDebts = addDebts.NameDebts,
                     DescriptionDebts = addDebts.Description,
                     AmountDebts = decimal.Round(addDebts.Amount, 2),
-                    ReadOnly = false                                      
+                    ReadOnly = false
                 };
                 db.Debts.Add(debts);
                 db.SaveChanges();
@@ -2487,27 +2508,28 @@ namespace Builders.ViewModels
             {
                 var displayRootRegistry = (Application.Current as App).displayRootRegistry;
                 var insDebts = new DebtsViewModel(db, DebtSelect)
-                {                   
+                {
                     NameDebts = DebtSelect.NameDebts,
                     Description = DebtSelect.DescriptionDebts,
                     Amount = DebtSelect.AmountDebts
                 };
                 await displayRootRegistry.ShowModalPresentation(insDebts);
 
-                if (insDebts.PressOk)               {
-                    
-                        DebtSelect.InvoiceId = insDebts.InvoiceSelect.Id;
-                        DebtSelect.InvoiceDate = insDebts.InvoiceSelect.DateInvoice;
-                        DebtSelect.InvoiceNumber = insDebts.InvoiceSelect.NumberInvoice;
-                        DebtSelect.FirstName = insDebts.InvoiceSelect.FirstName;
-                        DebtSelect.LastName = insDebts.InvoiceSelect.LastName;
-                        DebtSelect.Email = insDebts.InvoiceSelect.Email;
-                        DebtSelect.PhoneNumber = insDebts.InvoiceSelect.PhoneNumber;
-                        DebtSelect.NameDebts = insDebts.NameDebts;
-                        DebtSelect.DescriptionDebts = insDebts.Description;
-                        DebtSelect.AmountDebts = decimal.Round(insDebts.Amount, 2);
-                        DebtSelect.ReadOnly = false;
-                   
+                if (insDebts.PressOk)
+                {
+
+                    DebtSelect.InvoiceId = insDebts.InvoiceSelect.Id;
+                    DebtSelect.InvoiceDate = insDebts.InvoiceSelect.DateInvoice;
+                    DebtSelect.InvoiceNumber = insDebts.InvoiceSelect.NumberInvoice;
+                    DebtSelect.FirstName = insDebts.InvoiceSelect.FirstName;
+                    DebtSelect.LastName = insDebts.InvoiceSelect.LastName;
+                    DebtSelect.Email = insDebts.InvoiceSelect.Email;
+                    DebtSelect.PhoneNumber = insDebts.InvoiceSelect.PhoneNumber;
+                    DebtSelect.NameDebts = insDebts.NameDebts;
+                    DebtSelect.DescriptionDebts = insDebts.Description;
+                    DebtSelect.AmountDebts = decimal.Round(insDebts.Amount, 2);
+                    DebtSelect.ReadOnly = false;
+
                     db.Entry(DebtSelect).State = EntityState.Modified;
                     db.SaveChanges();
                     Debts = null;
@@ -2537,7 +2559,7 @@ namespace Builders.ViewModels
             {
                 PayDebts.Amount = DebtSelect.AmountPayment;
             }
-            else 
+            else
             {
                 PayDebts.Amount = DebtSelect.AmountDebts;
             }
@@ -2554,12 +2576,12 @@ namespace Builders.ViewModels
                     DebtSelect.ColorPayment = "Silver";
                     DebtSelect.Payment = true;
                 }
-                else 
+                else
                 {
                     DebtSelect.ColorPayment = "Red";
                     DebtSelect.Payment = false;
                 }
-                
+
                 db.Entry(DebtSelect).State = EntityState.Modified;
                 db.SaveChanges();
                 Debts = null;
@@ -2567,7 +2589,7 @@ namespace Builders.ViewModels
             }
 
         }));
-        public Command SearchDebts => _searchDebts ?? (_searchDebts = new Command(obj=> 
+        public Command SearchDebts => _searchDebts ?? (_searchDebts = new Command(obj =>
         {
             string search = obj.ToString();
             if (search == "")
@@ -2584,7 +2606,7 @@ namespace Builders.ViewModels
         {
             if (IsCheckedProfit)
             {
-                IsVisibleDateSelect = Visibility.Visible;                
+                IsVisibleDateSelect = Visibility.Visible;
                 IsVisibleDebtsReport = Visibility.Collapsed;
                 IsVisibleTotalReport = Visibility.Collapsed;
                 IsVisiblePayrollReport = Visibility.Collapsed;
@@ -2715,7 +2737,7 @@ namespace Builders.ViewModels
                 ExcelApp.UserControl = true;
             }
         }));
-        public Command PaymentExpensesActive => _paymentExpensesActive ?? (_paymentExpensesActive = new Command(async obj=> 
+        public Command PaymentExpensesActive => _paymentExpensesActive ?? (_paymentExpensesActive = new Command(async obj =>
         {
             if (ActiveExpenseSelect != null)
             {
@@ -2724,9 +2746,9 @@ namespace Builders.ViewModels
                 pay.Date = DateTime.Today;
                 pay.Amount = ActiveExpenseSelect.Amounts;
                 await displayRootRegistry.ShowModalPresentation(pay);
-                
+
                 if (pay.PressOk)
-                {   
+                {
                     if (pay.Amount != 0m)
                     {
                         ActiveExpenseSelect.DatePaid = pay.Date;
@@ -2744,11 +2766,11 @@ namespace Builders.ViewModels
                         PaymentExpenses = ReportPaymentExpenses(DateYearSelect, DateMonthSelect);
                         LabelActiveExpenses = decimal.Round(ActiveExpenses.Select(e => e.Amounts)?.Sum() ?? 0m, 2);
                         LabelPaymentExpenses = decimal.Round(PaymentExpenses.Select(e => e.AmountPaid)?.Sum() ?? 0m, 2);
-                    }                 
+                    }
                 }
             }
         }));
-        public Command PaymentExpensesPayment => _paymentExpensesPayment ?? (_paymentExpensesPayment = new Command(async obj=> 
+        public Command PaymentExpensesPayment => _paymentExpensesPayment ?? (_paymentExpensesPayment = new Command(async obj =>
         {
             if (PaymentExpenseSelect != null)
             {
@@ -2763,7 +2785,7 @@ namespace Builders.ViewModels
                     if (pay.Amount != 0m)
                     {
                         PaymentExpenseSelect.DatePaid = pay.Date;
-                        PaymentExpenseSelect.AmountPaid =decimal.Round(pay.Amount, 2);
+                        PaymentExpenseSelect.AmountPaid = decimal.Round(pay.Amount, 2);
                         PaymentExpenseSelect.NotesPaid = pay.Description;
                         PaymentExpenseSelect.Payment = true;
                         PaymentExpenseSelect.Color = "Silver";
@@ -2854,7 +2876,7 @@ namespace Builders.ViewModels
             db.LabourProfits.Load();
             db.Debts.Load();
             Clients = db.Clients.Local.ToBindingList();
-            Quotations = db.Quotations.Local.ToBindingList();
+            Quotations = db.Quotations.Local.ToBindingList().OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
             Invoices = db.Invoices.Local.ToBindingList();
             WorkOrders = db.WorkOrders.Local.ToBindingList();
             MaterialProfits = db.MaterialProfits.Local.ToBindingList();
@@ -2965,7 +2987,7 @@ namespace Builders.ViewModels
                 db.SaveChanges();
 
                 Quotations = null;
-                Quotations = db.Quotations.Local.ToBindingList();
+                Quotations = db.Quotations.Local.ToBindingList().OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
             }
         }
 
@@ -2988,7 +3010,7 @@ namespace Builders.ViewModels
                 }
                 DateYearSelect = DateTime.Today.Year;
             }
-            else 
+            else
             {
                 DateYears.Add(2020);
             }
@@ -2999,7 +3021,7 @@ namespace Builders.ViewModels
                 DateMonths.Add(month);
             }
             DateMonthSelect = DateMonths.ElementAt(DateTime.Today.Month - 1);
-            
+
         }
 
         private void AddMaterialProfit(int? invoiceId)
@@ -3060,7 +3082,7 @@ namespace Builders.ViewModels
             MaterialProfits = null;
             MaterialProfits = db.MaterialProfits.Local.ToBindingList();
 
-           
+
         }
         private void MaterialProfitCalculate(MaterialProfit select)
         {
@@ -3216,7 +3238,7 @@ namespace Builders.ViewModels
             LabourProfits = null;
             LabourProfits = db.LabourProfits.Local.ToBindingList();
 
-           
+
         }
         private void LabourProfitCalculate(LabourProfit select)
         {
@@ -3271,7 +3293,7 @@ namespace Builders.ViewModels
             {
                 foreach (var item in contractor)
                 {
-                    Debts debt = new Debts() 
+                    Debts debt = new Debts()
                     {
                         InvoiceDate = invoice.DateInvoice,
                         InvoiceId = invoice.Id,
@@ -3292,7 +3314,7 @@ namespace Builders.ViewModels
 
                 Debts = null;
                 Debts = db.Debts.Local.ToBindingList();
-            }           
+            }
         }
         private void InsDebtsTab(int? invoiceId)
         {
@@ -3687,27 +3709,27 @@ namespace Builders.ViewModels
         /// <param name="dateTo"></param>
         /// <returns></returns>
         private List<ReportAmount> ReportAmountGet(DateTime dateFrom, DateTime dateTo)
-        {           
-            var quota = db.Quotations.Where(q=>q.Id > 0);
+        {
+            var quota = db.Quotations.Where(q => q.Id > 0);
             var payment = db.Payments.Where(p => p.PaymentDatePaid >= dateFrom && p.PaymentDatePaid <= dateTo);
             List<ReportAmount> reports = new List<ReportAmount>();
-                          
-                foreach (var item in payment)
+
+            foreach (var item in payment)
+            {
+                ReportAmount amount = new ReportAmount()
                 {
-                    ReportAmount amount = new ReportAmount()
-                    {
-                        QuotaDate = quota.FirstOrDefault(q => q.Id == item.QuotationId).QuotaDate,
-                        NumberQuota = quota.FirstOrDefault(q => q.Id == item.QuotationId).NumberQuota,
-                        FullNameQuota = quota.FirstOrDefault(q => q.Id == item.QuotationId).FullName,
-                        PaymentDatePaid = item.PaymentDatePaid,
-                        PaymentAmountPaid = item.PaymentAmountPaid,
-                        PaymentMethod = item.PaymentMethod,
-                        Balance = item.Balance
-                    };
-                    reports.Add(amount);
-                }
-            
-            return reports?.OrderBy(r=>r.PaymentDatePaid).ToList();
+                    QuotaDate = quota.FirstOrDefault(q => q.Id == item.QuotationId).QuotaDate,
+                    NumberQuota = quota.FirstOrDefault(q => q.Id == item.QuotationId).NumberQuota,
+                    FullNameQuota = quota.FirstOrDefault(q => q.Id == item.QuotationId).FullName,
+                    PaymentDatePaid = item.PaymentDatePaid,
+                    PaymentAmountPaid = item.PaymentAmountPaid,
+                    PaymentMethod = item.PaymentMethod,
+                    Balance = item.Balance
+                };
+                reports.Add(amount);
+            }
+
+            return reports?.OrderBy(r => r.PaymentDatePaid).ToList();
         }
         /// <summary>
         /// Використовується для звіту по заданому проміжку дат. Вибирає всі несплачені платежі з Debts.
@@ -3737,7 +3759,7 @@ namespace Builders.ViewModels
         /// <returns></returns>
         private List<Expenses> ReportActivExpenses(int year, EnumMonths month)
         {
-            return db.Expenses.Where(e => e.Date.Year == year && e.Date.Month == (int)month && e.Payment == false).OrderBy(e=>e.Type).ThenBy(e=>e.Name).ToList();
+            return db.Expenses.Where(e => e.Date.Year == year && e.Date.Month == (int)month && e.Payment == false).OrderBy(e => e.Type).ThenBy(e => e.Name).ToList();
         }
         /// <summary>
         /// Використовується для звіту по заданому Year and Month. Вибирає всі оплачені записи з Expenses.
@@ -3749,6 +3771,6 @@ namespace Builders.ViewModels
         {
             return db.Expenses.Where(e => e.Date.Year == year && e.Date.Month == (int)month && e.Payment == true).OrderBy(e => e.Type).ThenBy(e => e.Name).ToList();
         }
-    
+
     }
 }
