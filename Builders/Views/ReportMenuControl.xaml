@@ -106,8 +106,8 @@
                         </StackPanel>
                     </RadioButton.Content>
                 </RadioButton>
-                
-                <RadioButton Content="Amount report"
+
+                <RadioButton Content="Record of payments"
                              Style="{StaticResource Report}"
                              IsChecked="{Binding IsCheckedAmount}"/>
 
@@ -369,7 +369,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Label Grid.Row="0" 
-                       Content="Payroll Report with Work Order" 
+                       Content="Contractor payments per invoice" 
                        Style="{StaticResource ReportHeader}"/>
 
                 <DataGrid Grid.Row="1" 
@@ -389,7 +389,7 @@
                     </DataGrid.Columns>
                 </DataGrid>
                 <Label Grid.Row="2" 
-                       Content="Payroll Report (total contractors)" 
+                       Content="Total payment to contractor" 
                        Style="{StaticResource ReportHeader}"/>
                 <DataGrid Grid.Row="3" 
                           AutoGenerateColumns="False"                          
@@ -421,7 +421,7 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <Label Grid.Row="0" 
-                       Content="Amount Report" 
+                       Content="Record of payments we made" 
                        Style="{StaticResource ReportHeader}"/>
 
                 <DataGrid Grid.Row="1" 
@@ -454,7 +454,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Orientation="Horizontal">
-                    <Label Content="Active Debts" 
+                    <Label Content="Active debts per invoice" 
                            Style="{StaticResource ReportHeader}"/>
                     <TextBlock Text="{Binding LabelAmountDebts, StringFormat='0.00'}"
                                Margin="10,10,10,30"
@@ -479,7 +479,7 @@
                     </DataGrid.Columns>
                 </DataGrid>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
-                    <Label Content="Payment Debts" 
+                    <Label Content="Total debts to contractors" 
                            Style="{StaticResource ReportHeader}"/>
                     <TextBlock Text="{Binding LabelPaymentDebts, StringFormat='0.00'}"
                                Margin="10,10,10,30"

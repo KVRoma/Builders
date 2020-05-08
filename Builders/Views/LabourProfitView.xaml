@@ -88,7 +88,7 @@
                              Text="{Binding Adjust}"/>
                     <Button Grid.Column="6" 
                             HorizontalAlignment="Right" 
-                            Content="Edit" 
+                            Content="Add" 
                             Foreground="Brown" 
                             BorderBrush="Brown"
                             Style="{StaticResource FooterButton}" 
@@ -147,7 +147,7 @@
                               SelectedItem="{Binding TaxSelect, Mode=TwoWay}"/>
                     <Button Grid.Column="4" 
                             HorizontalAlignment="Right" 
-                            Content="Edit" 
+                            Content="Add" 
                             Foreground="Brown"
                             BorderBrush="Brown"
                             Style="{StaticResource FooterButton}" 

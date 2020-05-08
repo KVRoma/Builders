@@ -302,7 +302,7 @@
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
 
-                    <TextBlock Margin="15,0,0,0" Text="Invoice" FontWeight="Bold"/>
+                    <TextBlock Margin="15,0,0,0" Text="Completed Jobs" FontWeight="Bold"/>
                 </StackPanel>
             </TabItem.Header>
             <TabItem.Content>

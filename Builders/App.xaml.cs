@@ -38,6 +38,8 @@ namespace Builders
             displayRootRegistry.RegisterWindowType<ExpensesViewModel, ExpensesView>();
             displayRootRegistry.RegisterWindowType<DebtsViewModel, DebtsView>();
             displayRootRegistry.RegisterWindowType<DebtsPaymentViewModel, DebtsPaymentView>();
+            displayRootRegistry.RegisterWindowType<MessageViewModel, MessageView>();
+           
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -70,6 +72,7 @@ namespace Builders
             displayRootRegistry.UnregisterWindowType<ExpensesViewModel>();
             displayRootRegistry.UnregisterWindowType<DebtsViewModel>();
             displayRootRegistry.UnregisterWindowType<DebtsPaymentViewModel>();
+            displayRootRegistry.UnregisterWindowType<MessageViewModel>();
             
             base.OnExit(e);
         }

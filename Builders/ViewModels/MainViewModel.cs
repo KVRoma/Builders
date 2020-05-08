@@ -11,6 +11,10 @@ using Builders.Enums;
 using Excel = Microsoft.Office.Interop.Excel;
 using Microsoft.Win32;
 using System.IO;
+using System.ComponentModel;
+using System.Threading;
+using Builders.Views;
+using System.Windows.Threading;
 
 namespace Builders.ViewModels
 {
@@ -18,6 +22,8 @@ namespace Builders.ViewModels
     {
         BuilderContext db;
         public string NameWindow { get; } = "Builder - 2020";
+
+
         #region Private Property
         private Client clientSelect;
         private IEnumerable<Client> clients;
@@ -359,6 +365,13 @@ namespace Builders.ViewModels
             {
                 isCheckedProfit = value;
                 OnPropertyChanged(nameof(IsCheckedProfit));
+
+                IsVisibleAmountReport = Visibility.Collapsed;
+                IsVisibleDebtsReport = Visibility.Collapsed;
+                IsVisibleExpensesReport = Visibility.Collapsed;
+                IsVisiblePayrollReport = Visibility.Collapsed;
+                IsVisibleProfitReport = Visibility.Collapsed;
+                IsVisibleTotalReport = Visibility.Collapsed;
             }
         }
         public bool IsCheckedTotal
@@ -368,6 +381,13 @@ namespace Builders.ViewModels
             {
                 isCheckedTotal = value;
                 OnPropertyChanged(nameof(IsCheckedTotal));
+
+                IsVisibleAmountReport = Visibility.Collapsed;
+                IsVisibleDebtsReport = Visibility.Collapsed;
+                IsVisibleExpensesReport = Visibility.Collapsed;
+                IsVisiblePayrollReport = Visibility.Collapsed;
+                IsVisibleProfitReport = Visibility.Collapsed;
+                IsVisibleTotalReport = Visibility.Collapsed;
             }
         }
         public bool IsCheckedPayroll
@@ -377,6 +397,13 @@ namespace Builders.ViewModels
             {
                 isCheckedPayroll = value;
                 OnPropertyChanged(nameof(IsCheckedPayroll));
+
+                IsVisibleAmountReport = Visibility.Collapsed;
+                IsVisibleDebtsReport = Visibility.Collapsed;
+                IsVisibleExpensesReport = Visibility.Collapsed;
+                IsVisiblePayrollReport = Visibility.Collapsed;
+                IsVisibleProfitReport = Visibility.Collapsed;
+                IsVisibleTotalReport = Visibility.Collapsed;
             }
         }
         public bool IsCheckedAmount
@@ -386,6 +413,13 @@ namespace Builders.ViewModels
             {
                 isCheckedAmount = value;
                 OnPropertyChanged(nameof(IsCheckedAmount));
+
+                IsVisibleAmountReport = Visibility.Collapsed;
+                IsVisibleDebtsReport = Visibility.Collapsed;
+                IsVisibleExpensesReport = Visibility.Collapsed;
+                IsVisiblePayrollReport = Visibility.Collapsed;
+                IsVisibleProfitReport = Visibility.Collapsed;
+                IsVisibleTotalReport = Visibility.Collapsed;
             }
         }
         public bool IsCheckedDebts
@@ -395,6 +429,13 @@ namespace Builders.ViewModels
             {
                 isCheckedDebts = value;
                 OnPropertyChanged(nameof(IsCheckedDebts));
+
+                IsVisibleAmountReport = Visibility.Collapsed;
+                IsVisibleDebtsReport = Visibility.Collapsed;
+                IsVisibleExpensesReport = Visibility.Collapsed;
+                IsVisiblePayrollReport = Visibility.Collapsed;
+                IsVisibleProfitReport = Visibility.Collapsed;
+                IsVisibleTotalReport = Visibility.Collapsed;
             }
         }
         public bool IsCheckedExpenses
@@ -414,6 +455,13 @@ namespace Builders.ViewModels
                     IsVisibleDateSelect = Visibility.Visible;
                     IsVisibleDateSelectExpenses = Visibility.Collapsed;
                 }
+
+                IsVisibleAmountReport = Visibility.Collapsed;
+                IsVisibleDebtsReport = Visibility.Collapsed;
+                IsVisibleExpensesReport = Visibility.Collapsed;
+                IsVisiblePayrollReport = Visibility.Collapsed;
+                IsVisibleProfitReport = Visibility.Collapsed;
+                IsVisibleTotalReport = Visibility.Collapsed;
             }
         }
         public bool EnableReport
@@ -896,15 +944,19 @@ namespace Builders.ViewModels
                     var material = db.MaterialQuotations.Where(m => m.QuotationId == item.Id);
                     var order = db.WorkOrders.Where(o => o.QuotaId == item.Id);
                     var receipt = db.Reciepts.Where(r => r.QuotaId == item.Id);
+                    var payment = db.Payments.Where(p => p.QuotationId == item.Id);
 
                     foreach (var itemIn in invoice)         // Цю херню треба буде викинути і замутити обмеження при створенні Інвойса (один інвойс на одну квоту !!!)
                     {
+                        var debts = db.Debts.Where(d => d.InvoiceId == itemIn.Id);
                         var matprof = db.MaterialProfits.FirstOrDefault(m => m.InvoiceId == itemIn.Id);
                         var mat = db.Materials.Where(m => m.MaterialProfitId == matprof.Id);
 
                         var labprof = db.LabourProfits.FirstOrDefault(l => l.InvoiceId == itemIn.Id);
                         var lab = db.Labours.Where(la => la.LabourProfitId == labprof.Id);
                         var labcontr = db.LabourContractors.Where(la => la.LabourProfitId == labprof.Id);
+
+                        db.Debts.RemoveRange(debts);
 
                         db.Materials.RemoveRange(mat);
                         db.MaterialProfits.Remove(matprof);
@@ -925,6 +977,7 @@ namespace Builders.ViewModels
                         db.WorkOrder_Works.RemoveRange(work);
                     }
 
+                    db.Payments.RemoveRange(payment);
                     db.Reciepts.RemoveRange(receipt);
                     db.WorkOrders.RemoveRange(order);
                     db.MaterialQuotations.RemoveRange(material);
@@ -932,8 +985,10 @@ namespace Builders.ViewModels
 
                     db.SaveChanges();
                 }
+
                 db.Quotations.RemoveRange(quota);
                 db.SaveChanges();
+                Quotations = db.Quotations.Local.ToBindingList().OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
 
                 db.Clients.Remove(ClientSelect);
                 db.SaveChanges();
@@ -1061,12 +1116,36 @@ namespace Builders.ViewModels
         {
             if (QuotationSelect != null)
             {
+                decimal start = QuotationSelect.InvoiceGrandTotal; // Початкові дані для  порівняння
+                var quotaStart = QuotationSelect;
+
                 var displayRootRegistry = (Application.Current as App).displayRootRegistry;
                 var quotationViewModel = new QuotationViewModel(ref db, EnumClient.Ins, QuotationSelect);
                 quotationViewModel.Clients = Clients;
                 quotationViewModel.ClientSelect = db.Clients.FirstOrDefault(c => c.Id == QuotationSelect.ClientId);
-                await displayRootRegistry.ShowModalPresentation(quotationViewModel);
+                await displayRootRegistry.ShowModalPresentation(quotationViewModel);                
                 Calculate(QuotationSelect.Id);
+
+                QuotationSelect = Quotations.FirstOrDefault(q => q.Id == quotaStart.Id);
+                var quotaFinish = QuotationSelect;  // Кінцеві дані для порівняння (що було і що стало)
+                decimal finish = QuotationSelect.InvoiceGrandTotal;
+                if (start != finish)
+                {
+                    var paid = db.Payments.Where(p => p.QuotationId == quotaFinish.Id);
+
+                    if (paid != null)
+                    {
+                        displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                        var message = new MessageViewModel(200, 410, "  The total amount of the quote has been changed !!!" + 
+                                               Environment.NewLine + "Need to re-register payments." + 
+                                               Environment.NewLine + "Open the payments?");
+                        await displayRootRegistry.ShowModalPresentation(message);
+                        if (message.PressOk)
+                        {
+                            PaymentQuotation.Execute("");                            
+                        }
+                    }                    
+                }
             }
         }));
         public Command DelQuotation => _delQuotation ?? (_delQuotation = new Command(obj =>
@@ -1378,7 +1457,15 @@ namespace Builders.ViewModels
                     }
                     ExcelApp.Cells[payCounter, 3] = item.PaymentAmountPaid;
                     ExcelApp.Cells[payCounter, 4] = item.PaymentMethod;
-                    ExcelApp.Cells[payCounter, 5] = item.Balance;
+                    
+                    if (item.Balance > 0)
+                    {
+                        ExcelApp.Cells[payCounter, 5] = item.Balance;
+                    }
+                    else
+                    {
+                        ExcelApp.Cells[payCounter, 5] = "Paid";
+                    }
 
                     payCounter++;
                 }
@@ -1397,6 +1484,7 @@ namespace Builders.ViewModels
         {
             if (QuotationSelect != null)
             {
+
                 int? quotaId = QuotationSelect.Id;
                 var displayRootRegistry = (Application.Current as App).displayRootRegistry;
                 var payment = new PaymentViewModel(ref db, QuotationSelect);
@@ -1409,12 +1497,53 @@ namespace Builders.ViewModels
                 {
                     var quotaItem = quota.FirstOrDefault(i => i.Id == quotaId);
                     var order = WorkOrders.FirstOrDefault(w => w.QuotaId == quotaId);
-                    if (quotaItem.PaidQuota && order == null)
+                    var invoice = Invoices.FirstOrDefault(i => i.QuotaId == quotaItem.Id);
+
+                    // Creating WorkOrder
+                    if (quotaItem.ActivQuota && order == null)
                     {
-                        var work = new WorkOrderViewModel(ref db, EnumClient.Add, null);
-                        work.Quotations = quota;
-                        work.QuotationSelect = quota.FirstOrDefault(q => q.Id == quotaId);
-                        work.CreatOrder.Execute("");
+                        displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                        var message = new MessageViewModel(200, 410, "   Quote status changed to Active !!!" + Environment.NewLine + "Do you want to create a 'Work Order' ? ");
+                        await displayRootRegistry.ShowModalPresentation(message);
+                        if (message.PressOk)
+                        {
+                            var work = new WorkOrderViewModel(ref db, EnumClient.Add, null);
+                            work.Quotations = quota;
+                            work.QuotationSelect = quota.FirstOrDefault(q => q.Id == quotaId);
+                            work.CreatOrder.Execute("");
+                        }
+                    }
+                    // Creating Invoice                    
+                    if (quotaItem.PaidQuota && invoice == null && order != null)
+                    {
+                        displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                        var message = new MessageViewModel(200, 410, "   The Quote is fully paid !!!" + Environment.NewLine + "Do you want to move her to the 'Completed Jobs' ?");
+                        await displayRootRegistry.ShowModalPresentation(message);
+                        if (message.PressOk)
+                        {
+                            var temp = db.Clients.FirstOrDefault(q => q.Id == quotaItem.ClientId);
+                            Invoice inv = new Invoice()
+                            {
+                                DateInvoice = DateTime.Today,
+                                NumberQuota = quotaItem.NumberQuota,
+                                OrderNumber = "",
+                                UpNumber = "",
+                                QuotaId = quotaItem.Id,
+                                FirstName = temp.PrimaryFirstName,
+                                LastName = temp.PrimaryLastName,
+                                PhoneNumber = temp.PrimaryPhoneNumber,
+                                Email = temp.PrimaryEmail
+                            };
+                            db.Invoices.Add(inv);
+                            db.SaveChanges();
+                            Invoices = null;
+                            Invoices = db.Invoices.Local.ToBindingList();
+
+                            int? NewInvoiceId = db.Invoices.Local.ToBindingList().OrderByDescending(q => q.Id).FirstOrDefault().Id;
+                            AddMaterialProfit(NewInvoiceId);
+                            AddLabourProfit(NewInvoiceId);
+                            AddDebtsTab(NewInvoiceId);
+                        }
                     }
                 }
             }
@@ -1958,7 +2087,15 @@ namespace Builders.ViewModels
                     }
                     ExcelApp.Cells[payCounter, 3] = item.PaymentAmountPaid;
                     ExcelApp.Cells[payCounter, 4] = item.PaymentMethod;
-                    ExcelApp.Cells[payCounter, 5] = item.Balance;
+                    
+                    if (item.Balance > 0)
+                    {
+                        ExcelApp.Cells[payCounter, 5] = item.Balance;
+                    }
+                    else
+                    {
+                        ExcelApp.Cells[payCounter, 5] = "Paid";
+                    }
 
                     payCounter++;
                 }
@@ -2602,8 +2739,10 @@ namespace Builders.ViewModels
             }
         }));
         //**********************************
+
         public Command LoadReport => _loadReport ?? (_loadReport = new Command(obj =>
         {
+
             if (IsCheckedProfit)
             {
                 IsVisibleDateSelect = Visibility.Visible;

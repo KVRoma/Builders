@@ -202,7 +202,7 @@ namespace Builders.ViewModels
                     quota.SortingQuota = 2;
                     quota.ActivQuota = true;
                     quota.PaidQuota = true;
-                    quota.Color = "Silver";
+                    quota.Color = "Green";
                 }
                 else
                 {
@@ -246,7 +246,7 @@ namespace Builders.ViewModels
                         quota.SortingQuota = 2;
                         quota.ActivQuota = true;
                         quota.PaidQuota = true;
-                        quota.Color = "Silver";
+                        quota.Color = "Green";
                     }
                     else
                     {
@@ -263,6 +263,8 @@ namespace Builders.ViewModels
                     quota.PaidQuota = false;
                     quota.Color = "Black";
                 }
+                db.Entry(quota).State = EntityState.Modified;
+                db.SaveChanges();
             }
         }));
         public Command PrintCommand => printCommand ?? (printCommand = new Command(obj=> 
@@ -297,13 +299,20 @@ namespace Builders.ViewModels
                         payFee = 0m;
                         payCredit = item.PaymentAmountPaid + payFee;
                     }
-
+                                        
                     ExcelApp.Cells[count, 1] = item.PaymentDatePaid;
                     ExcelApp.Cells[count, 2] = payCredit;
                     ExcelApp.Cells[count, 3] = item.PaymentAmountPaid;
                     ExcelApp.Cells[count, 4] = payFee;
                     ExcelApp.Cells[count, 5] = item.PaymentMethod;
-                    ExcelApp.Cells[count, 6] = item.Balance;
+                    if (item.Balance > 0)
+                    {
+                        ExcelApp.Cells[count, 6] = item.Balance;
+                    }
+                    else
+                    {
+                        ExcelApp.Cells[count, 6] = "Paid";
+                    }
 
                     count++;
                 }
@@ -364,15 +373,7 @@ namespace Builders.ViewModels
                 ExcelApp.Cells[29, 6] = quota.LabourTotal;
 
                 ExcelApp.Cells[21, 6] = quota.MaterialSubtotal;
-                ExcelApp.Cells[21, 6] = quota.MaterialSubtotal;
-                ExcelApp.Cells[21, 6] = quota.MaterialSubtotal;
-                ExcelApp.Cells[21, 6] = quota.MaterialSubtotal;
-                ExcelApp.Cells[21, 6] = quota.MaterialSubtotal;
-                ExcelApp.Cells[21, 6] = quota.MaterialSubtotal;
-                ExcelApp.Cells[21, 6] = quota.MaterialSubtotal;
-                ExcelApp.Cells[21, 6] = quota.MaterialSubtotal;
-                ExcelApp.Cells[21, 6] = quota.MaterialSubtotal;
-                ExcelApp.Cells[21, 6] = quota.MaterialSubtotal;
+                ExcelApp.Cells[31, 6] = quota?.ProcessingFee + quota?.FinancingFee;                
 
                 ExcelApp.Calculate();
                 ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
