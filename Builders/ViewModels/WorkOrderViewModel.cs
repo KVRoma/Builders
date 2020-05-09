@@ -60,6 +60,7 @@ namespace Builders.ViewModels
         private string misc;
         private int percent;
         private decimal ajust;
+        private decimal rate;
 
         public bool EnableWork
         {
@@ -429,6 +430,10 @@ namespace Builders.ViewModels
             {
                 percent = value;
                 OnPropertyChanged(nameof(Percent));
+                if (Percent != 0)
+                {
+                    Rate = 0m;
+                }
             }
                 
         }
@@ -439,6 +444,19 @@ namespace Builders.ViewModels
             {
                 ajust = value;
                 OnPropertyChanged(nameof(Ajust));
+            }
+        }
+        public decimal Rate
+        {
+            get { return rate; }
+            set
+            {
+                rate = value;
+                OnPropertyChanged(nameof(Rate));
+                if (Rate != 0m)
+                {
+                    Percent = 0;
+                }
             }
         }
         //********************************************************************* Command privat
@@ -542,8 +560,16 @@ namespace Builders.ViewModels
                     item.Contractor = InstallerSelect?.Name;
                     item.Color = InstallerSelect?.Color;
                     item.Procent = Percent;
-                    item.Payout = decimal.Round(item.Price * (item.Procent / 100m), 2);
-
+                    if (Rate != 0m)
+                    {
+                        item.Rate = Rate;
+                        item.Price = decimal.Round(item.Quantity * item.Rate, 2);
+                        item.Payout = item.Price;
+                    }
+                    else
+                    {
+                        item.Payout = decimal.Round(item.Price * (item.Procent / 100m), 2);
+                    }
                     db.Entry(item).State = EntityState.Modified;
                     db.SaveChanges();
                 }
