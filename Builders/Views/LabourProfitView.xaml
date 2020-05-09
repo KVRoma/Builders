@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Builders.Views"
+        xmlns:UI="clr-namespace:Builders.Commands"
         mc:Ignorable="d"
         Title="{Binding WindowName}"
         MinHeight="600"
@@ -27,14 +28,14 @@
                        Content="Labour" 
                        Style="{StaticResource LabelBold}"/>
                 <DataGrid Grid.Row="1" 
-                              AutoGenerateColumns="False" 
+                              AutoGenerateColumns="False"
                               IsReadOnly="True" 
                               ItemsSource="{Binding Labours, UpdateSourceTrigger=PropertyChanged}" 
                               SelectedItem="{Binding LabourSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Groupe" Width="auto" Binding="{Binding Path=Groupe}"/>
-                        <DataGridTextColumn Header="Item" Width="auto" Binding="{Binding Path=Item}"/>
-                        <DataGridTextColumn Header="Description" Width="auto" Binding="{Binding Path=Description}"/>
+                        <DataGridTextColumn Header="Item" MaxWidth="200" Binding="{Binding Path=Item}"/>
+                        <DataGridTextColumn Header="Description" MaxWidth="200" Binding="{Binding Path=Description}"/>
                         <DataGridTextColumn Header="Contractor" Width="*" Binding="{Binding Path=Contractor}"/>
                         <DataGridTextColumn Header="Quantity" Width="auto" Binding="{Binding Path=Quantity}"/>
                         <DataGridTextColumn Header="Rate" Width="auto" Binding="{Binding Path=Rate}"/>
@@ -54,6 +55,8 @@
                         <ColumnDefinition Width="200" />
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="auto" />
                         <ColumnDefinition Width="50" />
                         <ColumnDefinition />
@@ -67,26 +70,40 @@
                               VerticalContentAlignment="Center"
                               ItemsSource="{Binding Contractors }" 
                               SelectedItem="{Binding ContractorSelect, Mode=TwoWay}" 
-                              DisplayMemberPath="Name"/>
+                              DisplayMemberPath="Name"
+                              UI:FocusAdvancement.AdvancesByEnterKey="True"/>
                     <Label Grid.Column="2" 
-                           Content="Percent" 
+                           Content="Rate" 
                            VerticalAlignment="Center"
                            FontWeight="Bold"/>
                     <TextBox Grid.Column="3" Width="50" 
                              HorizontalContentAlignment="Center" 
                              TextWrapping="NoWrap" 
                              AcceptsReturn="False"
-                             Text="{Binding Percent}"/>
+                             Foreground="Red"
+                             Text="{Binding Rate}"
+                             UI:FocusAdvancement.AdvancesByEnterKey="True"/>
                     <Label Grid.Column="4" 
+                           Content="Percent" 
                            VerticalAlignment="Center"
-                           Content="Adjust" 
                            FontWeight="Bold"/>
                     <TextBox Grid.Column="5" Width="50" 
                              HorizontalContentAlignment="Center" 
                              TextWrapping="NoWrap" 
                              AcceptsReturn="False"
-                             Text="{Binding Adjust}"/>
-                    <Button Grid.Column="6" 
+                             Text="{Binding Percent}"
+                             UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+                    <Label Grid.Column="6" 
+                           VerticalAlignment="Center"
+                           Content="Adjust" 
+                           FontWeight="Bold"/>
+                    <TextBox Grid.Column="7" Width="50" 
+                             HorizontalContentAlignment="Center" 
+                             TextWrapping="NoWrap" 
+                             AcceptsReturn="False"
+                             Text="{Binding Adjust}"
+                             UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+                    <Button Grid.Column="8" 
                             HorizontalAlignment="Right" 
                             Content="Add" 
                             Foreground="Brown" 
@@ -135,7 +152,8 @@
                     <TextBox Grid.Column="1" Text="{Binding AdjustContractor}" 
                              HorizontalContentAlignment="Center" 
                              TextWrapping="NoWrap" 
-                             AcceptsReturn="False"/>
+                             AcceptsReturn="False"
+                             UI:FocusAdvancement.AdvancesByEnterKey="True"/>
                     <Label Grid.Column="2" 
                            Content="TAX"
                            VerticalAlignment="Center"
@@ -144,7 +162,8 @@
                               VerticalContentAlignment="Center"
                               HorizontalContentAlignment="Center"
                               ItemsSource="{Binding Tax }" 
-                              SelectedItem="{Binding TaxSelect, Mode=TwoWay}"/>
+                              SelectedItem="{Binding TaxSelect, Mode=TwoWay}"
+                              UI:FocusAdvancement.AdvancesByEnterKey="True"/>
                     <Button Grid.Column="4" 
                             HorizontalAlignment="Right" 
                             Content="Add" 

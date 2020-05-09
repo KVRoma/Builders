@@ -6,6 +6,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
 
 namespace Builders.ViewModels
 {
@@ -21,6 +22,7 @@ namespace Builders.ViewModels
         private DIC_Contractor contractorSelect;
         private IEnumerable<DIC_Contractor> contractors;
         private decimal percent;
+        private decimal rate;
         private decimal adjust;
         private string taxSelect;
         private List<string> tax;
@@ -44,9 +46,7 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(LabourSelect));
                 if (LabourSelect != null)
                 {
-                    ContractorSelect = db.DIC_Contractors.FirstOrDefault(c => c.Name == LabourSelect.Contractor);
-                    Percent = LabourSelect.Percent;
-                    Adjust = LabourSelect.Adjust;
+                    ContractorSelect = db.DIC_Contractors.FirstOrDefault(c => c.Name == LabourSelect.Contractor);                    
                 }
             }
         }
@@ -107,6 +107,23 @@ namespace Builders.ViewModels
             {
                 percent = value;
                 OnPropertyChanged(nameof(Percent));
+                if (Percent != 0)
+                {
+                    Rate = 0m;
+                }
+            }
+        }
+        public decimal Rate
+        {
+            get { return rate; }
+            set 
+            {
+                rate = value;
+                OnPropertyChanged(nameof(Rate));
+                if (Rate != 0m)
+                {
+                    Percent = 0;
+                }
             }
         }
         public decimal Adjust
@@ -156,7 +173,17 @@ namespace Builders.ViewModels
                 LabourSelect.Contractor = ContractorSelect.Name;
                 LabourSelect.Percent = Percent;
                 LabourSelect.Adjust = Adjust;
-                LabourSelect.Payout = decimal.Round(LabourSelect.Price * (Percent / 100m), 2);
+                
+                if (Rate != 0m)
+                {                    
+                    LabourSelect.Percent = Rate;
+                    LabourSelect.Payout = decimal.Round(LabourSelect.Quantity * LabourSelect.Percent, 2);
+                }
+                else
+                {                    
+                    LabourSelect.Payout = decimal.Round(LabourSelect.Price * (Percent / 100m), 2);
+                }
+                
                 LabourSelect.Profit = decimal.Round((LabourSelect.Price - LabourSelect.Payout) + Adjust, 2);
 
                 db.Entry(LabourSelect).State = EntityState.Modified;

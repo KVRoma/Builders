@@ -565,7 +565,8 @@ namespace Builders.ViewModels
                         //item.Rate = Rate;
                         //item.Price = decimal.Round(item.Quantity * item.Rate, 2);
                         //item.Payout = item.Price;
-
+                        item.Procent = Rate;
+                        item.Payout = decimal.Round(item.Quantity * item.Procent, 2);
                     }
                     else
                     {
