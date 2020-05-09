@@ -3535,7 +3535,7 @@ namespace Builders.ViewModels
         /// <returns></returns>
         private MaterialProfit ReportMaterial(DateTime dateFrom, DateTime dateTo)
         {
-            var filterMaterial = db.MaterialProfits.Where(m => m.InvoiceDate >= dateFrom && m.InvoiceDate <= dateTo && m.Companion == true);
+            var filterMaterial = db.MaterialProfits.Where(m => m.InvoiceDate >= dateFrom && m.InvoiceDate <= dateTo && m.Companion == true);            
             if (filterMaterial.Count() > 0)
             {
                 MaterialProfit report = new MaterialProfit();

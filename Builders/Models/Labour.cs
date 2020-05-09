@@ -17,7 +17,7 @@ namespace Builders.Models
         public decimal Rate { get; set; }
         public decimal Adjust { get; set; }
         public decimal Price { get; set; }
-        public int Percent { get; set; }
+        public decimal Percent { get; set; }
         public decimal Payout { get; set; }
         public decimal Profit { get; set; }        
         

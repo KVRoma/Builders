@@ -20,7 +20,7 @@ namespace Builders.ViewModels
         private IEnumerable<LabourContractor> labourContractors;
         private DIC_Contractor contractorSelect;
         private IEnumerable<DIC_Contractor> contractors;
-        private int percent;
+        private decimal percent;
         private decimal adjust;
         private string taxSelect;
         private List<string> tax;
@@ -100,7 +100,7 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(Contractors));
             }
         }
-        public int Percent
+        public decimal Percent
         {
             get { return percent; }
             set

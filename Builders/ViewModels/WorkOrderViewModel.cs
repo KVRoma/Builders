@@ -58,7 +58,7 @@ namespace Builders.ViewModels
         private int? pieces;
         private string newFloor;
         private string misc;
-        private int percent;
+        private decimal percent;
         private decimal ajust;
         private decimal rate;
 
@@ -423,7 +423,7 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(Misc));
             }
         }
-        public int Percent
+        public decimal Percent
         {
             get { return percent; }
             set 
@@ -562,9 +562,10 @@ namespace Builders.ViewModels
                     item.Procent = Percent;
                     if (Rate != 0m)
                     {
-                        item.Rate = Rate;
-                        item.Price = decimal.Round(item.Quantity * item.Rate, 2);
-                        item.Payout = item.Price;
+                        //item.Rate = Rate;
+                        //item.Price = decimal.Round(item.Quantity * item.Rate, 2);
+                        //item.Payout = item.Price;
+
                     }
                     else
                     {
