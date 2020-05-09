@@ -32,7 +32,7 @@ namespace Builders.ViewModels
             {
                 groupeSelect = value;
                 OnPropertyChanged(nameof(GroupeSelect));
-                Items = (GroupeSelect != null) ? (db.DIC_ItemQuotations.Local.ToBindingList().Where(t => t.GroupeId == GroupeSelect.Id)) : null;                
+                Items = (GroupeSelect != null) ? (db.DIC_ItemQuotations.Local.ToBindingList().Where(t => t.GroupeId == GroupeSelect.Id).OrderBy(t=>t.Name)) : null;                
             }
         }
         public IEnumerable<DIC_GroupeQuotation> Groupes
@@ -51,7 +51,7 @@ namespace Builders.ViewModels
             {
                 itemSelect = value;
                 OnPropertyChanged(nameof(ItemSelect));
-                Descriptions = (ItemSelect != null) ? (db.DIC_DescriptionQuotations.Local.ToBindingList().Where(t => t.ItemId == ItemSelect.Id)) : null;
+                Descriptions = (ItemSelect != null) ? (db.DIC_DescriptionQuotations.Local.ToBindingList().Where(t => t.ItemId == ItemSelect.Id).OrderBy(t => t.Name)) : null;
             }
         }
         public IEnumerable<DIC_ItemQuotation> Items
