@@ -345,7 +345,7 @@ namespace Builders.ViewModels
                     }
                     else
                     {
-                        ExcelApp.Cells[count, 6] = "Paid";
+                        ExcelApp.Cells[count, 6] = "Paid in full";
                     }
 
                     count++;

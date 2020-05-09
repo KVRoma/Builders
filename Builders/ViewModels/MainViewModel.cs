@@ -1464,7 +1464,7 @@ namespace Builders.ViewModels
                     }
                     else
                     {
-                        ExcelApp.Cells[payCounter, 5] = "Paid";
+                        ExcelApp.Cells[payCounter, 5] = "Paid in full";
                     }
 
                     payCounter++;
@@ -2094,7 +2094,7 @@ namespace Builders.ViewModels
                     }
                     else
                     {
-                        ExcelApp.Cells[payCounter, 5] = "Paid";
+                        ExcelApp.Cells[payCounter, 5] = "Paid in full";
                     }
 
                     payCounter++;
