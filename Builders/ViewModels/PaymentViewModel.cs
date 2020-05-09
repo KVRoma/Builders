@@ -195,7 +195,10 @@ namespace Builders.ViewModels
                 db.SaveChanges();
                 Reciepts = null;
                 Reciepts = db.Reciepts.Local.ToBindingList().Where(r => r.QuotaId == quota.Id);
+                RecieptSelect = Reciepts.OrderByDescending(i => i.Id).FirstOrDefault();
                 CountPay(Payments.Count());
+
+                PrintReciept("\\Blanks\\RecieptPDF_2.xltm");
 
                 if (balance <= 0)
                 {
@@ -269,18 +272,49 @@ namespace Builders.ViewModels
         }));
         public Command PrintCommand => printCommand ?? (printCommand = new Command(obj=> 
         {
+            PrintReciept("\\Blanks\\RecieptPDF.xltm");            
+        }));
+
+        public PaymentViewModel( ref BuilderContext context, Quotation select)
+        {
+            db = context;
+            quota = select;
+            db.DIC_PaymentMethods.Load();
+            db.Reciepts.Load();
+            db.Payments.Load();
+
+            Medhods = db.DIC_PaymentMethods.Local.ToBindingList();            
+            Reciepts = db.Reciepts.Local.ToBindingList().Where(r => r.QuotaId == quota.Id);
+            Payments = db.Payments.Local.ToBindingList().Where(p => p.QuotationId == quota.Id);
+
+            EnableDelAndPrint = false;
+            EnableAdd = false;
+        }
+        private void CountPay(int count)
+        {
+            if (count > 5)
+            {
+                EnableAdd = false;
+            }
+            else
+            {
+                EnableAdd = true;
+            }
+        }
+        private void PrintReciept(string path)
+        {
             if (PaymentSelect != null)
             {
                 Excel.Application ExcelApp = new Excel.Application();
                 Excel.Workbook ExcelWorkBook;
-                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\RecieptPDF.xltm");   //Вказуємо шлях до шаблону
+                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
 
                 var client = db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
-                var payDo = Payments.Where(p => p.Id <= PaymentSelect.Id).OrderBy(i=>i.Id);                
-                
+                var payDo = Payments.Where(p => p.Id <= PaymentSelect.Id).OrderBy(i => i.Id);
+
                 decimal payCredit = 0m;
                 decimal payFee = 0m;
-                
+
                 int count = 45;
                 foreach (var item in payDo)
                 {
@@ -299,7 +333,7 @@ namespace Builders.ViewModels
                         payFee = 0m;
                         payCredit = item.PaymentAmountPaid + payFee;
                     }
-                                        
+
                     ExcelApp.Cells[count, 1] = item.PaymentDatePaid;
                     ExcelApp.Cells[count, 2] = payCredit;
                     ExcelApp.Cells[count, 3] = item.PaymentAmountPaid;
@@ -341,7 +375,7 @@ namespace Builders.ViewModels
                 ExcelApp.Cells[40, 6] = payFee;
                 ExcelApp.Cells[41, 6] = PaymentSelect.PaymentAmountPaid;
                 ExcelApp.Cells[34, 6] = payDo.Select(p => p.PaymentAmountPaid).Sum(); // сплачено до цього часу
-                            
+
 
                 ExcelApp.Cells[4, 6] = RecieptSelect?.Number;
                 ExcelApp.Cells[6, 6] = quota.NumberQuota;
@@ -373,38 +407,11 @@ namespace Builders.ViewModels
                 ExcelApp.Cells[29, 6] = quota.LabourTotal;
 
                 ExcelApp.Cells[21, 6] = quota.MaterialSubtotal;
-                ExcelApp.Cells[31, 6] = quota?.ProcessingFee + quota?.FinancingFee;                
+                ExcelApp.Cells[31, 6] = quota?.ProcessingFee + quota?.FinancingFee;
 
                 ExcelApp.Calculate();
                 ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
                 ExcelApp.Calculate();
-            }
-        }));
-
-        public PaymentViewModel( ref BuilderContext context, Quotation select)
-        {
-            db = context;
-            quota = select;
-            db.DIC_PaymentMethods.Load();
-            db.Reciepts.Load();
-            db.Payments.Load();
-
-            Medhods = db.DIC_PaymentMethods.Local.ToBindingList();            
-            Reciepts = db.Reciepts.Local.ToBindingList().Where(r => r.QuotaId == quota.Id);
-            Payments = db.Payments.Local.ToBindingList().Where(p => p.QuotationId == quota.Id);
-
-            EnableDelAndPrint = false;
-            EnableAdd = false;
-        }
-        private void CountPay(int count)
-        {
-            if (count > 5)
-            {
-                EnableAdd = false;
-            }
-            else
-            {
-                EnableAdd = true;
             }
         }
     }
