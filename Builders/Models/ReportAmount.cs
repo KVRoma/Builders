@@ -14,6 +14,8 @@ namespace Builders.Models
         public DateTime PaymentDatePaid { get; set; }
         public decimal PaymentAmountPaid { get; set; }
         public string PaymentMethod { get; set; }
+        public decimal PaymentPrincipalPaid { get; set; }
+        public decimal ProcessingFee { get; set; }
         public decimal Balance { get; set; }
     }
 }

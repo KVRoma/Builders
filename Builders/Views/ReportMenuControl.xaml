@@ -431,6 +431,8 @@
                     <DataGrid.Columns>                        
                         <DataGridTextColumn Header="Date Paid" Width="auto"  Binding="{Binding Path=PaymentDatePaid, StringFormat=\{0:dd.MM.yyyy\}}" />
                         <DataGridTextColumn Header="Amount Paid" Width="auto"  Binding="{Binding Path=PaymentAmountPaid, StringFormat='0.00'}"/>
+                        <DataGridTextColumn Header="Processing Fee" Width="auto"  Binding="{Binding Path=ProcessingFee, StringFormat='0.00'}"/>
+                        <DataGridTextColumn Header="Principal Paid" Width="auto"  Binding="{Binding Path=PaymentPrincipalPaid, StringFormat='0.00'}"/>
                         <DataGridTextColumn Header="Method" Width="auto"  Binding="{Binding Path=PaymentMethod}" />
                         <DataGridTextColumn Header="Date Quota" Width="auto" Binding="{Binding Path=QuotaDate, StringFormat=\{0:dd.MM.yyyy\}}"/>
                         <DataGridTextColumn Header="Number Quota" Width="auto" Binding="{Binding Path=NumberQuota}"/>

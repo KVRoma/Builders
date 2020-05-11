@@ -3859,6 +3859,8 @@ namespace Builders.ViewModels
                     PaymentDatePaid = item.PaymentDatePaid,
                     PaymentAmountPaid = item.PaymentAmountPaid,
                     PaymentMethod = item.PaymentMethod,
+                    PaymentPrincipalPaid = item.PaymentPrincipalPaid,
+                    ProcessingFee = item.ProcessingFee,
                     Balance = item.Balance
                 };
                 reports.Add(amount);
