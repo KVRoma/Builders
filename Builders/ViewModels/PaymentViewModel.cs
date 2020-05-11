@@ -146,7 +146,7 @@ namespace Builders.ViewModels
             set
             {
                 methodSelect = value;
-                OnPropertyChanged(nameof(MethodSelect));
+                OnPropertyChanged(nameof(MethodSelect));               
             }               
         }
         public IEnumerable<DIC_PaymentMethod> Medhods
@@ -169,12 +169,34 @@ namespace Builders.ViewModels
         {
             if (AmountPayment != 0m && MethodSelect != null)
             {
-                decimal sum = (Payments.Count() != 0) ? (Payments.Select(p => p.PaymentAmountPaid).Sum()) : (0m);
-                decimal balance = decimal.Round(quota.InvoiceGrandTotal - sum - AmountPayment, 2);
+                decimal payFee;
+                decimal payCredit;
+
+                if (MethodSelect.Name == "Credit Card")
+                {
+                    payFee = (AmountPayment * 3m / 100m);
+                    payCredit = AmountPayment - payFee;                    
+                }
+                else if (MethodSelect.Name == "Debit Card")
+                {
+                    payFee = 0.25m;
+                    payCredit = decimal.Round(AmountPayment - payFee, 2);
+                }
+                else
+                {
+                    payFee = 0m;
+                    payCredit = AmountPayment;
+                }
+
+                decimal sum = (Payments.Count() != 0) ? (Payments.Select(p => p.PaymentPrincipalPaid).Sum()) : (0m);
+                decimal balance = decimal.Round(quota.InvoiceGrandTotal - sum - payCredit, 2);
+
                 Payment pay = new Payment()
                 {
                     PaymentDatePaid = DatePayment,
                     PaymentAmountPaid = AmountPayment,
+                    PaymentPrincipalPaid = payCredit,
+                    ProcessingFee = payFee,
                     PaymentMethod = MethodSelect.Name,
                     Balance = balance,
                     QuotationId = quota.Id
@@ -198,8 +220,7 @@ namespace Builders.ViewModels
                 RecieptSelect = Reciepts.OrderByDescending(i => i.Id).FirstOrDefault();
                 CountPay(Payments.Count());
 
-                PrintCommand.Execute("");
-                //PrintReciept("\\Blanks\\RecieptPDF_2.xltm");
+                PrintCommand.Execute(""); // Print Receipt                
 
                 if (balance <= 0)
                 {
@@ -312,33 +333,14 @@ namespace Builders.ViewModels
 
                 var client = db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
                 var payDo = Payments.Where(p => p.Id <= PaymentSelect.Id).OrderBy(i => i.Id);
-
-                decimal payCredit = 0m;
-                decimal payFee = 0m;
-
+                
                 int count = 45;
                 foreach (var item in payDo)
                 {
-                    if (item.PaymentMethod == "Credit Card")
-                    {
-                        payCredit = decimal.Round(item.PaymentAmountPaid * 1.030927835m, 2);
-                        payFee = decimal.Round(payCredit - item.PaymentAmountPaid, 2);
-                    }
-                    else if (item.PaymentMethod == "Debit Card")
-                    {
-                        payFee = 0.25m;
-                        payCredit = decimal.Round(item.PaymentAmountPaid + payFee, 2);
-                    }
-                    else
-                    {
-                        payFee = 0m;
-                        payCredit = item.PaymentAmountPaid + payFee;
-                    }
-
                     ExcelApp.Cells[count, 1] = item.PaymentDatePaid;
-                    ExcelApp.Cells[count, 2] = payCredit;
-                    ExcelApp.Cells[count, 3] = item.PaymentAmountPaid;
-                    ExcelApp.Cells[count, 4] = payFee;
+                    ExcelApp.Cells[count, 2] = item.PaymentAmountPaid;   
+                    ExcelApp.Cells[count, 3] = item.PaymentPrincipalPaid;  
+                    ExcelApp.Cells[count, 4] = item.ProcessingFee;
                     ExcelApp.Cells[count, 5] = item.PaymentMethod;
                     if (item.Balance > 0)
                     {
@@ -351,37 +353,17 @@ namespace Builders.ViewModels
 
                     count++;
                 }
-
-                if (PaymentSelect.PaymentMethod == "Credit Card")
-                {
-                    payCredit = decimal.Round(PaymentSelect.PaymentAmountPaid * 1.030927835m, 2);
-                    payFee = decimal.Round(payCredit - PaymentSelect.PaymentAmountPaid, 2);
-                }
-                else if (PaymentSelect.PaymentMethod == "Debit Card")
-                {
-                    payFee = 0.25m;
-                    payCredit = decimal.Round(PaymentSelect.PaymentAmountPaid + payFee, 2);
-                }
-                else
-                {
-                    payFee = 0m;
-                    payCredit = PaymentSelect.PaymentAmountPaid + payFee;
-                }
-
-
+                                
                 ExcelApp.Cells[3, 6] = PaymentSelect.PaymentDatePaid;
 
-                ExcelApp.Cells[38, 6] = payCredit;
+                ExcelApp.Cells[38, 6] = PaymentSelect.PaymentAmountPaid;     
                 ExcelApp.Cells[39, 6] = PaymentSelect.PaymentMethod;
-                ExcelApp.Cells[40, 6] = payFee;
-                ExcelApp.Cells[41, 6] = PaymentSelect.PaymentAmountPaid;
-                ExcelApp.Cells[34, 6] = payDo.Select(p => p.PaymentAmountPaid).Sum(); // сплачено до цього часу
-
+                ExcelApp.Cells[40, 6] = PaymentSelect.ProcessingFee;
+                ExcelApp.Cells[41, 6] = PaymentSelect.PaymentPrincipalPaid;   
+                ExcelApp.Cells[34, 6] = payDo.Select(p => p.PaymentPrincipalPaid).Sum();      // сплачено до цього часу
 
                 ExcelApp.Cells[4, 6] = RecieptSelect?.Number;
                 ExcelApp.Cells[6, 6] = quota.NumberQuota;
-
-
 
                 ExcelApp.Cells[9, 2] = quota.JobDescription;
                 ExcelApp.Cells[10, 2] = client.CompanyName;

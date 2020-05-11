@@ -12,7 +12,9 @@ namespace Builders.Models
         public int? NumberPayment { get; set; } 
         public DateTime PaymentDatePaid { get; set; }
         public decimal PaymentAmountPaid { get; set; }
+        public decimal PaymentPrincipalPaid { get; set; }
         public string PaymentMethod { get; set; }
+        public decimal ProcessingFee { get; set; }
         public decimal Balance { get; set; }
 
         public int? QuotationId { get; set; }
