@@ -3611,24 +3611,20 @@ namespace Builders.ViewModels
             {
                 var material = db.MaterialProfits.Where(i => i.InvoiceDate >= dateFrom && i.InvoiceDate <= dateTo && i.Companion == true);
                 var labour = db.LabourProfits.Where(i => i.InvoiceDate >= dateFrom && i.InvoiceDate <= dateTo && i.Companion == true);
+                
                 List<Report> reports = new List<Report>();
                 foreach (var item in invoice)
                 {
-                    var pay = db.Payments.Where(p => p.QuotationId == item.QuotaId);
-                    decimal fee = 0m;
-
-                    if (pay.Count() > 0)
+                    var temp = db.Payments.Where(p => p.QuotationId == item.QuotaId);
+                    decimal fee;
+                    if (temp.Count() > 0)
                     {
-                        var creditCard = pay.Where(c => c.PaymentMethod == "Credit Card").Select(c => c.PaymentAmountPaid);
-                        var debitCard = pay.Where(c => c.PaymentMethod == "Debit Card");
-
-                        decimal tempCredit = (creditCard.Count() > 0) ? creditCard.Sum() : 0m;
-                        decimal tempDebit = (debitCard.Count() > 0) ? debitCard.Count() : 0m;
-                        decimal credit = decimal.Round((tempCredit * 1.030927835m), 2) - tempCredit;
-                        decimal debit = decimal.Round((tempDebit * 0.25m), 2);
-                        fee = credit + debit;
+                        fee = temp.Select(f => f.ProcessingFee).Sum();
                     }
-
+                    else
+                    {
+                        fee = 0m;
+                    }
                     Report report = new Report()
                     {
                         InvoiceNumber = item.NumberInvoice,
