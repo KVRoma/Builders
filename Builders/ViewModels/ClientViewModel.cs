@@ -168,6 +168,10 @@ namespace Builders.ViewModels
             {
                 addressBillStreet = value;
                 OnPropertyChanged(nameof(AddressBillStreet));
+                if (AddressBillStreet != "")
+                {
+                    AddressSiteStreet = AddressBillStreet;
+                }
             }
         }
         public string AddressBillCity
@@ -177,6 +181,10 @@ namespace Builders.ViewModels
             {
                 addressBillCity = value;
                 OnPropertyChanged(nameof(AddressBillCity));
+                if (AddressBillCity != "")
+                {
+                    AddressSiteCity = AddressBillCity;
+                }
             }
         }
         public string AddressBillProvince
@@ -186,6 +194,10 @@ namespace Builders.ViewModels
             {
                 addressBillProvince = value;
                 OnPropertyChanged(nameof(AddressBillProvince));
+                if (AddressBillProvince != "")
+                {
+                    AddressSiteProvince = AddressBillProvince;
+                }
             }
         }
         public string AddressBillPostalCode
@@ -195,6 +207,10 @@ namespace Builders.ViewModels
             {
                 addressBillPostalCode = value;
                 OnPropertyChanged(nameof(AddressBillPostalCode));
+                if (AddressBillPostalCode != "")
+                {
+                    AddressSitePostalCode = AddressBillPostalCode;
+                }
             }
         }
         public string AddressBillCountry
@@ -204,6 +220,10 @@ namespace Builders.ViewModels
             {
                 addressBillCountry = value;
                 OnPropertyChanged(nameof(AddressBillCountry));
+                if (AddressBillCountry != "")
+                {
+                    addressSiteCountry = AddressBillCountry;
+                }
             }
         }
         public string AddressSiteStreet
