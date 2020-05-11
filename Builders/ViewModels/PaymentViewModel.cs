@@ -198,7 +198,8 @@ namespace Builders.ViewModels
                 RecieptSelect = Reciepts.OrderByDescending(i => i.Id).FirstOrDefault();
                 CountPay(Payments.Count());
 
-                PrintReciept("\\Blanks\\RecieptPDF_2.xltm");
+                PrintCommand.Execute("");
+                //PrintReciept("\\Blanks\\RecieptPDF_2.xltm");
 
                 if (balance <= 0)
                 {
