@@ -142,7 +142,11 @@ namespace Builders.ViewModels
             set
             {
                 contractorSelect = value;
-                OnPropertyChanged(nameof(ContractorSelect));                
+                OnPropertyChanged(nameof(ContractorSelect));
+                if (ContractorSelect != null)
+                {
+                    TaxSelect = ContractorSelect.TAX;
+                }
             }
         }
         public IEnumerable<WorkOrder_Contractor> Contractors
@@ -595,8 +599,7 @@ namespace Builders.ViewModels
                 db.SaveChanges();
                 Contractors = null;
                 Contractors = db.WorkOrder_Contractors.Local.ToBindingList().Where(c=>c.WorkOrderId == OrderSelect.Id).OrderBy(c=>c.Contractor);
-                
-                TaxSelect = null;
+                                
                 Ajust = 0m;
             }
         }));
@@ -776,10 +779,10 @@ namespace Builders.ViewModels
                                 Color = db.DIC_Contractors.FirstOrDefault(c=>c.Name == item)?.Color,
                                 Payout = temp,
                                 Adjust = 0m,
-                                TAX = TaxSelect,
+                                TAX = Tax[0],  // Default "Yes"
                                 Total = total,
-                                GST = 0m,
-                                TotalContractor = total,
+                                GST = decimal.Round(total * 0.05m, 2), // Default "5%",
+                                TotalContractor = decimal.Round(total + decimal.Round(total * 0.05m, 2), 2),
                                 WorkOrderId = OrderSelect.Id
                             };
                             db.WorkOrder_Contractors.Add(_Contractor);
