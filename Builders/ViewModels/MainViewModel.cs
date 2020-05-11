@@ -1871,7 +1871,9 @@ namespace Builders.ViewModels
 
                 int? NewInvoiceId = db.Invoices.Local.ToBindingList().OrderByDescending(q => q.Id).FirstOrDefault().Id;
                 AddMaterialProfit(NewInvoiceId);
+                MaterialProfitCalculate(MaterialProfitSelect);
                 AddLabourProfit(NewInvoiceId);
+                LabourProfitCalculate(LabourProfitSelect);
                 AddDebtsTab(NewInvoiceId);
             }
         }));
@@ -3221,6 +3223,7 @@ namespace Builders.ViewModels
             MaterialProfits = null;
             MaterialProfits = db.MaterialProfits.Local.ToBindingList();
 
+            MaterialProfitSelect = MaterialProfits.OrderByDescending(m => m.Id).FirstOrDefault();
 
         }
         private void MaterialProfitCalculate(MaterialProfit select)
@@ -3377,7 +3380,7 @@ namespace Builders.ViewModels
             LabourProfits = null;
             LabourProfits = db.LabourProfits.Local.ToBindingList();
 
-
+            LabourProfitSelect = LabourProfits.OrderByDescending(l => l.Id).FirstOrDefault();
         }
         private void LabourProfitCalculate(LabourProfit select)
         {

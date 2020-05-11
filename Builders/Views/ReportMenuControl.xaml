@@ -107,11 +107,17 @@
                     </RadioButton.Content>
                 </RadioButton>
 
-                <RadioButton Content="Record of payments"
-                             Style="{StaticResource Report}"
-                             IsChecked="{Binding IsCheckedAmount}"/>
+                <RadioButton Style="{StaticResource Report}"
+                             IsChecked="{Binding IsCheckedAmount}">
+                    <RadioButton.Content>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Record of"/>
+                            <TextBlock Text="INCOMING payments"/>
+                        </StackPanel>
+                    </RadioButton.Content>
+                </RadioButton>
 
-                <RadioButton Content="Debts report"
+                <RadioButton Content="Payment to Contractors"
                              Style="{StaticResource Report}"
                              IsChecked="{Binding IsCheckedDebts}"/>
 
@@ -421,7 +427,7 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <Label Grid.Row="0" 
-                       Content="Record of payments we made" 
+                       Content="Record of Client Payments to us" 
                        Style="{StaticResource ReportHeader}"/>
 
                 <DataGrid Grid.Row="1" 
@@ -481,7 +487,7 @@
                     </DataGrid.Columns>
                 </DataGrid>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
-                    <Label Content="Total debts to contractors" 
+                    <Label Content="Previous Payments Made" 
                            Style="{StaticResource ReportHeader}"/>
                     <TextBlock Text="{Binding LabelPaymentDebts, StringFormat='0.00'}"
                                Margin="10,10,10,30"
