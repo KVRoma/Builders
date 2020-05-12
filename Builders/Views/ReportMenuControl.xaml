@@ -285,35 +285,35 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="TOTAL MAT/LABOUR COST" Style="{StaticResource ReportItem}"/>
-                        <Label Content="{Binding TotalReportForLabel.TotalMaterialAndLabourCost}" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding TotalReportForLabel.TotalMaterialAndLabourCost, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="TOTAL GROSS PROFIT" Style="{StaticResource ReportItem}"/>
-                        <Label Content="{Binding TotalReportForLabel.TotalCrossProfit}" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding TotalReportForLabel.TotalCrossProfit, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="TOTAL EXPENSES" Style="{StaticResource ReportItem}"/>
-                        <Label Content="{Binding TotalReportForLabel.TotalExpenses}" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding TotalReportForLabel.TotalExpenses, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="TOTAL PROCESS FEES/REFUNDS" Style="{StaticResource ReportItem}"/>
-                        <Label Content="{Binding TotalReportForLabel.TotalProcessFees}" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding TotalReportForLabel.TotalProcessFees, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="NET STORE PROFIT" Style="{StaticResource ReportItem}"/>
-                        <Label Content="{Binding TotalReportForLabel.NetStoreProfit}" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding TotalReportForLabel.NetStoreProfit, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="NET STORE PROFIT - HALF" Style="{StaticResource ReportItem}"/>
-                        <Label Content="{Binding TotalReportForLabel.NetStoreProfitHalf}" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding TotalReportForLabel.NetStoreProfitHalf, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="NET PROFIT" Style="{StaticResource ReportItem}"/>
-                        <Label Content="{Binding TotalReportForLabel.NetProfit}" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding TotalReportForLabel.NetProfit, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="MATERIAL SPLIT" Style="{StaticResource ReportItem}"/>
-                        <Label Content="{Binding TotalReportForLabel.MaterialSplit}" Style="{StaticResource ReportItem}"/>
+                        <Label Content="{Binding TotalReportForLabel.MaterialSplit, StringFormat='0.00'}" Style="{StaticResource ReportItem}"/>
                     </StackPanel>
                 </StackPanel>
 

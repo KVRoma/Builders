@@ -222,7 +222,7 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(AddressBillCountry));
                 if (AddressBillCountry != "")
                 {
-                    addressSiteCountry = AddressBillCountry;
+                    AddressSiteCountry = AddressBillCountry;
                 }
             }
         }

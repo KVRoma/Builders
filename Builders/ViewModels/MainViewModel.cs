@@ -21,8 +21,11 @@ namespace Builders.ViewModels
     public class MainViewModel : ViewModel
     {
         BuilderContext db;
-        public string NameWindow { get; } = "Builder - 2020";
+        BackgroundWorker worker;
 
+        public string NameWindow { get; } = "Builder - 2020";
+        private Visibility progress;
+        private decimal opacityProgress;
 
         #region Private Property
         private Client clientSelect;
@@ -92,6 +95,25 @@ namespace Builders.ViewModels
         private List<EnumMonths> dateMonths;
         #endregion
         #region Public Property
+        public Visibility Progress
+        {
+            get { return progress; }
+            set
+            {
+                progress = value;
+                OnPropertyChanged(nameof(Progress));
+            }
+        }
+        public decimal OpacityProgress
+        {
+            get { return opacityProgress; }
+            set
+            {
+                opacityProgress = value;
+                OnPropertyChanged(nameof(OpacityProgress));
+            }
+        }
+
         public Client ClientSelect
         {
             get { return clientSelect; }
@@ -864,14 +886,28 @@ namespace Builders.ViewModels
             if (ClientSelect != null)
             {
                 string[] files = OpenFileArray("Image files (*.png;*.jpeg;*.jpg;*.JPG)|*.png;*.jpeg;*.jpg;*.JPG");
-                string SecondDir = Directory.GetCurrentDirectory() + "\\Foto";
 
-                if (files != null)
+                if (worker != null && worker.IsBusy) { return; }
+                worker = new BackgroundWorker();
+                worker.DoWork += worker_DoWork;
+                worker.RunWorkerAsync();
+                void worker_DoWork(object sender, DoWorkEventArgs e)
                 {
-                    foreach (string fil in files)
+                    ProgressStart();
+
+                    // Основні затратні задачі
+                    string SecondDir = Directory.GetCurrentDirectory() + "\\Foto";
+
+                    if (files != null)
                     {
-                        File.Copy(fil, Path.Combine(SecondDir, ClientSelect.Id + "_" + Path.GetRandomFileName() + Path.GetExtension(fil)), true);
+                        foreach (string fil in files)
+                        {
+                            File.Copy(fil, Path.Combine(SecondDir, ClientSelect.Id + "_" + Path.GetRandomFileName() + Path.GetExtension(fil)), true);
+                        }
                     }
+                    //************************
+
+                    ProgressStop();
                 }
 
             }
@@ -997,52 +1033,59 @@ namespace Builders.ViewModels
         }));
         public Command LoadClient => _loadClient ?? (_loadClient = new Command(obj =>
         {
+            Task task = Task.Run(() => { ProgressStart(); });   // Незнаю (поки що) якась херня, всюди працює Бакграундворкер, а тут хоч провались !!!!
+            task.Wait();
+
             string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
 
             if (path == null) // Перевіряємо шлях до файлу на null
             {
+                task.Dispose();
+                ProgressStop();
                 return;
-            }
+            }     
 
             Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
             Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
             Excel.Worksheet ExcelWorkSheet;                           // Створюємо лист Excel            
-            Client client = new Client();
 
             try
             {
                 ExcelWorkBook = ExcelApp.Workbooks.Open(path);                  // Відкриваємо файл Excel                
                 ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
 
-                client.DateRegistration = DateTime.Parse(ExcelApp.Cells[2, 3].Value.ToString()); // Для поля з датою треба просто "Value"
-                client.TypeOfClient = ExcelApp.Cells[3, 3].Value2?.ToString();
-                client.CompanyName = ExcelApp.Cells[4, 3].Value2?.ToString();
+                Client client = new Client()
+                {
+                    DateRegistration = (DateTime.TryParse(ExcelApp.Cells[2, 3].Value?.ToString(), out DateTime res)) ? (res) : (DateTime.Today), // Для поля з датою треба просто "Value"
+                    TypeOfClient = ExcelApp.Cells[3, 3].Value2?.ToString(),
+                    CompanyName = ExcelApp.Cells[4, 3].Value2?.ToString(),
 
-                client.PrimaryFirstName = ExcelApp.Cells[5, 3].Value2?.ToString();
-                client.PrimaryLastName = ExcelApp.Cells[6, 3].Value2?.ToString();
-                client.PrimaryPhoneNumber = ExcelApp.Cells[7, 3].Value2?.ToString();
-                client.PrimaryEmail = ExcelApp.Cells[8, 3].Value2?.ToString();
+                    PrimaryFirstName = ExcelApp.Cells[5, 3].Value2?.ToString(),
+                    PrimaryLastName = ExcelApp.Cells[6, 3].Value2?.ToString(),
+                    PrimaryPhoneNumber = ExcelApp.Cells[7, 3].Value2?.ToString(),
+                    PrimaryEmail = ExcelApp.Cells[8, 3].Value2?.ToString(),
 
-                client.SecondaryFirstName = ExcelApp.Cells[9, 3].Value2?.ToString();
-                client.SecondaryLastName = ExcelApp.Cells[10, 3].Value2?.ToString();
-                client.SecondaryPhoneNumber = ExcelApp.Cells[11, 3].Value2?.ToString();
-                client.SecondaryEmail = ExcelApp.Cells[12, 3].Value2?.ToString();
+                    SecondaryFirstName = ExcelApp.Cells[9, 3].Value2?.ToString(),
+                    SecondaryLastName = ExcelApp.Cells[10, 3].Value2?.ToString(),
+                    SecondaryPhoneNumber = ExcelApp.Cells[11, 3].Value2?.ToString(),
+                    SecondaryEmail = ExcelApp.Cells[12, 3].Value2?.ToString(),
 
-                client.AddressBillStreet = ExcelApp.Cells[13, 3].Value2?.ToString();
-                client.AddressBillCity = ExcelApp.Cells[14, 3].Value2?.ToString();
-                client.AddressBillProvince = ExcelApp.Cells[15, 3].Value2?.ToString();
-                client.AddressBillPostalCode = ExcelApp.Cells[16, 3].Value2?.ToString();
-                client.AddressBillCountry = ExcelApp.Cells[17, 3].Value2?.ToString();
+                    AddressBillStreet = ExcelApp.Cells[13, 3].Value2?.ToString(),
+                    AddressBillCity = ExcelApp.Cells[14, 3].Value2?.ToString(),
+                    AddressBillProvince = ExcelApp.Cells[15, 3].Value2?.ToString(),
+                    AddressBillPostalCode = ExcelApp.Cells[16, 3].Value2?.ToString(),
+                    AddressBillCountry = ExcelApp.Cells[17, 3].Value2?.ToString(),
 
-                client.AddressSiteStreet = ExcelApp.Cells[18, 3].Value2?.ToString();
-                client.AddressSiteCity = ExcelApp.Cells[19, 3].Value2?.ToString();
-                client.AddressSiteProvince = ExcelApp.Cells[20, 3].Value2?.ToString();
-                client.AddressSitePostalCode = ExcelApp.Cells[21, 3].Value2?.ToString();
-                client.AddressSiteCountry = ExcelApp.Cells[22, 3].Value2?.ToString();
+                    AddressSiteStreet = ExcelApp.Cells[18, 3].Value2?.ToString(),
+                    AddressSiteCity = ExcelApp.Cells[19, 3].Value2?.ToString(),
+                    AddressSiteProvince = ExcelApp.Cells[20, 3].Value2?.ToString(),
+                    AddressSitePostalCode = ExcelApp.Cells[21, 3].Value2?.ToString(),
+                    AddressSiteCountry = ExcelApp.Cells[22, 3].Value2?.ToString(),
 
-                client.HearAboutUs = ExcelApp.Cells[23, 3].Value2?.ToString();
-                client.Specify = ExcelApp.Cells[24, 3].Value2?.ToString();
-                client.Notes = ExcelApp.Cells[25, 3].Value2?.ToString();
+                    HearAboutUs = ExcelApp.Cells[23, 3].Value2?.ToString(),
+                    Specify = ExcelApp.Cells[24, 3].Value2?.ToString(),
+                    Notes = ExcelApp.Cells[25, 3].Value2?.ToString()
+                };
 
                 ExcelApp.Sheets[2].Cells[1, 20] = 1;
 
@@ -1062,6 +1105,8 @@ namespace Builders.ViewModels
                 ExcelApp.Visible = true;
                 ExcelApp.UserControl = true;
             }
+
+            ProgressStop();
         }));
         public Command SearchClient => _searchClient ?? (_searchClient = new Command(obj =>
         {
@@ -1077,29 +1122,43 @@ namespace Builders.ViewModels
         }));
         public Command TemplateClient => _templateClient ?? (_templateClient = new Command(obj =>
         {
-            Excel.Application ExcelApp = new Excel.Application();
-            Excel.Workbook ExcelWorkBook;
-            ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\TemplateClient.xltm");   //Вказуємо шлях до шаблону
-
-            var typeClient = db.DIC_TypeOfClients.Where(c => c.Id > 0);
-            var howClient = db.DIC_HearAboutsUse.Where(h => h.Id > 0);
-            int i = 2;
-            foreach (var item in typeClient)
+            if (worker != null && worker.IsBusy) { return; }
+            worker = new BackgroundWorker();
+            worker.DoWork += worker_DoWork;
+            worker.RunWorkerAsync();
+            void worker_DoWork(object sender, DoWorkEventArgs e)
             {
-                ExcelApp.Sheets[2].Cells[i, 1] = item.Name;
-                i++;
-            }
+                ProgressStart();
 
-            i = 2;
-            foreach (var item in howClient)
-            {
-                ExcelApp.Sheets[2].Cells[i, 2] = item.Name;
-                i++;
-            }
+                // Основні затратні задачі
+                Excel.Application ExcelApp = new Excel.Application();
+                Excel.Workbook ExcelWorkBook;
+                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\TemplateClient.xltm");   //Вказуємо шлях до шаблону
 
-            ExcelApp.Visible = true;           // Робим книгу видимою
-            ExcelApp.UserControl = true;       // Передаємо керування користувачу 
+                var typeClient = db.DIC_TypeOfClients.Where(c => c.Id > 0);
+                var howClient = db.DIC_HearAboutsUse.Where(h => h.Id > 0);
+                int i = 2;
+                foreach (var item in typeClient)
+                {
+                    ExcelApp.Sheets[2].Cells[i, 1] = item.Name;
+                    i++;
+                }
+
+                i = 2;
+                foreach (var item in howClient)
+                {
+                    ExcelApp.Sheets[2].Cells[i, 2] = item.Name;
+                    i++;
+                }
+
+                ExcelApp.Visible = true;           // Робим книгу видимою
+                ExcelApp.UserControl = true;       // Передаємо керування користувачу  
+                                                   //************************
+
+                ProgressStop();
+            }
         }));
+
         //**********************************
         public Command AddQuotation => _addQuotation ?? (_addQuotation = new Command(async obj =>
         {
@@ -1123,7 +1182,7 @@ namespace Builders.ViewModels
                 var quotationViewModel = new QuotationViewModel(ref db, EnumClient.Ins, QuotationSelect);
                 quotationViewModel.Clients = Clients;
                 quotationViewModel.ClientSelect = db.Clients.FirstOrDefault(c => c.Id == QuotationSelect.ClientId);
-                await displayRootRegistry.ShowModalPresentation(quotationViewModel);                
+                await displayRootRegistry.ShowModalPresentation(quotationViewModel);
                 Calculate(QuotationSelect.Id);
 
                 QuotationSelect = Quotations.FirstOrDefault(q => q.Id == quotaStart.Id);
@@ -1136,15 +1195,15 @@ namespace Builders.ViewModels
                     if (paid != null)
                     {
                         displayRootRegistry = (Application.Current as App).displayRootRegistry;
-                        var message = new MessageViewModel(200, 410, "  The total amount of the quote has been changed !!!" + 
-                                               Environment.NewLine + "Need to re-register payments." + 
+                        var message = new MessageViewModel(200, 410, "  The total amount of the quote has been changed !!!" +
+                                               Environment.NewLine + "Need to re-register payments." +
                                                Environment.NewLine + "Open the payments?");
                         await displayRootRegistry.ShowModalPresentation(message);
                         if (message.PressOk)
                         {
-                            PaymentQuotation.Execute("");                            
+                            PaymentQuotation.Execute("");
                         }
-                    }                    
+                    }
                 }
             }
         }));
@@ -1457,7 +1516,7 @@ namespace Builders.ViewModels
                     }
                     ExcelApp.Cells[payCounter, 3] = item.PaymentAmountPaid;
                     ExcelApp.Cells[payCounter, 4] = item.PaymentMethod;
-                    
+
                     if (item.Balance > 0)
                     {
                         ExcelApp.Cells[payCounter, 5] = item.Balance;
@@ -1558,236 +1617,256 @@ namespace Builders.ViewModels
                 {
                     return;
                 }
-                Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
-                Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
-                Excel.Worksheet ExcelWorkSheet;                           // Створюємо лист Excel
 
-                try
+
+                if (worker != null && worker.IsBusy) { return; }
+                worker = new BackgroundWorker();
+                worker.DoWork += worker_DoWork;
+                worker.RunWorkerAsync();
+                void worker_DoWork(object sender, DoWorkEventArgs e)
                 {
+                    ProgressStart();
 
-                    ExcelWorkBook = ExcelApp.Workbooks.Open(path);                  // Відкриваємо файл Excel                
-                    ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel
+                    // Основні затратні задачі
 
-                    Client client = ClientSelect;
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                           // Створюємо лист Excel
 
-                    Quotation quota = new Quotation()
+                    try
                     {
-                        QuotaDate = DateTime.Today,
-                        PrefixNumberQuota = "Q",
-                        ClientId = client.Id,
-                        NumberClient = client.NumberClient,
-                        JobDescription = ExcelApp.Cells[2, 2].Value2?.ToString(),
-                        JobNote = ExcelApp.Cells[3, 2].Value2?.ToString(),
-                        FinancingYesNo = false,
 
-                    };
-                    db.Quotations.Add(quota);
-                    db.SaveChanges();
-                    var quotaSelect = db.Quotations.Local.ToBindingList().OrderByDescending(q => q.Id).FirstOrDefault();
-                    QuotationSelect = quotaSelect;
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(path);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel
 
+                        Client client = ClientSelect;
 
-                    // "FLOORING"
-                    for (int i = 7; i <= 14; i++)
-                    {
-                        string nameG = "FLOORING";
-                        string nameI = ExcelApp.Cells[i, 1].Value2?.ToString();
-                        string nameD = ExcelApp.Cells[i, 2].Value2?.ToString();
-                        string nameQ = ExcelApp.Cells[i, 3].Value2?.ToString();
-
-                        if (nameQ != null)
+                        Quotation quota = new Quotation()
                         {
-                            var groupe = db.DIC_GroupeQuotations.FirstOrDefault(g => g.NameGroupe == nameG);
-                            var item = db.DIC_ItemQuotations.FirstOrDefault(itm => itm.GroupeId == groupe.Id && itm.Name == nameI);
-                            var des = db.DIC_DescriptionQuotations.FirstOrDefault(d => d.ItemId == item.Id && d.Name == nameD);
+                            QuotaDate = DateTime.Today,
+                            PrefixNumberQuota = "Q",
+                            ClientId = client.Id,
+                            NumberClient = client.NumberClient,
+                            FirstName = client.PrimaryFirstName,
+                            LastName = client.PrimaryLastName,
+                            PhoneNumber = client.PrimaryPhoneNumber,
+                            Email = client.PrimaryEmail,
+                            JobDescription = ExcelApp.Cells[2, 2].Value2?.ToString(),
+                            JobNote = ExcelApp.Cells[3, 2].Value2?.ToString(),
+                            FinancingYesNo = false,
 
-                            decimal rate = (des != null) ? (des.Price) : (0m);
-                            decimal quantity = (decimal.TryParse(nameQ, out decimal res)) ? (res) : (0m);
+                        };
+                        db.Quotations.Add(quota);
+                        db.SaveChanges();
+                        var quotaSelect = db.Quotations.Local.ToBindingList().OrderByDescending(q => q.Id).FirstOrDefault();
+                        QuotationSelect = quotaSelect;
 
-                            MaterialQuotation material = new MaterialQuotation()
-                            {
-                                QuotationId = quotaSelect.Id,
-                                Groupe = nameG,
-                                Item = nameI,
-                                Description = nameD,
-                                Quantity = quantity,
-                                Rate = rate,
-                                Price = decimal.Round(rate * quantity, 2)
-                            };
-                            db.MaterialQuotations.Add(material);
-                            db.SaveChanges();
-                        }
-                    }
-                    // "ACCESSORIES"
-                    for (int i = 16; i <= 31; i++)
-                    {
-                        string nameG = "ACCESSORIES";
-                        string nameI = ExcelApp.Cells[i, 1].Value2?.ToString();
-                        string nameD = ExcelApp.Cells[i, 2].Value2?.ToString();
-                        string nameQ = ExcelApp.Cells[i, 3].Value2?.ToString();
 
-                        if (nameQ != null)
+                        // "FLOORING"
+                        for (int i = 7; i <= 14; i++)
                         {
-                            var groupe = db.DIC_GroupeQuotations.FirstOrDefault(g => g.NameGroupe == nameG);
-                            var item = db.DIC_ItemQuotations.FirstOrDefault(itm => itm.GroupeId == groupe.Id && itm.Name == nameI);
-                            var des = db.DIC_DescriptionQuotations.FirstOrDefault(d => d.ItemId == item.Id && d.Name == nameD);
+                            string nameG = "FLOORING";
+                            string nameI = ExcelApp.Cells[i, 1].Value2?.ToString();
+                            string nameD = ExcelApp.Cells[i, 2].Value2?.ToString();
+                            string nameQ = ExcelApp.Cells[i, 3].Value2?.ToString();
 
-                            decimal rate = (des != null) ? (des.Price) : (0m);
-                            decimal quantity = (decimal.TryParse(nameQ, out decimal res)) ? (res) : (0m);
-
-                            MaterialQuotation material = new MaterialQuotation()
+                            if (nameQ != null)
                             {
-                                QuotationId = quotaSelect.Id,
-                                Groupe = nameG,
-                                Item = nameI,
-                                Description = nameD,
-                                Quantity = quantity,
-                                Rate = rate,
-                                Price = decimal.Round(rate * quantity, 2)
-                            };
-                            db.MaterialQuotations.Add(material);
-                            db.SaveChanges();
-                        }
-                    }
-                    // "INSTALLATION"
-                    for (int i = 34; i <= 41; i++)
-                    {
-                        string nameG = "INSTALLATION";
-                        string nameI = ExcelApp.Cells[i, 1].Value2?.ToString();
-                        string nameD = ExcelApp.Cells[i, 2].Value2?.ToString();
-                        string nameQ = ExcelApp.Cells[i, 3].Value2?.ToString();
+                                var groupe = db.DIC_GroupeQuotations.FirstOrDefault(g => g.NameGroupe == nameG);
+                                var item = db.DIC_ItemQuotations.FirstOrDefault(itm => itm.GroupeId == groupe.Id && itm.Name == nameI);
+                                var des = db.DIC_DescriptionQuotations.FirstOrDefault(d => d.ItemId == item.Id && d.Name == nameD);
 
-                        if (nameQ != null)
+                                decimal rate = (des != null) ? (des.Price) : (0m);
+                                decimal quantity = (decimal.TryParse(nameQ, out decimal res)) ? (res) : (0m);
+
+                                MaterialQuotation material = new MaterialQuotation()
+                                {
+                                    QuotationId = quotaSelect.Id,
+                                    Groupe = nameG,
+                                    Item = nameI,
+                                    Description = nameD,
+                                    Quantity = quantity,
+                                    Rate = rate,
+                                    Price = decimal.Round(rate * quantity, 2)
+                                };
+                                db.MaterialQuotations.Add(material);
+                                db.SaveChanges();
+                            }
+                        }
+                        // "ACCESSORIES"
+                        for (int i = 16; i <= 31; i++)
                         {
-                            var groupe = db.DIC_GroupeQuotations.FirstOrDefault(g => g.NameGroupe == nameG);
-                            var item = db.DIC_ItemQuotations.FirstOrDefault(itm => itm.GroupeId == groupe.Id && itm.Name == nameI);
-                            var des = db.DIC_DescriptionQuotations.FirstOrDefault(d => d.ItemId == item.Id && d.Name == nameD);
+                            string nameG = "ACCESSORIES";
+                            string nameI = ExcelApp.Cells[i, 1].Value2?.ToString();
+                            string nameD = ExcelApp.Cells[i, 2].Value2?.ToString();
+                            string nameQ = ExcelApp.Cells[i, 3].Value2?.ToString();
 
-                            decimal rate = (des != null) ? (des.Price) : (0m);
-                            decimal quantity = (decimal.TryParse(nameQ, out decimal res)) ? (res) : (0m);
-
-                            MaterialQuotation material = new MaterialQuotation()
+                            if (nameQ != null)
                             {
-                                QuotationId = quotaSelect.Id,
-                                Groupe = nameG,
-                                Item = nameI,
-                                Description = nameD,
-                                Quantity = quantity,
-                                Rate = rate,
-                                Price = decimal.Round(rate * quantity, 2)
-                            };
-                            db.MaterialQuotations.Add(material);
-                            db.SaveChanges();
-                        }
-                    }
-                    // "DEMOLITION"
-                    for (int i = 43; i <= 47; i++)
-                    {
-                        string nameG = "DEMOLITION";
-                        string nameI = ExcelApp.Cells[i, 1].Value2?.ToString();
-                        string nameD = ExcelApp.Cells[i, 2].Value2?.ToString();
-                        string nameQ = ExcelApp.Cells[i, 3].Value2?.ToString();
+                                var groupe = db.DIC_GroupeQuotations.FirstOrDefault(g => g.NameGroupe == nameG);
+                                var item = db.DIC_ItemQuotations.FirstOrDefault(itm => itm.GroupeId == groupe.Id && itm.Name == nameI);
+                                var des = db.DIC_DescriptionQuotations.FirstOrDefault(d => d.ItemId == item.Id && d.Name == nameD);
 
-                        if (nameQ != null)
+                                decimal rate = (des != null) ? (des.Price) : (0m);
+                                decimal quantity = (decimal.TryParse(nameQ, out decimal res)) ? (res) : (0m);
+
+                                MaterialQuotation material = new MaterialQuotation()
+                                {
+                                    QuotationId = quotaSelect.Id,
+                                    Groupe = nameG,
+                                    Item = nameI,
+                                    Description = nameD,
+                                    Quantity = quantity,
+                                    Rate = rate,
+                                    Price = decimal.Round(rate * quantity, 2)
+                                };
+                                db.MaterialQuotations.Add(material);
+                                db.SaveChanges();
+                            }
+                        }
+                        // "INSTALLATION"
+                        for (int i = 34; i <= 41; i++)
                         {
-                            var groupe = db.DIC_GroupeQuotations.FirstOrDefault(g => g.NameGroupe == nameG);
-                            var item = db.DIC_ItemQuotations.FirstOrDefault(itm => itm.GroupeId == groupe.Id && itm.Name == nameI);
-                            var des = db.DIC_DescriptionQuotations.FirstOrDefault(d => d.ItemId == item.Id && d.Name == nameD);
+                            string nameG = "INSTALLATION";
+                            string nameI = ExcelApp.Cells[i, 1].Value2?.ToString();
+                            string nameD = ExcelApp.Cells[i, 2].Value2?.ToString();
+                            string nameQ = ExcelApp.Cells[i, 3].Value2?.ToString();
 
-                            decimal rate = (des != null) ? (des.Price) : (0m);
-                            decimal quantity = (decimal.TryParse(nameQ, out decimal res)) ? (res) : (0m);
-
-                            MaterialQuotation material = new MaterialQuotation()
+                            if (nameQ != null)
                             {
-                                QuotationId = quotaSelect.Id,
-                                Groupe = nameG,
-                                Item = nameI,
-                                Description = nameD,
-                                Quantity = quantity,
-                                Rate = rate,
-                                Price = decimal.Round(rate * quantity, 2)
-                            };
-                            db.MaterialQuotations.Add(material);
-                            db.SaveChanges();
-                        }
-                    }
-                    // "OPTIONAL SERVICES"
-                    for (int i = 49; i <= 55; i++)
-                    {
-                        string nameG = "OPTIONAL SERVICES";
-                        string nameI = ExcelApp.Cells[i, 1].Value2?.ToString();
-                        string nameD = ExcelApp.Cells[i, 2].Value2?.ToString();
-                        string nameQ = ExcelApp.Cells[i, 3].Value2?.ToString();
+                                var groupe = db.DIC_GroupeQuotations.FirstOrDefault(g => g.NameGroupe == nameG);
+                                var item = db.DIC_ItemQuotations.FirstOrDefault(itm => itm.GroupeId == groupe.Id && itm.Name == nameI);
+                                var des = db.DIC_DescriptionQuotations.FirstOrDefault(d => d.ItemId == item.Id && d.Name == nameD);
 
-                        if (nameQ != null)
+                                decimal rate = (des != null) ? (des.Price) : (0m);
+                                decimal quantity = (decimal.TryParse(nameQ, out decimal res)) ? (res) : (0m);
+
+                                MaterialQuotation material = new MaterialQuotation()
+                                {
+                                    QuotationId = quotaSelect.Id,
+                                    Groupe = nameG,
+                                    Item = nameI,
+                                    Description = nameD,
+                                    Quantity = quantity,
+                                    Rate = rate,
+                                    Price = decimal.Round(rate * quantity, 2)
+                                };
+                                db.MaterialQuotations.Add(material);
+                                db.SaveChanges();
+                            }
+                        }
+                        // "DEMOLITION"
+                        for (int i = 43; i <= 47; i++)
                         {
-                            var groupe = db.DIC_GroupeQuotations.FirstOrDefault(g => g.NameGroupe == nameG);
-                            var item = db.DIC_ItemQuotations.FirstOrDefault(itm => itm.GroupeId == groupe.Id && itm.Name == nameI);
-                            var des = db.DIC_DescriptionQuotations.FirstOrDefault(d => d.ItemId == item.Id && d.Name == nameD);
+                            string nameG = "DEMOLITION";
+                            string nameI = ExcelApp.Cells[i, 1].Value2?.ToString();
+                            string nameD = ExcelApp.Cells[i, 2].Value2?.ToString();
+                            string nameQ = ExcelApp.Cells[i, 3].Value2?.ToString();
 
-                            decimal rate = (des != null) ? (des.Price) : (0m);
-                            decimal quantity = (decimal.TryParse(nameQ, out decimal res)) ? (res) : (0m);
-
-                            MaterialQuotation material = new MaterialQuotation()
+                            if (nameQ != null)
                             {
-                                QuotationId = quotaSelect.Id,
-                                Groupe = nameG,
-                                Item = nameI,
-                                Description = nameD,
-                                Quantity = quantity,
-                                Rate = rate,
-                                Price = decimal.Round(rate * quantity, 2)
-                            };
-                            db.MaterialQuotations.Add(material);
-                            db.SaveChanges();
-                        }
-                    }
-                    // "FLOORING DELIVERY"
-                    for (int i = 57; i <= 60; i++)
-                    {
-                        string nameG = "FLOORING DELIVERY";
-                        string nameI = ExcelApp.Cells[i, 1].Value2?.ToString();
-                        string nameD = ExcelApp.Cells[i, 2].Value2?.ToString();
-                        string nameQ = ExcelApp.Cells[i, 3].Value2?.ToString();
+                                var groupe = db.DIC_GroupeQuotations.FirstOrDefault(g => g.NameGroupe == nameG);
+                                var item = db.DIC_ItemQuotations.FirstOrDefault(itm => itm.GroupeId == groupe.Id && itm.Name == nameI);
+                                var des = db.DIC_DescriptionQuotations.FirstOrDefault(d => d.ItemId == item.Id && d.Name == nameD);
 
-                        if (nameQ != null)
+                                decimal rate = (des != null) ? (des.Price) : (0m);
+                                decimal quantity = (decimal.TryParse(nameQ, out decimal res)) ? (res) : (0m);
+
+                                MaterialQuotation material = new MaterialQuotation()
+                                {
+                                    QuotationId = quotaSelect.Id,
+                                    Groupe = nameG,
+                                    Item = nameI,
+                                    Description = nameD,
+                                    Quantity = quantity,
+                                    Rate = rate,
+                                    Price = decimal.Round(rate * quantity, 2)
+                                };
+                                db.MaterialQuotations.Add(material);
+                                db.SaveChanges();
+                            }
+                        }
+                        // "OPTIONAL SERVICES"
+                        for (int i = 49; i <= 55; i++)
                         {
-                            var groupe = db.DIC_GroupeQuotations.FirstOrDefault(g => g.NameGroupe == nameG);
-                            var item = db.DIC_ItemQuotations.FirstOrDefault(itm => itm.GroupeId == groupe.Id && itm.Name == nameI);
-                            var des = db.DIC_DescriptionQuotations.FirstOrDefault(d => d.ItemId == item.Id && d.Name == nameD);
+                            string nameG = "OPTIONAL SERVICES";
+                            string nameI = ExcelApp.Cells[i, 1].Value2?.ToString();
+                            string nameD = ExcelApp.Cells[i, 2].Value2?.ToString();
+                            string nameQ = ExcelApp.Cells[i, 3].Value2?.ToString();
 
-                            decimal rate = (des != null) ? (des.Price) : (0m);
-                            decimal quantity = (decimal.TryParse(nameQ, out decimal res)) ? (res) : (0m);
-
-                            MaterialQuotation material = new MaterialQuotation()
+                            if (nameQ != null)
                             {
-                                QuotationId = quotaSelect.Id,
-                                Groupe = nameG,
-                                Item = nameI,
-                                Description = nameD,
-                                Quantity = quantity,
-                                Rate = rate,
-                                Price = decimal.Round(rate * quantity, 2)
-                            };
-                            db.MaterialQuotations.Add(material);
-                            db.SaveChanges();
+                                var groupe = db.DIC_GroupeQuotations.FirstOrDefault(g => g.NameGroupe == nameG);
+                                var item = db.DIC_ItemQuotations.FirstOrDefault(itm => itm.GroupeId == groupe.Id && itm.Name == nameI);
+                                var des = db.DIC_DescriptionQuotations.FirstOrDefault(d => d.ItemId == item.Id && d.Name == nameD);
+
+                                decimal rate = (des != null) ? (des.Price) : (0m);
+                                decimal quantity = (decimal.TryParse(nameQ, out decimal res)) ? (res) : (0m);
+
+                                MaterialQuotation material = new MaterialQuotation()
+                                {
+                                    QuotationId = quotaSelect.Id,
+                                    Groupe = nameG,
+                                    Item = nameI,
+                                    Description = nameD,
+                                    Quantity = quantity,
+                                    Rate = rate,
+                                    Price = decimal.Round(rate * quantity, 2)
+                                };
+                                db.MaterialQuotations.Add(material);
+                                db.SaveChanges();
+                            }
                         }
+                        // "FLOORING DELIVERY"
+                        for (int i = 57; i <= 60; i++)
+                        {
+                            string nameG = "FLOORING DELIVERY";
+                            string nameI = ExcelApp.Cells[i, 1].Value2?.ToString();
+                            string nameD = ExcelApp.Cells[i, 2].Value2?.ToString();
+                            string nameQ = ExcelApp.Cells[i, 3].Value2?.ToString();
+
+                            if (nameQ != null)
+                            {
+                                var groupe = db.DIC_GroupeQuotations.FirstOrDefault(g => g.NameGroupe == nameG);
+                                var item = db.DIC_ItemQuotations.FirstOrDefault(itm => itm.GroupeId == groupe.Id && itm.Name == nameI);
+                                var des = db.DIC_DescriptionQuotations.FirstOrDefault(d => d.ItemId == item.Id && d.Name == nameD);
+
+                                decimal rate = (des != null) ? (des.Price) : (0m);
+                                decimal quantity = (decimal.TryParse(nameQ, out decimal res)) ? (res) : (0m);
+
+                                MaterialQuotation material = new MaterialQuotation()
+                                {
+                                    QuotationId = quotaSelect.Id,
+                                    Groupe = nameG,
+                                    Item = nameI,
+                                    Description = nameD,
+                                    Quantity = quantity,
+                                    Rate = rate,
+                                    Price = decimal.Round(rate * quantity, 2)
+                                };
+                                db.MaterialQuotations.Add(material);
+                                db.SaveChanges();
+                            }
+                        }
+
+                        ExcelApp.Sheets[2].Cells[1, 20] = 1;
+
+                        //ExcelApp.Visible = true;            // Робим Excel видимим, щоб користувач міг його закрити
+                        //ExcelApp.UserControl = true;        // Передаємо керування користувачу
+
+                        Calculate(quotaSelect.Id);
+
                     }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                        Calculate(QuotationSelect.Id);
+                    }
+                    //************************
 
-                    ExcelApp.Sheets[2].Cells[1, 20] = 1;
-
-                    //ExcelApp.Visible = true;            // Робим Excel видимим, щоб користувач міг його закрити
-                    //ExcelApp.UserControl = true;        // Передаємо керування користувачу
-
-                    Calculate(quotaSelect.Id);
-
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                    ExcelApp.Visible = true;
-                    ExcelApp.UserControl = true;
-                    Calculate(QuotationSelect.Id);
+                    ProgressStop();
                 }
             }
         }));
@@ -1805,42 +1884,56 @@ namespace Builders.ViewModels
         }));
         public Command TemplateQuotation => _templateQuotation ?? (_templateQuotation = new Command(obj =>
         {
-            Excel.Application ExcelApp = new Excel.Application();
-            Excel.Workbook ExcelWorkBook;
-            ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\TemplateQuota.xltm");   //Вказуємо шлях до шаблону
-
-            var groups = db.DIC_GroupeQuotations.Where(g => g.Id > 0);
-            var dic_item = db.DIC_ItemQuotations.Where(g => g.Id > 0);
-            var dic_des = db.DIC_DescriptionQuotations.Where(g => g.Id > 0);
-
-            int i = 2;
-            int its = 2;
-            foreach (var group in groups)
+            if (worker != null && worker.IsBusy) { return; }
+            worker = new BackgroundWorker();
+            worker.DoWork += worker_DoWork;
+            worker.RunWorkerAsync();
+            void worker_DoWork(object sender, DoWorkEventArgs e)
             {
-                var items = dic_item.Where(it => it.GroupeId == group.Id).OrderBy(it => it.Name);
-                foreach (var item in items)
-                {
-                    ExcelApp.Sheets[2].Cells[its, 1] = item.Name;
-                    ExcelApp.Sheets[2].Cells[its, 2] = group.NameGroupe;
-                    its++;
+                ProgressStart();
 
-                    var descroptions = dic_des.Where(d => d.ItemId == item.Id);
-                    foreach (var description in descroptions)
+                // Основні затратні задачі
+                Excel.Application ExcelApp = new Excel.Application();
+                Excel.Workbook ExcelWorkBook;
+                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\TemplateQuota.xltm");   //Вказуємо шлях до шаблону
+
+                var groups = db.DIC_GroupeQuotations.Where(g => g.Id > 0);
+                var dic_item = db.DIC_ItemQuotations.Where(g => g.Id > 0);
+                var dic_des = db.DIC_DescriptionQuotations.Where(g => g.Id > 0);
+
+                int i = 2;
+                int its = 2;
+                foreach (var group in groups)
+                {
+                    var items = dic_item.Where(it => it.GroupeId == group.Id).OrderBy(it => it.Name);
+                    foreach (var item in items)
                     {
-                        ExcelApp.Sheets[2].Cells[i, 4] = group.NameGroupe;
-                        ExcelApp.Sheets[2].Cells[i, 5] = item.Name;
-                        ExcelApp.Sheets[2].Cells[i, 6] = description.Name;
-                        i++;
+                        ExcelApp.Sheets[2].Cells[its, 1] = item.Name;
+                        ExcelApp.Sheets[2].Cells[its, 2] = group.NameGroupe;
+                        its++;
+
+                        var descroptions = dic_des.Where(d => d.ItemId == item.Id);
+                        foreach (var description in descroptions)
+                        {
+                            ExcelApp.Sheets[2].Cells[i, 4] = group.NameGroupe;
+                            ExcelApp.Sheets[2].Cells[i, 5] = item.Name;
+                            ExcelApp.Sheets[2].Cells[i, 6] = description.Name;
+                            i++;
+                        }
                     }
                 }
-            }
-            groups = null;
-            dic_item = null;
-            dic_des = null;
+                groups = null;
+                dic_item = null;
+                dic_des = null;
 
-            ExcelApp.Visible = true;           // Робим книгу видимою
-            ExcelApp.UserControl = true;       // Передаємо керування користувачу 
+                ExcelApp.Visible = true;           // Робим книгу видимою
+                ExcelApp.UserControl = true;       // Передаємо керування користувачу 
+                                                   //************************
+
+                ProgressStop();
+            }
         }));
+        
         //**********************************
         public Command AddInvoice => _addInvoice ?? (_addInvoice = new Command(async obj =>
         {
@@ -2089,7 +2182,7 @@ namespace Builders.ViewModels
                     }
                     ExcelApp.Cells[payCounter, 3] = item.PaymentAmountPaid;
                     ExcelApp.Cells[payCounter, 4] = item.PaymentMethod;
-                    
+
                     if (item.Balance > 0)
                     {
                         ExcelApp.Cells[payCounter, 5] = item.Balance;
@@ -2838,44 +2931,57 @@ namespace Builders.ViewModels
                 return;
             }
 
-            Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
-            Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
-            Excel.Worksheet ExcelWorkSheet;                           // Створюємо лист Excel            
-
-
-            try
+            if (worker != null && worker.IsBusy) { return; }
+            worker = new BackgroundWorker();
+            worker.DoWork += worker_DoWork;
+            worker.RunWorkerAsync();
+            void worker_DoWork(object sender, DoWorkEventArgs e)
             {
-                ExcelWorkBook = ExcelApp.Workbooks.Open(path);                  // Відкриваємо файл Excel                
-                ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+                ProgressStart();
 
-                for (int i = 3; i <= 1000; i++)
+                // Основні затратні задачі
+                Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                Excel.Worksheet ExcelWorkSheet;                           // Створюємо лист Excel            
+
+
+                try
                 {
-                    if (ExcelApp.Cells[i, 5].Value2 > 0)
+                    ExcelWorkBook = ExcelApp.Workbooks.Open(path);                  // Відкриваємо файл Excel                
+                    ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+
+                    for (int i = 3; i <= 1000; i++)
                     {
-                        Expenses expenses = new Expenses();
+                        if (ExcelApp.Cells[i, 5].Value2 > 0)
+                        {
+                            Expenses expenses = new Expenses();
 
-                        expenses.Date = DateTime.Parse(ExcelApp.Cells[i, 1].Value.ToString());
-                        expenses.Type = ExcelApp.Cells[i, 2].Value2?.ToString();
-                        expenses.Name = ExcelApp.Cells[i, 3].Value2?.ToString();
-                        expenses.Description = ExcelApp.Cells[i, 4].Value2?.ToString();
-                        expenses.Amounts = decimal.TryParse(ExcelApp.Cells[i, 5].Value2?.ToString(), out decimal result) ? (result) : 0m;
+                            expenses.Date = DateTime.Parse(ExcelApp.Cells[i, 1].Value.ToString());
+                            expenses.Type = ExcelApp.Cells[i, 2].Value2?.ToString();
+                            expenses.Name = ExcelApp.Cells[i, 3].Value2?.ToString();
+                            expenses.Description = ExcelApp.Cells[i, 4].Value2?.ToString();
+                            expenses.Amounts = decimal.TryParse(ExcelApp.Cells[i, 5].Value2?.ToString(), out decimal result) ? (result) : 0m;
 
-                        db.Expenses.Add(expenses);
-                        expenses = null;
+                            db.Expenses.Add(expenses);
+                            expenses = null;
+                        }
                     }
+                    db.SaveChanges();
+
+
+                    ExcelApp.Sheets[2].Cells[1, 20] = 1;
+
+
                 }
-                db.SaveChanges();
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                    ExcelApp.Visible = true;
+                    ExcelApp.UserControl = true;
+                }
+                //************************
 
-
-                ExcelApp.Sheets[2].Cells[1, 20] = 1;
-
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-                ExcelApp.Visible = true;
-                ExcelApp.UserControl = true;
+                ProgressStop();
             }
         }));
         public Command PaymentExpensesActive => _paymentExpensesActive ?? (_paymentExpensesActive = new Command(async obj =>
@@ -2964,14 +3070,27 @@ namespace Builders.ViewModels
         }));
         public Command TemplateExpenses => _templateExpenses ?? (_templateExpenses = new Command(obj =>
         {
-            Excel.Application ExcelApp = new Excel.Application();
-            Excel.Workbook ExcelWorkBook;
-            ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\TemplateExpenses.xltm");   //Вказуємо шлях до шаблону
+            if (worker != null && worker.IsBusy) { return; }
+            worker = new BackgroundWorker();
+            worker.DoWork += worker_DoWork;
+            worker.RunWorkerAsync();
+            void worker_DoWork(object sender, DoWorkEventArgs e)
+            {
+                ProgressStart();
 
-            ExcelApp.Cells[3, 1] = DateTime.Today.ToShortDateString();
+                // Основні затратні задачі
+                Excel.Application ExcelApp = new Excel.Application();
+                Excel.Workbook ExcelWorkBook;
+                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\TemplateExpenses.xltm");   //Вказуємо шлях до шаблону
 
-            ExcelApp.Visible = true;           // Робим книгу видимою
-            ExcelApp.UserControl = true;       // Передаємо керування користувачу
+                ExcelApp.Cells[3, 1] = DateTime.Today.ToShortDateString();
+
+                ExcelApp.Visible = true;           // Робим книгу видимою
+                ExcelApp.UserControl = true;       // Передаємо керування користувачу
+                                                   //************************
+
+                ProgressStop();
+            }
         }));
         public Command ExportReport => _exportReport ?? (_exportReport = new Command(obj =>
         {
@@ -3008,6 +3127,10 @@ namespace Builders.ViewModels
         #endregion
         public MainViewModel()
         {
+
+
+            ProgressStop();
+
             db = new BuilderContext();
             db.Clients.Load();
             db.Quotations.Load();
@@ -3051,7 +3174,26 @@ namespace Builders.ViewModels
             ReportDateFrom = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             ReportDateTo = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.DaysInMonth(DateTime.Today.Year, DateTime.Today.Month));
         }
-
+        /// <summary>
+        /// Відображає ProgressBar та робить форму напівпрозорою
+        /// </summary>
+        private void ProgressStart()
+        {
+            Progress = Visibility.Visible;
+            OpacityProgress = 0.5m;
+        }
+        /// <summary>
+        /// Приховує ProgressBar та повертає форму до нормального вигляду
+        /// </summary>
+        private void ProgressStop()
+        {
+            Progress = Visibility.Hidden;
+            OpacityProgress = 1m;
+        }
+        /// <summary>
+        /// Підраховує вартість вказаної Quota
+        /// </summary>
+        /// <param name="id"></param>
         private void Calculate(int? id)
         {
             var temp = db.Quotations.FirstOrDefault(q => q.Id == id);
@@ -3105,25 +3247,9 @@ namespace Builders.ViewModels
                     }
                 }
 
-
                 temp.MaterialSubtotal = decimal.Parse((flooring + accessories).ToString());
-                //temp.MaterialTax = decimal.Round(temp.MaterialSubtotal * 0.12m, 2);
-                //temp.MaterialTotal = temp.MaterialSubtotal + temp.MaterialTax - temp.MaterialDiscountAmount;
-
                 temp.LabourSubtotal = decimal.Parse((installation + demolition + services + delivery).ToString());
-                //temp.LabourTax = decimal.Round(temp.LabourSubtotal * 0.05m, 2);
-                //temp.LabourTotal = temp.LabourSubtotal + temp.LabourTax - temp.LabourDiscountAmount;
 
-                //temp.ProjectTotal = temp.MaterialTotal + temp.LabourTotal;
-                //temp.ProcessingFee = temp.AmountPaidByCreditCard * 0.03m;
-                //temp.FinancingAmount = (temp.FinancingYesNo) ? (temp.ProjectTotal) : (0m);
-                //temp.FinancingFee = (temp.FinancingYesNo) ? (temp.FinancingAmount * 0.08m) : (0m);
-                //temp.InvoiceGrandTotal = temp.ProjectTotal + temp.FinancingFee + temp.ProcessingFee;
-                //if (temp.PaymentAmountPaid1 == 0)
-                //{
-                //    temp.PaymentDatePaid1 = temp.QuotaDate;
-                //    temp.PaymentAmountPaid1 = temp.InvoiceGrandTotal;
-                //}
                 db.Entry(temp).State = EntityState.Modified;
                 db.SaveChanges();
 
@@ -3131,7 +3257,9 @@ namespace Builders.ViewModels
                 Quotations = db.Quotations.Local.ToBindingList().OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
             }
         }
-
+        /// <summary>
+        /// Реалізує List<> та завантажує дані для відображення
+        /// </summary>
         private void ListLoaded()
         {
             NameQuota = new List<string>();
@@ -3164,7 +3292,10 @@ namespace Builders.ViewModels
             DateMonthSelect = DateMonths.ElementAt(DateTime.Today.Month - 1);
 
         }
-
+        /// <summary>
+        /// Створює екземпляр MaterialProfit по заданому Invoice та записує в db.
+        /// </summary>
+        /// <param name="invoiceId"></param>
         private void AddMaterialProfit(int? invoiceId)
         {
             var invoice = db.Invoices.FirstOrDefault(i => i.Id == invoiceId);
@@ -3226,6 +3357,10 @@ namespace Builders.ViewModels
             MaterialProfitSelect = MaterialProfits.OrderByDescending(m => m.Id).FirstOrDefault();
 
         }
+        /// <summary>
+        /// Підраховує вартість всіх матеріалів в заданому MaterialProfit
+        /// </summary>
+        /// <param name="select"></param>
         private void MaterialProfitCalculate(MaterialProfit select)
         {
             var material = db.Materials.Where(m => m.MaterialProfitId == select.Id);
@@ -3263,6 +3398,10 @@ namespace Builders.ViewModels
             MaterialProfits = null;
             MaterialProfits = db.MaterialProfits.Local.ToBindingList();
         }
+        /// <summary>
+        /// Створює екземпляр LabourProfit по заданому Invoice та записує в db.
+        /// </summary>
+        /// <param name="invoiceId"></param>
         private void AddLabourProfit(int? invoiceId)
         {
             var invoice = db.Invoices.FirstOrDefault(i => i.Id == invoiceId);
@@ -3382,6 +3521,10 @@ namespace Builders.ViewModels
 
             LabourProfitSelect = LabourProfits.OrderByDescending(l => l.Id).FirstOrDefault();
         }
+        /// <summary>
+        ///  Підраховує вартість всіх робіт в заданому LabourProfit
+        /// </summary>
+        /// <param name="select"></param>
         private void LabourProfitCalculate(LabourProfit select)
         {
             var lab = db.Labours.Where(i => i.LabourProfitId == select.Id);
@@ -3424,7 +3567,10 @@ namespace Builders.ViewModels
             }
 
         }
-
+        /// <summary>
+        /// Створює екземпляри Debts по всім Contractor з вказаного Invoice та записує їх в db
+        /// </summary>
+        /// <param name="invoiceId"></param>
         private void AddDebtsTab(int? invoiceId)
         {
             var invoice = db.Invoices.FirstOrDefault(i => i.Id == invoiceId);
@@ -3458,6 +3604,10 @@ namespace Builders.ViewModels
                 Debts = db.Debts.Local.ToBindingList();
             }
         }
+        /// <summary>
+        /// Видаляє, а потім по новій створює екземпляри Debts по всім Contractor з вказаного Invoice та записує їх в db
+        /// </summary>
+        /// <param name="invoiceId"></param>
         private void InsDebtsTab(int? invoiceId)
         {
             var invoice = db.Invoices.FirstOrDefault(i => i.Id == invoiceId);
@@ -3496,7 +3646,7 @@ namespace Builders.ViewModels
             }
         }
         /// <summary>
-        /// Відкриваємо файл по заданій масці
+        /// Відкриває файл по заданій масці (один файл)
         /// </summary>
         /// <returns></returns>
         private string OpenFile(string filter)
@@ -3509,6 +3659,11 @@ namespace Builders.ViewModels
             }
             return null;
         }
+        /// <summary>
+        /// Відкриває вибрані файли по заданій масці (масив файлів)
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         private string[] OpenFileArray(string filter)
         {
             OpenFileDialog dialog = new OpenFileDialog();
@@ -3520,7 +3675,6 @@ namespace Builders.ViewModels
             }
             return null;
         }
-
         /// <summary>
         /// Метод закриває программу
         /// </summary>        
@@ -3538,7 +3692,7 @@ namespace Builders.ViewModels
         /// <returns></returns>
         private MaterialProfit ReportMaterial(DateTime dateFrom, DateTime dateTo)
         {
-            var filterMaterial = db.MaterialProfits.Where(m => m.InvoiceDate >= dateFrom && m.InvoiceDate <= dateTo && m.Companion == true);            
+            var filterMaterial = db.MaterialProfits.Where(m => m.InvoiceDate >= dateFrom && m.InvoiceDate <= dateTo && m.Companion == true);
             if (filterMaterial.Count() > 0)
             {
                 MaterialProfit report = new MaterialProfit();
@@ -3614,7 +3768,7 @@ namespace Builders.ViewModels
             {
                 var material = db.MaterialProfits.Where(i => i.InvoiceDate >= dateFrom && i.InvoiceDate <= dateTo && i.Companion == true);
                 var labour = db.LabourProfits.Where(i => i.InvoiceDate >= dateFrom && i.InvoiceDate <= dateTo && i.Companion == true);
-                
+
                 List<Report> reports = new List<Report>();
                 foreach (var item in invoice)
                 {

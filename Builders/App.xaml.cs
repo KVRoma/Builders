@@ -46,7 +46,7 @@ namespace Builders
         {
             base.OnStartup(e);
             
-            var mainViewModel = new MainViewModel();
+            var mainViewModel = new MainViewModel();            
             displayRootRegistry.ShowPresentation(mainViewModel);
             
         }

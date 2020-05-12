@@ -170,7 +170,7 @@ namespace Builders.ViewModels
         //************************************************************
         private Command _insMaterial;
         private Command _addExps;
-        private Command _insExps;
+        private Command _insExps; 
         private Command _delExps;
 
         public Command InsMaterial => _insMaterial ?? (_insMaterial = new Command(obj=> 
