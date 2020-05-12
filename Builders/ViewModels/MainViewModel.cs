@@ -1031,83 +1031,89 @@ namespace Builders.ViewModels
                 Clients = db.Clients.Local.ToBindingList();
             }
         }));
-        public Command LoadClient => _loadClient ?? (_loadClient = new Command(obj =>
-        {
-            Task task = Task.Run(() => { ProgressStart(); });   // Незнаю (поки що) якась херня, всюди працює Бакграундворкер, а тут хоч провались !!!!
-            task.Wait();
-
+        public Command LoadClient => _loadClient ?? (_loadClient = new Command(async obj =>
+        {           
             string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
 
             if (path == null) // Перевіряємо шлях до файлу на null
-            {
-                task.Dispose();
+            {                
                 ProgressStop();
                 return;
-            }     
-
-            Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
-            Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
-            Excel.Worksheet ExcelWorkSheet;                           // Створюємо лист Excel            
-
-            try
-            {
-                ExcelWorkBook = ExcelApp.Workbooks.Open(path);                  // Відкриваємо файл Excel                
-                ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
-
-                Client client = new Client()
-                {
-                    DateRegistration = (DateTime.TryParse(ExcelApp.Cells[2, 3].Value?.ToString(), out DateTime res)) ? (res) : (DateTime.Today), // Для поля з датою треба просто "Value"
-                    TypeOfClient = ExcelApp.Cells[3, 3].Value2?.ToString(),
-                    CompanyName = ExcelApp.Cells[4, 3].Value2?.ToString(),
-
-                    PrimaryFirstName = ExcelApp.Cells[5, 3].Value2?.ToString(),
-                    PrimaryLastName = ExcelApp.Cells[6, 3].Value2?.ToString(),
-                    PrimaryPhoneNumber = ExcelApp.Cells[7, 3].Value2?.ToString(),
-                    PrimaryEmail = ExcelApp.Cells[8, 3].Value2?.ToString(),
-
-                    SecondaryFirstName = ExcelApp.Cells[9, 3].Value2?.ToString(),
-                    SecondaryLastName = ExcelApp.Cells[10, 3].Value2?.ToString(),
-                    SecondaryPhoneNumber = ExcelApp.Cells[11, 3].Value2?.ToString(),
-                    SecondaryEmail = ExcelApp.Cells[12, 3].Value2?.ToString(),
-
-                    AddressBillStreet = ExcelApp.Cells[13, 3].Value2?.ToString(),
-                    AddressBillCity = ExcelApp.Cells[14, 3].Value2?.ToString(),
-                    AddressBillProvince = ExcelApp.Cells[15, 3].Value2?.ToString(),
-                    AddressBillPostalCode = ExcelApp.Cells[16, 3].Value2?.ToString(),
-                    AddressBillCountry = ExcelApp.Cells[17, 3].Value2?.ToString(),
-
-                    AddressSiteStreet = ExcelApp.Cells[18, 3].Value2?.ToString(),
-                    AddressSiteCity = ExcelApp.Cells[19, 3].Value2?.ToString(),
-                    AddressSiteProvince = ExcelApp.Cells[20, 3].Value2?.ToString(),
-                    AddressSitePostalCode = ExcelApp.Cells[21, 3].Value2?.ToString(),
-                    AddressSiteCountry = ExcelApp.Cells[22, 3].Value2?.ToString(),
-
-                    HearAboutUs = ExcelApp.Cells[23, 3].Value2?.ToString(),
-                    Specify = ExcelApp.Cells[24, 3].Value2?.ToString(),
-                    Notes = ExcelApp.Cells[25, 3].Value2?.ToString()
-                };
-
-                ExcelApp.Sheets[2].Cells[1, 20] = 1;
-
-                //ExcelApp.Visible = true;            // Робим Excel видимим, щоб користувач міг його закрити
-                //ExcelApp.UserControl = true;        // Передаємо керування користувачу
-
-                db.Clients.Add(client);
-                db.SaveChanges();
-
-                Clients = null;
-                Clients = db.Clients.Local.ToBindingList();
-
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-                ExcelApp.Visible = true;
-                ExcelApp.UserControl = true;
-            }
-
+            ProgressStart();
+            db.Clients.Add(await GetClient(path));
+            db.SaveChanges();
             ProgressStop();
+
+
+            async Task<Client> GetClient(string pat)
+            {
+
+                Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                Excel.Worksheet ExcelWorkSheet;                           // Створюємо лист Excel    
+                Client client;
+
+                try
+                {
+                    ExcelWorkBook = ExcelApp.Workbooks.Open(pat);                  // Відкриваємо файл Excel                
+                    ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+
+
+                    client = await Task.Run(() => new Client()
+                    {
+                        DateRegistration = (DateTime.TryParse(ExcelApp.Cells[2, 3].Value?.ToString(), out DateTime res)) ? (res) : (DateTime.Today), // Для поля з датою треба просто "Value"
+                        TypeOfClient = ExcelApp.Cells[3, 3].Value2?.ToString(),
+                        CompanyName = ExcelApp.Cells[4, 3].Value2?.ToString(),
+
+                        PrimaryFirstName = ExcelApp.Cells[5, 3].Value2?.ToString(),
+                        PrimaryLastName = ExcelApp.Cells[6, 3].Value2?.ToString(),
+                        PrimaryPhoneNumber = ExcelApp.Cells[7, 3].Value2?.ToString(),
+                        PrimaryEmail = ExcelApp.Cells[8, 3].Value2?.ToString(),
+
+                        SecondaryFirstName = ExcelApp.Cells[9, 3].Value2?.ToString(),
+                        SecondaryLastName = ExcelApp.Cells[10, 3].Value2?.ToString(),
+                        SecondaryPhoneNumber = ExcelApp.Cells[11, 3].Value2?.ToString(),
+                        SecondaryEmail = ExcelApp.Cells[12, 3].Value2?.ToString(),
+
+                        AddressBillStreet = ExcelApp.Cells[13, 3].Value2?.ToString(),
+                        AddressBillCity = ExcelApp.Cells[14, 3].Value2?.ToString(),
+                        AddressBillProvince = ExcelApp.Cells[15, 3].Value2?.ToString(),
+                        AddressBillPostalCode = ExcelApp.Cells[16, 3].Value2?.ToString(),
+                        AddressBillCountry = ExcelApp.Cells[17, 3].Value2?.ToString(),
+
+                        AddressSiteStreet = ExcelApp.Cells[18, 3].Value2?.ToString(),
+                        AddressSiteCity = ExcelApp.Cells[19, 3].Value2?.ToString(),
+                        AddressSiteProvince = ExcelApp.Cells[20, 3].Value2?.ToString(),
+                        AddressSitePostalCode = ExcelApp.Cells[21, 3].Value2?.ToString(),
+                        AddressSiteCountry = ExcelApp.Cells[22, 3].Value2?.ToString(),
+
+                        HearAboutUs = ExcelApp.Cells[23, 3].Value2?.ToString(),
+                        Specify = ExcelApp.Cells[24, 3].Value2?.ToString(),
+                        Notes = ExcelApp.Cells[25, 3].Value2?.ToString()
+                    });
+
+
+                    ExcelApp.Sheets[2].Cells[1, 20] = 1;
+
+                    //ExcelApp.Visible = true;            // Робим Excel видимим, щоб користувач міг його закрити
+                    //ExcelApp.UserControl = true;        // Передаємо керування користувачу
+
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                    ExcelApp.Visible = true;
+                    ExcelApp.UserControl = true;
+                    client = null;
+                }
+                return client;
+            }
+            
         }));
+        
+        //**************
         public Command SearchClient => _searchClient ?? (_searchClient = new Command(obj =>
         {
             string search = obj.ToString();
@@ -1933,7 +1939,7 @@ namespace Builders.ViewModels
                 ProgressStop();
             }
         }));
-        
+
         //**********************************
         public Command AddInvoice => _addInvoice ?? (_addInvoice = new Command(async obj =>
         {
