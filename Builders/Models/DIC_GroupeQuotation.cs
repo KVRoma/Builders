@@ -12,9 +12,11 @@ namespace Builders.Models
         public string NameGroupe { get; set; }
 
         public ICollection<DIC_ItemQuotation> DIC_ItemQuotation { get; set; }
+        public ICollection<DIC_Supplier> DIC_Supplier { get; set; }
         public DIC_GroupeQuotation()
         {
             DIC_ItemQuotation = new List<DIC_ItemQuotation>();
+            DIC_Supplier = new List<DIC_Supplier>();
         }
 
     }

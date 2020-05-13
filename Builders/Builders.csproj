@@ -106,6 +106,7 @@
     <Compile Include="Models\DIC_ItemQuotation.cs" />
     <Compile Include="Models\DIC_PaymentMethod.cs" />
     <Compile Include="Models\DIC_Room.cs" />
+    <Compile Include="Models\DIC_Supplier.cs" />
     <Compile Include="Models\DIC_TypeOfClient.cs" />
     <Compile Include="Models\Expenses.cs" />
     <Compile Include="Models\IdicClient.cs" />

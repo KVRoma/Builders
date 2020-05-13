@@ -10,6 +10,9 @@ namespace Builders.Models
     {
         public int? Id { get; set; }
         public string Name { get; set; }
+
+        public int? SupplierId { get; set; }
+        public string Color { get; set; } = "Black";
         
         public int? GroupeId { get; set; }
         public DIC_GroupeQuotation DIC_GroupeQuotation  { get; set; }

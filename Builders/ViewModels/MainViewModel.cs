@@ -1111,9 +1111,7 @@ namespace Builders.ViewModels
                 return client;
             }
             
-        }));
-        
-        //**************
+        }));        
         public Command SearchClient => _searchClient ?? (_searchClient = new Command(obj =>
         {
             string search = obj.ToString();
