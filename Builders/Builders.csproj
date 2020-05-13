@@ -176,6 +176,15 @@
     <Compile Include="Views\DIC_QuotationView.xaml.cs">
       <DependentUpon>DIC_QuotationView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DIC_SupplierEditControl.xaml.cs">
+      <DependentUpon>DIC_SupplierEditControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DIC_SupplierMenuControl.xaml.cs">
+      <DependentUpon>DIC_SupplierMenuControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DIC_SupplierSelectControl.xaml.cs">
+      <DependentUpon>DIC_SupplierSelectControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DIC_SupplierView.xaml.cs">
       <DependentUpon>DIC_SupplierView.xaml</DependentUpon>
     </Compile>
@@ -260,6 +269,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DIC_QuotationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DIC_SupplierEditControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DIC_SupplierMenuControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DIC_SupplierSelectControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

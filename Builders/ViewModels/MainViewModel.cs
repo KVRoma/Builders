@@ -873,6 +873,7 @@ namespace Builders.ViewModels
         private Command _dicHearAboutsUs;
         private Command _dicQuotation;
         private Command _dicContractors;
+        private Command _dicSupplier;
         //*************************************
         #endregion
         #region Public Command
@@ -3128,6 +3129,13 @@ namespace Builders.ViewModels
             var dicContract = new DIC_ContractorViewModel(ref db);
             await displayRootRegistry.ShowModalPresentation(dicContract);
         }));
+        public Command DIC_Supplier => _dicSupplier ?? (_dicSupplier = new Command(async obj=> 
+        {
+            var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+            var supplierViewModel = new DIC_SupplierViewModel(ref db);
+            await displayRootRegistry.ShowModalPresentation(supplierViewModel);
+        }));
+        
         #endregion
         public MainViewModel()
         {

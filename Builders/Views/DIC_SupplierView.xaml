@@ -10,25 +10,8 @@
         Width="600" 
         Style="{StaticResource WindowStyle}">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="auto"/>
-        </Grid.RowDefinitions>
-        <DataGrid Grid.Row="0" 
-                  IsReadOnly="True" 
-                  AutoGenerateColumns="False"                      
-                  ItemsSource="{Binding Suppliers, UpdateSourceTrigger=PropertyChanged}" 
-                  SelectedItem="{Binding SupplierSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">           
-            <DataGrid.InputBindings>
-                <MouseBinding Gesture="LeftDoubleClick" 
-                              Command="{Binding SelectToExitCommand}"
-                              CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"/>
-            </DataGrid.InputBindings>
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Suppliers" Width="*" Binding="{Binding Path=Supplier}"/>
-                <DataGridTextColumn Header="???" Width="*"/>
-            </DataGrid.Columns>
-        </DataGrid>
-
+        <local:DIC_SupplierSelectControl Visibility="{Binding VisibilitySelect}"/>
+        <local:DIC_SupplierMenuControl Visibility="{Binding VisibilityMenu}"/>
+        <local:DIC_SupplierEditControl Visibility="{Binding VisibilityEdit}"/>
     </Grid>
 </Window>

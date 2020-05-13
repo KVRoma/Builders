@@ -27,7 +27,8 @@
                 <MenuItem Header="How did they hear about us" Command="{Binding DIC_HearAboutsUs}"/>
                 <MenuItem Header="Material and Labour" Command="{Binding DIC_Quotation}"/>
                 <MenuItem Header="Contractors" Command="{Binding DIC_Contractors}"/>
-            </MenuItem>
+                <MenuItem Header="Suppliers" Command="{Binding DIC_Supplier}"/>
+        </MenuItem>
             <MenuItem Header="Info">            
             </MenuItem>
     </Menu>            
