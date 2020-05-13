@@ -138,6 +138,7 @@
     <Compile Include="ViewModels\DIC_ClientViewModel.cs" />
     <Compile Include="ViewModels\DIC_ContractorViewModel.cs" />
     <Compile Include="ViewModels\DIC_QuotationViewModel.cs" />
+    <Compile Include="ViewModels\DIC_SupplierViewModel.cs" />
     <Compile Include="ViewModels\ExpensesViewModel.cs" />
     <Compile Include="ViewModels\FotoViewModel.cs" />
     <Compile Include="ViewModels\InvoiceViewModel.cs" />
@@ -174,6 +175,9 @@
     </Compile>
     <Compile Include="Views\DIC_QuotationView.xaml.cs">
       <DependentUpon>DIC_QuotationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DIC_SupplierView.xaml.cs">
+      <DependentUpon>DIC_SupplierView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ExpensesView.xaml.cs">
       <DependentUpon>ExpensesView.xaml</DependentUpon>
@@ -256,6 +260,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DIC_QuotationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DIC_SupplierView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

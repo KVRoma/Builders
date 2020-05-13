@@ -22,21 +22,33 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <Label Content="Select Groupe"/>
+            <Label Content="Select Groupe" 
+                   Style="{StaticResource LabelHeder2}"/>
             <ComboBox Margin="0,2,2,2" FontWeight="Bold" 
                       MinWidth="150"  Width="auto" 
                       ItemsSource="{Binding Groupes}" 
                       SelectedItem="{Binding GroupeSelect, Mode=TwoWay}" 
                       DisplayMemberPath="NameGroupe" />
         </StackPanel>
-        
-        <Label Grid.Row="1" Content="Select Items"/>
+
+        <Label Grid.Row="1" 
+               Content="Select Item" 
+               HorizontalAlignment="Left"
+               Style="{StaticResource LabelHeder2}"/>
         <DataGrid Grid.Row="2" IsReadOnly="True" 
                     AutoGenerateColumns="False"                      
                     ItemsSource="{Binding Items, UpdateSourceTrigger=PropertyChanged}" 
                     SelectedItem="{Binding ItemSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Foreground" Value="{Binding Path=Color}"/>
+                </Style>
+            </DataGrid.RowStyle>
+            <DataGrid.InputBindings>
+                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding DubleClickCommand}"/>
+            </DataGrid.InputBindings>
             <DataGrid.Columns>                    
-                <DataGridTextColumn Header="Items" Width="*" Binding="{Binding Path=Name}"/>                    
+                <DataGridTextColumn Header="Items Name" Width="*" Binding="{Binding Path=Name}"/>                
             </DataGrid.Columns>
         </DataGrid>            
         
@@ -58,15 +70,18 @@
                     Style="{StaticResource FooterButton}" 
                     Command="{Binding DelItemCommand}"/>
         </StackPanel>
-        
-        <Label Grid.Row="4" Content="Selected Description"/>
+
+        <Label Grid.Row="4" 
+               Content="Selected Description" 
+               HorizontalAlignment="Left"
+               Style="{StaticResource LabelHeder2}"/>        
         <DataGrid Grid.Row="5" IsReadOnly="True"
                     AutoGenerateColumns="False" 
                     
                     ItemsSource="{Binding Descriptions, UpdateSourceTrigger=PropertyChanged}" 
                     SelectedItem="{Binding DescriptionSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Items" Width="*" Binding="{Binding Path=Name}"/>
+                <DataGridTextColumn Header="Descriptions Name" Width="*" Binding="{Binding Path=Name}"/>
                 <DataGridTextColumn Header="Price" Width="auto" Binding="{Binding Path=Price}"/>
                 <DataGridTextColumn Header="Cost" Width="auto" Binding="{Binding Path=Cost}"/>
             </DataGrid.Columns>

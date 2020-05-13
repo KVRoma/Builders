@@ -21,7 +21,8 @@ namespace Builders.ViewModels
         private DIC_ItemQuotation itemSelect;
         private IEnumerable<DIC_ItemQuotation> items;
         private DIC_DescriptionQuotation descriptionSelect;
-        private IEnumerable<DIC_DescriptionQuotation> descriptions;        
+        private IEnumerable<DIC_DescriptionQuotation> descriptions;
+        
 
         private EnumDictionary result;
         
@@ -31,7 +32,7 @@ namespace Builders.ViewModels
             set
             {
                 groupeSelect = value;
-                OnPropertyChanged(nameof(GroupeSelect));
+                OnPropertyChanged(nameof(GroupeSelect));                
                 Items = (GroupeSelect != null) ? (db.DIC_ItemQuotations.Local.ToBindingList().Where(t => t.GroupeId == GroupeSelect.Id).OrderBy(t=>t.Name)) : null;                
             }
         }
@@ -90,10 +91,12 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(Result));
             }
         }
+       
 
         private Command _addItemCommand;
         private Command _insItemCommand;
         private Command _delItemCommand;
+        private Command _dubleClickCommand;
         //**************************************************
         private Command _addDescriptionCommand;
         private Command _insDescriptionCommand;
@@ -145,6 +148,23 @@ namespace Builders.ViewModels
                 Items = null;
                 Items = (GroupeSelect != null) ? (db.DIC_ItemQuotations.Local.ToBindingList().Where(t => t.GroupeId == GroupeSelect.Id)) : null;
             }           
+        }));
+        public Command DubleClickCommand => _dubleClickCommand ?? (_dubleClickCommand = new Command(async obj=> 
+        {
+            if (GroupeSelect.Id == 1 || GroupeSelect.Id == 2)
+            {
+                var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                var supplierViewModel = new DIC_SupplierViewModel(ref db, GroupeSelect.Id);
+                await displayRootRegistry.ShowModalPresentation(supplierViewModel);
+                if (supplierViewModel.PressOk)
+                {
+                    ItemSelect.SupplierId = supplierViewModel.SupplierSelect.Id;
+                    ItemSelect.Color = "Blue";
+                    db.Entry(ItemSelect).State = EntityState.Modified;
+                    db.SaveChanges();
+                    Items = db.DIC_ItemQuotations.Local.ToBindingList().Where(t => t.GroupeId == GroupeSelect.Id).OrderBy(t => t.Name);
+                }
+            }
         }));
         //*************************************************
         public Command AddDescriptionCommand => _addDescriptionCommand ?? (_addDescriptionCommand = new Command(async obj => 
