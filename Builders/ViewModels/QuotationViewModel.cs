@@ -423,7 +423,8 @@ namespace Builders.ViewModels
                         Description = DIC_DescriptionSelect?.Name,
                         Rate = decimal.Round(Rate, 2),
                         Quantity = Quantity,
-                        Price = decimal.Round(Rate * Quantity, 2)                        
+                        Price = decimal.Round(Rate * Quantity, 2),
+                        SupplierId = DIC_ItemSelect?.SupplierId
                     };
                     db.MaterialQuotations.Add(material);
                     db.SaveChanges();
@@ -532,6 +533,7 @@ namespace Builders.ViewModels
                 {
                     tempMaterialSelect.Groupe = DIC_GroupeSelect?.NameGroupe;
                     tempMaterialSelect.Item = DIC_ItemSelect?.Name;
+                    tempMaterialSelect.SupplierId = DIC_ItemSelect?.SupplierId;
                     tempMaterialSelect.Description = DIC_DescriptionSelect?.Name;
                     tempMaterialSelect.Rate = decimal.Round(Rate, 2);
                     tempMaterialSelect.Quantity = Quantity;
@@ -655,6 +657,7 @@ namespace Builders.ViewModels
                             Quantity = item.Quantity,
                             Price = item.Price,
                             Rate = item.Rate,
+                            SupplierId = item?.SupplierId,
                             QuotationId = item.QuotationId,
                             Quotation = item.Quotation
                         });

@@ -209,7 +209,96 @@
                 </Grid>
             </TabItem.Content>
         </TabItem>
+
         
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal">
+
+                    <TextBlock Margin="15,0,0,0" Text="Delivery" FontWeight="Bold"/>
+                </StackPanel>
+            </TabItem.Header>
+            <TabItem.Content>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" Style="{StaticResource BorderRadiusSearch}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition MinWidth="200" Width="auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" 
+                                   Content="Enter to search..."
+                                   Style="{StaticResource LabelSearch}"/>
+                            <TextBox Grid.Column="1" 
+                                     HorizontalAlignment="Stretch"                                 
+                                     FontWeight="Bold"
+                                     Foreground="Blue">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Command="{Binding SearchDebts}"
+                                                CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type TextBox}},Path=Text}"
+                                                Key="Return"/>
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <Label Grid.Column="2" 
+                                   Content="(search by Invoice Id, Name, Phone, Email)"
+                                   Style="{StaticResource LabelSearch}"/>
+                        </Grid>
+                    </Border>
+                    <DataGrid Grid.Row="1" 
+                              AutoGenerateColumns="False" 
+                              IsReadOnly="True" 
+                              ItemsSource="{Binding Deliveries, UpdateSourceTrigger=PropertyChanged}" 
+                              SelectedItem="{Binding DeliverySelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Foreground" Value="{Binding Path=ColorPayment}"/>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.InputBindings>
+                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding}"/>
+                        </DataGrid.InputBindings>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Date" Width="auto" Binding="{Binding Path=DateCreating, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                            <DataGridTextColumn Header="Quota Id" Width="auto" Binding="{Binding Path=NumberQuota}" />
+                            <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=FullName}"/>
+                            <DataGridTextColumn Header="Supplier Name" Width="*" Binding="{Binding Path=SupplierName}"/>
+                            <DataGridTextColumn Header="Order Number" Width="auto" Binding="{Binding Path=OrderNumber}"/>
+                            <DataGridCheckBoxColumn Header="Sent mail" Binding="{Binding Path=IsEnabled}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <StackPanel Grid.Row="2" Grid.ColumnSpan="2"
+                                Style="{StaticResource FooterMenu}" >
+                        <Button Content="Add" 
+                                Foreground="Green" 
+                                BorderBrush="Green"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding }"/>
+                        <Button Content="Edit" 
+                                Foreground="Brown" 
+                                BorderBrush="Brown"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding }"/>
+                        <Button Content="Del" 
+                                Foreground="Red" 
+                                BorderBrush="Red"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding }"/> 
+
+                    </StackPanel>
+                </Grid>
+            </TabItem.Content>
+        </TabItem> 
+         
+
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
@@ -643,6 +732,7 @@
                 </Grid>
             </TabItem.Content>
         </TabItem>
+        
         
         <TabItem>
             <TabItem.Header>

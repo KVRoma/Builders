@@ -141,7 +141,18 @@
         <Setter Property="Margin" Value="0,2,2,2"/>
     </Style>
     <!--**********************************************************-->
-    
+    <!-- стиль для TextBox HEDER Text Wrap and Press Enter -->
+    <Style TargetType="TextBox" x:Key="TextBoxWrap">        
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="AcceptsReturn" Value="True"/>       
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="Blue"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalScrollBarVisibility" Value="Visible"/>
+        <Setter Property="Margin" Value="5,5,5,0"/>
+    </Style>
+    <!--**********************************************************-->
     <!-- стиль для TextBlock HEDER -->
     <Style TargetType="TextBlock" x:Key="TextBlockHEDER">
         <Setter Property="HorizontalAlignment" Value="Stretch"/>

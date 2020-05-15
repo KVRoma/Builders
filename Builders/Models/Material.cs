@@ -20,7 +20,9 @@ namespace Builders.Models
         public decimal CostSubtotal { get; set; }
         public decimal CostEPRate { get; set; }
         public decimal CostTax { get; set; }
-        public decimal CostTotal { get; set; }       
+        public decimal CostTotal { get; set; } 
+        
+        public int? SupplierId { get; set; }
 
         public int? MaterialProfitId { get; set; }
         public virtual MaterialProfit MaterialProfit { get; set; }

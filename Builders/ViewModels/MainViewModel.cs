@@ -44,6 +44,8 @@ namespace Builders.ViewModels
         private IEnumerable<LabourProfit> labourProfits;
         private Debts debtSelect;
         private IEnumerable<Debts> debts;
+        private Delivery deliverySelect;
+        private IEnumerable<Delivery> deliveries;
 
         private bool enableClient;
         private bool enableQuota;
@@ -313,6 +315,24 @@ namespace Builders.ViewModels
             {
                 debts = value;
                 OnPropertyChanged(nameof(Debts));
+            }
+        }
+        public Delivery DeliverySelect
+        {
+            get { return deliverySelect; }
+            set
+            {
+                deliverySelect = value;
+                OnPropertyChanged(nameof(DeliverySelect));
+            }
+        }
+        public IEnumerable<Delivery> Deliveries
+        {
+            get { return deliveries; }
+            set 
+            {
+                deliveries = value;
+                OnPropertyChanged(nameof(Deliveries));
             }
         }
 
@@ -1562,6 +1582,19 @@ namespace Builders.ViewModels
                     var quotaItem = quota.FirstOrDefault(i => i.Id == quotaId);
                     var order = WorkOrders.FirstOrDefault(w => w.QuotaId == quotaId);
                     var invoice = Invoices.FirstOrDefault(i => i.QuotaId == quotaItem.Id);
+                    var delivery = Deliveries.FirstOrDefault(d => d.QuotaId == quotaItem.Id);
+                    
+                    // Creating Delivery
+                    if (quotaItem.ActivQuota && delivery == null)
+                    {
+                        displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                        var message = new MessageViewModel(200, 410, "   Quote status changed to Active !!!" + Environment.NewLine + "Do you want to create a 'Delivery' ? ");
+                        await displayRootRegistry.ShowModalPresentation(message);
+                        if (message.PressOk)
+                        {
+                            AddDelivery(quotaItem);
+                        }
+                    }
 
                     // Creating WorkOrder
                     if (quotaItem.ActivQuota && order == null)
@@ -3133,7 +3166,7 @@ namespace Builders.ViewModels
         {
             var displayRootRegistry = (Application.Current as App).displayRootRegistry;
             var supplierViewModel = new DIC_SupplierViewModel(ref db);
-            await displayRootRegistry.ShowModalPresentation(supplierViewModel);
+            await displayRootRegistry.ShowModalPresentation(supplierViewModel);            
         }));
         
         #endregion
@@ -3151,6 +3184,7 @@ namespace Builders.ViewModels
             db.MaterialProfits.Load();
             db.LabourProfits.Load();
             db.Debts.Load();
+            db.Deliveries.Load();
             Clients = db.Clients.Local.ToBindingList();
             Quotations = db.Quotations.Local.ToBindingList().OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
             Invoices = db.Invoices.Local.ToBindingList();
@@ -3158,6 +3192,7 @@ namespace Builders.ViewModels
             MaterialProfits = db.MaterialProfits.Local.ToBindingList();
             LabourProfits = db.LabourProfits.Local.ToBindingList();
             Debts = db.Debts.Local.ToBindingList();
+            Deliveries = db.Deliveries.Local.ToBindingList();
             ListLoaded();
             NameQuotaSelect = "ESTIMATE";
 
@@ -3304,6 +3339,60 @@ namespace Builders.ViewModels
             DateMonthSelect = DateMonths.ElementAt(DateTime.Today.Month - 1);
 
         }
+        private void AddDelivery(Quotation quota)
+        {
+            var material = db.MaterialQuotations.Where(m => m.QuotationId == quota.Id);
+            var supplier = material?.Select(m => m.SupplierId)?.Distinct();
+            if (supplier.Count() > 0)
+            {
+                foreach (var item in supplier)
+                {
+                    var suppMat = material.Where(m => m.SupplierId == item);
+
+                    var dicSupp = db.DIC_Suppliers.Find(item);
+
+                    Delivery delivery = new Delivery()
+                    {
+                        QuotaId = quota.Id,
+                        NumberQuota = quota.NumberQuota,
+                        DateCreating = DateTime.Today,
+                        FirstName = quota.FirstName,
+                        LastName = quota.LastName,
+                        PhoneNumber = quota.PhoneNumber,
+                        Email = quota.Email,
+                        SupplierId = dicSupp.Id,
+                        SupplierName = dicSupp.Supplier
+                    };
+                    db.Deliveries.Add(delivery);
+                    db.SaveChanges();
+                    
+                    var del = db.Deliveries.OrderByDescending(d => d.Id).FirstOrDefault();
+                    
+                    foreach (var Mat in suppMat)
+                    {
+                        DeliveryMaterial deliveryMaterial = new DeliveryMaterial()
+                        {
+                            Groupe = Mat.Groupe,
+                            Item = Mat.Item,
+                            Description = Mat.Description,
+                            DeliveryId = del.Id,
+                            SupplierId = dicSupp.Id,
+                            Supplier = dicSupp.Supplier,
+                            Quantity = Mat.Quantity,
+                            Rate = Mat.Rate,
+                            Price = Mat.Price                            
+                        };
+                        db.DeliveryMaterials.Add(deliveryMaterial);
+                        db.SaveChanges();
+                    }
+                }
+            }
+            
+            //var material = db.MaterialQuotations.Where(m => m.QuotationId == quota.Id).Where(m=>m.Groupe == "FLOORING" || m.Groupe == "ACCESSORIES");        
+           
+
+
+        }
         /// <summary>
         /// Створює екземпляр MaterialProfit по заданому Invoice та записує в db.
         /// </summary>
@@ -3351,6 +3440,7 @@ namespace Builders.ViewModels
                         Quantity = item.Quantity,
                         Rate = item.Rate,
                         Price = item.Price,
+                        SupplierId = item?.SupplierId,
                         CostQuantity = 0m,
                         CostUnitPrice = 0m,
                         CostSubtotal = 0m,

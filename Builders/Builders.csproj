@@ -97,6 +97,8 @@
     <Compile Include="Models\BuilderContext.cs" />
     <Compile Include="Models\Client.cs" />
     <Compile Include="Models\Debts.cs" />
+    <Compile Include="Models\Delivery.cs" />
+    <Compile Include="Models\DeliveryMaterial.cs" />
     <Compile Include="Models\DIC_Area.cs" />
     <Compile Include="Models\DIC_Contractor.cs" />
     <Compile Include="Models\DIC_DescriptionQuotation.cs" />

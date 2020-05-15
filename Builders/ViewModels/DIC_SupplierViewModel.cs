@@ -26,6 +26,7 @@ namespace Builders.ViewModels
         private Visibility visibilityEdit;
         private bool isEnableButton;
         private bool isCreated;
+        private int idSelect;
 
         public DIC_Supplier SupplierSelect
         {
@@ -148,44 +149,49 @@ namespace Builders.ViewModels
         public Command AddCommand => addCommand ?? (addCommand = new Command(obj=> 
         {
             IsCreated = true;
-            SupplierSelect = new DIC_Supplier();
+            SupplierSelect = new DIC_Supplier() { GroupeId = GroupeSelect.Id};
             VisibilityEdit = Visibility.Visible;
             VisibilityMenu = Visibility.Collapsed;
             
         }));
         public Command InsCommand => insCommand ?? (insCommand = new Command(obj=> 
         {
+            
             IsCreated = false;
-            VisibilityEdit = Visibility.Visible;
+            idSelect = SupplierSelect.Id;            
             VisibilityMenu = Visibility.Collapsed;
+            VisibilityEdit = Visibility.Visible;
         }));
         public Command DelCommand => delCommand ?? (delCommand = new Command(obj=> 
         {
             db.DIC_Suppliers.Remove(SupplierSelect);
             db.SaveChanges();
+            Suppliers = null;
             Suppliers = db.DIC_Suppliers.Local.ToBindingList().Where(s => s.GroupeId == GroupeSelect.Id).OrderBy(s => s.Supplier);
         }));
         public Command OkCommand => okCommand ?? (okCommand = new Command(obj=> 
         {            
-            VisibilityEdit = Visibility.Collapsed;
-            VisibilityMenu = Visibility.Visible;
             if (IsCreated)
             {
                 db.DIC_Suppliers.Add(SupplierSelect);
                 IsCreated = false;
             }
             else
-            {
+            {               
                 db.Entry(SupplierSelect).State = EntityState.Modified;
-                IsCreated = false;
-            }            
+            }
             db.SaveChanges();
             Suppliers = db.DIC_Suppliers.Local.ToBindingList().Where(s => s.GroupeId == GroupeSelect.Id).OrderBy(s => s.Supplier);
+
+            VisibilityMenu = Visibility.Visible;
+            VisibilityEdit = Visibility.Collapsed;            
         }));
         public Command CancelCommand => cancelCommand ?? (cancelCommand = new Command(obj=> 
         {            
             VisibilityEdit = Visibility.Collapsed;
             VisibilityMenu = Visibility.Visible;
+            Suppliers = null;
+            Suppliers = db.DIC_Suppliers.Local.ToBindingList().Where(s => s.GroupeId == GroupeSelect.Id).OrderBy(s => s.Supplier);
         }));
 
         public DIC_SupplierViewModel(ref BuilderContext context, int? idGroupe)
@@ -212,7 +218,8 @@ namespace Builders.ViewModels
             db.DIC_Suppliers.Load();
             db.DIC_GroupeQuotations.Load();
             Groupes = db.DIC_GroupeQuotations.Local.ToBindingList().Where(g=>g.Id == 1 | g.Id == 2);
+            GroupeSelect = Groupes.FirstOrDefault(g => g.Id == 1);
         }
-
+        
     }
 }
