@@ -37,7 +37,7 @@ namespace Builders.Models
         public decimal AmountDelivery { get; set; } = 0m;
 
         public bool IsEnabled { get; set; } = false;
-        public string Color { get; set; } = "Black";
+        public string Color { get; set; } = "Red";
 
         public ICollection<DeliveryMaterial> DeliveryMaterial { get; set; }
        

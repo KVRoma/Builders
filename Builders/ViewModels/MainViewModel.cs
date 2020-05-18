@@ -884,6 +884,8 @@ namespace Builders.ViewModels
         //*********************************
         private Command _printDelivery;
         private Command _printDriverDelivery;
+        private Command _searchDelivery;
+        private Command _dubleClickDelivery;
         //*********************************
         private Command _addInvoice;
         private Command _insInvoice;
@@ -2039,6 +2041,14 @@ namespace Builders.ViewModels
 
                 ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
                 ExcelApp.Calculate();
+
+                DeliverySelect.Color = "Black";
+                DeliverySelect.IsEnabled = true;
+                db.Entry(DeliverySelect).State = EntityState.Modified;
+                db.SaveChanges();
+
+                Deliveries = null;
+                Deliveries = db.Deliveries.Local.ToBindingList();
             }
         }));
         public Command PrintDriverDelivery => _printDriverDelivery ?? (_printDriverDelivery = new Command(obj =>
@@ -2082,6 +2092,40 @@ namespace Builders.ViewModels
                 }
                 ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
                 ExcelApp.Calculate();
+            }
+        }));
+        public Command SearchDelivery => _searchDelivery ?? (_searchDelivery = new Command(obj=> 
+        {
+            string search = obj.ToString();
+            if (search == "")
+            {
+                Deliveries = db.Deliveries.Local.ToBindingList();
+            }
+            else
+            {
+                Deliveries = Deliveries.Where(n => n.FullSearch.ToUpper().Contains(search.ToUpper()));
+            }
+        }));
+        public Command DubleClickDelivery => _dubleClickDelivery ?? (_dubleClickDelivery = new Command(async obj=> 
+        {
+            if (DeliverySelect != null)
+            {
+                var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                var deliveryVM = new DeliveryViewModel();
+                deliveryVM.OrderNumber = DeliverySelect?.OrderNumber;
+                deliveryVM.AmountDelivery = DeliverySelect.AmountDelivery;
+                await displayRootRegistry.ShowModalPresentation(deliveryVM);
+                if (deliveryVM.PressOk)
+                {
+                    DeliverySelect.OrderNumber = deliveryVM.OrderNumber;
+                    DeliverySelect.AmountDelivery = decimal.Round(deliveryVM.AmountDelivery, 2);
+                    DeliverySelect.Color = "Blue";
+                    db.Entry(DeliverySelect).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    Deliveries = null;
+                    Deliveries = db.Deliveries.Local.ToBindingList();
+                }
             }
         }));
 

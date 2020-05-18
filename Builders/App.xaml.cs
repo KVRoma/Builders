@@ -40,6 +40,7 @@ namespace Builders
             displayRootRegistry.RegisterWindowType<DebtsViewModel, DebtsView>();
             displayRootRegistry.RegisterWindowType<DebtsPaymentViewModel, DebtsPaymentView>();
             displayRootRegistry.RegisterWindowType<MessageViewModel, MessageView>();
+            displayRootRegistry.RegisterWindowType<DeliveryViewModel, DeliveryView>();
            
         }
 
@@ -75,6 +76,7 @@ namespace Builders
             displayRootRegistry.UnregisterWindowType<DebtsViewModel>();
             displayRootRegistry.UnregisterWindowType<DebtsPaymentViewModel>();
             displayRootRegistry.UnregisterWindowType<MessageViewModel>();
+            displayRootRegistry.UnregisterWindowType<DeliveryViewModel>();
             
             base.OnExit(e);
         }

@@ -243,13 +243,13 @@
                                      FontWeight="Bold"
                                      Foreground="Blue">
                                 <TextBox.InputBindings>
-                                    <KeyBinding Command="{Binding SearchDebts}"
+                                    <KeyBinding Command="{Binding SearchDelivery}"
                                                 CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type TextBox}},Path=Text}"
                                                 Key="Return"/>
                                 </TextBox.InputBindings>
                             </TextBox>
                             <Label Grid.Column="2" 
-                                   Content="(search by Invoice Id, Name, Phone, Email)"
+                                   Content="(search by Quota Id, Name, Phone, Email)"
                                    Style="{StaticResource LabelSearch}"/>
                         </Grid>
                     </Border>
@@ -260,11 +260,11 @@
                               SelectedItem="{Binding DeliverySelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         <DataGrid.RowStyle>
                             <Style TargetType="DataGridRow">
-                                <Setter Property="Foreground" Value="{Binding Path=ColorPayment}"/>
+                                <Setter Property="Foreground" Value="{Binding Path=Color}"/>
                             </Style>
                         </DataGrid.RowStyle>
                         <DataGrid.InputBindings>
-                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding}"/>
+                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding DubleClickDelivery}"/>
                         </DataGrid.InputBindings>
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Date" Width="auto" Binding="{Binding Path=DateCreating, StringFormat=\{0:dd.MM.yyyy\}}"/>
