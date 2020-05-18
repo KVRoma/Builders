@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,9 +26,15 @@ namespace Builders.Models
         {
             get { return NumberQuota + " " + FirstName + " " + LastName + " " + PhoneNumber + " " + Email; }
         }
+       
+        public string NameComboBox
+        {
+            get { return NumberQuota + " " + FullName; }
+        }
         public int? SupplierId { get; set; }
         public string SupplierName { get; set; }
         public string OrderNumber { get; set; }
+        public decimal AmountDelivery { get; set; } = 0m;
 
         public bool IsEnabled { get; set; } = false;
         public string Color { get; set; } = "Black";

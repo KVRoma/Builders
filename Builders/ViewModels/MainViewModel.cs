@@ -46,6 +46,8 @@ namespace Builders.ViewModels
         private IEnumerable<Debts> debts;
         private Delivery deliverySelect;
         private IEnumerable<Delivery> deliveries;
+        private List<string> deliveriesComboBox;
+        private string deliveryComboBoxSelect;
 
         private bool enableClient;
         private bool enableQuota;
@@ -324,15 +326,42 @@ namespace Builders.ViewModels
             {
                 deliverySelect = value;
                 OnPropertyChanged(nameof(DeliverySelect));
+                if (DeliverySelect != null)
+                {
+                    DeliveryComboBoxSelect = DeliverySelect.NameComboBox;
+                }
             }
         }
         public IEnumerable<Delivery> Deliveries
         {
             get { return deliveries; }
-            set 
+            set
             {
                 deliveries = value;
                 OnPropertyChanged(nameof(Deliveries));
+                if (Deliveries != null)
+                {
+                    DeliveriesComboBox?.Clear();
+                    DeliveriesComboBox = DeliveriesComboBoxGet();
+                }
+            }
+        }
+        public List<string> DeliveriesComboBox
+        {
+            get { return deliveriesComboBox; }
+            set
+            {
+                deliveriesComboBox = value;
+                OnPropertyChanged(nameof(DeliveriesComboBox));
+            }
+        }
+        public string DeliveryComboBoxSelect
+        {
+            get { return deliveryComboBoxSelect; }
+            set
+            {
+                deliveryComboBoxSelect = value;
+                OnPropertyChanged(nameof(DeliveryComboBoxSelect));
             }
         }
 
@@ -853,6 +882,9 @@ namespace Builders.ViewModels
         private Command _searchQuotation;
         private Command _templateQuotation;
         //*********************************
+        private Command _printDelivery;
+        private Command _printDriverDelivery;
+        //*********************************
         private Command _addInvoice;
         private Command _insInvoice;
         private Command _delInvoice;
@@ -1053,11 +1085,11 @@ namespace Builders.ViewModels
             }
         }));
         public Command LoadClient => _loadClient ?? (_loadClient = new Command(async obj =>
-        {           
+        {
             string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
 
             if (path == null) // Перевіряємо шлях до файлу на null
-            {                
+            {
                 ProgressStop();
                 return;
             }
@@ -1131,8 +1163,8 @@ namespace Builders.ViewModels
                 }
                 return client;
             }
-            
-        }));        
+
+        }));
         public Command SearchClient => _searchClient ?? (_searchClient = new Command(obj =>
         {
             string search = obj.ToString();
@@ -1241,6 +1273,13 @@ namespace Builders.ViewModels
                 var order = db.WorkOrders.Where(o => o.QuotaId == QuotationSelect.Id);
                 var receipt = db.Reciepts.Where(r => r.QuotaId == QuotationSelect.Id);
                 var pay = db.Payments.Where(p => p.QuotationId == QuotationSelect.Id);
+                var delivery = db.Deliveries.Where(d => d.QuotaId == QuotationSelect.Id);
+
+                foreach (var item in delivery)
+                {
+                    var mat = db.DeliveryMaterials.Where(m => m.DeliveryId == item.Id);
+                    db.DeliveryMaterials.RemoveRange(mat);
+                }
 
                 foreach (var item in invoice)         // Цю херню треба буде викинути і замутити обмеження при створенні Інвойса (один інвойс на одну квоту !!!)
                 {
@@ -1272,6 +1311,7 @@ namespace Builders.ViewModels
                     db.WorkOrder_Installations.RemoveRange(inst);
                     db.WorkOrder_Works.RemoveRange(work);
                 }
+                db.Deliveries.RemoveRange(delivery);
                 db.WorkOrders.RemoveRange(order);
                 db.Reciepts.RemoveRange(receipt);
                 db.Payments.RemoveRange(pay);
@@ -1281,6 +1321,8 @@ namespace Builders.ViewModels
                 db.SaveChanges();
                 Quotations = null;
                 Quotations = db.Quotations.Local.ToBindingList().OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
+                Deliveries = null;
+                Deliveries = db.Deliveries.Local.ToBindingList();
             }
         }));
         public Command CopyQuotation => _copyQuotation ?? (_copyQuotation = new Command(async obj =>
@@ -1583,7 +1625,7 @@ namespace Builders.ViewModels
                     var order = WorkOrders.FirstOrDefault(w => w.QuotaId == quotaId);
                     var invoice = Invoices.FirstOrDefault(i => i.QuotaId == quotaItem.Id);
                     var delivery = Deliveries.FirstOrDefault(d => d.QuotaId == quotaItem.Id);
-                    
+
                     // Creating Delivery
                     if (quotaItem.ActivQuota && delivery == null)
                     {
@@ -1969,6 +2011,77 @@ namespace Builders.ViewModels
                                                    //************************
 
                 ProgressStop();
+            }
+        }));
+
+        //**********************************
+        public Command PrintDelivery => _printDelivery ?? (_printDelivery = new Command(obj =>
+        {
+            if (DeliverySelect != null)
+            {
+                var material = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id);
+                var dic = db.DIC_Suppliers.FirstOrDefault(s => s.Id == DeliverySelect.SupplierId);
+                Excel.Application ExcelApp = new Excel.Application();
+                Excel.Workbook ExcelWorkBook;
+                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\ListOfSuppliesPDF.xltm");   //Вказуємо шлях до шаблону
+
+                ExcelApp.Cells[3, 6] = DeliverySelect.DateCreating;
+                ExcelApp.Cells[9, 2] = dic?.Supplier;
+                ExcelApp.Cells[10, 2] = dic?.Address;
+
+                int i = 14;
+                foreach (var item in material)
+                {
+                    ExcelApp.Cells[i, 1] = item.Description;
+                    ExcelApp.Cells[i, 6] = item.Quantity;
+                    i++;
+                }
+
+                ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
+                ExcelApp.Calculate();
+            }
+        }));
+        public Command PrintDriverDelivery => _printDriverDelivery ?? (_printDriverDelivery = new Command(obj =>
+        {
+            if (DeliveryComboBoxSelect != null)
+            {
+                Excel.Application ExcelApp = new Excel.Application();
+                Excel.Workbook ExcelWorkBook;
+                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\DeliveryPDF.xltm");   //Вказуємо шлях до шаблону
+
+                string[] comboBox = DeliveryComboBoxSelect.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                string word = comboBox[0];
+                var supplier = db.Deliveries.Where(d => d.NumberQuota == word);
+                int? quotaId = supplier.FirstOrDefault(s=>s.QuotaId > 0)?.QuotaId;
+                var quota = db.Quotations.FirstOrDefault(q => q.Id == quotaId);
+                var client = db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+                if (supplier != null && quota != null && client != null)
+                {
+                    ExcelApp.Cells[3, 5] = DateTime.Today;
+                    ExcelApp.Cells[4, 5] = quota.NumberQuota;
+                    ExcelApp.Cells[9, 2] = client.PrimaryFullName;
+                    ExcelApp.Cells[10, 2] = client?.CompanyName;
+                    ExcelApp.Cells[11, 2] = client?.AddressBillStreet + client?.AddressBillCity + client?.AddressBillProvince + client?.AddressBillPostalCode + client?.AddressBillCountry;
+                    ExcelApp.Cells[12, 2] = client?.PrimaryPhoneNumber;
+                    ExcelApp.Cells[11, 4] = client?.AddressSiteStreet + client?.AddressSiteCity + client?.AddressSiteProvince + client?.AddressSitePostalCode + client?.AddressSiteCountry;
+                    ExcelApp.Cells[12, 4] = client?.PrimaryEmail;
+                    int i = 24;
+                    foreach (var item in supplier)
+                    {
+                        var temp = db.DeliveryMaterials.Where(m => m.DeliveryId == item.Id)?.Select(m => m.Quantity);
+                        decimal quantity = temp?.Sum() ?? (0m);
+                        var dictionary = db.DIC_Suppliers.FirstOrDefault(s => s.Id == item.SupplierId);                        
+
+                        ExcelApp.Cells[i, 1] = dictionary.Supplier;
+                        ExcelApp.Cells[i, 2] = dictionary.Address;
+                        ExcelApp.Cells[i, 3] = dictionary.Hours;
+                        ExcelApp.Cells[i, 4] = quantity;
+                        ExcelApp.Cells[i, 5] = item.OrderNumber;
+                        i++;
+                    }
+                }
+                ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
+                ExcelApp.Calculate();
             }
         }));
 
@@ -3162,13 +3275,13 @@ namespace Builders.ViewModels
             var dicContract = new DIC_ContractorViewModel(ref db);
             await displayRootRegistry.ShowModalPresentation(dicContract);
         }));
-        public Command DIC_Supplier => _dicSupplier ?? (_dicSupplier = new Command(async obj=> 
+        public Command DIC_Supplier => _dicSupplier ?? (_dicSupplier = new Command(async obj =>
         {
             var displayRootRegistry = (Application.Current as App).displayRootRegistry;
             var supplierViewModel = new DIC_SupplierViewModel(ref db);
-            await displayRootRegistry.ShowModalPresentation(supplierViewModel);            
+            await displayRootRegistry.ShowModalPresentation(supplierViewModel);
         }));
-        
+
         #endregion
         public MainViewModel()
         {
@@ -3309,6 +3422,9 @@ namespace Builders.ViewModels
         /// </summary>
         private void ListLoaded()
         {
+            DeliveriesComboBox = new List<string>();
+            DeliveriesComboBox = DeliveriesComboBoxGet();
+
             NameQuota = new List<string>();
             NameQuota.Add("ESTIMATE");
             NameQuota.Add("APPROVED QUOTE");
@@ -3365,9 +3481,13 @@ namespace Builders.ViewModels
                     };
                     db.Deliveries.Add(delivery);
                     db.SaveChanges();
-                    
+
+                    //OnPropertyChanged(nameof(Deliveries));
+                    Deliveries = null;
+                    Deliveries = db.Deliveries.Local.ToBindingList();
+
                     var del = db.Deliveries.OrderByDescending(d => d.Id).FirstOrDefault();
-                    
+
                     foreach (var Mat in suppMat)
                     {
                         DeliveryMaterial deliveryMaterial = new DeliveryMaterial()
@@ -3380,16 +3500,16 @@ namespace Builders.ViewModels
                             Supplier = dicSupp.Supplier,
                             Quantity = Mat.Quantity,
                             Rate = Mat.Rate,
-                            Price = Mat.Price                            
+                            Price = Mat.Price
                         };
                         db.DeliveryMaterials.Add(deliveryMaterial);
                         db.SaveChanges();
                     }
                 }
             }
-            
+
             //var material = db.MaterialQuotations.Where(m => m.QuotationId == quota.Id).Where(m=>m.Groupe == "FLOORING" || m.Groupe == "ACCESSORIES");        
-           
+
 
 
         }
@@ -4168,5 +4288,25 @@ namespace Builders.ViewModels
             return db.Expenses.Where(e => e.Date.Year == year && e.Date.Month == (int)month && e.Payment == true).OrderBy(e => e.Type).ThenBy(e => e.Name).ToList();
         }
 
+        private List<string> DeliveriesComboBoxGet()
+        {
+            List<string> comboBox = new List<string>();
+            var name = Deliveries.Where(d => d.Id > 0).ToList();
+
+            if (name.Count > 0)
+            {
+                foreach (var item in name)
+                {
+                    comboBox.Add(item.NameComboBox);
+                }
+                comboBox = comboBox.OrderBy(x => name).Distinct().ToList();
+            }
+            else
+            {
+                comboBox?.Clear();
+            }
+
+            return comboBox;
+        }
     }
 }

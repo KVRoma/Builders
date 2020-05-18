@@ -277,21 +277,29 @@
                     </DataGrid>
                     <StackPanel Grid.Row="2" Grid.ColumnSpan="2"
                                 Style="{StaticResource FooterMenu}" >
-                        <Button Content="Add" 
+                        <Button Content="Print PO" 
+                                Foreground="Blue" 
+                                BorderBrush="Blue"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding PrintDelivery}"/>
+                        <ComboBox HorizontalContentAlignment="Left"
+                                  VerticalContentAlignment="Center"
+                                  FontWeight="Bold"
+                                  Width="200"
+                                  Margin="150,5,5,5"
+                                  ItemsSource="{Binding DeliveriesComboBox, UpdateSourceTrigger=PropertyChanged}" 
+                                  SelectedItem="{Binding DeliveryComboBoxSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                                   
+                                  IsEnabled="{Binding EnableButtonCreat}"/>
+                        <Button Content="For Driver" 
                                 Foreground="Green" 
                                 BorderBrush="Green"
                                 Style="{StaticResource FooterButton}" 
-                                Command="{Binding }"/>
-                        <Button Content="Edit" 
-                                Foreground="Brown" 
-                                BorderBrush="Brown"
-                                Style="{StaticResource FooterButton}" 
-                                Command="{Binding }"/>
-                        <Button Content="Del" 
+                                Command="{Binding PrintDriverDelivery}"/>
+                        <!--<Button Content="Del" 
                                 Foreground="Red" 
                                 BorderBrush="Red"
                                 Style="{StaticResource FooterButton}" 
-                                Command="{Binding }"/> 
+                                Command="{Binding }"/> -->
 
                     </StackPanel>
                 </Grid>
