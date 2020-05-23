@@ -3510,22 +3510,24 @@ namespace Builders.ViewModels
                     var suppMat = material.Where(m => m.SupplierId == item);
 
                     var dicSupp = db.DIC_Suppliers.Find(item);
-
-                    Delivery delivery = new Delivery()
+                    if (dicSupp != null)
                     {
-                        QuotaId = quota.Id,
-                        NumberQuota = quota.NumberQuota,
-                        DateCreating = DateTime.Today,
-                        FirstName = quota.FirstName,
-                        LastName = quota.LastName,
-                        PhoneNumber = quota.PhoneNumber,
-                        Email = quota.Email,
-                        SupplierId = dicSupp.Id,
-                        SupplierName = dicSupp.Supplier
-                    };
-                    db.Deliveries.Add(delivery);
-                    db.SaveChanges();
 
+                        Delivery delivery = new Delivery()
+                        {
+                            QuotaId = quota.Id,
+                            NumberQuota = quota.NumberQuota,
+                            DateCreating = DateTime.Today,
+                            FirstName = quota.FirstName,
+                            LastName = quota.LastName,
+                            PhoneNumber = quota.PhoneNumber,
+                            Email = quota.Email,
+                            SupplierId = dicSupp.Id,
+                            SupplierName = dicSupp.Supplier
+                        };
+                        db.Deliveries.Add(delivery);
+                        db.SaveChanges();
+                    }
                     //OnPropertyChanged(nameof(Deliveries));
                     Deliveries = null;
                     Deliveries = db.Deliveries.Local.ToBindingList();
@@ -3534,20 +3536,23 @@ namespace Builders.ViewModels
 
                     foreach (var Mat in suppMat)
                     {
-                        DeliveryMaterial deliveryMaterial = new DeliveryMaterial()
+                        if (Mat != null && del != null)
                         {
-                            Groupe = Mat.Groupe,
-                            Item = Mat.Item,
-                            Description = Mat.Description,
-                            DeliveryId = del.Id,
-                            SupplierId = dicSupp.Id,
-                            Supplier = dicSupp.Supplier,
-                            Quantity = Mat.Quantity,
-                            Rate = Mat.Rate,
-                            Price = Mat.Price
-                        };
-                        db.DeliveryMaterials.Add(deliveryMaterial);
-                        db.SaveChanges();
+                            DeliveryMaterial deliveryMaterial = new DeliveryMaterial()
+                            {
+                                Groupe = Mat.Groupe,
+                                Item = Mat.Item,
+                                Description = Mat.Description,
+                                DeliveryId = del.Id,
+                                SupplierId = dicSupp.Id,
+                                Supplier = dicSupp.Supplier,
+                                Quantity = Mat.Quantity,
+                                Rate = Mat.Rate,
+                                Price = Mat.Price
+                            };
+                            db.DeliveryMaterials.Add(deliveryMaterial);
+                            db.SaveChanges();
+                        }
                     }
                 }
             }
