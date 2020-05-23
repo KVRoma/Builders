@@ -1253,15 +1253,7 @@ namespace Builders.ViewModels
 
                     if (paid != null)
                     {
-                        displayRootRegistry = (Application.Current as App).displayRootRegistry;
-                        var message = new MessageViewModel(200, 410, "  The total amount of the quote has been changed !!!" +
-                                               Environment.NewLine + "Need to re-register payments." +
-                                               Environment.NewLine + "Open the payments?");
-                        await displayRootRegistry.ShowModalPresentation(message);
-                        if (message.PressOk)
-                        {
-                            PaymentQuotation.Execute("");
-                        }
+                        CalculatePayment(QuotationSelect);         // Перераховуєм Баланс                        
                     }
                 }
             }
@@ -3459,6 +3451,22 @@ namespace Builders.ViewModels
 
                 Quotations = null;
                 Quotations = db.Quotations.Local.ToBindingList().OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
+            }
+        }
+        /// <summary>
+        /// Перераховує баланс враховуючи зміни в Quota
+        /// </summary>
+        /// <param name="quota"></param>
+        private void CalculatePayment(Quotation quota)
+        {
+            var payments = db.Payments.Where(p => p.QuotationId == quota.Id).OrderBy(p => p.Id);
+            decimal quotaTotal = quota.InvoiceGrandTotal;
+            foreach (var item in payments)
+            {
+                item.Balance = quotaTotal - item.PaymentPrincipalPaid;
+                quotaTotal = item.Balance;
+                db.Entry(item).State = EntityState.Modified;
+                db.SaveChanges();
             }
         }
         /// <summary>
