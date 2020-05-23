@@ -27,10 +27,11 @@
             <GradientStop Offset="1.00" Color="LightBlue"/>
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
-    <!--************************************** -->
+    <!--************************************** -->   
     <!-- Стиль для Window -->
     <Style TargetType="Window" x:Key="WindowStyle">
         <Setter Property="Background" Value="{StaticResource Gradient_LightBlue_White_LightBlue}"/>
+        <Setter Property="FontFamily" Value="/Fonts/QualyBold.ttf#Qualy Bold"/>     <!--Добавив шрифт замовника-->
     </Style>
     <!--************************************** -->
     <!-- Авто стиль для Menu -->
@@ -38,6 +39,7 @@
         <Setter Property="Margin" Value="5"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="Background" Value="{StaticResource Gradient_Blue_White_Blue}"/>
+        <Setter Property="FontFamily" Value="/Fonts/QualyBold.ttf#Qualy Bold"/>        <!--Добавив шрифт замовника-->
     </Style>
     <!--************************************** -->
     <!--Стиль для Border робить рамку з заокругленими краями-->
