@@ -3544,7 +3544,7 @@ namespace Builders.ViewModels
 
                     foreach (var Mat in suppMat)
                     {
-                        if (Mat != null && del != null)
+                        if (Mat != null && del != null && dicSupp != null)
                         {
                             DeliveryMaterial deliveryMaterial = new DeliveryMaterial()
                             {
@@ -3772,29 +3772,29 @@ namespace Builders.ViewModels
                     }
                 }
             }
-            foreach (var item in materialQ)
-            {
-                if (item.Groupe == "FLOORING DELIVERY")
-                {
-                    Labour lab = new Labour()
-                    {
-                        Groupe = item.Groupe,
-                        Item = item.Item,
-                        Description = item.Description,
-                        Contractor = null,
-                        Quantity = item.Quantity,
-                        Rate = item.Rate,
-                        Price = item.Price,
-                        Percent = 0,
-                        Payout = 0m,
-                        Adjust = 0m,
-                        Profit = decimal.Round(item.Price - 0m, 2),
-                        LabourProfitId = LabourProfitSelect.Id
-                    };
-                    db.Labours.Add(lab);
-                    db.SaveChanges();
-                }
-            }
+            //foreach (var item in materialQ)
+            //{
+            //    if (item.Groupe == "FLOORING DELIVERY")
+            //    {
+            //        Labour lab = new Labour()
+            //        {
+            //            Groupe = item.Groupe,
+            //            Item = item.Item,
+            //            Description = item.Description,
+            //            Contractor = null,
+            //            Quantity = item.Quantity,
+            //            Rate = item.Rate,
+            //            Price = item.Price,
+            //            Percent = 0,
+            //            Payout = 0m,
+            //            Adjust = 0m,
+            //            Profit = decimal.Round(item.Price - 0m, 2),
+            //            LabourProfitId = LabourProfitSelect.Id
+            //        };
+            //        db.Labours.Add(lab);
+            //        db.SaveChanges();
+            //    }
+            //}
             LabourProfits = null;
             LabourProfits = db.LabourProfits.Local.ToBindingList();
 

@@ -720,7 +720,7 @@ namespace Builders.ViewModels
                 {
                     foreach (MaterialQuotation item in material)
                     {
-                        if ((item.Groupe == "INSTALLATION") || (item.Groupe == "DEMOLITION") || (item.Groupe == "OPTIONAL SERVICES"))
+                        if ((item.Groupe == "INSTALLATION") || (item.Groupe == "DEMOLITION") || (item.Groupe == "OPTIONAL SERVICES") || (item.Groupe == "FLOORING DELIVERY"))
                         {
                             ins.Add(new WorkOrder_Installation()
                             {
