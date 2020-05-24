@@ -393,7 +393,28 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Content Include="Fonts\QualyBold.ttf">
+    <Content Include="Fonts\LEMONMILK-Bold.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fonts\LEMONMILK-BoldItalic.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fonts\LEMONMILK-Light.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fonts\LEMONMILK-LightItalic.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fonts\LEMONMILK-Medium.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fonts\LEMONMILK-MediumItalic.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fonts\LEMONMILK-Regular.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fonts\LEMONMILK-RegularItalic.otf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />

@@ -8,9 +8,9 @@
         mc:Ignorable="d"
         Title="{Binding WindowName}"
         Style="{StaticResource WindowStyle}"
-        MinHeight="220" 
+        MinHeight="250" 
         MinWidth="400"
-        Height="220" 
+        Height="250" 
         Width="400"
         MaxHeight="220">
     <Grid Margin="2">

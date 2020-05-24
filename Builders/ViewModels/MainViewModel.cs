@@ -3657,39 +3657,50 @@ namespace Builders.ViewModels
         private void MaterialProfitCalculate(MaterialProfit select)
         {
             var material = db.Materials.Where(m => m.MaterialProfitId == select.Id);
+            if (material.Count() > 0)
+            {
+                var price = material?.Select(m => m.Price);
+                decimal priceSum = price?.Sum() ?? 0m;
 
-            decimal materialSubtotal = decimal.Round(material.Select(m => m.Price).Sum(), 2);
-            decimal materialTax = decimal.Round(materialSubtotal * 0.12m, 2);
-            decimal materialTotal = decimal.Round(materialSubtotal + materialTax, 2);
+                var costSubtotal = material?.Select(m => m.CostSubtotal);
+                decimal costSubtotalSum = costSubtotal?.Sum() ?? 0m;
 
-            decimal otherSubtotal = decimal.Round(material.Select(m => m.CostSubtotal).Sum(), 2);
-            decimal otherTax = decimal.Round(material.Select(t => t.CostTotal).Sum() - otherSubtotal, 2);
-            decimal otherTotal = decimal.Round(otherSubtotal + otherTax, 2);
+                var costTotal = material?.Select(t => t.CostTotal);
+                decimal costTotalSum = costTotal?.Sum() ?? 0m;
 
-            decimal profitBefor = decimal.Round(materialSubtotal - otherSubtotal, 2);
-            decimal profitTax = decimal.Round(materialTax - otherTax, 2);
-            decimal profitInc = decimal.Round(materialTotal - otherTotal, 2);
-            decimal profitTotal = decimal.Round(profitInc - select.ProfitDiscount, 2);
+                decimal materialSubtotal = decimal.Round(priceSum, 2);
+                decimal materialTax = decimal.Round(materialSubtotal * 0.12m, 2);
+                decimal materialTotal = decimal.Round(materialSubtotal + materialTax, 2);
+
+                decimal otherSubtotal = decimal.Round(costSubtotalSum, 2);
+                decimal otherTax = decimal.Round(costTotalSum - otherSubtotal, 2);
+                decimal otherTotal = decimal.Round(otherSubtotal + otherTax, 2);
+
+                decimal profitBefor = decimal.Round(materialSubtotal - otherSubtotal, 2);
+                decimal profitTax = decimal.Round(materialTax - otherTax, 2);
+                decimal profitInc = decimal.Round(materialTotal - otherTotal, 2);
+                decimal profitTotal = decimal.Round(profitInc - (select?.ProfitDiscount ?? 0m), 2);
 
 
-            select.MaterialSubtotal = materialSubtotal;
-            select.MaterialTax = materialTax;
-            select.MaterialTotal = materialTotal;
+                select.MaterialSubtotal = materialSubtotal;
+                select.MaterialTax = materialTax;
+                select.MaterialTotal = materialTotal;
 
-            select.CostMaterialSubtotal = otherSubtotal;
-            select.CostMaterialTax = otherTax;
-            select.CostMaterialTotal = otherTotal;
+                select.CostMaterialSubtotal = otherSubtotal;
+                select.CostMaterialTax = otherTax;
+                select.CostMaterialTotal = otherTotal;
 
-            select.ProfitBeforTax = profitBefor;
-            select.ProfitTax = profitTax;
-            select.ProfitInclTax = profitInc;
-            select.ProfitTotal = profitTotal;
+                select.ProfitBeforTax = profitBefor;
+                select.ProfitTax = profitTax;
+                select.ProfitInclTax = profitInc;
+                select.ProfitTotal = profitTotal;
 
-            db.Entry(select).State = EntityState.Modified;
-            db.SaveChanges();
+                db.Entry(select).State = EntityState.Modified;
+                db.SaveChanges();
 
-            MaterialProfits = null;
-            MaterialProfits = db.MaterialProfits.Local.ToBindingList();
+                MaterialProfits = null;
+                MaterialProfits = db.MaterialProfits.Local.ToBindingList();
+            }
         }
         /// <summary>
         /// Створює екземпляр LabourProfit по заданому Invoice та записує в db.
@@ -3764,7 +3775,7 @@ namespace Builders.ViewModels
             {
                 foreach (var item in materialQ)
                 {
-                    if (item.Groupe == "INSTALLATION" || item.Groupe == "DEMOLITION" || item.Groupe == "OPTIONAL SERVICES")
+                    if (item.Groupe == "INSTALLATION" || item.Groupe == "DEMOLITION" || item.Groupe == "OPTIONAL SERVICES" || item.Groupe == "FLOORING DELIVERY")
                     {
                         Labour lab = new Labour()
                         {
@@ -3786,29 +3797,7 @@ namespace Builders.ViewModels
                     }
                 }
             }
-            //foreach (var item in materialQ)
-            //{
-            //    if (item.Groupe == "FLOORING DELIVERY")
-            //    {
-            //        Labour lab = new Labour()
-            //        {
-            //            Groupe = item.Groupe,
-            //            Item = item.Item,
-            //            Description = item.Description,
-            //            Contractor = null,
-            //            Quantity = item.Quantity,
-            //            Rate = item.Rate,
-            //            Price = item.Price,
-            //            Percent = 0,
-            //            Payout = 0m,
-            //            Adjust = 0m,
-            //            Profit = decimal.Round(item.Price - 0m, 2),
-            //            LabourProfitId = LabourProfitSelect.Id
-            //        };
-            //        db.Labours.Add(lab);
-            //        db.SaveChanges();
-            //    }
-            //}
+            
             LabourProfits = null;
             LabourProfits = db.LabourProfits.Local.ToBindingList();
 
@@ -3859,6 +3848,9 @@ namespace Builders.ViewModels
                 LabourProfits = db.LabourProfits.Local.ToBindingList();
             }
 
+        }
+        private void InvoiceCalculate(int? invoiceId)
+        { 
         }
         /// <summary>
         /// Створює екземпляри Debts по всім Contractor з вказаного Invoice та записує їх в db

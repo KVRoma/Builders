@@ -192,7 +192,7 @@
                                 Command="{Binding PrintQuotation}"
                                 IsEnabled="{Binding EnableQuota}"/>
                         <ComboBox Margin="5" 
-                                  VerticalAlignment="Center" 
+                                  VerticalContentAlignment="Center" 
                                   Width="150"
                                   ItemsSource="{Binding NameQuota }" 
                                   SelectedItem="{Binding NameQuotaSelect, Mode=TwoWay}"

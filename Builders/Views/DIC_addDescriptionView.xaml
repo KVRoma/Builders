@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:Builders.Views"
         mc:Ignorable="d"
         Title="{Binding WindowName}" 
-        MinHeight="150"
+        MinHeight="160"
         MinWidth="500"
-        Height="150" 
+        Height="160" 
         Width="500" 
         Style="{StaticResource WindowStyle}">
     <Grid>
