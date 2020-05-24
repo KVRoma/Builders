@@ -2109,14 +2109,28 @@ namespace Builders.ViewModels
                 await displayRootRegistry.ShowModalPresentation(deliveryVM);
                 if (deliveryVM.PressOk)
                 {
-                    DeliverySelect.OrderNumber = deliveryVM.OrderNumber;
-                    DeliverySelect.AmountDelivery = decimal.Round(deliveryVM.AmountDelivery, 2);
-                    DeliverySelect.Color = "Blue";
-                    db.Entry(DeliverySelect).State = EntityState.Modified;
-                    db.SaveChanges();
+                    if (deliveryVM.OrderNumber != "")
+                    {
+                        DeliverySelect.OrderNumber = deliveryVM.OrderNumber;
+                        //DeliverySelect.AmountDelivery = decimal.Round(deliveryVM.AmountDelivery, 2);
+                        DeliverySelect.Color = "Blue";
+                        db.Entry(DeliverySelect).State = EntityState.Modified;
+                        db.SaveChanges();
 
-                    Deliveries = null;
-                    Deliveries = db.Deliveries.Local.ToBindingList();
+                        Deliveries = null;
+                        Deliveries = db.Deliveries.Local.ToBindingList();
+                    }
+                    else
+                    {
+                        DeliverySelect.OrderNumber = deliveryVM.OrderNumber;
+                        //DeliverySelect.AmountDelivery = decimal.Round(deliveryVM.AmountDelivery, 2);
+                        DeliverySelect.Color = "Red";
+                        db.Entry(DeliverySelect).State = EntityState.Modified;
+                        db.SaveChanges();
+
+                        Deliveries = null;
+                        Deliveries = db.Deliveries.Local.ToBindingList();
+                    }
                 }
             }
         }));
@@ -4344,7 +4358,10 @@ namespace Builders.ViewModels
         {
             return db.Expenses.Where(e => e.Date.Year == year && e.Date.Month == (int)month && e.Payment == true).OrderBy(e => e.Type).ThenBy(e => e.Name).ToList();
         }
-
+        /// <summary>
+        /// Завантажує ComboBox унікальними даними
+        /// </summary>
+        /// <returns></returns>
         private List<string> DeliveriesComboBoxGet()
         {
             List<string> comboBox = new List<string>();

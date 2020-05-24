@@ -172,21 +172,33 @@ namespace Builders.ViewModels
                 decimal payFee;
                 decimal payCredit;
 
-                if (MethodSelect.Name == "Credit Card")
-                {
-                    payFee = (AmountPayment * 3m / 100m);
-                    payCredit = AmountPayment - payFee;                    
-                }
-                else if (MethodSelect.Name == "Debit Card")
-                {
-                    payFee = 0.25m;
-                    payCredit = decimal.Round(AmountPayment - payFee, 2);
-                }
-                else
-                {
-                    payFee = 0m;
-                    payCredit = AmountPayment;
-                }
+                switch (MethodSelect.Name)
+                {                    
+                    case "Credit Card - 1 %":
+                        {
+                            payFee = (AmountPayment * 1m / 100m);
+                            payCredit = AmountPayment - payFee;
+                        }
+                        break;
+                    case "Credit Card - 2 %":
+                        {
+                            payFee = (AmountPayment * 2m / 100m);
+                            payCredit = AmountPayment - payFee;
+                        }
+                        break;
+                    case "Credit Card - 3 %":
+                        {
+                            payFee = (AmountPayment * 3m / 100m);
+                            payCredit = AmountPayment - payFee;
+                        }
+                        break;
+                    default:
+                        {
+                            payFee = 0m;
+                            payCredit = AmountPayment;
+                        }
+                        break;
+                }                
 
                 decimal sum = (Payments.Count() != 0) ? (Payments.Select(p => p.PaymentPrincipalPaid).Sum()) : (0m);
                 decimal balance = decimal.Round(quota.InvoiceGrandTotal - sum - payCredit, 2);

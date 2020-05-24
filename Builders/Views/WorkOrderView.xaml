@@ -204,8 +204,8 @@
                     </DataGrid.CellStyle>
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Groupe" Width="auto" Binding="{Binding Path=Groupe}"/>
-                        <DataGridTextColumn Header="Item" Width="auto" Binding="{Binding Path=Item}"/>
-                        <DataGridTextColumn Header="Description" Width="auto" Binding="{Binding Path=Description}"/>
+                        <DataGridTextColumn Header="Item" Width="200" Binding="{Binding Path=Item}"/>
+                        <DataGridTextColumn Header="Description" Width="200" Binding="{Binding Path=Description}"/>
                         <DataGridTextColumn Header="Quantity" Width="auto" Binding="{Binding Path=Quantity}"/>
                         <DataGridTextColumn Header="Rate" Width="auto" Binding="{Binding Path=Rate, StringFormat='0.00'}"/>
                         <DataGridTextColumn Header="Price" Width="auto" Binding="{Binding Path=Price, StringFormat='0.00'}"/>
