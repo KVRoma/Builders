@@ -82,7 +82,7 @@
                     <RadioButton.Content>
                         <StackPanel Orientation="Vertical">
                             <TextBlock Text="Profits report"/>
-                            <TextBlock Text="Dependent on Partner" FontSize="9" Foreground="Red" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Dependent on Partner" FontSize="9" Foreground="Red"/>
                         </StackPanel>
                     </RadioButton.Content>
                 </RadioButton>
@@ -92,7 +92,7 @@
                     <RadioButton.Content>
                         <StackPanel Orientation="Vertical">
                             <TextBlock Text="Total report"/>
-                            <TextBlock Text="Dependent on Partner" FontSize="9" Foreground="Red" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Dependent on Partner" FontSize="9" Foreground="Red"/>
                         </StackPanel>
                     </RadioButton.Content>
                 </RadioButton>
@@ -101,8 +101,9 @@
                              IsChecked="{Binding IsCheckedPayroll}">
                     <RadioButton.Content>
                         <StackPanel Orientation="Vertical">
-                            <TextBlock Text="Payroll report"/>
-                            <TextBlock Text="Dependent on Partner" FontSize="9" Foreground="Red" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Active contractor"/>
+                            <TextBlock Text="Debts/Payments mode"/>
+                            <TextBlock Text="Dependent on Partner" FontSize="9" Foreground="Red"/>
                         </StackPanel>
                     </RadioButton.Content>
                 </RadioButton>
@@ -117,7 +118,7 @@
                     </RadioButton.Content>
                 </RadioButton>
 
-                <RadioButton Content="Payment to Contractors"
+                <RadioButton Content="DEBTS to Contractors"
                              Style="{StaticResource Report}"
                              IsChecked="{Binding IsCheckedDebts}"/>
 

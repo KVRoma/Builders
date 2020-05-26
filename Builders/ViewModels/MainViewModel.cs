@@ -2015,11 +2015,15 @@ namespace Builders.ViewModels
             {
                 var material = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id);
                 var dic = db.DIC_Suppliers.FirstOrDefault(s => s.Id == DeliverySelect.SupplierId);
+                var quota = db.Quotations.FirstOrDefault(q => q.Id == DeliverySelect.QuotaId);
+                var client = db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
                 Excel.Application ExcelApp = new Excel.Application();
                 Excel.Workbook ExcelWorkBook;
                 ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\ListOfSuppliesPDF.xltm");   //Вказуємо шлях до шаблону
 
                 ExcelApp.Cells[3, 6] = DeliverySelect.DateCreating;
+                ExcelApp.Cells[6, 2] = "\"" + client.NumberClient + " - " + quota.NumberQuota + "\"";
+                ExcelApp.Cells[7, 2] = "\"CMO" + " - " + client.PrimaryFullName + "\"" ;
                 ExcelApp.Cells[9, 2] = dic?.Supplier;
                 ExcelApp.Cells[10, 2] = dic?.Address;
 

@@ -354,8 +354,7 @@
                               IsReadOnly="True" 
                               ItemsSource="{Binding WorkOrders, UpdateSourceTrigger=PropertyChanged}" 
                               SelectedItem="{Binding WorkOrderSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}"/>
+                        <DataGrid.Columns>                            
                             <DataGridTextColumn Header="Date" Binding="{Binding Path=DateWork, StringFormat=\{0:dd.MM.yyyy\}}"/>
                             <DataGridTextColumn Header="Quota Id" Binding="{Binding Path=NumberQuota}" />
                             <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=FullName}"/>
@@ -532,8 +531,7 @@
                         <DataGrid.InputBindings>
                             <MouseBinding Gesture="LeftDoubleClick" Command="{Binding ClickMaterialProfit}"/>
                         </DataGrid.InputBindings>
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}" />
+                        <DataGrid.Columns>                            
                             <DataGridTextColumn Header="Date" Binding="{Binding Path=InvoiceDate, StringFormat=\{0:dd.MM.yyyy\}}"/>
                             <DataGridTextColumn Header="Invoice Id" Binding="{Binding Path=InvoiceNumber}"/>
                             <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=FullName}" />
@@ -616,8 +614,7 @@
                         <DataGrid.InputBindings>
                             <MouseBinding Gesture="LeftDoubleClick" Command="{Binding ClickLabourPrifit}"/>
                         </DataGrid.InputBindings>
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}"/>
+                        <DataGrid.Columns>                            
                             <DataGridTextColumn Header="Date" Binding="{Binding Path=InvoiceDate, StringFormat=\{0:dd.MM.yyyy\}}"/>
                             <DataGridTextColumn Header="Invoice Id" Binding="{Binding Path=InvoiceNumber}" />
                             <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=FullName}"/>
