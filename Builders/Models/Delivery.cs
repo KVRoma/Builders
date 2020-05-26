@@ -36,6 +36,7 @@ namespace Builders.Models
         public string OrderNumber { get; set; }
         public decimal AmountDelivery { get; set; } = 0m;
 
+        public bool IsArchive { get; set; } = false;
         public bool IsEnabled { get; set; } = false;
         public string Color { get; set; } = "Red";
 

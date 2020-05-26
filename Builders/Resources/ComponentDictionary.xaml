@@ -211,7 +211,7 @@
         </Setter>
     </Style>
     <!--**********************************************************-->
-    <!--Авто стиль для RadioButton -->
+    <!--Cтиль для RadioButton -->
     <Style TargetType="RadioButton" x:Key="Report">
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="FontWeight" Value="Bold"/>
@@ -229,7 +229,23 @@
         </Style.Triggers>
     </Style>
     <!--**********************************************************-->
-   
+    <!--Cтиль для CheckBox -->
+    <Style TargetType="CheckBox" x:Key="Archive">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Margin" Value="10,0,0,0"/>        
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="Blue"/>                
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="Red"/>
+                <Setter Property="Foreground" Value="Red"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <!--**********************************************************-->   
     <!--Cтиль для DataGrid перевертає текст в заголовку -->
     <Style x:Key="ColumnHeaderRotateStyle" TargetType="DataGridColumnHeader" >
         <Setter Property="ContentTemplate" >

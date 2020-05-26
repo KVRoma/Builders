@@ -10,7 +10,7 @@
     <TabControl Grid.Row="1" ItemContainerStyle="{StaticResource TabItemStyle1}">
         <TabItem>
             <TabItem.Header>
-                <StackPanel Orientation="Horizontal">                    
+                <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="15,0,0,0" Text="Client" FontWeight="Bold"/>
                 </StackPanel>
             </TabItem.Header>
@@ -59,7 +59,7 @@
                             <DataGridTextColumn Header="Date" Binding="{Binding Path=DateRegistration, StringFormat=\{0:dd.MM.yyyy\}}"/>
                             <DataGridTextColumn Header="Type of Client" Width="auto" Binding="{Binding Path=TypeOfClient}"/>
                             <DataGridTextColumn Header="Company Name" Width="auto" Binding="{Binding Path=CompanyName}"/>
-                            <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=PrimaryFullName}"/>                            
+                            <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=PrimaryFullName}"/>
                             <DataGridTextColumn Header="Phone Number" Width="auto" Binding="{Binding Path=PrimaryPhoneNumber}"/>
                             <DataGridTextColumn Header="Email" Width="auto" Binding="{Binding Path=PrimaryEmail}"/>
                         </DataGrid.Columns>
@@ -104,14 +104,14 @@
             <TabItem.Content>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>                        
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    
+
                     <Border Grid.Row="0" Style="{StaticResource BorderRadiusSearch}">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -136,7 +136,7 @@
                                    Content="(search by Client Id, Name, Phone, Email)"
                                    Style="{StaticResource LabelSearch}"/>
                         </Grid>
-                    </Border>                    
+                    </Border>
                     <DataGrid Grid.Row="1" 
                               AutoGenerateColumns="False" 
                               IsReadOnly="True" 
@@ -150,7 +150,7 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Id" Binding="{Binding Path=NumberQuota}"/>
                             <DataGridTextColumn Header="Date" Binding="{Binding Path=QuotaDate, StringFormat=\{0:dd.MM.yyyy\}}"/>
-                            <DataGridTextColumn Header="ClientId" Width="auto" Binding="{Binding Path=NumberClient}"/>                            
+                            <DataGridTextColumn Header="ClientId" Width="auto" Binding="{Binding Path=NumberClient}"/>
                             <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=FullName}"/>
                             <DataGridTextColumn Header="Phone" Width="*" Binding="{Binding Path=PhoneNumber}"/>
                             <DataGridTextColumn Header="Email" Width="*" Binding="{Binding Path=Email}"/>
@@ -210,7 +210,7 @@
             </TabItem.Content>
         </TabItem>
 
-        
+
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
@@ -287,7 +287,7 @@
                                   FontWeight="Bold"
                                   Width="200"
                                   Margin="150,5,5,5"
-                                  ItemsSource="{Binding DeliveriesComboBox, UpdateSourceTrigger=PropertyChanged}" 
+                                  ItemsSource="{Binding DeliveriesComboBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                   SelectedItem="{Binding DeliveryComboBoxSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                                   
                                   IsEnabled="{Binding EnableButtonCreat}"/>
                         <Button Content="For Driver" 
@@ -295,17 +295,15 @@
                                 BorderBrush="Green"
                                 Style="{StaticResource FooterButton}" 
                                 Command="{Binding PrintDriverDelivery}"/>
-                        <!--<Button Content="Del" 
-                                Foreground="Red" 
-                                BorderBrush="Red"
-                                Style="{StaticResource FooterButton}" 
-                                Command="{Binding }"/> -->
+                        <CheckBox Content="View Archive"                            
+                                  Style="{StaticResource Archive}"
+                                  IsChecked="{Binding IsCheckedArchiveDelivery, UpdateSourceTrigger=PropertyChanged}"/>
 
                     </StackPanel>
                 </Grid>
             </TabItem.Content>
-        </TabItem> 
-         
+        </TabItem>
+
 
         <TabItem>
             <TabItem.Header>
@@ -354,7 +352,7 @@
                               IsReadOnly="True" 
                               ItemsSource="{Binding WorkOrders, UpdateSourceTrigger=PropertyChanged}" 
                               SelectedItem="{Binding WorkOrderSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                        <DataGrid.Columns>                            
+                        <DataGrid.Columns>
                             <DataGridTextColumn Header="Date" Binding="{Binding Path=DateWork, StringFormat=\{0:dd.MM.yyyy\}}"/>
                             <DataGridTextColumn Header="Quota Id" Binding="{Binding Path=NumberQuota}" />
                             <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=FullName}"/>
@@ -477,7 +475,7 @@
                                 BorderBrush="Green"
                                 Style="{StaticResource FooterButton}" 
                                 Command="{Binding PrintInvoice}"
-                                IsEnabled="{Binding EnableInvoice}"/>                        
+                                IsEnabled="{Binding EnableInvoice}"/>
                     </StackPanel>
                 </Grid>
             </TabItem.Content>
@@ -491,7 +489,7 @@
             <TabItem.Content>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>                        
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
@@ -531,7 +529,7 @@
                         <DataGrid.InputBindings>
                             <MouseBinding Gesture="LeftDoubleClick" Command="{Binding ClickMaterialProfit}"/>
                         </DataGrid.InputBindings>
-                        <DataGrid.Columns>                            
+                        <DataGrid.Columns>
                             <DataGridTextColumn Header="Date" Binding="{Binding Path=InvoiceDate, StringFormat=\{0:dd.MM.yyyy\}}"/>
                             <DataGridTextColumn Header="Invoice Id" Binding="{Binding Path=InvoiceNumber}"/>
                             <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=FullName}" />
@@ -563,7 +561,7 @@
                 </Grid>
             </TabItem.Content>
         </TabItem>
-        
+
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
@@ -574,14 +572,15 @@
             <TabItem.Content>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>                        
+                        <ColumnDefinition Width="187*"/>
+                        <ColumnDefinition Width="707*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <Border Grid.Row="0" Style="{StaticResource BorderRadiusSearch}">
+                    <Border Grid.Row="0" Style="{StaticResource BorderRadiusSearch}" Grid.ColumnSpan="2">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
@@ -614,7 +613,7 @@
                         <DataGrid.InputBindings>
                             <MouseBinding Gesture="LeftDoubleClick" Command="{Binding ClickLabourPrifit}"/>
                         </DataGrid.InputBindings>
-                        <DataGrid.Columns>                            
+                        <DataGrid.Columns>
                             <DataGridTextColumn Header="Date" Binding="{Binding Path=InvoiceDate, StringFormat=\{0:dd.MM.yyyy\}}"/>
                             <DataGridTextColumn Header="Invoice Id" Binding="{Binding Path=InvoiceNumber}" />
                             <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=FullName}"/>
@@ -698,11 +697,11 @@
                             <Style TargetType="DataGridRow">
                                 <Setter Property="Foreground" Value="{Binding Path=ColorPayment}"/>
                             </Style>
-                        </DataGrid.RowStyle>                        
+                        </DataGrid.RowStyle>
                         <DataGrid.InputBindings>
                             <MouseBinding Gesture="LeftDoubleClick" Command="{Binding PaymentDebts}"/>
                         </DataGrid.InputBindings>
-                        <DataGrid.Columns>                            
+                        <DataGrid.Columns>
                             <DataGridTextColumn Header="Date" Binding="{Binding Path=InvoiceDate, StringFormat=\{0:dd.MM.yyyy\}}"/>
                             <DataGridTextColumn Header="Invoice Id" Binding="{Binding Path=InvoiceNumber}" />
                             <DataGridTextColumn Header="Name" Width="auto" Binding="{Binding Path=FullName}"/>
@@ -710,7 +709,7 @@
                             <DataGridTextColumn Header="Email" Width="auto" Binding="{Binding Path=Email}"/>
                             <DataGridTextColumn Header="Debt Name" Width="*" Binding="{Binding Path=NameDebts}" />
                             <DataGridTextColumn Header="Description" Width="*" Binding="{Binding Path=DescriptionDebts}" />
-                            <DataGridTextColumn Header="Amount" Binding="{Binding Path=AmountDebts, StringFormat='0.00'}" />                            
+                            <DataGridTextColumn Header="Amount" Binding="{Binding Path=AmountDebts, StringFormat='0.00'}" />
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel Grid.Row="2" Grid.ColumnSpan="2"
@@ -732,13 +731,13 @@
                                 Style="{StaticResource FooterButton}" 
                                 Command="{Binding DelDebts}"
                                 IsEnabled="{Binding EnableDebts}"/>
-                        
+
                     </StackPanel>
                 </Grid>
             </TabItem.Content>
         </TabItem>
-        
-        
+
+
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
@@ -756,10 +755,10 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    
+
                     <local:ReportMenuControl Grid.Row="1" 
                                              Visibility="{Binding IsVisibleMenuReport}"/>
-                    
+
                 </Grid>
             </TabItem.Content>
         </TabItem>

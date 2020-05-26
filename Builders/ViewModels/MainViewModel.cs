@@ -48,6 +48,7 @@ namespace Builders.ViewModels
         private IEnumerable<Delivery> deliveries;
         private List<string> deliveriesComboBox;
         private string deliveryComboBoxSelect;
+        private bool isCheckedArchiveDelivery;
 
         private bool enableClient;
         private bool enableQuota;
@@ -341,8 +342,16 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(Deliveries));
                 if (Deliveries != null)
                 {
-                    DeliveriesComboBox?.Clear();
-                    DeliveriesComboBox = DeliveriesComboBoxGet();
+                    if (IsCheckedArchiveDelivery)
+                    {
+                        DeliveriesComboBox?.Clear();
+                        DeliveriesComboBox = DeliveriesComboBoxArchiveGet();
+                    }
+                    else
+                    {
+                        DeliveriesComboBox?.Clear();
+                        DeliveriesComboBox = DeliveriesComboBoxGet();
+                    }
                 }
             }
         }
@@ -362,6 +371,29 @@ namespace Builders.ViewModels
             {
                 deliveryComboBoxSelect = value;
                 OnPropertyChanged(nameof(DeliveryComboBoxSelect));
+            }
+        }
+        public bool IsCheckedArchiveDelivery
+        {
+            get { return isCheckedArchiveDelivery; }
+            set
+            {
+                isCheckedArchiveDelivery = value;
+                OnPropertyChanged(nameof(IsCheckedArchiveDelivery));
+                if (IsCheckedArchiveDelivery)
+                {
+                    DeliveriesComboBox?.Clear();
+                    DeliveriesComboBox = DeliveriesComboBoxArchiveGet();
+                    Deliveries = null;
+                    Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == true);
+                }
+                else
+                {
+                    DeliveriesComboBox?.Clear();
+                    DeliveriesComboBox = DeliveriesComboBoxGet();
+                    Deliveries = null;
+                    Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == false);
+                }
             }
         }
 
@@ -1036,6 +1068,7 @@ namespace Builders.ViewModels
                     var order = db.WorkOrders.Where(o => o.QuotaId == item.Id);
                     var receipt = db.Reciepts.Where(r => r.QuotaId == item.Id);
                     var payment = db.Payments.Where(p => p.QuotationId == item.Id);
+                    var delivery = db.Deliveries.Where(d => d.QuotaId == item.Id);
 
                     foreach (var itemIn in invoice)         // Цю херню треба буде викинути і замутити обмеження при створенні Інвойса (один інвойс на одну квоту !!!)
                     {
@@ -1068,11 +1101,18 @@ namespace Builders.ViewModels
                         db.WorkOrder_Works.RemoveRange(work);
                     }
 
+                    foreach (var del in delivery)
+                    {
+                        var mat = db.DeliveryMaterials.Where(m => m.DeliveryId == del.Id);
+                        db.DeliveryMaterials.RemoveRange(mat);
+                    }
+
                     db.Payments.RemoveRange(payment);
                     db.Reciepts.RemoveRange(receipt);
                     db.WorkOrders.RemoveRange(order);
                     db.MaterialQuotations.RemoveRange(material);
                     db.Invoices.RemoveRange(invoice);
+                    db.Deliveries.RemoveRange(delivery);
 
                     db.SaveChanges();
                 }
@@ -1084,6 +1124,10 @@ namespace Builders.ViewModels
                 db.Clients.Remove(ClientSelect);
                 db.SaveChanges();
                 Clients = db.Clients.Local.ToBindingList();
+
+                Deliveries = null;
+                Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == false);
+                IsCheckedArchiveDelivery = false;
             }
         }));
         public Command LoadClient => _loadClient ?? (_loadClient = new Command(async obj =>
@@ -1315,8 +1359,10 @@ namespace Builders.ViewModels
                 db.SaveChanges();
                 Quotations = null;
                 Quotations = db.Quotations.Local.ToBindingList().OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
+               
                 Deliveries = null;
-                Deliveries = db.Deliveries.Local.ToBindingList();
+                Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == false);
+                IsCheckedArchiveDelivery = false;
             }
         }));
         public Command CopyQuotation => _copyQuotation ?? (_copyQuotation = new Command(async obj =>
@@ -1614,7 +1660,7 @@ namespace Builders.ViewModels
 
                 Quotations = db.Quotations.Local.ToBindingList().OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
                 WorkOrders = db.WorkOrders.Local.ToBindingList();
-                Deliveries = db.Deliveries.Local.ToBindingList();
+                Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == false);
             }
         }));
         public Command PaymentQuotation => _paymentQuotation ?? (_paymentQuotation = new Command(async obj =>
@@ -1684,8 +1730,20 @@ namespace Builders.ViewModels
                                 PhoneNumber = temp.PrimaryPhoneNumber,
                                 Email = temp.PrimaryEmail
                             };
+                            
+                            var deliveryToArchive = db.Deliveries.Where(d => d.QuotaId == quotaId);
+                            foreach (var item in deliveryToArchive)
+                            {
+                                item.IsArchive = true;
+                                db.Entry(item).State = EntityState.Modified;
+                            }
                             db.Invoices.Add(inv);
                             db.SaveChanges();
+
+                            Deliveries = null;
+                            Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == false);
+                            IsCheckedArchiveDelivery = false;
+
                             Invoices = null;
                             Invoices = db.Invoices.Local.ToBindingList();
 
@@ -2061,7 +2119,7 @@ namespace Builders.ViewModels
                 db.SaveChanges();
 
                 Deliveries = null;
-                Deliveries = db.Deliveries.Local.ToBindingList();
+                Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == false);
             }
         }));
         public Command PrintDriverDelivery => _printDriverDelivery ?? (_printDriverDelivery = new Command(obj =>
@@ -2112,11 +2170,11 @@ namespace Builders.ViewModels
             string search = obj.ToString();
             if (search == "")
             {
-                Deliveries = db.Deliveries.Local.ToBindingList();
+                Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == false);
             }
             else
             {
-                Deliveries = Deliveries.Where(n => n.FullSearch.ToUpper().Contains(search.ToUpper()));
+                Deliveries = Deliveries.Where(n => n.IsArchive == false && n.FullSearch.ToUpper().Contains(search.ToUpper()));
             }
         }));
         public Command DubleClickDelivery => _dubleClickDelivery ?? (_dubleClickDelivery = new Command(async obj=> 
@@ -2132,25 +2190,23 @@ namespace Builders.ViewModels
                 {
                     if (deliveryVM.OrderNumber != "")
                     {
-                        DeliverySelect.OrderNumber = deliveryVM.OrderNumber;
-                        //DeliverySelect.AmountDelivery = decimal.Round(deliveryVM.AmountDelivery, 2);
+                        DeliverySelect.OrderNumber = deliveryVM.OrderNumber;                        
                         DeliverySelect.Color = "Blue";
                         db.Entry(DeliverySelect).State = EntityState.Modified;
                         db.SaveChanges();
 
                         Deliveries = null;
-                        Deliveries = db.Deliveries.Local.ToBindingList();
+                        Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == false);
                     }
                     else
                     {
-                        DeliverySelect.OrderNumber = deliveryVM.OrderNumber;
-                        //DeliverySelect.AmountDelivery = decimal.Round(deliveryVM.AmountDelivery, 2);
+                        DeliverySelect.OrderNumber = deliveryVM.OrderNumber;                        
                         DeliverySelect.Color = "Red";
                         db.Entry(DeliverySelect).State = EntityState.Modified;
                         db.SaveChanges();
 
                         Deliveries = null;
-                        Deliveries = db.Deliveries.Local.ToBindingList();
+                        Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == false);
                     }
                 }
             }
@@ -2179,6 +2235,17 @@ namespace Builders.ViewModels
                     PhoneNumber = temp.PrimaryPhoneNumber,
                     Email = temp.PrimaryEmail
                 };
+
+                var deliveryToArchive = db.Deliveries.Where(d => d.QuotaId == inv.QuotaId);
+                foreach (var item in deliveryToArchive)
+                {
+                    item.IsArchive = true;
+                    db.Entry(item).State = EntityState.Modified;
+                }
+                Deliveries = null;
+                Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == false);
+                IsCheckedArchiveDelivery = false;
+
                 db.Invoices.Add(inv);
                 db.SaveChanges();
                 Invoices = null;
@@ -3344,6 +3411,8 @@ namespace Builders.ViewModels
             await displayRootRegistry.ShowModalPresentation(supplierViewModel);
         }));
 
+       
+
         #endregion
         public MainViewModel()
         {
@@ -3367,7 +3436,7 @@ namespace Builders.ViewModels
             MaterialProfits = db.MaterialProfits.Local.ToBindingList();
             LabourProfits = db.LabourProfits.Local.ToBindingList();
             Debts = db.Debts.Local.ToBindingList();
-            Deliveries = db.Deliveries.Local.ToBindingList();
+            Deliveries = db.Deliveries.Local.ToBindingList().Where(d=>d.IsArchive == false);
             ListLoaded();
             NameQuotaSelect = "ESTIMATE";
 
@@ -3564,7 +3633,7 @@ namespace Builders.ViewModels
                     }
                     //OnPropertyChanged(nameof(Deliveries));
                     Deliveries = null;
-                    Deliveries = db.Deliveries.Local.ToBindingList();
+                    Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == false);
 
                     var del = db.Deliveries.OrderByDescending(d => d.Id).FirstOrDefault();
 
@@ -3590,11 +3659,6 @@ namespace Builders.ViewModels
                     }
                 }
             }
-
-            //var material = db.MaterialQuotations.Where(m => m.QuotationId == quota.Id).Where(m=>m.Groupe == "FLOORING" || m.Groupe == "ACCESSORIES");        
-
-
-
         }
         /// <summary>
         /// Створює екземпляр MaterialProfit по заданому Invoice та записує в db.
@@ -4369,7 +4433,31 @@ namespace Builders.ViewModels
         private List<string> DeliveriesComboBoxGet()
         {
             List<string> comboBox = new List<string>();
-            var name = Deliveries.Where(d => d.Id > 0).ToList();
+            var name = db.Deliveries.Where(d => d.IsArchive == false).ToList();
+
+            if (name.Count > 0)
+            {
+                foreach (var item in name)
+                {
+                    comboBox.Add(item.NameComboBox);
+                }
+                comboBox = comboBox.OrderBy(x => name).Distinct().ToList();
+            }
+            else
+            {
+                comboBox?.Clear();
+            }
+
+            return comboBox;
+        }
+        /// <summary>
+        /// Завантажує ComboBox унікальними даними з Архіву
+        /// </summary>
+        /// <returns></returns>
+        private List<string> DeliveriesComboBoxArchiveGet()
+        {            
+            List<string> comboBox = new List<string>();
+            var name = db.Deliveries.Where(d => d.IsArchive == true).ToList();
 
             if (name.Count > 0)
             {
