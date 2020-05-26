@@ -2519,11 +2519,8 @@ namespace Builders.ViewModels
                     {
                         ExcelApp.Cells[i, 1] = item.Item;
                         ExcelApp.Cells[i, 2] = item.Description;
-                        ExcelApp.Cells[i, 3] = item.Contractor;
-                        ExcelApp.Cells[i, 4] = item.Quantity;
-                        ExcelApp.Cells[i, 5] = item.Rate;
-                        ExcelApp.Cells[i, 6] = item.Price;
-                        ExcelApp.Cells[i, 7] = item.Procent.ToString() + " %";
+                        ExcelApp.Cells[i, 6] = item.Contractor;
+                        ExcelApp.Cells[i, 7] = item.Quantity;                        
                         ExcelApp.Cells[i, 8] = item.Payout;
                         i++;
                     }
@@ -2536,11 +2533,8 @@ namespace Builders.ViewModels
                     {
                         ExcelApp.Cells[i, 1] = item.Item;
                         ExcelApp.Cells[i, 2] = item.Description;
-                        ExcelApp.Cells[i, 3] = item.Contractor;
-                        ExcelApp.Cells[i, 4] = item.Quantity;
-                        ExcelApp.Cells[i, 5] = item.Rate;
-                        ExcelApp.Cells[i, 6] = item.Price;
-                        ExcelApp.Cells[i, 7] = item.Procent.ToString() + " %";
+                        ExcelApp.Cells[i, 6] = item.Contractor;
+                        ExcelApp.Cells[i, 7] = item.Quantity;                        
                         ExcelApp.Cells[i, 8] = item.Payout;
                         i++;
                     }
@@ -2553,11 +2547,8 @@ namespace Builders.ViewModels
                     {
                         ExcelApp.Cells[i, 1] = item.Item;
                         ExcelApp.Cells[i, 2] = item.Description;
-                        ExcelApp.Cells[i, 3] = item.Contractor;
-                        ExcelApp.Cells[i, 4] = item.Quantity;
-                        ExcelApp.Cells[i, 5] = item.Rate;
-                        ExcelApp.Cells[i, 6] = item.Price;
-                        ExcelApp.Cells[i, 7] = item.Procent.ToString() + " %";
+                        ExcelApp.Cells[i, 6] = item.Contractor;
+                        ExcelApp.Cells[i, 7] = item.Quantity;                        
                         ExcelApp.Cells[i, 8] = item.Payout;
                         i++;
                     }
