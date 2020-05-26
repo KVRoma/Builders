@@ -1413,14 +1413,12 @@ namespace Builders.ViewModels
         }));
         public Command PrintQuotation => _printQuotation ?? (_printQuotation = new Command(obj =>
         {
-
-
             if (QuotationSelect != null && NameQuotaSelect != null)
-            {
+            {                
                 if (NameQuotaSelect == "INVOICE")
                 {
                     // Додати зміну в назві поля !!!! наприклад РІ1004
-                    QuotationSelect.PrefixNumberQuota = "PI";
+                    QuotationSelect.PrefixNumberQuota = "PI";                    
                 }
                 else
                 {
@@ -1594,10 +1592,29 @@ namespace Builders.ViewModels
                 ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
                 ExcelApp.Calculate();
 
-                db.Entry(QuotationSelect).State = EntityState.Modified;
+                db.Entry(QuotationSelect).State = EntityState.Modified;                
+
+                var delivery = db.Deliveries.FirstOrDefault(d => d.QuotaId == QuotationSelect.Id);
+                var workOrder = db.WorkOrders.FirstOrDefault(w => w.QuotaId == QuotationSelect.Id);
+                if (delivery != null)
+                {
+                    delivery.NumberQuota = QuotationSelect.NumberQuota;
+                    db.Entry(delivery).State = EntityState.Modified;                    
+                }
+                if (workOrder != null)
+                {
+                    workOrder.NumberQuota = QuotationSelect.NumberQuota;
+                    db.Entry(workOrder).State = EntityState.Modified;                    
+                }
+
                 db.SaveChanges();
+                Deliveries = null;
+                WorkOrders = null;
                 Quotations = null;
-                Quotations = db.Quotations.Local.ToBindingList();
+
+                Quotations = db.Quotations.Local.ToBindingList().OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
+                WorkOrders = db.WorkOrders.Local.ToBindingList();
+                Deliveries = db.Deliveries.Local.ToBindingList();
             }
         }));
         public Command PaymentQuotation => _paymentQuotation ?? (_paymentQuotation = new Command(async obj =>
@@ -2022,8 +2039,8 @@ namespace Builders.ViewModels
                 ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\ListOfSuppliesPDF.xltm");   //Вказуємо шлях до шаблону
 
                 ExcelApp.Cells[3, 6] = DeliverySelect.DateCreating;
-                ExcelApp.Cells[6, 2] = "\"" + client.NumberClient + " - " + quota.NumberQuota + "\"";
-                ExcelApp.Cells[7, 2] = "\"CMO" + " - " + client.PrimaryFullName + "\"" ;
+                ExcelApp.Cells[6, 2] = "\"" + client?.NumberClient + " - " + quota?.NumberQuota + "\"";
+                ExcelApp.Cells[7, 2] = "\"CMO" + " - " + client?.PrimaryFullName + "\"" ;
                 ExcelApp.Cells[9, 2] = dic?.Supplier;
                 ExcelApp.Cells[10, 2] = dic?.Address;
 
