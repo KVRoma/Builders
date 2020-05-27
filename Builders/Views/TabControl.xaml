@@ -444,10 +444,11 @@
                             <DataGridTextColumn Header="Date" Binding="{Binding Path=DateInvoice, StringFormat=\{0:dd.MM.yyyy\}}"/>
                             <DataGridTextColumn Header="Quota Id" Width="auto" Binding="{Binding Path=NumberQuota}"/>
                             <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=FullName}"/>
-                            <DataGridTextColumn Header="Phone" Width="*" Binding="{Binding Path=PhoneNumber}"/>
-                            <DataGridTextColumn Header="Email" Width="*" Binding="{Binding Path=Email}"/>
-                            <DataGridTextColumn Header="SO/Pick-Up #" Width="auto" Binding="{Binding Path=UpNumber}"/>
-                            <DataGridTextColumn Header="PO #" Width="auto" Binding="{Binding Path=OrderNumber}"/>
+                            <DataGridTextColumn Header="Phone" Width="auto" Binding="{Binding Path=PhoneNumber}"/>
+                            <DataGridTextColumn Header="Email" Width="auto" Binding="{Binding Path=Email}"/>
+                            <DataGridTextColumn Header="Material Profit" Width="auto" Binding="{Binding Path=MaterialProfit, StringFormat='0.00'}"/>
+                            <DataGridTextColumn Header="Labour Profit" Width="auto" Binding="{Binding Path=LabourProfit, StringFormat='0.00'}"/>
+                            <DataGridTextColumn Header="Material + Labour" Width="auto" Binding="{Binding Path=TotalProfit, StringFormat='0.00'}"/>
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel Grid.Row="2" 

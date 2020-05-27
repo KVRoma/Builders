@@ -37,5 +37,9 @@ namespace Builders.Models
         public string NumberQuota { get; set; }        
         public string UpNumber { get; set; }
         public string OrderNumber { get; set; }
+
+        public decimal MaterialProfit { get; set; }
+        public decimal LabourProfit { get; set; }
+        public decimal TotalProfit { get; set; }
     }
 }

@@ -1742,15 +1742,17 @@ namespace Builders.ViewModels
 
                             Deliveries = null;
                             Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == false);
-                            IsCheckedArchiveDelivery = false;
-
-                            Invoices = null;
-                            Invoices = db.Invoices.Local.ToBindingList();
+                            IsCheckedArchiveDelivery = false;                                                       
 
                             int? NewInvoiceId = db.Invoices.Local.ToBindingList().OrderByDescending(q => q.Id).FirstOrDefault().Id;
                             AddMaterialProfit(NewInvoiceId);
                             AddLabourProfit(NewInvoiceId);
                             AddDebtsTab(NewInvoiceId);
+                            var material = db.MaterialProfits.FirstOrDefault(m=>m.InvoiceId == NewInvoiceId);
+                            var labour = db.LabourProfits.FirstOrDefault(l => l.InvoiceId == NewInvoiceId);
+                            MaterialProfitCalculate(material);
+                            LabourProfitCalculate(labour);
+                            InvoiceCalculate(NewInvoiceId);
                         }
                     }
                 }
@@ -2248,8 +2250,8 @@ namespace Builders.ViewModels
 
                 db.Invoices.Add(inv);
                 db.SaveChanges();
-                Invoices = null;
-                Invoices = db.Invoices.Local.ToBindingList();
+                //Invoices = null;
+                //Invoices = db.Invoices.Local.ToBindingList();
 
                 int? NewInvoiceId = db.Invoices.Local.ToBindingList().OrderByDescending(q => q.Id).FirstOrDefault().Id;
                 AddMaterialProfit(NewInvoiceId);
@@ -2257,6 +2259,7 @@ namespace Builders.ViewModels
                 AddLabourProfit(NewInvoiceId);
                 LabourProfitCalculate(LabourProfitSelect);
                 AddDebtsTab(NewInvoiceId);
+                InvoiceCalculate(NewInvoiceId);
             }
         }));
         public Command InsInvoice => _insInvoice ?? (_insInvoice = new Command(async obj =>
@@ -2677,10 +2680,12 @@ namespace Builders.ViewModels
         {
             if (MaterialProfitSelect != null)
             {
+                int? temp = MaterialProfitSelect.InvoiceId;
                 var displayRootRegistry = (Application.Current as App).displayRootRegistry;
                 var mp = new MaterialProfitViewModel(ref db, MaterialProfitSelect);
                 await displayRootRegistry.ShowModalPresentation(mp);
                 MaterialProfitCalculate(MaterialProfitSelect);
+                InvoiceCalculate(temp);
             }
         }));
         public Command PrintMaterialProfit => _printMaterialProfit ?? (_printMaterialProfit = new Command(obj =>
@@ -2816,11 +2821,13 @@ namespace Builders.ViewModels
         {
             if (LabourProfitSelect != null)
             {
+                int? temp = LabourProfitSelect.InvoiceId;
                 var displayRootRegistry = (Application.Current as App).displayRootRegistry;
                 var lp = new LabourProfitViewModel(ref db, LabourProfitSelect);
                 await displayRootRegistry.ShowModalPresentation(lp);
                 InsDebtsTab(LabourProfitSelect.InvoiceId);
                 LabourProfitCalculate(LabourProfitSelect);
+                InvoiceCalculate(temp);
             }
         }));
         public Command PrintLabourProfit => _printLabourProfit ?? (_printLabourProfit = new Command(obj =>
@@ -3775,7 +3782,7 @@ namespace Builders.ViewModels
                 db.SaveChanges();
 
                 MaterialProfits = null;
-                MaterialProfits = db.MaterialProfits.Local.ToBindingList();
+                MaterialProfits = db.MaterialProfits.Local.ToBindingList();                
             }
         }
         /// <summary>
@@ -3925,8 +3932,22 @@ namespace Builders.ViewModels
             }
 
         }
+        /// <summary>
+        /// Записує профіти в створений Invoice
+        /// </summary>
+        /// <param name="invoiceId"></param>
         private void InvoiceCalculate(int? invoiceId)
-        { 
+        {
+            decimal material = db.MaterialProfits.FirstOrDefault(m=>m.InvoiceId == invoiceId)?.ProfitTotal ?? 0m;
+            decimal labour = db.LabourProfits.FirstOrDefault(l => l.InvoiceId == invoiceId)?.ProfitTotal ?? 0m;
+            var invoice = db.Invoices.Find(invoiceId);
+            invoice.MaterialProfit = material;
+            invoice.LabourProfit = labour;
+            invoice.TotalProfit = decimal.Round(material + labour, 2);
+            db.Entry(invoice).State = EntityState.Modified;
+            db.SaveChanges();
+            Invoices = null;
+            Invoices = db.Invoices.Local.ToBindingList();
         }
         /// <summary>
         /// Створює екземпляри Debts по всім Contractor з вказаного Invoice та записує їх в db
