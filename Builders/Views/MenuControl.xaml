@@ -14,6 +14,7 @@
                 <MenuItem Header="Load Expenses from .xls" Command="{Binding LaodExpensesFromXls}" Foreground="Green"/>
                 <MenuItem Header=""/>
                 <MenuItem Header="Load Image for select Client" Command="{Binding LoadFoto}" Foreground="Green" IsEnabled="{Binding EnableClient}"/>
+                <MenuItem Header="Load Image for select Material Profit" Command="{Binding LoadFotoMaterialProfit}" Foreground="Green" IsEnabled="{Binding EnableMaterialProfit}"/>
                 <MenuItem Header=""/>
                 <MenuItem Header="Creat Template Quota" Command="{Binding TemplateQuotation}" Foreground="Blue"/>
                 <MenuItem Header="Creat Template Client" Command="{Binding TemplateClient }" Foreground="Blue"/>

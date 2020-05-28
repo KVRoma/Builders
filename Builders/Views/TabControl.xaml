@@ -558,6 +558,12 @@
                                 Style="{StaticResource FooterButton}" 
                                 Command="{Binding PrintMaterialProfit}"
                                 IsEnabled="{Binding EnableMaterialProfit}"/>
+                        <Button Content="Image" 
+                                Foreground="Blue"
+                                BorderBrush="Blue"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding ViewFotoMaterialProfit}"
+                                IsEnabled="{Binding EnableMaterialProfit}"/>
                     </StackPanel>
                 </Grid>
             </TabItem.Content>

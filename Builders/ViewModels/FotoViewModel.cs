@@ -19,7 +19,8 @@ namespace Builders.ViewModels
         public string BackButton { get; } = "<<";
         private string sheetsCount;
 
-        private Client clientSelect;
+        private int? clientSelectId;
+        private string maskName;
         private BitmapImage image;
         private string nameFile;
         private List<string> images;
@@ -34,13 +35,22 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(SheetsCount));
             }
         }
-        public Client ClientSelect
+        public int? ClientSelectId
         {
-            get { return clientSelect; }
+            get { return clientSelectId; }
             set
             {
-                clientSelect = value;
-                OnPropertyChanged(nameof(ClientSelect));
+                clientSelectId = value;
+                OnPropertyChanged(nameof(ClientSelectId));
+            }
+        }
+        public string MaskName
+        {
+            get { return maskName; }
+            set 
+            {
+                maskName = value;
+                OnPropertyChanged(nameof(MaskName));
             }
         }
         public BitmapImage Image
@@ -127,9 +137,10 @@ namespace Builders.ViewModels
             }
         }));
 
-        public FotoViewModel(Client select)
+        public FotoViewModel(int? selectId, string mask)
         {
-            ClientSelect = select;
+            ClientSelectId = selectId;
+            MaskName = mask;
             images = GetFotoNameArray(Directory.GetCurrentDirectory() + "\\Foto");
             NameFile = (images.Count > 0) ? (images[0]) : (null);
             imgCounter = 0;
@@ -153,7 +164,7 @@ namespace Builders.ViewModels
         /// <returns></returns>
         public List<string> GetFotoNameArray(string pathDir)
         {
-            string[] images = Directory.GetFiles(pathDir, ClientSelect.Id + "_*");    // зберігаємо масив фото з каталогу  
+            string[] images = Directory.GetFiles(pathDir, ClientSelectId + MaskName);    // зберігаємо масив фото з каталогу  
             return new List<string>(images);
         }
 

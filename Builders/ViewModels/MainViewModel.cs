@@ -935,6 +935,8 @@ namespace Builders.ViewModels
         private Command _printMaterialProfit;
         private Command _searchMaterialProfit;
         private Command _clickMaterialProfit;
+        private Command _loadFotoMaterialProfit;
+        private Command _viewFotoMaterialProfit;
         //*********************************
         private Command _insLabourProfit;
         private Command _printLabourProfit;
@@ -989,7 +991,7 @@ namespace Builders.ViewModels
                     {
                         foreach (string fil in files)
                         {
-                            File.Copy(fil, Path.Combine(SecondDir, ClientSelect.Id + "_" + Path.GetRandomFileName() + Path.GetExtension(fil)), true);
+                            File.Copy(fil, Path.Combine(SecondDir, ClientSelect.Id + "_client_" + Path.GetRandomFileName() + Path.GetExtension(fil)), true);
                         }
                     }
                     //************************
@@ -1003,7 +1005,7 @@ namespace Builders.ViewModels
         public Command ViewFoto => _viewFoto ?? (_viewFoto = new Command(async obj =>
         {
             var displayRootRegistry = (Application.Current as App).displayRootRegistry;
-            var foto = new FotoViewModel(ClientSelect);
+            var foto = new FotoViewModel(ClientSelect.Id, "_client_*");
             await displayRootRegistry.ShowModalPresentation(foto);
         }));
 
@@ -2815,6 +2817,43 @@ namespace Builders.ViewModels
                 MaterialProfits = null;
                 MaterialProfits = db.MaterialProfits.Local.ToBindingList();
             }
+        }));
+        public Command LoadFotoMaterialProfit => _loadFotoMaterialProfit ?? (_loadFotoMaterialProfit = new Command(obj=> 
+        {
+            if (MaterialProfitSelect != null)
+            {
+                string[] files = OpenFileArray("Image files (*.png;*.jpeg;*.jpg;*.JPG)|*.png;*.jpeg;*.jpg;*.JPG");
+
+                if (worker != null && worker.IsBusy) { return; }
+                worker = new BackgroundWorker();
+                worker.DoWork += worker_DoWork;
+                worker.RunWorkerAsync();
+                void worker_DoWork(object sender, DoWorkEventArgs e)
+                {
+                    ProgressStart();
+
+                    // Основні затратні задачі
+                    string SecondDir = Directory.GetCurrentDirectory() + "\\Foto";
+
+                    if (files != null)
+                    {
+                        foreach (string fil in files)
+                        {
+                            File.Copy(fil, Path.Combine(SecondDir, MaterialProfitSelect.Id + "_mat_" + Path.GetRandomFileName() + Path.GetExtension(fil)), true);                            
+                        }
+                    }
+                    //************************
+
+                    ProgressStop();
+                }
+
+            }
+        }));
+        public Command ViewFotoMaterialProfit => _viewFotoMaterialProfit ?? (_viewFotoMaterialProfit = new Command(async obj=> 
+        {
+            var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+            var foto = new FotoViewModel(MaterialProfitSelect.Id, "_mat_*");
+            await displayRootRegistry.ShowModalPresentation(foto);
         }));
         //**********************************
         public Command InsLabourProfit => _insLabourProfit ?? (_insLabourProfit = new Command(async obj =>
