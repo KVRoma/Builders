@@ -20,6 +20,7 @@ namespace Builders.Models
         public DbSet<WorkOrder> WorkOrders { get; set; }
         public DbSet<WorkOrder_Work> WorkOrder_Works { get; set; }
         public DbSet<WorkOrder_Installation> WorkOrder_Installations { get; set; }
+        public DbSet<WorkOrder_Accessories> WorkOrder_Accessories { get; set; }
         public DbSet<WorkOrder_Contractor> WorkOrder_Contractors { get; set; }
         public DbSet<Reciept> Reciepts { get; set; }
         public DbSet<MaterialProfit> MaterialProfits { get; set; }

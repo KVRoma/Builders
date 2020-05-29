@@ -1095,11 +1095,13 @@ namespace Builders.ViewModels
                     foreach (var ord in order)
                     {
                         var work = db.WorkOrder_Works.Where(w => w.WorkOrderId == ord.Id);
+                        var accessories = db.WorkOrder_Accessories.Where(a => a.WorkOrderId == ord.Id);
                         var inst = db.WorkOrder_Installations.Where(i => i.WorkOrderId == ord.Id);
                         var con = db.WorkOrder_Contractors.Where(c => c.WorkOrderId == ord.Id);
 
                         db.WorkOrder_Contractors.RemoveRange(con);
                         db.WorkOrder_Installations.RemoveRange(inst);
+                        db.WorkOrder_Accessories.RemoveRange(accessories);
                         db.WorkOrder_Works.RemoveRange(work);
                     }
 
@@ -1345,10 +1347,12 @@ namespace Builders.ViewModels
                 foreach (var item in order)
                 {
                     var work = db.WorkOrder_Works.Where(w => w.WorkOrderId == item.Id);
+                    var accessories = db.WorkOrder_Accessories.Where(a => a.WorkOrderId == item.Id);
                     var inst = db.WorkOrder_Installations.Where(ins => ins.WorkOrderId == item.Id);
                     var con = db.WorkOrder_Contractors.Where(c => c.WorkOrderId == item.Id);
                     db.WorkOrder_Contractors.RemoveRange(con);
                     db.WorkOrder_Installations.RemoveRange(inst);
+                    db.WorkOrder_Accessories.RemoveRange(accessories);
                     db.WorkOrder_Works.RemoveRange(work);
                 }
                 db.Deliveries.RemoveRange(delivery);
@@ -2547,10 +2551,12 @@ namespace Builders.ViewModels
             if (WorkOrderSelect != null)
             {
                 var work = db.WorkOrder_Works.Where(w => w.WorkOrderId == WorkOrderSelect.Id);
+                var accessories = db.WorkOrder_Accessories.Where(a => a.WorkOrderId == WorkOrderSelect.Id);
                 var install = db.WorkOrder_Installations.Where(i => i.WorkOrderId == WorkOrderSelect.Id);
                 var contract = db.WorkOrder_Contractors.Where(c => c.WorkOrderId == WorkOrderSelect.Id);
                 db.WorkOrder_Contractors.RemoveRange(contract);
                 db.WorkOrder_Installations.RemoveRange(install);
+                db.WorkOrder_Accessories.RemoveRange(accessories);
                 db.WorkOrder_Works.RemoveRange(work);
                 db.WorkOrders.Remove(WorkOrderSelect);
                 db.SaveChanges();
@@ -2573,6 +2579,7 @@ namespace Builders.ViewModels
                     var quota = db.Quotations.FirstOrDefault(q => q.Id == WorkOrderSelect.QuotaId);
                     var client = db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
                     var work = db.WorkOrder_Works.Where(w => w.WorkOrderId == WorkOrderSelect.Id && w.Contractor == contractor.Contractor);
+                    var accessories = db.WorkOrder_Accessories.Where(a => a.WorkOrderId == WorkOrderSelect.Id && a.Contractor == contractor.Contractor);
                     var inst = db.WorkOrder_Installations.Where(ins => ins.WorkOrderId == WorkOrderSelect.Id && ins.Contractor == contractor.Contractor);
                     var cont = db.WorkOrder_Contractors.Where(c => c.WorkOrderId == WorkOrderSelect.Id && c.Contractor == contractor.Contractor).OrderBy(c => c.Contractor);
 
@@ -2609,7 +2616,18 @@ namespace Builders.ViewModels
                         i++;
                     }
 
-                    i = 40;
+                    i = 41;
+                    foreach (var item in accessories)
+                    {
+                        ExcelApp.Cells[i, 1] = item.Area;
+                        ExcelApp.Cells[i, 2] = item.Room;
+                        ExcelApp.Cells[i, 3] = item.OldAccessories;
+                        ExcelApp.Cells[i, 5] = item.NewAccessories;                        
+                        ExcelApp.Cells[i, 7] = item.Notes;
+                        i++;
+                    }
+
+                    i = 61;
                     foreach (var item in inst)
                     {
                         if (item.Groupe == "DEMOLITION")
@@ -2624,7 +2642,7 @@ namespace Builders.ViewModels
                         }
                     }
 
-                    i = 46;
+                    i = 67;
                     foreach (var item in inst)
                     {
                         if (item.Groupe == "INSTALLATION")
@@ -2639,7 +2657,7 @@ namespace Builders.ViewModels
                         }
                     }
 
-                    i = 55;
+                    i = 76;
                     foreach (var item in inst)
                     {
                         if (item.Groupe == "OPTIONAL SERVICES")
@@ -2654,7 +2672,7 @@ namespace Builders.ViewModels
                         }
                     }
 
-                    i = 64;
+                    i = 85;
                     foreach (var item in cont)
                     {
                         ExcelApp.Cells[i, 1] = item.Contractor;

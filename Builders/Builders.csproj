@@ -129,6 +129,7 @@
     <Compile Include="Models\ReportPayrollToWork.cs" />
     <Compile Include="Models\ReportTotal.cs" />
     <Compile Include="Models\WorkOrder.cs" />
+    <Compile Include="Models\WorkOrder_Accessories.cs" />
     <Compile Include="Models\WorkOrder_Contractor.cs" />
     <Compile Include="Models\WorkOrder_Installation.cs" />
     <Compile Include="Models\WorkOrder_Work.cs" />

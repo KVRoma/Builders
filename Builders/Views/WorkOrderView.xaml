@@ -9,16 +9,15 @@
         Title="{Binding WindowName}" 
         Style="{StaticResource WindowStyle}"
         MinHeight="800"
-        MinWidth="900"
+        MinWidth="1000"
         Height="800" 
-        Width="900">
+        Width="1000">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        
         <Border Grid.Row="0" Style="{StaticResource BorderRadiusBlack}">
             <Grid >
                 <Grid.RowDefinitions>
@@ -34,7 +33,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
-                   
+
                 </Grid.ColumnDefinitions>
                 <Label Grid.Row="0" Grid.Column="0" Content="Quote/Agreement" FontWeight="Bold" />
                 <ComboBox Grid.Row="0" Grid.Column="1" 
@@ -55,8 +54,8 @@
                 <Label Grid.Row="1" Grid.Column="2" Content="Completion Date" FontWeight="Bold"/>
                 <DatePicker Grid.Row="1" Grid.Column="3"
                             SelectedDate="{Binding CompletionDate}"/>
-                
-                
+
+
                 <Label Grid.Row="2" 
                        Grid.Column="0" 
                        Content="Notes" 
@@ -82,285 +81,445 @@
                         IsEnabled="{Binding EnableButtonCreat}"/>
             </Grid>
         </Border>
-        <Border Grid.Row="1" 
-                Style="{StaticResource BorderRadiusBlack}" 
-                IsEnabled="{Binding EnableWork}" >
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <DataGrid Grid.Row="0" 
-                              AutoGenerateColumns="False" 
-                              IsReadOnly="True" 
-                              ItemsSource="{Binding Works, UpdateSourceTrigger=PropertyChanged}" 
-                              SelectedItem="{Binding WorkSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                    <DataGrid.RowStyle>
-                        <Style TargetType="DataGridRow">
-                            <Setter Property="Foreground" Value="{Binding Path=Color}"/>
-                        </Style>
-                    </DataGrid.RowStyle>
-                    <DataGrid.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Style.Triggers>
-                                <Trigger Property="DataGridRow.IsSelected" Value="False">
-                                    <Setter Property="Foreground" Value="{Binding Path=Color}"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGrid.CellStyle>
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Area" Width="auto" Binding="{Binding Path=Area}"/>
-                        <DataGridTextColumn Header="Room" Width="auto" Binding="{Binding Path=Room}"/>
-                        <DataGridTextColumn Header="Existing Floor" Width="auto" Binding="{Binding Path=Existing}"/>
-                        <DataGridTextColumn Header="New Floor" Width="*" Binding="{Binding Path=NewFloor}"/>
-                        <DataGridTextColumn Header="Furniture Moving" Width="auto" Binding="{Binding Path=Furniture}"/>
-                        <DataGridTextColumn Header="Caution/Notes" Width="*" Binding="{Binding Path=Misc}"/>
-                        <DataGridTextColumn Header="Contractor" Width="*" Binding="{Binding Path=Contractor}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <Grid Grid.Row="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Grid.Row="0" Content="Area" HorizontalContentAlignment="Center"/>
-                    <ComboBox Grid.Column="0" Grid.Row="1" Margin="2"
+        
+        <TabControl Grid.Row="1" 
+                    TabStripPlacement="Left" 
+                    ItemContainerStyle="{StaticResource TabItemStyle1}" 
+                    IsEnabled="{Binding EnableWork}">
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="15" 
+                                   Text="Floor" 
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Border Style="{StaticResource BorderRadiusBlack}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Grid.Row="0" Content="Area" HorizontalContentAlignment="Center"/>
+                                <ComboBox Grid.Column="0" Grid.Row="1" Margin="2"
                               HorizontalContentAlignment="Center"                   
                               ItemsSource="{Binding Areas }" 
                               SelectedItem="{Binding AreaSelect, Mode=TwoWay}" 
                               DisplayMemberPath="Name"/>
-                    <Label Grid.Column="1" Grid.Row="0" Content="Room" HorizontalContentAlignment="Center"/>
-                    <ComboBox Grid.Column="1" Grid.Row="1" Margin="2"
+                                <Label Grid.Column="1" Grid.Row="0" Content="Room" HorizontalContentAlignment="Center"/>
+                                <ComboBox Grid.Column="1" Grid.Row="1" Margin="2"
                               HorizontalContentAlignment="Center"                   
                               ItemsSource="{Binding Rooms }" 
                               SelectedItem="{Binding RoomSelect, Mode=TwoWay}" 
                               DisplayMemberPath="Name"/>
-                    <Label Grid.Column="2" Grid.Row="0" Content="Existing Floor" HorizontalContentAlignment="Center"/>
-                    <ComboBox Grid.Column="2" Grid.Row="1" Margin="2"
+                                <Label Grid.Column="2" Grid.Row="0" Content="Existing Floor" HorizontalContentAlignment="Center"/>
+                                <ComboBox Grid.Column="2" Grid.Row="1" Margin="2"
                               HorizontalContentAlignment="Center"                   
                               ItemsSource="{Binding Floors }" 
                               SelectedItem="{Binding FloorSelect, Mode=TwoWay}" 
                               DisplayMemberPath="Name"/>
-                    <Label Grid.Column="3" Grid.Row="0" Content="New Floor" HorizontalContentAlignment="Center"/>
-                    <TextBox Grid.Column="3" Grid.Row="1" Margin="2"
+                                <Label Grid.Column="3" Grid.Row="0" Content="New Floor" HorizontalContentAlignment="Center"/>
+                                <TextBox Grid.Column="3" Grid.Row="1" Margin="2"
                              Text="{Binding NewFloor}"
                              HorizontalContentAlignment="Center" 
                              TextWrapping="NoWrap" 
                              AcceptsReturn="False"/>
-                    <Label Grid.Column="4" Grid.Row="0" Content="Furniture Moving" HorizontalContentAlignment="Center"/>
-                    <ComboBox Grid.Column="4" Grid.Row="1" Margin="2"
+                                <Label Grid.Column="4" Grid.Row="0" Content="Furniture Moving" HorizontalContentAlignment="Center"/>
+                                <ComboBox Grid.Column="4" Grid.Row="1" Margin="2"
                               HorizontalContentAlignment="Center"                   
                               ItemsSource="{Binding Furnitures }" 
                               SelectedItem="{Binding FurnitureSelect, Mode=TwoWay}"/>
-                    <Label Grid.Column="5" Grid.Row="0" Content="Caution/Notes" HorizontalContentAlignment="Center"/>
-                    <TextBox Grid.Column="5" Grid.Row="1" Margin="2"
+                                <Label Grid.Column="5" Grid.Row="0" Content="Caution/Notes" HorizontalContentAlignment="Center"/>
+                                <TextBox Grid.Column="5" Grid.Row="1" Margin="2"
                              Text="{Binding Misc}"
                              HorizontalContentAlignment="Center" 
                              TextWrapping="NoWrap" 
                              AcceptsReturn="False"/>
-                    <Label Grid.Column="6" Grid.Row="0" Content="Contractor" HorizontalContentAlignment="Center"/>
-                    <ComboBox Grid.Column="6" Grid.Row="1" Margin="2"
+                                <Label Grid.Column="6" Grid.Row="0" Content="Contractor" HorizontalContentAlignment="Center"/>
+                                <ComboBox Grid.Column="6" Grid.Row="1" Margin="2"
                               HorizontalContentAlignment="Center"                   
                               ItemsSource="{Binding ContractorWorks }" 
                               SelectedItem="{Binding ContractorWorkSelect, Mode=TwoWay}"
                               DisplayMemberPath="Name"/>
-                </Grid>
-                <StackPanel Grid.Row="2" 
+                            </Grid>
+
+                            <DataGrid Grid.Row="1" 
+                              AutoGenerateColumns="False" 
+                              IsReadOnly="True" 
+                              ItemsSource="{Binding Works, UpdateSourceTrigger=PropertyChanged}" 
+                              SelectedItem="{Binding WorkSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Foreground" Value="{Binding Path=Color}"/>
+                                    </Style>
+                                </DataGrid.RowStyle>
+                                <DataGrid.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Style.Triggers>
+                                            <Trigger Property="DataGridRow.IsSelected" Value="False">
+                                                <Setter Property="Foreground" Value="{Binding Path=Color}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.CellStyle>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Area" Width="auto" Binding="{Binding Path=Area}"/>
+                                    <DataGridTextColumn Header="Room" Width="auto" Binding="{Binding Path=Room}"/>
+                                    <DataGridTextColumn Header="Existing Floor" Width="auto" Binding="{Binding Path=Existing}"/>
+                                    <DataGridTextColumn Header="New Floor" Width="*" Binding="{Binding Path=NewFloor}"/>
+                                    <DataGridTextColumn Header="Furniture Moving" Width="auto" Binding="{Binding Path=Furniture}"/>
+                                    <DataGridTextColumn Header="Caution/Notes" Width="*" Binding="{Binding Path=Misc}"/>
+                                    <DataGridTextColumn Header="Contractor" Width="*" Binding="{Binding Path=Contractor}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <StackPanel Grid.Row="2" 
                                 Style="{StaticResource FooterMenu}">
-                    <Button Content="Add" 
+                                <Button Content="Add" 
                             Foreground="Green" 
                             BorderBrush="Green"
                             Style="{StaticResource FooterButton}" 
                             Command="{Binding AddWork}"/>
-                    <Button Content="Edit" 
+                                <Button Content="Edit" 
                             Foreground="Brown" 
                             BorderBrush="Brown"
                             Style="{StaticResource FooterButton}" 
                             Command="{Binding InsWork}"/>
-                    <Button Content="Del" 
+                                <Button Content="Del" 
                             Foreground="Red" 
                             BorderBrush="Red"
                             Style="{StaticResource FooterButton}" 
-                            Command="{Binding DelWork}"/>                    
-                </StackPanel>
-            </Grid>
-        </Border>
-        <Border Grid.Row="2" 
-                Style="{StaticResource BorderRadiusBlack}" 
-                IsEnabled="{Binding EnableWork}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <DataGrid Grid.Row="0" SelectionMode="Extended" 
+                            Command="{Binding DelWork}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </TabItem.Content>
+            </TabItem>
+
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="15" 
+                                   Text="Accessories" 
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Border Style="{StaticResource BorderRadiusBlack}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Grid.Row="0" Content="Area" HorizontalContentAlignment="Center"/>
+                                <ComboBox Grid.Column="0" Grid.Row="1" Margin="2"
+                                          HorizontalContentAlignment="Center"                   
+                                          ItemsSource="{Binding AreasAccessories }" 
+                                          SelectedItem="{Binding AreaSelectAccessories, Mode=TwoWay}" 
+                                          DisplayMemberPath="Name"/>
+                                <Label Grid.Column="1" Grid.Row="0" Content="Room" HorizontalContentAlignment="Center"/>
+                                <ComboBox Grid.Column="1" Grid.Row="1" Margin="2"
+                                          HorizontalContentAlignment="Center"                   
+                                          ItemsSource="{Binding RoomsAccessories }" 
+                                          SelectedItem="{Binding RoomSelectAccessories, Mode=TwoWay}" 
+                                          DisplayMemberPath="Name"/>
+                                <Label Grid.Column="2" Grid.Row="0" Content="OldAccessories" HorizontalContentAlignment="Center"/>
+                                <TextBox Grid.Column="2" Grid.Row="1" Margin="2"
+                                         Text="{Binding OldAccessories}"
+                                         HorizontalContentAlignment="Center" 
+                                         TextWrapping="NoWrap" 
+                                         AcceptsReturn="False"/>
+                                <Label Grid.Column="3" Grid.Row="0" Content="NewAccessories" HorizontalContentAlignment="Center"/>
+                                <ComboBox Grid.Column="3" Grid.Row="1" Margin="2"
+                                          HorizontalContentAlignment="Center"                   
+                                          ItemsSource="{Binding NewAccessories }" 
+                                          SelectedItem="{Binding NewAccessorieSelect, Mode=TwoWay}" 
+                                          DisplayMemberPath="Description"/>
+                                <Label Grid.Column="4" Grid.Row="0" Content="Contractor" HorizontalContentAlignment="Center"/>
+                                <ComboBox Grid.Column="4" Grid.Row="1" Margin="2"
+                                          HorizontalContentAlignment="Center"                   
+                                          ItemsSource="{Binding  ContractorAccessories }" 
+                                          SelectedItem="{Binding ContractorAccessorieSelect, Mode=TwoWay}"
+                                          DisplayMemberPath="Name"/>
+                                <Label Grid.Column="5" Grid.Row="0" Content="Notes" HorizontalContentAlignment="Center"/>
+                                <TextBox Grid.Column="5" Grid.Row="1" Margin="2"
+                                         Text="{Binding NotesAccessories}"
+                                         HorizontalContentAlignment="Center" 
+                                         TextWrapping="NoWrap" 
+                                         AcceptsReturn="False"/>
+                            </Grid>
+
+                            <DataGrid Grid.Row="1" 
+                              AutoGenerateColumns="False" 
+                              IsReadOnly="True" 
+                              ItemsSource="{Binding Accessories, UpdateSourceTrigger=PropertyChanged}" 
+                              SelectedItem="{Binding AccessorieSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Foreground" Value="{Binding Path=Color}"/>
+                                    </Style>
+                                </DataGrid.RowStyle>
+                                <DataGrid.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Style.Triggers>
+                                            <Trigger Property="DataGridRow.IsSelected" Value="False">
+                                                <Setter Property="Foreground" Value="{Binding Path=Color}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.CellStyle>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Area" Width="auto" Binding="{Binding Path=Area}"/>
+                                    <DataGridTextColumn Header="Room" Width="auto" Binding="{Binding Path=Room}"/>
+                                    <DataGridTextColumn Header="Old Accessories" Width="auto" Binding="{Binding Path=OldAccessories}"/>
+                                    <DataGridTextColumn Header="New Accessories" Width="*" Binding="{Binding Path=NewAccessories}"/>
+                                    <DataGridTextColumn Header="Contractor" Width="*" Binding="{Binding Path=Contractor}"/>
+                                    <DataGridTextColumn Header="Notes" Width="*" Binding="{Binding Path=Notes}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <StackPanel Grid.Row="2" 
+                                Style="{StaticResource FooterMenu}">
+                                <Button Content="Add" 
+                                        Foreground="Green" 
+                                        BorderBrush="Green"
+                                        Style="{StaticResource FooterButton}" 
+                                        Command="{Binding AddAccessories}"/>
+                                <Button Content="Edit" 
+                                        Foreground="Brown" 
+                                        BorderBrush="Brown"
+                                        Style="{StaticResource FooterButton}" 
+                                        Command="{Binding InsAccessories}"/>
+                                <Button Content="Del" 
+                                        Foreground="Red" 
+                                        BorderBrush="Red"
+                                        Style="{StaticResource FooterButton}" 
+                                        Command="{Binding DelAccessories}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </TabItem.Content>
+            </TabItem>
+
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="15" 
+                                   Text="Labour" 
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Border Style="{StaticResource BorderRadiusBlack}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <DataGrid Grid.Row="0" SelectionMode="Extended" 
                           AutoGenerateColumns="False" 
                           IsReadOnly="True"                          
                           ItemsSource="{Binding Installations, UpdateSourceTrigger=PropertyChanged}" 
                           UI:MultiSelect.SelectedItems="{Binding InstallationSelect}">
-                    <DataGrid.RowStyle>
-                        <Style TargetType="DataGridRow">
-                            <Setter Property="Foreground" Value="{Binding Path=Color}"/>                            
-                        </Style>
-                    </DataGrid.RowStyle>
-                    <DataGrid.CellStyle>                        
-                        <Style TargetType="DataGridCell">                            
-                            <Style.Triggers>                                
-                                <Trigger Property="DataGridRow.IsSelected" Value="False">
-                                    <Setter Property="Foreground" Value="{Binding Path=Color}"/>                                    
-                                </Trigger>                                
-                            </Style.Triggers>                            
-                        </Style>                        
-                    </DataGrid.CellStyle>
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Groupe" Width="auto" Binding="{Binding Path=Groupe}"/>
-                        <DataGridTextColumn Header="Item" Width="200" Binding="{Binding Path=Item}"/>
-                        <DataGridTextColumn Header="Description" Width="200" Binding="{Binding Path=Description}"/>
-                        <DataGridTextColumn Header="Quantity" Width="auto" Binding="{Binding Path=Quantity}"/>
-                        <DataGridTextColumn Header="Rate" Width="auto" Binding="{Binding Path=Rate, StringFormat='0.00'}"/>
-                        <DataGridTextColumn Header="Price" Width="auto" Binding="{Binding Path=Price, StringFormat='0.00'}"/>
-                        <DataGridTextColumn Header="Percent" Width="auto" Binding="{Binding Path=Procent}"/>
-                        <DataGridTextColumn Header="Payout" Width="auto" Binding="{Binding Path=Payout, StringFormat='0.00'}"/>
-                        <DataGridTextColumn Header="Contractor" Width="*" Binding="{Binding Path=Contractor}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <Grid Grid.Row="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="200"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>                        
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="Contractor" 
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Foreground" Value="{Binding Path=Color}"/>
+                                    </Style>
+                                </DataGrid.RowStyle>
+                                <DataGrid.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Style.Triggers>
+                                            <Trigger Property="DataGridRow.IsSelected" Value="False">
+                                                <Setter Property="Foreground" Value="{Binding Path=Color}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.CellStyle>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Groupe" Width="auto" Binding="{Binding Path=Groupe}"/>
+                                    <DataGridTextColumn Header="Item" Width="200" Binding="{Binding Path=Item}"/>
+                                    <DataGridTextColumn Header="Description" Width="200" Binding="{Binding Path=Description}"/>
+                                    <DataGridTextColumn Header="Quantity" Width="auto" Binding="{Binding Path=Quantity}"/>
+                                    <DataGridTextColumn Header="Rate" Width="auto" Binding="{Binding Path=Rate, StringFormat='0.00'}"/>
+                                    <DataGridTextColumn Header="Price" Width="auto" Binding="{Binding Path=Price, StringFormat='0.00'}"/>
+                                    <DataGridTextColumn Header="Percent" Width="auto" Binding="{Binding Path=Procent}"/>
+                                    <DataGridTextColumn Header="Payout" Width="auto" Binding="{Binding Path=Payout, StringFormat='0.00'}"/>
+                                    <DataGridTextColumn Header="Contractor" Width="*" Binding="{Binding Path=Contractor}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Grid Grid.Row="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="200"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Content="Contractor" 
                            VerticalAlignment="Center"
                            HorizontalAlignment="Right" FontWeight="Bold"/>
-                    <ComboBox Grid.Column="1" Margin="2"
+                                <ComboBox Grid.Column="1" Margin="2"
                               HorizontalContentAlignment="Center"
                               VerticalContentAlignment="Center"
                               ItemsSource="{Binding Installers }" 
                               SelectedItem="{Binding InstallerSelect, Mode=TwoWay}" 
                               DisplayMemberPath="Name"
                               UI:FocusAdvancement.AdvancesByEnterKey="True"/>
-                    <Label Grid.Column="2" 
+                                <Label Grid.Column="2" 
                            VerticalAlignment="Center"
                            Content="Rate" 
                            FontWeight="Bold"/>
-                    <TextBox Grid.Column="3" Width="50" 
+                                <TextBox Grid.Column="3" Width="50" 
                              HorizontalContentAlignment="Center" 
                              TextWrapping="NoWrap" 
                              AcceptsReturn="False"
                              Foreground="Red"
                              Text="{Binding Rate, Mode=TwoWay}"
                              UI:FocusAdvancement.AdvancesByEnterKey="True"/>
-                    <Label Grid.Column="4" 
+                                <Label Grid.Column="4" 
                            VerticalAlignment="Center"
                            Content="Percent" 
                            FontWeight="Bold"/>
-                    <TextBox Grid.Column="5" Width="50" 
+                                <TextBox Grid.Column="5" Width="50" 
                              HorizontalContentAlignment="Center" 
                              TextWrapping="NoWrap" 
                              AcceptsReturn="False"
                              Text="{Binding Percent, Mode=TwoWay}"
                              UI:FocusAdvancement.AdvancesByEnterKey="True"/>
-                    <Button Grid.Column="6" 
+                                <Button Grid.Column="6" 
                             HorizontalAlignment="Right" 
                             Content="Add" 
                             Foreground="Green" 
                             BorderBrush="Green"
                             Style="{StaticResource FooterButton}" 
                             Command="{Binding AddInstallation}"/>
-                </Grid>               
-            </Grid>
-        </Border>
-        <Border Grid.Row="3" 
-                Style="{StaticResource BorderRadiusBlack}" 
-                IsEnabled="{Binding EnableWork}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <DataGrid Grid.Row="1" 
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </TabItem.Content>
+            </TabItem>
+
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="15" 
+                                   Text="Contractor" 
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Border Style="{StaticResource BorderRadiusBlack}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <DataGrid Grid.Row="1" 
                               AutoGenerateColumns="False" 
                               IsReadOnly="True" 
                               ItemsSource="{Binding Contractors, UpdateSourceTrigger=PropertyChanged}" 
                               SelectedItem="{Binding ContractorSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                    <DataGrid.RowStyle>
-                        <Style TargetType="DataGridRow">
-                            <Setter Property="Foreground" Value="{Binding Path=Color}"/>
-                        </Style>
-                    </DataGrid.RowStyle>
-                    <DataGrid.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Style.Triggers>
-                                <Trigger Property="DataGridRow.IsSelected" Value="False">
-                                    <Setter Property="Foreground" Value="{Binding Path=Color}"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGrid.CellStyle>
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Contractor" Width="*" Binding="{Binding Path=Contractor}"/>
-                        <DataGridTextColumn Header="Payout" Width="auto" Binding="{Binding Path=Payout, StringFormat='0.00'}"/>
-                        <DataGridTextColumn Header="Adjust" Width="auto" Binding="{Binding Path=Adjust, StringFormat='0.00'}"/>
-                        <DataGridTextColumn Header="Total" Width="auto" Binding="{Binding Path=Total, StringFormat='0.00'}"/>
-                        <DataGridTextColumn Header="TAX" Width="auto" Binding="{Binding Path=TAX}"/>
-                        <DataGridTextColumn Header="GST" Width="auto" Binding="{Binding Path=GST, StringFormat='0.00'}"/>
-                        <DataGridTextColumn Header="TOTAL" Width="auto" Foreground="Red" Binding="{Binding Path=TotalContractor, StringFormat='0.00'}"/>                        
-                    </DataGrid.Columns>
-                </DataGrid>
-                <Grid Grid.Row="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition  Width="50"/>
-                        <ColumnDefinition Width="auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="Adjust" 
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Foreground" Value="{Binding Path=Color}"/>
+                                    </Style>
+                                </DataGrid.RowStyle>
+                                <DataGrid.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Style.Triggers>
+                                            <Trigger Property="DataGridRow.IsSelected" Value="False">
+                                                <Setter Property="Foreground" Value="{Binding Path=Color}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.CellStyle>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Contractor" Width="*" Binding="{Binding Path=Contractor}"/>
+                                    <DataGridTextColumn Header="Payout" Width="auto" Binding="{Binding Path=Payout, StringFormat='0.00'}"/>
+                                    <DataGridTextColumn Header="Adjust" Width="auto" Binding="{Binding Path=Adjust, StringFormat='0.00'}"/>
+                                    <DataGridTextColumn Header="Total" Width="auto" Binding="{Binding Path=Total, StringFormat='0.00'}"/>
+                                    <DataGridTextColumn Header="TAX" Width="auto" Binding="{Binding Path=TAX}"/>
+                                    <DataGridTextColumn Header="GST" Width="auto" Binding="{Binding Path=GST, StringFormat='0.00'}"/>
+                                    <DataGridTextColumn Header="TOTAL" Width="auto" Foreground="Red" Binding="{Binding Path=TotalContractor, StringFormat='0.00'}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Grid Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition  Width="50"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Content="Adjust" 
                            VerticalAlignment="Center"
                            HorizontalAlignment="Right" FontWeight="Bold"/>
-                    <TextBox Grid.Column="1" Text="{Binding Ajust}" 
+                                <TextBox Grid.Column="1" Text="{Binding Ajust}" 
                              HorizontalContentAlignment="Center" 
                              TextWrapping="NoWrap" 
                              AcceptsReturn="False"/>
-                    <Label Grid.Column="2" 
+                                <Label Grid.Column="2" 
                            VerticalAlignment="Center" 
-                           Content="TAX" 
-                           FontWeight="Bold"/>                    
-                    <ComboBox Grid.Column="3" Margin="2"
+                           Content="GST" 
+                           FontWeight="Bold"/>
+                                <ComboBox Grid.Column="3" Margin="2"
                               VerticalContentAlignment="Center"
                               HorizontalContentAlignment="Center"
                               ItemsSource="{Binding Tax }" 
                               SelectedItem="{Binding TaxSelect, Mode=TwoWay}"/>
-                    <Button Grid.Column="4" 
+                                <Button Grid.Column="4" 
                             HorizontalAlignment="Right" 
-                            Content="Add" 
+                            Content="Edit" 
                             Foreground="Green"
                             BorderBrush="Green"
                             Style="{StaticResource FooterButton}" 
                             Command="{Binding AddContractor}"/>
-                </Grid>
-            </Grid>
-        </Border>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </TabItem.Content>
+            </TabItem>
+
+        </TabControl>
     </Grid>
 </Window>

@@ -24,7 +24,9 @@ namespace Builders.ViewModels
         private IEnumerable<WorkOrder> orders;
         private WorkOrder_Work workSelect;
         private IEnumerable<WorkOrder_Work> works;
-        private IList<WorkOrder_Installation> installationSelect;    // TEST
+        private WorkOrder_Accessories accessorieSelect;
+        private IEnumerable<WorkOrder_Accessories> accessories;
+        private IList<WorkOrder_Installation> installationSelect;    
         private IEnumerable<WorkOrder_Installation> installations;
         private WorkOrder_Contractor contractorSelect;
         private IEnumerable<WorkOrder_Contractor> contractors;
@@ -53,6 +55,16 @@ namespace Builders.ViewModels
         private IEnumerable<DIC_Contractor> installers;
         private DIC_Contractor contractorWorkSelect;
         private IEnumerable<DIC_Contractor> contractorWorks;
+        private DIC_Area areaSelectAccessories;
+        private IEnumerable<DIC_Area> areasAccessories;
+        private DIC_Room roomSelectAccessories;
+        private IEnumerable<DIC_Room> roomsAccessories;
+        private string oldAccessories;
+        private MaterialQuotation newAccessorieSelect;
+        private IEnumerable<MaterialQuotation> newAccessories;
+        private DIC_Contractor contractorAccessorieSelect;
+        private IEnumerable<DIC_Contractor> contractorAccessories;
+        private string notesAccessories;
         //******************************************************************** TextBox privat
         private string parking;
         private DateTime serviceDate;
@@ -159,6 +171,24 @@ namespace Builders.ViewModels
             {
                 contractors = value;
                 OnPropertyChanged(nameof(Contractors));
+            }
+        }
+        public WorkOrder_Accessories AccessorieSelect
+        {
+            get { return accessorieSelect; }
+            set
+            {
+                accessorieSelect = value;
+                OnPropertyChanged(nameof(AccessorieSelect));
+            }
+        }
+        public IEnumerable<WorkOrder_Accessories> Accessories
+        {
+            get { return accessories; }
+            set
+            {
+                accessories = value;
+                OnPropertyChanged(nameof(Accessories));
             }
         }
         //********************************************************************* ComboBox public
@@ -384,6 +414,96 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(ContractorWorks));
             }
         }
+        public DIC_Area AreaSelectAccessories
+        {
+            get { return areaSelectAccessories; }
+            set
+            {
+                areaSelectAccessories = value;
+                OnPropertyChanged(nameof(AreaSelectAccessories));
+            }
+        }
+        public IEnumerable<DIC_Area> AreasAccessories
+        {
+            get { return areasAccessories; }
+            set
+            {
+                areasAccessories = value;
+                OnPropertyChanged(nameof(AreasAccessories));
+            }
+        }
+        public DIC_Room RoomSelectAccessories
+        {
+            get { return roomSelectAccessories; }
+            set
+            {
+                roomSelectAccessories = value;
+                OnPropertyChanged(nameof(RoomSelectAccessories));
+            }
+        }
+        public IEnumerable<DIC_Room> RoomsAccessories
+        {
+            get { return roomsAccessories; }
+            set
+            {
+                roomsAccessories = value;
+                OnPropertyChanged(nameof(RoomsAccessories));
+            }
+        }
+        public string OldAccessories
+        {
+            get { return oldAccessories; }
+            set
+            {
+                oldAccessories = value;
+                OnPropertyChanged(nameof(OldAccessories));
+            }
+        }
+        public MaterialQuotation NewAccessorieSelect
+        {
+            get { return newAccessorieSelect; }
+            set
+            {
+                newAccessorieSelect = value;
+                OnPropertyChanged(nameof(NewAccessorieSelect));
+            }
+        }
+        public IEnumerable<MaterialQuotation> NewAccessories
+        {
+            get { return newAccessories; }
+            set
+            {
+                newAccessories = value;
+                OnPropertyChanged(nameof(NewAccessories));
+            }
+        }
+        public DIC_Contractor ContractorAccessorieSelect
+        {
+            get { return contractorAccessorieSelect; }
+            set
+            {
+                contractorAccessorieSelect = value;
+                OnPropertyChanged(nameof(ContractorAccessorieSelect));
+            }
+        }
+        public IEnumerable<DIC_Contractor> ContractorAccessories
+        {
+            get { return contractorAccessories; }
+            set
+            {
+                contractorAccessories = value;
+                OnPropertyChanged(nameof(ContractorAccessories));
+            }
+        }
+        public string NotesAccessories
+        {
+            get { return notesAccessories; }
+            set
+            {
+                notesAccessories = value;
+                OnPropertyChanged(nameof(NotesAccessories));
+            }
+        }
 
         //******************************************************************** TextBox public
         public string Parking
@@ -490,6 +610,9 @@ namespace Builders.ViewModels
         private Command _addWork;
         private Command _insWork;
         private Command _delWork;
+        private Command _addAccessories;
+        private Command _insAccessories;
+        private Command _delAccessories;
         private Command _addInstallation;
         private Command _addContractor;
         //********************************************************************* Command public
@@ -580,6 +703,50 @@ namespace Builders.ViewModels
                 Works = db.WorkOrder_Works.Local.ToBindingList().Where(w => w.WorkOrderId == OrderSelect.Id);
             }
         }));
+        public Command AddAccessories => _addAccessories ?? (_addAccessories = new Command(obj=> 
+        {
+            WorkOrder_Accessories accessories = new WorkOrder_Accessories()
+            {
+                Area = AreaSelectAccessories?.Name,
+                Room = RoomSelectAccessories?.Name,
+                OldAccessories = OldAccessories,
+                NewAccessories = NewAccessorieSelect?.Description,
+                Contractor = ContractorAccessorieSelect?.Name,
+                Color = ContractorAccessorieSelect?.Color,
+                Notes = NotesAccessories,
+                WorkOrderId = OrderSelect.Id
+            };
+            db.WorkOrder_Accessories.Add(accessories);
+            db.SaveChanges();
+            Accessories = db.WorkOrder_Accessories.Local.ToBindingList().Where(a => a.WorkOrderId == OrderSelect.Id);
+        }));
+        public Command InsAccessories => _insAccessories ?? (_insAccessories = new Command(obj=> 
+        {
+            if (AccessorieSelect != null)
+            {
+                AccessorieSelect.Area = AreaSelectAccessories?.Name;
+                AccessorieSelect.Room = RoomSelectAccessories?.Name;
+                AccessorieSelect.OldAccessories = OldAccessories;
+                AccessorieSelect.NewAccessories = NewAccessorieSelect?.Description;
+                AccessorieSelect.Contractor = ContractorAccessorieSelect?.Name;
+                AccessorieSelect.Color = ContractorAccessorieSelect?.Color;
+                AccessorieSelect.Notes = NotesAccessories;
+                db.Entry(AccessorieSelect).State = EntityState.Modified;
+                db.SaveChanges();
+                Accessories = null;
+                Accessories = db.WorkOrder_Accessories.Local.ToBindingList().Where(a => a.WorkOrderId == OrderSelect.Id);
+            }
+        }));
+        public Command DelAccessories => _delAccessories ?? (_delAccessories = new Command(obj=> 
+        {
+            if (AccessorieSelect != null)
+            {
+                db.WorkOrder_Accessories.Remove(AccessorieSelect);
+                db.SaveChanges();
+                Accessories = null;
+                Accessories = db.WorkOrder_Accessories.Local.ToBindingList().Where(a => a.WorkOrderId == OrderSelect.Id);
+            }
+        }));
         public Command AddInstallation => _addInstallation ?? (_addInstallation = new Command(obj=> 
         {
            
@@ -637,14 +804,17 @@ namespace Builders.ViewModels
             db = context;
             
             db.WorkOrder_Works.Load();
+            db.WorkOrder_Accessories.Load();
             db.WorkOrder_Installations.Load();
             db.WorkOrder_Contractors.Load();
             db.DIC_Areas.Load();
             db.DIC_Rooms.Load();
             db.DIC_ExistingFloors.Load();
             db.DIC_Contractors.Load();
+            db.MaterialQuotations.Load();
 
             Works = db.WorkOrder_Works.Local.ToBindingList();
+            Accessories = db.WorkOrder_Accessories.Local.ToBindingList();
             Installations = db.WorkOrder_Installations.Local.ToBindingList().OrderBy(i => i.Groupe);                            //.ThenBy(c => c.Contractor);
             InstallationSelect = new List<WorkOrder_Installation>();
             Contractors = db.WorkOrder_Contractors.Local.ToBindingList();
@@ -653,6 +823,11 @@ namespace Builders.ViewModels
             Floors = db.DIC_ExistingFloors.Local.ToBindingList().OrderBy(a => a.Name);
             Installers = db.DIC_Contractors.Local.ToBindingList().OrderBy(a => a.Name);
             ContractorWorks = db.DIC_Contractors.Local.ToBindingList().OrderBy(a => a.Name);
+            AreasAccessories = db.DIC_Areas.Local.ToBindingList().OrderBy(a => a.Name);
+            RoomsAccessories = db.DIC_Rooms.Local.ToBindingList().OrderBy(a => a.Name);
+            NewAccessories = db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == OrderSelect.QuotaId).Where(m=>m.Groupe == "FLOORING" || m.Groupe == "ACCESSORIES");
+            ContractorAccessories = db.DIC_Contractors.Local.ToBindingList().OrderBy(a => a.Name);
+
 
             TrimLoad();
             BaseboardLoad();
@@ -670,6 +845,7 @@ namespace Builders.ViewModels
                         EnableWork = false;
                         EnableButtonCreat = true;
                         Works = db.WorkOrder_Works.Local.ToBindingList().Where(w => w.WorkOrderId == OrderSelect?.Id);
+                        Accessories = db.WorkOrder_Accessories.Local.ToBindingList().Where(a => a.WorkOrderId == OrderSelect?.Id);
                         Contractors = db.WorkOrder_Contractors.Local.ToBindingList().Where(c => c.WorkOrderId == OrderSelect?.Id); 
                     }
                     break;
@@ -687,6 +863,7 @@ namespace Builders.ViewModels
                         Pieces = OrderSelect.ReplacingQuantity;
                         QuotationSelect = db.Quotations.FirstOrDefault(q => q.Id == OrderSelect.QuotaId);
                         Works = db.WorkOrder_Works.Local.ToBindingList().Where(w => w.WorkOrderId == OrderSelect.Id);
+                        Accessories = db.WorkOrder_Accessories.Local.ToBindingList().Where(a => a.WorkOrderId == OrderSelect.Id);
                         Installations = db.WorkOrder_Installations.Local.ToBindingList().Where(i => i.WorkOrderId == OrderSelect.Id).OrderBy(i => i.Groupe).ThenBy(c => c.Contractor);
                         Contractors = db.WorkOrder_Contractors.Local.ToBindingList().Where(c => c.WorkOrderId == OrderSelect.Id).OrderBy(c=>c.Contractor);
                         EnableWork = true;
@@ -780,6 +957,7 @@ namespace Builders.ViewModels
                 NewFloor = select.NewFloor;
                 FurnitureSelect = select.Furniture;
                 Misc = select.Misc;
+
             }
         }
         private void LoadContractor()

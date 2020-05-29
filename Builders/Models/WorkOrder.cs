@@ -36,11 +36,13 @@ namespace Builders.Models
 
         public virtual ICollection<WorkOrder_Work> WorkOrder_Works { get; set; }
         public virtual ICollection<WorkOrder_Installation> WorkOrder_Installations { get; set; }
+        public virtual ICollection<WorkOrder_Accessories> WorkOrder_Accessories { get; set; }
         public virtual ICollection<WorkOrder_Contractor> WorkOrder_Contractors { get; set; }
 
         public WorkOrder()
         {
             WorkOrder_Works = new List<WorkOrder_Work>();
+            WorkOrder_Accessories = new List<WorkOrder_Accessories>();
             WorkOrder_Installations = new List<WorkOrder_Installation>();
             WorkOrder_Contractors = new List<WorkOrder_Contractor>();
         }
