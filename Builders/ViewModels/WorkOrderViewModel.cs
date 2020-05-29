@@ -1,6 +1,7 @@
 ﻿using Builders.Commands;
 using Builders.Enums;
 using Builders.Models;
+using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -50,6 +51,8 @@ namespace Builders.ViewModels
         private List<string> furnitures;
         private DIC_Contractor installerSelect;
         private IEnumerable<DIC_Contractor> installers;
+        private DIC_Contractor contractorWorkSelect;
+        private IEnumerable<DIC_Contractor> contractorWorks;
         //******************************************************************** TextBox privat
         private string parking;
         private DateTime serviceDate;
@@ -363,6 +366,25 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(Installers));
             }
         }
+        public DIC_Contractor ContractorWorkSelect
+        {
+            get { return contractorWorkSelect; }
+            set
+            {
+                contractorWorkSelect = value;
+                OnPropertyChanged(nameof(ContractorWorkSelect));
+            }
+        }
+        public IEnumerable<DIC_Contractor> ContractorWorks
+        {
+            get { return contractorWorks; }
+            set
+            {
+                contractorWorks = value;
+                OnPropertyChanged(nameof(ContractorWorks));
+            }
+        }
+
         //******************************************************************** TextBox public
         public string Parking
         {
@@ -522,6 +544,8 @@ namespace Builders.ViewModels
                 NewFloor = NewFloor,
                 Furniture = FurnitureSelect,
                 Misc = Misc,
+                Contractor = ContractorWorkSelect?.Name,
+                Color = ContractorWorkSelect?.Color,
                 WorkOrderId = OrderSelect.Id
             };
             db.WorkOrder_Works.Add(work);
@@ -538,6 +562,8 @@ namespace Builders.ViewModels
                 WorkSelect.NewFloor = NewFloor;
                 WorkSelect.Furniture = FurnitureSelect;
                 WorkSelect.Misc = Misc;
+                WorkSelect.Contractor = ContractorWorkSelect?.Name;
+                WorkSelect.Color = ContractorWorkSelect?.Color;
                 db.Entry(WorkSelect).State = EntityState.Modified;
                 db.SaveChanges();
                 Works = null;
@@ -603,6 +629,8 @@ namespace Builders.ViewModels
                 Ajust = 0m;
             }
         }));
+
+       
         //*********************************************************************
         public WorkOrderViewModel(ref BuilderContext context, EnumClient client, int? IdWorkOrder)
         {
@@ -624,6 +652,7 @@ namespace Builders.ViewModels
             Rooms = db.DIC_Rooms.Local.ToBindingList().OrderBy(a => a.Name);
             Floors = db.DIC_ExistingFloors.Local.ToBindingList().OrderBy(a => a.Name);
             Installers = db.DIC_Contractors.Local.ToBindingList().OrderBy(a => a.Name);
+            ContractorWorks = db.DIC_Contractors.Local.ToBindingList().OrderBy(a => a.Name);
 
             TrimLoad();
             BaseboardLoad();

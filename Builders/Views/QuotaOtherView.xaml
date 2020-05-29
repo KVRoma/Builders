@@ -40,9 +40,9 @@
         <Label Grid.Row="4" Grid.Column="0" 
                Content="Do You Want Financing?" 
                Style="{StaticResource LabelBold}"/>
-        <Label Grid.Row="5" Grid.Column="0" 
+       <!--<Label Grid.Row="5" Grid.Column="0" 
                Content="Amount Paid by Credit Card" 
-               Style="{StaticResource LabelBold}"/>
+               Style="{StaticResource LabelBold}"/> -->
 
         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Description}"/>
         <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Notes}"/>
@@ -54,7 +54,7 @@
                   HorizontalAlignment="Center" 
                   FontWeight="Bold"
                   IsChecked="{Binding Financing}"/>
-        <TextBox Grid.Row="5" Grid.Column="1" HorizontalContentAlignment="Center" Text="{Binding CreditCard}"/>
+        <!--<TextBox Grid.Row="5" Grid.Column="1" HorizontalContentAlignment="Center" Text="{Binding CreditCard}"/>-->
         <Button Grid.Row="6" 
                 Grid.ColumnSpan="2" 
                 Content="Save" 

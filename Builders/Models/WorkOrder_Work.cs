@@ -16,6 +16,9 @@ namespace Builders.Models
         public string Furniture { get; set; }
         public string Misc { get; set; }
 
+        public string Contractor { get; set; }
+        public string Color { get; set; }
+
         public int? WorkOrderId { get; set; }
         public virtual WorkOrder WorkOrder { get; set; }
     }

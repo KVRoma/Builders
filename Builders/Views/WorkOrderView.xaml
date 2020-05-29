@@ -96,13 +96,28 @@
                               IsReadOnly="True" 
                               ItemsSource="{Binding Works, UpdateSourceTrigger=PropertyChanged}" 
                               SelectedItem="{Binding WorkSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Foreground" Value="{Binding Path=Color}"/>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Style.Triggers>
+                                <Trigger Property="DataGridRow.IsSelected" Value="False">
+                                    <Setter Property="Foreground" Value="{Binding Path=Color}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.CellStyle>
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Area" Width="auto" Binding="{Binding Path=Area}"/>
                         <DataGridTextColumn Header="Room" Width="auto" Binding="{Binding Path=Room}"/>
                         <DataGridTextColumn Header="Existing Floor" Width="auto" Binding="{Binding Path=Existing}"/>
                         <DataGridTextColumn Header="New Floor" Width="*" Binding="{Binding Path=NewFloor}"/>
                         <DataGridTextColumn Header="Furniture Moving" Width="auto" Binding="{Binding Path=Furniture}"/>
-                        <DataGridTextColumn Header="Misc" Width="*" Binding="{Binding Path=Misc}"/>                        
+                        <DataGridTextColumn Header="Caution/Notes" Width="*" Binding="{Binding Path=Misc}"/>
+                        <DataGridTextColumn Header="Contractor" Width="*" Binding="{Binding Path=Contractor}"/>
                     </DataGrid.Columns>
                 </DataGrid>
                 <Grid Grid.Row="1">
@@ -111,6 +126,7 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
@@ -147,12 +163,18 @@
                               HorizontalContentAlignment="Center"                   
                               ItemsSource="{Binding Furnitures }" 
                               SelectedItem="{Binding FurnitureSelect, Mode=TwoWay}"/>
-                    <Label Grid.Column="5" Grid.Row="0" Content="Misc" HorizontalContentAlignment="Center"/>
+                    <Label Grid.Column="5" Grid.Row="0" Content="Caution/Notes" HorizontalContentAlignment="Center"/>
                     <TextBox Grid.Column="5" Grid.Row="1" Margin="2"
                              Text="{Binding Misc}"
                              HorizontalContentAlignment="Center" 
                              TextWrapping="NoWrap" 
                              AcceptsReturn="False"/>
+                    <Label Grid.Column="6" Grid.Row="0" Content="Contractor" HorizontalContentAlignment="Center"/>
+                    <ComboBox Grid.Column="6" Grid.Row="1" Margin="2"
+                              HorizontalContentAlignment="Center"                   
+                              ItemsSource="{Binding ContractorWorks }" 
+                              SelectedItem="{Binding ContractorWorkSelect, Mode=TwoWay}"
+                              DisplayMemberPath="Name"/>
                 </Grid>
                 <StackPanel Grid.Row="2" 
                                 Style="{StaticResource FooterMenu}">
