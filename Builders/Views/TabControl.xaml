@@ -54,6 +54,9 @@
                               IsReadOnly="True" 
                               ItemsSource="{Binding Clients, UpdateSourceTrigger=PropertyChanged}" 
                               SelectedItem="{Binding ClientSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <DataGrid.InputBindings>
+                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding InsClient}"/>
+                        </DataGrid.InputBindings>
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Id" Binding="{Binding Path=NumberClient}"/>
                             <DataGridTextColumn Header="Date" Binding="{Binding Path=DateRegistration, StringFormat=\{0:dd.MM.yyyy\}}"/>
@@ -94,10 +97,11 @@
                 </Grid>
             </TabItem.Content>
         </TabItem>
+        
+        
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
-
                     <TextBlock Margin="15,0,0,0" Text="Quotation" FontWeight="Bold"/>
                 </StackPanel>
             </TabItem.Header>
@@ -111,7 +115,6 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-
                     <Border Grid.Row="0" Style="{StaticResource BorderRadiusSearch}">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -147,6 +150,9 @@
                                 <Setter Property="Foreground" Value="{Binding Path=Color}"/>
                             </Style>
                         </DataGrid.RowStyle>
+                        <DataGrid.InputBindings>
+                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding InsQuotation}"/>
+                        </DataGrid.InputBindings>
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Id" Binding="{Binding Path=NumberQuota}"/>
                             <DataGridTextColumn Header="Date" Binding="{Binding Path=QuotaDate, StringFormat=\{0:dd.MM.yyyy\}}"/>
@@ -214,7 +220,6 @@
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
-
                     <TextBlock Margin="15,0,0,0" Text="Delivery" FontWeight="Bold"/>
                 </StackPanel>
             </TabItem.Header>
@@ -308,7 +313,6 @@
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
-
                     <TextBlock Margin="15,0,0,0" Text="Work Order" FontWeight="Bold"/>
                 </StackPanel>
             </TabItem.Header>
@@ -352,6 +356,9 @@
                               IsReadOnly="True" 
                               ItemsSource="{Binding WorkOrders, UpdateSourceTrigger=PropertyChanged}" 
                               SelectedItem="{Binding WorkOrderSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <DataGrid.InputBindings>
+                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding InsWorkOrder}"/>
+                        </DataGrid.InputBindings>
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Date" Binding="{Binding Path=DateWork, StringFormat=\{0:dd.MM.yyyy\}}"/>
                             <DataGridTextColumn Header="Quota Id" Binding="{Binding Path=NumberQuota}" />
@@ -392,10 +399,11 @@
                 </Grid>
             </TabItem.Content>
         </TabItem>
+        
+        
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
-
                     <TextBlock Margin="15,0,0,0" Text="Completed Jobs" FontWeight="Bold"/>
                 </StackPanel>
             </TabItem.Header>
@@ -481,6 +489,8 @@
                 </Grid>
             </TabItem.Content>
         </TabItem>
+        
+        
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
@@ -572,7 +582,6 @@
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
-
                     <TextBlock Margin="15,0,0,0" Text="Labour Profit" FontWeight="Bold"/>
                 </StackPanel>
             </TabItem.Header>
@@ -656,7 +665,6 @@
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
-
                     <TextBlock Margin="15,0,0,0" Text="Debts" FontWeight="Bold"/>
                 </StackPanel>
             </TabItem.Header>
@@ -748,7 +756,6 @@
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
-
                     <TextBlock Margin="15,0,0,0" Text="ACCOUNTING TAB" FontWeight="Bold"/>
                 </StackPanel>
             </TabItem.Header>
