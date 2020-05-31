@@ -90,7 +90,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Margin="15" 
-                                   Text="Floor" 
+                                   Text="Room" 
                                    FontWeight="Bold"/>
                     </StackPanel>
                 </TabItem.Header>
@@ -183,10 +183,10 @@
                                     <DataGridTextColumn Header="Area" Width="auto" Binding="{Binding Path=Area}"/>
                                     <DataGridTextColumn Header="Room" Width="auto" Binding="{Binding Path=Room}"/>
                                     <DataGridTextColumn Header="Existing Floor" Width="auto" Binding="{Binding Path=Existing}"/>
-                                    <DataGridTextColumn Header="New Floor" Width="*" Binding="{Binding Path=NewFloor}"/>
+                                    <DataGridTextColumn Header="New Floor" Width="auto" Binding="{Binding Path=NewFloor}"/>
                                     <DataGridTextColumn Header="Furniture Moving" Width="auto" Binding="{Binding Path=Furniture}"/>
                                     <DataGridTextColumn Header="Caution/Notes" Width="*" Binding="{Binding Path=Misc}"/>
-                                    <DataGridTextColumn Header="Contractor" Width="*" Binding="{Binding Path=Contractor}"/>
+                                    <DataGridTextColumn Header="Contractor" Width="auto" Binding="{Binding Path=Contractor}"/>
                                 </DataGrid.Columns>
                             </DataGrid>
 
@@ -256,13 +256,13 @@
                                           ItemsSource="{Binding RoomsAccessories }" 
                                           SelectedItem="{Binding RoomSelectAccessories, Mode=TwoWay}" 
                                           DisplayMemberPath="Name"/>
-                                <Label Grid.Column="2" Grid.Row="0" Content="OldAccessories" HorizontalContentAlignment="Center"/>
+                                <Label Grid.Column="2" Grid.Row="0" Content="Old Accessories" HorizontalContentAlignment="Center"/>
                                 <TextBox Grid.Column="2" Grid.Row="1" Margin="2"
                                          Text="{Binding OldAccessories}"
                                          HorizontalContentAlignment="Center" 
                                          TextWrapping="NoWrap" 
                                          AcceptsReturn="False"/>
-                                <Label Grid.Column="3" Grid.Row="0" Content="NewAccessories" HorizontalContentAlignment="Center"/>
+                                <Label Grid.Column="3" Grid.Row="0" Content="New Accessories" HorizontalContentAlignment="Center"/>
                                 <ComboBox Grid.Column="3" Grid.Row="1" Margin="2"
                                           HorizontalContentAlignment="Center"                   
                                           ItemsSource="{Binding NewAccessories }" 
@@ -305,8 +305,8 @@
                                     <DataGridTextColumn Header="Area" Width="auto" Binding="{Binding Path=Area}"/>
                                     <DataGridTextColumn Header="Room" Width="auto" Binding="{Binding Path=Room}"/>
                                     <DataGridTextColumn Header="Old Accessories" Width="auto" Binding="{Binding Path=OldAccessories}"/>
-                                    <DataGridTextColumn Header="New Accessories" Width="*" Binding="{Binding Path=NewAccessories}"/>
-                                    <DataGridTextColumn Header="Contractor" Width="*" Binding="{Binding Path=Contractor}"/>
+                                    <DataGridTextColumn Header="New Accessories" Width="auto" Binding="{Binding Path=NewAccessories}"/>
+                                    <DataGridTextColumn Header="Contractor" Width="auto" Binding="{Binding Path=Contractor}"/>
                                     <DataGridTextColumn Header="Notes" Width="*" Binding="{Binding Path=Notes}"/>
                                 </DataGrid.Columns>
                             </DataGrid>

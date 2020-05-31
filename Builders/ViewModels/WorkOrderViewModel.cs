@@ -133,7 +133,7 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(Works));
             }
         }
-        public IList<WorkOrder_Installation> InstallationSelect           
+        public IList<WorkOrder_Installation> InstallationSelect
         {
             get { return installationSelect; }
             set
@@ -180,6 +180,10 @@ namespace Builders.ViewModels
             {
                 accessorieSelect = value;
                 OnPropertyChanged(nameof(AccessorieSelect));
+                if (AccessorieSelect != null)
+                {
+                    LoadComboBoxAccessorieSelect(AccessorieSelect);
+                }
             }
         }
         public IEnumerable<WorkOrder_Accessories> Accessories
@@ -889,14 +893,7 @@ namespace Builders.ViewModels
             Baseboard = new List<string>();
             Baseboard.Add("Remove & Reuse");
             Baseboard.Add("Remove & Dispose");
-        }
-        //private void ColourLoad()
-        //{
-        //    Colour = new List<string>();
-        //    Colour.Add(nameof(Color.Blue));
-        //    Colour.Add(nameof(Color.Red));
-        //    Colour.Add(nameof(Color.Green));
-        //}
+        }        
         private void ReplacingLoad()
         {
             Replacing = new List<string>();
@@ -951,14 +948,23 @@ namespace Builders.ViewModels
         {
             if (select != null)
             {
-                AreaSelect = db.DIC_Areas.FirstOrDefault(a => a.Name == select.Area);
-                RoomSelect = db.DIC_Rooms.FirstOrDefault(r => r.Name == select.Room);
-                FloorSelect = db.DIC_ExistingFloors.FirstOrDefault(f => f.Name == select.Existing);
+                AreaSelect = Areas.FirstOrDefault(a => a.Name == select.Area);
+                RoomSelect = Rooms.FirstOrDefault(r => r.Name == select.Room);
+                FloorSelect = Floors.FirstOrDefault(f => f.Name == select.Existing);
                 NewFloor = select.NewFloor;
                 FurnitureSelect = select.Furniture;
+                ContractorWorkSelect = ContractorWorks.FirstOrDefault(c=>c.Name == select.Contractor);
                 Misc = select.Misc;
-
             }
+        }
+        private void LoadComboBoxAccessorieSelect(WorkOrder_Accessories select)
+        {
+            AreaSelectAccessories = AreasAccessories.FirstOrDefault(a => a.Name == select.Area);
+            RoomSelectAccessories = RoomsAccessories.FirstOrDefault(r => r.Name == select.Room);
+            OldAccessories = select.OldAccessories;            
+            NewAccessorieSelect = NewAccessories.FirstOrDefault(a=>a.Description == select.NewAccessories);           
+            ContractorAccessorieSelect = ContractorAccessories.FirstOrDefault(c => c.Name == select.Contractor);
+            NotesAccessories = select.Notes;            
         }
         private void LoadContractor()
         {
