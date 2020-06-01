@@ -30,6 +30,7 @@ namespace Builders.ViewModels
         private bool flagEdit;
         private DateTime localdateFrom;
         private DateTime localdateTo;
+        private string companyName;
 
 
         public IEnumerable<Expenses> Expenses
@@ -139,6 +140,15 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(Amount));
             }
         }
+        public string CompanyName
+        {
+            get { return companyName; }
+            set
+            {
+                companyName = value;
+                OnPropertyChanged(nameof(CompanyName));
+            }
+        }
 
         private Command _addCommand;
         private Command _insCommand;
@@ -184,7 +194,7 @@ namespace Builders.ViewModels
                db.SaveChanges();
 
                 Expenses = null;
-                Expenses = db.Expenses.Local.ToBindingList().Where(i => i.Date >= localdateFrom && i.Date <= localdateTo).OrderBy(e => e.Type).ThenBy(e => e.Date);
+                Expenses = db.Expenses.Local.ToBindingList().Where(i =>i.CompanyName == CompanyName && i.Date >= localdateFrom && i.Date <= localdateTo).OrderBy(e => e.Type).ThenBy(e => e.Date);
             }
         }));
 
@@ -196,7 +206,8 @@ namespace Builders.ViewModels
                 Type = TypeSelect,
                 Name = Name,
                 Description = Description,
-                Amounts = Amount
+                Amounts = Amount,
+                CompanyName = CompanyName
             };
 
             if (flagEdit)
@@ -206,6 +217,7 @@ namespace Builders.ViewModels
                 ExpensesSelect[0].Name = expenses.Name;
                 ExpensesSelect[0].Description = expenses.Description;
                 ExpensesSelect[0].Amounts = expenses.Amounts;
+                ExpensesSelect[0].CompanyName = expenses.CompanyName;
 
                 db.Entry(ExpensesSelect[0]).State = EntityState.Modified;
                 db.SaveChanges();
@@ -218,19 +230,21 @@ namespace Builders.ViewModels
             
 
             Expenses = null;
-            Expenses = db.Expenses.Local.ToBindingList().Where(i => i.Date >= localdateFrom && i.Date <= localdateTo).OrderBy(e => e.Type).ThenBy(e => e.Date);
+            Expenses = db.Expenses.Local.ToBindingList().Where(i =>i.CompanyName == CompanyName && i.Date >= localdateFrom && i.Date <= localdateTo).OrderBy(e => e.Type).ThenBy(e => e.Date);
 
             VisibleView = Visibility.Visible;
             VisibleAdd = Visibility.Collapsed;
         }));
 
-        public ExpensesViewModel(DateTime dateFrom, DateTime dateTo, ref BuilderContext context)
+        
+        public ExpensesViewModel(DateTime dateFrom, DateTime dateTo, ref BuilderContext context, string companyName)
         {
             db = context;
             localdateFrom = dateFrom;
             localdateTo = dateTo;
+            CompanyName = companyName;
             db.Expenses.Load();            
-            Expenses = db.Expenses.Local.ToBindingList().Where(i => i.Date >= localdateFrom && i.Date <= localdateTo).OrderBy(e=>e.Type).ThenBy(e=>e.Date);            
+            Expenses = db.Expenses.Local.ToBindingList().Where(i =>i.CompanyName == CompanyName && i.Date >= localdateFrom && i.Date <= localdateTo).OrderBy(e=>e.Type).ThenBy(e=>e.Date);            
             ExpensesSelect = new List<Expenses>();            
             EnableButtonGrid = false;
             VisibleView = Visibility.Visible;

@@ -43,13 +43,19 @@ namespace Builders.ViewModels
 
         private Client clientSelect;
         private IEnumerable<Client> clients;
-        private bool copyClient; // для сопіювання квоти на другого клієнта
+        private bool copyClient; // для копіювання квоти на другого клієнта
         private int? lastIdClient;               // Для збереження попереднього клієнта  
 
         private decimal quantity;
         private decimal rate;
+
+        private string companyName;
+        private string depth;
+        private int? mapei;
+        private Visibility isVisibleCMO;
+        private Visibility isVisibleLeveling;
         //************************************************************************************************
-        
+
         public Quotation QuotaSelect
         {
             get { return quotaSelect; }
@@ -266,6 +272,62 @@ namespace Builders.ViewModels
             { 
                 rate = value; 
                 OnPropertyChanged(nameof(Rate)); 
+            }
+        }
+
+        public string CompanyName
+        {
+            get { return companyName; }
+            set
+            {
+                companyName = value;
+                OnPropertyChanged(nameof(CompanyName));
+                if (CompanyName == "CMO")
+                {
+                    IsVisibleCMO = Visibility.Visible;
+                    IsVisibleLeveling = Visibility.Collapsed;
+                }
+                else
+                {
+                    IsVisibleCMO = Visibility.Collapsed;
+                    IsVisibleLeveling = Visibility.Visible;
+                }
+            }
+        }
+        public string Depth
+        {
+            get { return depth; }
+            set
+            {
+                depth = value;
+                OnPropertyChanged(nameof(Depth));
+            }
+        }
+        public int? Mapei
+        {
+            get { return mapei; }
+            set
+            {
+                mapei = value;
+                OnPropertyChanged(nameof(Mapei));
+            }
+        }
+        public Visibility IsVisibleCMO
+        {
+            get { return isVisibleCMO; }
+            set
+            {
+                isVisibleCMO = value;
+                OnPropertyChanged(nameof(IsVisibleCMO));
+            }
+        }
+        public Visibility IsVisibleLeveling
+        {
+            get { return isVisibleLeveling; }
+            set
+            {
+                isVisibleLeveling = value;
+                OnPropertyChanged(nameof(IsVisibleLeveling));
             }
         }
         //**************************************************************************************************
@@ -584,12 +646,13 @@ namespace Builders.ViewModels
                 }
             }
         }));
-       
+              
 
-        public QuotationViewModel( ref BuilderContext context, EnumClient res, Quotation select)
+        public QuotationViewModel( ref BuilderContext context, EnumClient res, Quotation select, string companyName)
         {
             db = context;
-            result = res;            
+            result = res;
+            CompanyName = companyName;
             db.DIC_GroupeQuotations.Load();
             db.DIC_ItemQuotations.Load();
             db.DIC_DescriptionQuotations.Load();            
