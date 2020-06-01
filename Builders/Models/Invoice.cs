@@ -41,5 +41,7 @@ namespace Builders.Models
         public decimal MaterialProfit { get; set; }
         public decimal LabourProfit { get; set; }
         public decimal TotalProfit { get; set; }
+
+        public string CompanyName { get; set; } = "CMO";
     }
 }

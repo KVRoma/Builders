@@ -6,8 +6,49 @@
              xmlns:local="clr-namespace:Builders.Views"             
              mc:Ignorable="d" 
              d:DesignHeight="450" 
-             d:DesignWidth="900">
+             d:DesignWidth="950">
     <TabControl Grid.Row="1" ItemContainerStyle="{StaticResource TabItemStyle1}">
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="15,0,0,0" Text="Company" FontWeight="Bold"/>
+                </StackPanel>
+            </TabItem.Header>
+            <TabItem.Content>
+                <Grid Background="{StaticResource Gradient_LightBlue_White_LightBlue}">                    
+                    <StackPanel HorizontalAlignment="Center" 
+                                VerticalAlignment="Center">
+                        <RadioButton Style="{StaticResource SelectCompany}"
+                                         IsChecked="{Binding IsCheckedCMO}">
+                            <RadioButton.Content>
+                                <StackPanel Orientation="Vertical">
+                                    <Image Width="150" Margin="20,0,0,10" 
+                                           Source="Logo.jpg"/>
+                                    <TextBlock Text="CMO company" 
+                                               HorizontalAlignment="Center"
+                                               Margin="20,0,0,10"/>
+                                </StackPanel>
+                            </RadioButton.Content>
+                        </RadioButton>
+
+                        <RadioButton Style="{StaticResource SelectCompany}"
+                                         IsChecked="{Binding IsCheckedLeveling}">
+                            <RadioButton.Content>
+                                <StackPanel Orientation="Vertical">
+                                    <Image Width="150" Margin="20,0,0,10"
+                                           Source="LogoLeveling.jpg"/>
+                                    <TextBlock Text="NL company" 
+                                               HorizontalAlignment="Center"
+                                               Margin="20,0,0,10"/>
+                                </StackPanel>
+                            </RadioButton.Content>
+                        </RadioButton>
+                    </StackPanel>
+                </Grid>
+            </TabItem.Content>
+        </TabItem>
+
+
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
@@ -97,8 +138,8 @@
                 </Grid>
             </TabItem.Content>
         </TabItem>
-        
-        
+
+
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
@@ -399,8 +440,8 @@
                 </Grid>
             </TabItem.Content>
         </TabItem>
-        
-        
+
+
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
@@ -489,8 +530,8 @@
                 </Grid>
             </TabItem.Content>
         </TabItem>
-        
-        
+
+
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">

@@ -40,5 +40,7 @@ namespace Builders.Models
         public bool Payment { get; set; } = false;
         public string ColorPayment { get; set; } = "Red";
         public bool ReadOnly { get; set; } = true;
+
+        public string CompanyName { get; set; } = "CMO";
     }
 }

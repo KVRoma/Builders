@@ -40,6 +40,8 @@ namespace Builders.Models
         public bool IsEnabled { get; set; } = false;
         public string Color { get; set; } = "Red";
 
+        public string CompanyName { get; set; } = "CMO";
+
         public ICollection<DeliveryMaterial> DeliveryMaterial { get; set; }
        
         public Delivery()

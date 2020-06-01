@@ -21,5 +21,7 @@ namespace Builders.Models
 
         public bool Payment { get; set; } = false;
         public string Color { get; set; } = "Red";
+
+        public string CompanyName { get; set; } = "CMO";
     }
 }

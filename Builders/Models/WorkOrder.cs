@@ -34,6 +34,8 @@ namespace Builders.Models
         public string ReplacingYesNo { get; set; }
         public int? ReplacingQuantity { get; set; }
 
+        public string CompanyName { get; set; } = "CMO";
+
         public virtual ICollection<WorkOrder_Work> WorkOrder_Works { get; set; }
         public virtual ICollection<WorkOrder_Installation> WorkOrder_Installations { get; set; }
         public virtual ICollection<WorkOrder_Accessories> WorkOrder_Accessories { get; set; }

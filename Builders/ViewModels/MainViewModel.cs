@@ -58,6 +58,12 @@ namespace Builders.ViewModels
         private bool enableLabourProfit;
         private bool enableDebts;
 
+        private bool isCheckedCMO;
+        private bool isCheckedLeveling;
+        private Visibility isVisibleCMO;
+        private Visibility isVisibleLeveling;
+        private string companyName;
+
         private bool isCheckedProfit;
         private bool isCheckedTotal;
         private bool isCheckedPayroll;
@@ -385,14 +391,14 @@ namespace Builders.ViewModels
                     DeliveriesComboBox?.Clear();
                     DeliveriesComboBox = DeliveriesComboBoxArchiveGet();
                     Deliveries = null;
-                    Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == true);
+                    LoadDeliveriesDB(CompanyName, true);
                 }
                 else
                 {
                     DeliveriesComboBox?.Clear();
                     DeliveriesComboBox = DeliveriesComboBoxGet();
                     Deliveries = null;
-                    LoadDeliveriesDB();
+                    LoadDeliveriesDB(CompanyName, false);
                 }
             }
         }
@@ -890,6 +896,60 @@ namespace Builders.ViewModels
             }
         }
 
+        public bool IsCheckedCMO
+        {
+            get { return isCheckedCMO; }
+            set
+            {
+                isCheckedCMO = value;
+                OnPropertyChanged(nameof(IsCheckedCMO));
+                if (IsCheckedCMO)
+                {
+                    CompanyName = "CMO";
+                }                
+            }
+        }
+        public bool IsCheckedLeveling
+        {
+            get { return isCheckedLeveling; }
+            set
+            {
+                isCheckedLeveling = value;
+                OnPropertyChanged(nameof(IsCheckedLeveling));
+                if (IsCheckedLeveling)
+                {
+                    CompanyName = "Leveling";
+                }
+            }
+        }
+        public Visibility IsVisibleCMO
+        {
+            get { return isVisibleCMO; }
+            set
+            {
+                isVisibleCMO = value;
+                OnPropertyChanged(nameof(IsVisibleCMO));
+            }
+        }
+        public Visibility IsVisibleLeveling
+        {
+            get { return isVisibleLeveling; }
+            set
+            {
+                isVisibleLeveling = value;
+                OnPropertyChanged(nameof(IsVisibleLeveling));
+            }
+        }
+        public string CompanyName
+        {
+            get { return companyName; }
+            set
+            {
+                companyName = value;
+                OnPropertyChanged(nameof(CompanyName));
+            }
+        }
+
         #endregion
         #region Private Command
         private Command _exitApp;
@@ -1123,14 +1183,14 @@ namespace Builders.ViewModels
 
                 db.Quotations.RemoveRange(quota);
                 db.SaveChanges();
-                LoadQuotationsDB();
+                LoadQuotationsDB(CompanyName);
 
                 db.Clients.Remove(ClientSelect);
                 db.SaveChanges();
                 LoadClientsDB();
 
                 Deliveries = null;
-                LoadDeliveriesDB();
+                LoadDeliveriesDB(CompanyName, false);
                 IsCheckedArchiveDelivery = false;
             }
         }));
@@ -1297,6 +1357,7 @@ namespace Builders.ViewModels
                 decimal finish = QuotationSelect.InvoiceGrandTotal;
                 if (start != finish)
                 {
+                    DelDeliveri(quotaFinish);
                     var paid = db.Payments.Where(p => p.QuotationId == quotaFinish.Id);
 
                     if (paid != null)
@@ -1364,10 +1425,10 @@ namespace Builders.ViewModels
                 db.Quotations.Remove(QuotationSelect);
                 db.SaveChanges();
                 Quotations = null;
-                LoadQuotationsDB();
+                LoadQuotationsDB(CompanyName);
 
                 Deliveries = null;
-                LoadDeliveriesDB();
+                LoadDeliveriesDB(CompanyName, false);
                 IsCheckedArchiveDelivery = false;
             }
         }));
@@ -1665,9 +1726,9 @@ namespace Builders.ViewModels
                 WorkOrders = null;               
                 Quotations = null;
 
-                LoadQuotationsDB();
-                LoadWorkOrdersDB();                
-                LoadDeliveriesDB();               
+                LoadQuotationsDB(CompanyName);
+                LoadWorkOrdersDB(CompanyName);                
+                LoadDeliveriesDB(CompanyName, false);               
             }
         }));
         public Command PaymentQuotation => _paymentQuotation ?? (_paymentQuotation = new Command(async obj =>
@@ -1680,7 +1741,7 @@ namespace Builders.ViewModels
                 var payment = new PaymentViewModel(ref db, QuotationSelect);
                 await displayRootRegistry.ShowModalPresentation(payment);
                 Quotations = null;
-                LoadQuotationsDB();
+                LoadQuotationsDB(CompanyName);
 
                 var quota = Quotations.Where(q => q.Id == quotaId);
                 if (quota != null)
@@ -1748,7 +1809,7 @@ namespace Builders.ViewModels
                             db.SaveChanges();
 
                             Deliveries = null;
-                            LoadDeliveriesDB();
+                            LoadDeliveriesDB(CompanyName, false);
                             IsCheckedArchiveDelivery = false;
 
                             int? NewInvoiceId = Invoices.OrderByDescending(q => q.Id).FirstOrDefault().Id; 
@@ -2033,11 +2094,11 @@ namespace Builders.ViewModels
             string search = obj.ToString();
             if (search == "")
             {
-                LoadQuotationsDB();
+                LoadQuotationsDB(CompanyName);
             }
             else
             {
-                Quotations = Quotations.Where(n => n.FullSearch.ToUpper().Contains(search.ToUpper())).OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
+                Quotations = Quotations.Where(n =>n.CompanyName == CompanyName && n.FullSearch.ToUpper().Contains(search.ToUpper())).OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
             }
         }));
         public Command TemplateQuotation => _templateQuotation ?? (_templateQuotation = new Command(obj =>
@@ -2128,7 +2189,7 @@ namespace Builders.ViewModels
                 db.SaveChanges();
 
                 Deliveries = null;
-                LoadDeliveriesDB();
+                LoadDeliveriesDB(CompanyName, false);
             }
         }));
         public Command PrintDriverDelivery => _printDriverDelivery ?? (_printDriverDelivery = new Command(obj =>
@@ -2143,8 +2204,8 @@ namespace Builders.ViewModels
                 string word = comboBox[0];
                 var supplier = db.Deliveries.Where(d => d.NumberQuota == word);
                 int? quotaId = supplier.FirstOrDefault(s => s.QuotaId > 0)?.QuotaId;
-                var quota = db.Quotations.FirstOrDefault(q => q.Id == quotaId);
-                var client = db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+                var quota = Quotations.FirstOrDefault(q => q.Id == quotaId); //db.Quotations.FirstOrDefault(q => q.Id == quotaId);
+                var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
                 if (supplier != null && quota != null && client != null)
                 {
                     ExcelApp.Cells[3, 5] = DateTime.Today;
@@ -2179,11 +2240,11 @@ namespace Builders.ViewModels
             string search = obj.ToString();
             if (search == "")
             {
-                LoadDeliveriesDB();
+                LoadDeliveriesDB(CompanyName, false);
             }
             else
             {
-                Deliveries = Deliveries.Where(n => n.IsArchive == false && n.FullSearch.ToUpper().Contains(search.ToUpper()));
+                Deliveries = Deliveries.Where(n => n.CompanyName == CompanyName && n.FullSearch.ToUpper().Contains(search.ToUpper()));
             }
         }));
         public Command DubleClickDelivery => _dubleClickDelivery ?? (_dubleClickDelivery = new Command(async obj =>
@@ -2205,7 +2266,7 @@ namespace Builders.ViewModels
                         db.SaveChanges();
 
                         Deliveries = null;
-                        LoadDeliveriesDB();
+                        LoadDeliveriesDB(CompanyName, false);
                     }
                     else
                     {
@@ -2215,7 +2276,7 @@ namespace Builders.ViewModels
                         db.SaveChanges();
 
                         Deliveries = null;
-                        LoadDeliveriesDB();
+                        LoadDeliveriesDB(CompanyName, false);
                     }
                 }
             }
@@ -2230,7 +2291,7 @@ namespace Builders.ViewModels
             await displayRootRegistry.ShowModalPresentation(invoiceViewModel);
             if (invoiceViewModel.PressOk)
             {
-                var temp = db.Clients.FirstOrDefault(q => q.Id == invoiceViewModel.QuotaSelect.ClientId);
+                var temp = Clients.FirstOrDefault(q => q.Id == invoiceViewModel.QuotaSelect.ClientId); //db.Clients.FirstOrDefault(q => q.Id == invoiceViewModel.QuotaSelect.ClientId);
 
                 Invoice inv = new Invoice()
                 {
@@ -2252,7 +2313,7 @@ namespace Builders.ViewModels
                     db.Entry(item).State = EntityState.Modified;
                 }
                 Deliveries = null;
-                LoadDeliveriesDB();
+                LoadDeliveriesDB(CompanyName, false);
                 IsCheckedArchiveDelivery = false;
 
                 db.Invoices.Add(inv);
@@ -2293,7 +2354,7 @@ namespace Builders.ViewModels
                     db.SaveChanges();
 
                     Invoices = null;
-                    LoadInvoicesDB();
+                    LoadInvoicesDB(CompanyName);
                 }
             }
         }));
@@ -2301,12 +2362,12 @@ namespace Builders.ViewModels
         {
             if (InvoiceSelect != null)
             {
-                var materialProfit = db.MaterialProfits.FirstOrDefault(m => m.InvoiceId == InvoiceSelect.Id);
+                var materialProfit = MaterialProfits.FirstOrDefault(m => m.InvoiceId == InvoiceSelect.Id); //db.MaterialProfits.FirstOrDefault(m => m.InvoiceId == InvoiceSelect.Id);
                 var material = db.Materials.Where(mat => mat.MaterialProfitId == materialProfit.Id);
-                var labourPrifit = db.LabourProfits.FirstOrDefault(l => l.InvoiceId == InvoiceSelect.Id);
+                var labourPrifit = LabourProfits.FirstOrDefault(l => l.InvoiceId == InvoiceSelect.Id); //db.LabourProfits.FirstOrDefault(l => l.InvoiceId == InvoiceSelect.Id);
                 var labour = db.Labours.Where(l => l.LabourProfitId == labourPrifit.Id);
                 var labourCon = db.LabourContractors.Where(c => c.LabourProfitId == labourPrifit.Id);
-                var debts = db.Debts.Where(d => d.InvoiceId == InvoiceSelect.Id);
+                var debts = Debts.Where(d => d.InvoiceId == InvoiceSelect.Id); //db.Debts.Where(d => d.InvoiceId == InvoiceSelect.Id);
                 db.LabourContractors.RemoveRange(labourCon);
                 db.Labours.RemoveRange(labour);
                 db.LabourProfits.Remove(labourPrifit);
@@ -2316,13 +2377,13 @@ namespace Builders.ViewModels
                 db.Invoices.Remove(InvoiceSelect);     // Обовязково треба звертати увагу на залежність !!! ЧЕРГА !!!                
                 db.SaveChanges();
                 Invoices = null;
-                LoadInvoicesDB();
+                LoadInvoicesDB(CompanyName);
                 MaterialProfits = null;
-                LoadMaterialProfitsDB();
+                LoadMaterialProfitsDB(CompanyName);
                 LabourProfits = null;
-                LoadLabourProfitsDB();
+                LoadLabourProfitsDB(CompanyName);
                 Debts = null;
-                LoadDebtsDB();
+                LoadDebtsDB(CompanyName);
             }
         }));
         public Command PrintInvoice => _printInvoice ?? (_printInvoice = new Command(obj =>
@@ -2330,8 +2391,8 @@ namespace Builders.ViewModels
             if (InvoiceSelect != null)
             {
                 int i = 0;
-                var quota = db.Quotations.FirstOrDefault(q => q.Id == InvoiceSelect.QuotaId);
-                var clientData = db.Clients.Where(c => c.Id == quota.ClientId).FirstOrDefault();
+                var quota = Quotations.FirstOrDefault(q => q.Id == InvoiceSelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == InvoiceSelect.QuotaId);
+                var clientData = Clients.Where(c => c.Id == quota.ClientId).FirstOrDefault(); //db.Clients.Where(c => c.Id == quota.ClientId).FirstOrDefault();
                 var materialData = db.MaterialQuotations.Where(q => q.QuotationId == quota.Id);
 
                 Excel.Application ExcelApp = new Excel.Application();
@@ -2505,11 +2566,11 @@ namespace Builders.ViewModels
             string search = obj.ToString();
             if (search == "")
             {
-                LoadInvoicesDB();
+                LoadInvoicesDB(CompanyName);
             }
             else
             {
-                Invoices = Invoices.Where(n => n.FullSearch.ToUpper().Contains(search.ToUpper()));
+                Invoices = Invoices.Where(n =>n.CompanyName == CompanyName && n.FullSearch.ToUpper().Contains(search.ToUpper()));
             }
         }));
 
@@ -2544,7 +2605,7 @@ namespace Builders.ViewModels
                 db.SaveChanges();
 
                 WorkOrders = null;
-                LoadWorkOrdersDB();
+                LoadWorkOrdersDB(CompanyName);
             }
         }));
         public Command DelWorkOrder => _delWorkOrder ?? (_delWorkOrder = new Command(obj =>
@@ -2562,7 +2623,7 @@ namespace Builders.ViewModels
                 db.WorkOrders.Remove(WorkOrderSelect);
                 db.SaveChanges();
                 WorkOrders = null;
-                LoadWorkOrdersDB();
+                LoadWorkOrdersDB(CompanyName);
             }
         }));
         public Command PrintWorkOrder => _printWorkOrder ?? (_printWorkOrder = new Command(obj =>
@@ -2590,11 +2651,11 @@ namespace Builders.ViewModels
             string search = obj.ToString();
             if (search == "")
             {
-                LoadWorkOrdersDB();
+                LoadWorkOrdersDB(CompanyName);
             }
             else
             {
-                WorkOrders = WorkOrders.Where(n => n.FullSearch.ToUpper().Contains(search.ToUpper()));
+                WorkOrders = WorkOrders.Where(n =>n.CompanyName == CompanyName && n.FullSearch.ToUpper().Contains(search.ToUpper()));
             }
         }));
         //**********************************
@@ -2719,11 +2780,11 @@ namespace Builders.ViewModels
             string search = obj.ToString();
             if (search == "")
             {
-                LoadMaterialProfitsDB();
+                LoadMaterialProfitsDB(CompanyName);
             }
             else
             {
-                MaterialProfits = MaterialProfits.Where(n => n.FullSearch.ToUpper().Contains(search.ToUpper()));
+                MaterialProfits = MaterialProfits.Where(n =>n.CompanyName == CompanyName && n.FullSearch.ToUpper().Contains(search.ToUpper()));
             }
         }));
         public Command ClickMaterialProfit => _clickMaterialProfit ?? (_clickMaterialProfit = new Command(obj =>
@@ -2735,7 +2796,7 @@ namespace Builders.ViewModels
                 db.SaveChanges();
 
                 MaterialProfits = null;
-                LoadMaterialProfitsDB();
+                LoadMaterialProfitsDB(CompanyName);
             }
         }));
         public Command LoadFotoMaterialProfit => _loadFotoMaterialProfit ?? (_loadFotoMaterialProfit = new Command(obj =>
@@ -2930,11 +2991,11 @@ namespace Builders.ViewModels
             string search = obj.ToString();
             if (search == "")
             {
-                LoadLabourProfitsDB();
+                LoadLabourProfitsDB(CompanyName);
             }
             else
             {
-                LabourProfits = LabourProfits.Where(n => n.FullSearch.ToUpper().Contains(search.ToUpper()));
+                LabourProfits = LabourProfits.Where(n =>n.CompanyName == CompanyName && n.FullSearch.ToUpper().Contains(search.ToUpper()));
             }
         }));
         public Command ClickLabourPrifit => _clickLabourProfit ?? (_clickLabourProfit = new Command(obj =>
@@ -2946,7 +3007,7 @@ namespace Builders.ViewModels
                 db.SaveChanges();
 
                 LabourProfits = null;
-                LoadLabourProfitsDB();
+                LoadLabourProfitsDB(CompanyName);
             }
         }));
         //**********************************
@@ -2976,7 +3037,7 @@ namespace Builders.ViewModels
                 db.Debts.Add(debts);
                 db.SaveChanges();
                 Debts = null;
-                LoadDebtsDB();
+                LoadDebtsDB(CompanyName);
             }
 
         }));
@@ -3011,7 +3072,7 @@ namespace Builders.ViewModels
                     db.Entry(DebtSelect).State = EntityState.Modified;
                     db.SaveChanges();
                     Debts = null;
-                    LoadDebtsDB();
+                    LoadDebtsDB(CompanyName);
                 }
             }
         }));
@@ -3022,7 +3083,7 @@ namespace Builders.ViewModels
                 db.Debts.Remove(DebtSelect);
                 db.SaveChanges();
                 Debts = null;
-                LoadDebtsDB();
+                LoadDebtsDB(CompanyName);
             }
         }));
         public Command PaymentDebts => _paymentDebts ?? (_paymentDebts = new Command(async obj =>
@@ -3063,7 +3124,7 @@ namespace Builders.ViewModels
                 db.Entry(DebtSelect).State = EntityState.Modified;
                 db.SaveChanges();
                 Debts = null;
-                LoadDebtsDB();
+                LoadDebtsDB(CompanyName);
             }
 
         }));
@@ -3072,11 +3133,11 @@ namespace Builders.ViewModels
             string search = obj.ToString();
             if (search == "")
             {
-                LoadDebtsDB();
+                LoadDebtsDB(CompanyName);
             }
             else
             {
-                Debts = Debts.Where(n => n.FullSearch.ToUpper().Contains(search.ToUpper()));
+                Debts = Debts.Where(n =>n.CompanyName == CompanyName && n.FullSearch.ToUpper().Contains(search.ToUpper()));
             }
         }));
         //**********************************
@@ -3377,8 +3438,7 @@ namespace Builders.ViewModels
             await displayRootRegistry.ShowModalPresentation(supplierViewModel);
         }));
 
-
-
+       
         #endregion
         public MainViewModel()
         {
@@ -3397,13 +3457,13 @@ namespace Builders.ViewModels
             db.Deliveries.Load();
 
             LoadClientsDB();
-            LoadQuotationsDB();
-            LoadInvoicesDB();
-            LoadWorkOrdersDB();
-            LoadMaterialProfitsDB();
-            LoadLabourProfitsDB();
-            LoadDebtsDB();
-            LoadDeliveriesDB();
+            LoadQuotationsDB(CompanyName);
+            LoadInvoicesDB(CompanyName);
+            LoadWorkOrdersDB(CompanyName);
+            LoadMaterialProfitsDB(CompanyName);
+            LoadLabourProfitsDB(CompanyName);
+            LoadDebtsDB(CompanyName);
+            LoadDeliveriesDB(CompanyName, false);
 
             ListLoaded();
             NameQuotaSelect = "ESTIMATE";
@@ -3431,6 +3491,11 @@ namespace Builders.ViewModels
             IsVisibleDebtsReport = Visibility.Collapsed;
             IsVisibleExpensesReport = Visibility.Collapsed;
 
+            IsCheckedCMO = true;
+            IsCheckedLeveling = false;
+            IsVisibleCMO = Visibility.Visible;
+            IsVisibleLeveling = Visibility.Collapsed;
+
             ReportDateFrom = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             ReportDateTo = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.DaysInMonth(DateTime.Today.Year, DateTime.Today.Month));
         }
@@ -3438,33 +3503,33 @@ namespace Builders.ViewModels
         {
             Clients = db.Clients.Local.ToBindingList();
         }
-        private void LoadQuotationsDB()
+        private void LoadQuotationsDB(string companyName)
         {
-            Quotations = db.Quotations.Local.ToBindingList().OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
+            Quotations = db.Quotations.Local.ToBindingList().Where(q=>q.CompanyName == companyName).OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
         }
-        private void LoadInvoicesDB()
+        private void LoadInvoicesDB(string companyName)
         {
-            Invoices = db.Invoices.Local.ToBindingList();
+            Invoices = db.Invoices.Local.ToBindingList().Where(i=>i.CompanyName == companyName);
         }
-        private void LoadWorkOrdersDB()
+        private void LoadWorkOrdersDB(string companyName)
         {
-            WorkOrders = db.WorkOrders.Local.ToBindingList();
+            WorkOrders = db.WorkOrders.Local.ToBindingList().Where(w => w.CompanyName == companyName);
         }
-        private void LoadMaterialProfitsDB()
+        private void LoadMaterialProfitsDB(string companyName)
         {
-            MaterialProfits = db.MaterialProfits.Local.ToBindingList();
+            MaterialProfits = db.MaterialProfits.Local.ToBindingList().Where(m => m.CompanyName == companyName);
         }
-        private void LoadLabourProfitsDB()
+        private void LoadLabourProfitsDB(string companyName)
         {
-            LabourProfits = db.LabourProfits.Local.ToBindingList();
+            LabourProfits = db.LabourProfits.Local.ToBindingList().Where(l => l.CompanyName == companyName);
         }
-        private void LoadDebtsDB()
+        private void LoadDebtsDB(string companyName)
         {
-            Debts = db.Debts.Local.ToBindingList();
+            Debts = db.Debts.Local.ToBindingList().Where(d => d.CompanyName == companyName);
         }
-        private void LoadDeliveriesDB()
+        private void LoadDeliveriesDB(string companyName, bool isArchive)
         {
-            Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == false);
+            Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == isArchive && d.CompanyName == companyName);
         }
         /// <summary>
         /// Відображає ProgressBar та робить форму напівпрозорою
@@ -3546,7 +3611,7 @@ namespace Builders.ViewModels
                 db.SaveChanges();
 
                 Quotations = null;
-                LoadQuotationsDB();
+                LoadQuotationsDB(CompanyName);
             }
         }
         /// <summary>
@@ -3603,6 +3668,10 @@ namespace Builders.ViewModels
             DateMonthSelect = DateMonths.ElementAt(DateTime.Today.Month - 1);
 
         }
+        /// <summary>
+        /// Сворює екземпляр Delivery
+        /// </summary>
+        /// <param name="quota"></param>
         private void AddDelivery(Quotation quota)
         {
             var material = db.MaterialQuotations.Where(m => m.QuotationId == quota.Id);
@@ -3634,7 +3703,7 @@ namespace Builders.ViewModels
                     }
                     //OnPropertyChanged(nameof(Deliveries));
                     Deliveries = null;
-                    LoadDeliveriesDB();
+                    LoadDeliveriesDB(CompanyName, false);
 
                     var del = db.Deliveries.OrderByDescending(d => d.Id).FirstOrDefault();
 
@@ -3659,6 +3728,26 @@ namespace Builders.ViewModels
                         }
                     }
                 }
+            }
+        }
+        /// <summary>
+        /// Видаляє екземпляр Delivery
+        /// </summary>
+        /// <param name="quota"></param>
+        private void DelDeliveri(Quotation quota)
+        {
+            var delivery = db.Deliveries.Where(d => d.QuotaId == quota.Id);
+            if (delivery != null)
+            {
+                foreach (var item in delivery)
+                {
+                    var material = db.DeliveryMaterials.Where(m => m.DeliveryId == item.Id);
+                    db.DeliveryMaterials.RemoveRange(material);
+                }
+                db.Deliveries.RemoveRange(delivery);
+                db.SaveChanges();
+                Deliveries = null;
+                LoadDeliveriesDB(CompanyName, false);
             }
         }
         /// <summary>
@@ -3722,7 +3811,7 @@ namespace Builders.ViewModels
             }
 
             MaterialProfits = null;
-            LoadMaterialProfitsDB();
+            LoadMaterialProfitsDB(CompanyName);
 
             MaterialProfitSelect = MaterialProfits.OrderByDescending(m => m.Id).FirstOrDefault();
 
@@ -3776,7 +3865,7 @@ namespace Builders.ViewModels
                 db.SaveChanges();
 
                 MaterialProfits = null;
-                LoadMaterialProfitsDB();
+                LoadMaterialProfitsDB(CompanyName);
             }
         }
         /// <summary>
@@ -3876,7 +3965,7 @@ namespace Builders.ViewModels
             }
 
             LabourProfits = null;
-            LoadLabourProfitsDB();
+            LoadLabourProfitsDB(CompanyName);
 
             LabourProfitSelect = LabourProfits.OrderByDescending(l => l.Id).FirstOrDefault();
         }
@@ -3922,7 +4011,7 @@ namespace Builders.ViewModels
                 db.SaveChanges();
 
                 LabourProfits = null;
-                LoadLabourProfitsDB();
+                LoadLabourProfitsDB(CompanyName);
             }
 
         }
@@ -3941,7 +4030,7 @@ namespace Builders.ViewModels
             db.Entry(invoice).State = EntityState.Modified;
             db.SaveChanges();
             Invoices = null;
-            LoadInvoicesDB();
+            LoadInvoicesDB(CompanyName);
         }
         /// <summary>
         /// Створює екземпляри Debts по всім Contractor з вказаного Invoice та записує їх в db
@@ -3949,8 +4038,8 @@ namespace Builders.ViewModels
         /// <param name="invoiceId"></param>
         private void AddDebtsTab(int? invoiceId)
         {
-            var invoice = db.Invoices.FirstOrDefault(i => i.Id == invoiceId);
-            int? idLabour = db.LabourProfits.FirstOrDefault(l => l.InvoiceId == invoiceId).Id;
+            var invoice = Invoices.FirstOrDefault(i => i.Id == invoiceId); //db.Invoices.FirstOrDefault(i => i.Id == invoiceId);
+            int? idLabour = LabourProfits.FirstOrDefault(l => l.InvoiceId == invoiceId).Id; //db.LabourProfits.FirstOrDefault(l => l.InvoiceId == invoiceId).Id;
             var contractor = db.LabourContractors.Where(c => c.LabourProfitId == idLabour);
             List<Debts> debts = new List<Debts>();
             if (contractor != null)
@@ -3977,7 +4066,7 @@ namespace Builders.ViewModels
                 db.SaveChanges();
 
                 Debts = null;
-                LoadDebtsDB();
+                LoadDebtsDB(CompanyName);
             }
         }
         /// <summary>
@@ -3986,11 +4075,11 @@ namespace Builders.ViewModels
         /// <param name="invoiceId"></param>
         private void InsDebtsTab(int? invoiceId)
         {
-            var invoice = db.Invoices.FirstOrDefault(i => i.Id == invoiceId);
-            int? idLabour = db.LabourProfits.FirstOrDefault(l => l.InvoiceId == invoiceId).Id;
+            var invoice = Invoices.FirstOrDefault(i => i.Id == invoiceId); //db.Invoices.FirstOrDefault(i => i.Id == invoiceId);
+            int? idLabour = LabourProfits.FirstOrDefault(l => l.InvoiceId == invoiceId).Id; //db.LabourProfits.FirstOrDefault(l => l.InvoiceId == invoiceId).Id;
             var contractor = db.LabourContractors.Where(c => c.LabourProfitId == idLabour);
 
-            var labourDebts = db.Debts.Where(d => d.InvoiceId == invoiceId && d.ReadOnly == true);
+            var labourDebts = Debts.Where(d => d.InvoiceId == invoiceId && d.ReadOnly == true); //db.Debts.Where(d => d.InvoiceId == invoiceId && d.ReadOnly == true);
             db.Debts.RemoveRange(labourDebts);
             db.SaveChanges();
 
@@ -4018,7 +4107,7 @@ namespace Builders.ViewModels
                 db.Debts.AddRange(debts);
                 db.SaveChanges();
                 Debts = null;
-                LoadDebtsDB();
+                LoadDebtsDB(CompanyName);
             }
         }
         /// <summary>
@@ -4068,7 +4157,7 @@ namespace Builders.ViewModels
         /// <returns></returns>
         private MaterialProfit ReportMaterial(DateTime dateFrom, DateTime dateTo)
         {
-            var filterMaterial = db.MaterialProfits.Where(m => m.InvoiceDate >= dateFrom && m.InvoiceDate <= dateTo && m.Companion == true);
+            var filterMaterial = MaterialProfits.Where(m => m.InvoiceDate >= dateFrom && m.InvoiceDate <= dateTo && m.Companion == true); //db.MaterialProfits.Where(m => m.InvoiceDate >= dateFrom && m.InvoiceDate <= dateTo && m.Companion == true);
             if (filterMaterial.Count() > 0)
             {
                 MaterialProfit report = new MaterialProfit();
@@ -4104,7 +4193,7 @@ namespace Builders.ViewModels
         /// <returns></returns>
         private LabourProfit ReportLabour(DateTime dateFrom, DateTime dateTo)
         {
-            var filterLabour = db.LabourProfits.Where(l => l.InvoiceDate >= dateFrom && l.InvoiceDate <= dateTo && l.Companion == true);
+            var filterLabour = LabourProfits.Where(l => l.InvoiceDate >= dateFrom && l.InvoiceDate <= dateTo && l.Companion == true); //db.LabourProfits.Where(l => l.InvoiceDate >= dateFrom && l.InvoiceDate <= dateTo && l.Companion == true);
             if (filterLabour.Count() > 0)
             {
                 LabourProfit report = new LabourProfit();
@@ -4139,11 +4228,11 @@ namespace Builders.ViewModels
         /// <returns></returns>
         private List<Report> ReportTotalGrid(DateTime dateFrom, DateTime dateTo)
         {
-            var invoice = db.Invoices.Where(i => i.DateInvoice >= dateFrom && i.DateInvoice <= dateTo);
+            var invoice = Invoices.Where(i => i.DateInvoice >= dateFrom && i.DateInvoice <= dateTo); //db.Invoices.Where(i => i.DateInvoice >= dateFrom && i.DateInvoice <= dateTo);
             if (invoice.Count() > 0)
             {
-                var material = db.MaterialProfits.Where(i => i.InvoiceDate >= dateFrom && i.InvoiceDate <= dateTo && i.Companion == true);
-                var labour = db.LabourProfits.Where(i => i.InvoiceDate >= dateFrom && i.InvoiceDate <= dateTo && i.Companion == true);
+                var material = MaterialProfits.Where(i => i.InvoiceDate >= dateFrom && i.InvoiceDate <= dateTo && i.Companion == true); //db.MaterialProfits.Where(i => i.InvoiceDate >= dateFrom && i.InvoiceDate <= dateTo && i.Companion == true);
+                var labour = LabourProfits.Where(i => i.InvoiceDate >= dateFrom && i.InvoiceDate <= dateTo && i.Companion == true); //db.LabourProfits.Where(i => i.InvoiceDate >= dateFrom && i.InvoiceDate <= dateTo && i.Companion == true);
 
                 List<Report> reports = new List<Report>();
                 foreach (var item in invoice)
@@ -4309,7 +4398,7 @@ namespace Builders.ViewModels
         {
             List<ReportPayrollToWork> reports = new List<ReportPayrollToWork>();
             //var workOrder = db.WorkOrders.Where(w => w.DateWork >= dateFrom && w.DateWork <= dateTo);
-            var workOrder = db.LabourProfits.Where(w => w.InvoiceDate >= dateFrom && w.InvoiceDate <= dateTo && w.Companion == true);
+            var workOrder = LabourProfits.Where(w => w.InvoiceDate >= dateFrom && w.InvoiceDate <= dateTo && w.Companion == true); //db.LabourProfits.Where(w => w.InvoiceDate >= dateFrom && w.InvoiceDate <= dateTo && w.Companion == true);
             if (workOrder.Count() > 0)
             {
                 foreach (var item in workOrder)
@@ -4378,7 +4467,7 @@ namespace Builders.ViewModels
         /// <returns></returns>
         private List<ReportAmount> ReportAmountGet(DateTime dateFrom, DateTime dateTo)
         {
-            var quota = db.Quotations.Where(q => q.Id > 0);
+            var quota = Quotations.Where(q => q.Id > 0); //db.Quotations.Where(q => q.Id > 0);
             var payment = db.Payments.Where(p => p.PaymentDatePaid >= dateFrom && p.PaymentDatePaid <= dateTo);
             List<ReportAmount> reports = new List<ReportAmount>();
 
@@ -4409,7 +4498,7 @@ namespace Builders.ViewModels
         /// <returns></returns>
         private List<Debts> ReportAmountDebts(DateTime dateFrom, DateTime dateTo)
         {
-            return db.Debts.Where(d => d.InvoiceDate >= dateFrom && d.InvoiceDate <= dateTo && d.Payment == false).ToList();
+            return  Debts.Where(d => d.InvoiceDate >= dateFrom && d.InvoiceDate <= dateTo && d.Payment == false).ToList(); //db.Debts.Where(d => d.InvoiceDate >= dateFrom && d.InvoiceDate <= dateTo && d.Payment == false).ToList();
         }
         /// <summary>
         /// Використовується для звіту по заданому проміжку дат. Вибирає всі оплачені платежі з Debts.
@@ -4419,7 +4508,7 @@ namespace Builders.ViewModels
         /// <returns></returns>
         private List<Debts> ReportPaymentDebts(DateTime dateFrom, DateTime dateTo)
         {
-            return db.Debts.Where(d => d.InvoiceDate >= dateFrom && d.InvoiceDate <= dateTo && d.Payment == true).ToList();
+            return Debts.Where(d => d.InvoiceDate >= dateFrom && d.InvoiceDate <= dateTo && d.Payment == true).ToList(); //db.Debts.Where(d => d.InvoiceDate >= dateFrom && d.InvoiceDate <= dateTo && d.Payment == true).ToList();
         }
         /// <summary>
         /// Використовується для звіту по заданому Year and Month. Вибирає всі неоплачені записи з Expenses.
@@ -4502,8 +4591,8 @@ namespace Builders.ViewModels
             ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
 
 
-            var quota = db.Quotations.FirstOrDefault(q => q.Id == WorkOrderSelect.QuotaId);
-            var client = db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+            var quota = Quotations.FirstOrDefault(q => q.Id == WorkOrderSelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == WorkOrderSelect.QuotaId);
+            var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
             var work = db.WorkOrder_Works.Where(w => w.WorkOrderId == WorkOrderSelect.Id && w.Contractor == contractor.Contractor);
             var accessories = db.WorkOrder_Accessories.Where(a => a.WorkOrderId == WorkOrderSelect.Id && a.Contractor == contractor.Contractor);
             var inst = db.WorkOrder_Installations.Where(ins => ins.WorkOrderId == WorkOrderSelect.Id && ins.Contractor == contractor.Contractor);
@@ -4634,8 +4723,8 @@ namespace Builders.ViewModels
             ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
 
 
-            var quota = db.Quotations.FirstOrDefault(q => q.Id == WorkOrderSelect.QuotaId);
-            var client = db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+            var quota = Quotations.FirstOrDefault(q => q.Id == WorkOrderSelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == WorkOrderSelect.QuotaId);
+            var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
             var work = db.WorkOrder_Works.Where(w => w.WorkOrderId == WorkOrderSelect.Id && w.Contractor == contractor.Contractor);
             var accessories = db.WorkOrder_Accessories.Where(a => a.WorkOrderId == WorkOrderSelect.Id && a.Contractor == contractor.Contractor);
             var inst = db.WorkOrder_Installations.Where(ins => ins.WorkOrderId == WorkOrderSelect.Id && ins.Contractor == contractor.Contractor);

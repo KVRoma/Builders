@@ -41,6 +41,8 @@ namespace Builders.Models
 
         public bool Companion { get; set; } = true;
 
+        public string CompanyName { get; set; } = "CMO";
+
         public virtual ICollection<Material> Materials { get; set; }
         public MaterialProfit()
         {
