@@ -17,6 +17,7 @@ namespace Builders.Models
         public decimal Price { get; set; }
         public string Depth { get; set; }  // Використовується тільки в Leveling Quota
         public int? Mapei { get; set; } // Використовується тільки в Leveling Quota
+        public decimal QuantityNL { get; set; } = 0m; // Використовується для зберенження кількості в Leveling Quota
         public int? SupplierId { get; set; }
 
         public int? QuotationId { get; set; }

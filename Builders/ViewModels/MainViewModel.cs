@@ -1527,210 +1527,14 @@ namespace Builders.ViewModels
             }
         }));
         public Command PrintQuotation => _printQuotation ?? (_printQuotation = new Command(obj =>
-        {
-            if (QuotationSelect != null && NameQuotaSelect != null)
+        {            
+            if (CompanyName == "CMO")
             {
-                if (NameQuotaSelect == "INVOICE")
-                {
-                    // Додати зміну в назві поля !!!! наприклад РІ1004
-                    QuotationSelect.PrefixNumberQuota = "PI";
-                }
-                else
-                {
-                    QuotationSelect.PrefixNumberQuota = "Q";
-                }
-
-
-                int i = 0;
-                var clientData = Clients.Where(c => c.Id == QuotationSelect.ClientId).FirstOrDefault();
-                var materialData = db.MaterialQuotations.Where(q => q.QuotationId == QuotationSelect.Id);
-
-                Excel.Application ExcelApp = new Excel.Application();
-                Excel.Workbook ExcelWorkBook;
-                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\QuotaPDF.xltm");   //Вказуємо шлях до шаблону
-
-
-                ExcelApp.Cells[1, 3] = NameQuotaSelect;
-
-                ExcelApp.Cells[2, 5] = QuotationSelect.QuotaDate;
-                ExcelApp.Cells[3, 5] = QuotationSelect.NumberQuota;
-                ExcelApp.Cells[4, 5] = clientData.NumberClient;
-                ExcelApp.Cells[6, 2] = QuotationSelect.JobDescription;
-
-                ExcelApp.Cells[7, 2] = clientData.CompanyName;
-
-                ExcelApp.Cells[8, 2] = clientData.PrimaryFirstName + " " + clientData.PrimaryLastName;
-                ExcelApp.Cells[9, 2] = clientData.PrimaryPhoneNumber;
-                ExcelApp.Cells[10, 2] = clientData.PrimaryEmail;
-                ExcelApp.Cells[11, 2] = clientData.AddressBillStreet + ", " + clientData.AddressBillCity + ", " + clientData.AddressBillProvince + ", " + clientData.AddressBillPostalCode + ", " + clientData.AddressBillCountry;
-
-                ExcelApp.Cells[8, 4] = clientData.SecondaryFirstName + " " + clientData.SecondaryLastName;
-                ExcelApp.Cells[9, 4] = clientData.SecondaryPhoneNumber;
-                ExcelApp.Cells[10, 4] = clientData.SecondaryEmail;
-                ExcelApp.Cells[11, 4] = clientData.AddressSiteStreet + ", " + clientData.AddressSiteCity + ", " + clientData.AddressSiteProvince + ", " + clientData.AddressSitePostalCode + ", " + clientData.AddressSiteCountry;
-
-                i = 19; // "FLOORING"
-                foreach (var item in materialData)
-                {
-                    if (item.Groupe == "FLOORING")
-                    {
-                        //ExcelApp.Cells[i, 1] = item.Item;
-                        ExcelApp.Cells[i, 1] = item.Description;
-                        ExcelApp.Cells[i, 3] = item.Quantity;
-                        ExcelApp.Cells[i, 4] = item.Rate;
-                        ExcelApp.Cells[i, 5] = item.Price;
-                        i++;
-                    }
-                }
-
-                i = 28;  // "ACCESSORIES"
-                foreach (var item in materialData)
-                {
-                    if (item.Groupe == "ACCESSORIES")
-                    {
-                        //ExcelApp.Cells[27 + i, 1] = item.Item;
-                        ExcelApp.Cells[i, 1] = item.Description;
-                        ExcelApp.Cells[i, 3] = item.Quantity;
-                        ExcelApp.Cells[i, 4] = item.Rate;
-                        ExcelApp.Cells[i, 5] = item.Price;
-                        i++;
-                    }
-                }
-
-                i = 57; // "INSTALLATION"
-                foreach (var item in materialData)
-                {
-                    if (item.Groupe == "INSTALLATION")
-                    {
-                        ExcelApp.Cells[i, 1] = item.Item;
-                        ExcelApp.Cells[i, 2] = item.Description;
-                        ExcelApp.Cells[i, 3] = item.Quantity;
-                        ExcelApp.Cells[i, 4] = item.Rate;
-                        ExcelApp.Cells[i, 5] = item.Price;
-                        i++;
-                    }
-                }
-
-                i = 66; // "DEMOLITION"
-                foreach (var item in materialData)
-                {
-                    if (item.Groupe == "DEMOLITION")
-                    {
-                        ExcelApp.Cells[i, 1] = item.Item;
-                        ExcelApp.Cells[i, 2] = item.Description;
-                        ExcelApp.Cells[i, 3] = item.Quantity;
-                        ExcelApp.Cells[i, 4] = item.Rate;
-                        ExcelApp.Cells[i, 5] = item.Price;
-                        i++;
-                    }
-                }
-
-                i = 72;  // "OPTIONAL SERVICES"
-                foreach (var item in materialData)
-                {
-                    if (item.Groupe == "OPTIONAL SERVICES")
-                    {
-                        ExcelApp.Cells[i, 1] = item.Item;
-                        ExcelApp.Cells[i, 2] = item.Description;
-                        ExcelApp.Cells[i, 3] = item.Quantity;
-                        ExcelApp.Cells[i, 4] = item.Rate;
-                        ExcelApp.Cells[i, 5] = item.Price;
-                        i++;
-                    }
-                }
-
-                i = 80;  // "FLOORING DELIVERY"
-                foreach (var item in materialData)
-                {
-                    if (item.Groupe == "FLOORING DELIVERY")
-                    {
-                        ExcelApp.Cells[i, 1] = item.Item;
-                        ExcelApp.Cells[i, 2] = item.Description;
-                        ExcelApp.Cells[i, 3] = item.Quantity;
-                        ExcelApp.Cells[i, 4] = item.Rate;
-                        ExcelApp.Cells[i, 5] = item.Price;
-                        i++;
-                    }
-                }
-
-                ExcelApp.Cells[14, 2] = QuotationSelect.JobNote;
-
-                ExcelApp.Cells[45, 5] = QuotationSelect.MaterialSubtotal;
-                ExcelApp.Cells[46, 5] = QuotationSelect.MaterialTax;
-                ExcelApp.Cells[47, 5] = QuotationSelect.MaterialDiscountAmount;
-                ExcelApp.Cells[48, 5] = QuotationSelect.MaterialTotal;
-
-                ExcelApp.Cells[84, 5] = QuotationSelect.LabourSubtotal;
-                ExcelApp.Cells[85, 5] = QuotationSelect.LabourTax;
-                ExcelApp.Cells[86, 5] = QuotationSelect.LabourDiscountAmount;
-                ExcelApp.Cells[87, 5] = QuotationSelect.LabourTotal;
-
-                ExcelApp.Cells[90, 2] = (QuotationSelect.FinancingYesNo) ? "Yes" : "No";
-                ExcelApp.Cells[91, 2] = QuotationSelect.FinancingAmount;
-                ExcelApp.Cells[92, 2] = QuotationSelect.AmountPaidByCreditCard;
-
-                ExcelApp.Cells[90, 5] = QuotationSelect.ProjectTotal;
-                ExcelApp.Cells[91, 5] = QuotationSelect.FinancingFee;
-                ExcelApp.Cells[92, 5] = QuotationSelect.ProcessingFee;
-                ExcelApp.Cells[93, 5] = QuotationSelect.InvoiceGrandTotal;
-
-                var pay = db.Payments.Where(p => p.QuotationId == QuotationSelect.Id).OrderBy(p => p.Id);
-
-                int payCounter = 98;
-                foreach (var item in pay)
-                {
-                    if (item.PaymentDatePaid == DateTime.MinValue)
-                    {
-                        ExcelApp.Cells[payCounter, 2] = "";
-                    }
-                    else
-                    {
-                        ExcelApp.Cells[payCounter, 2] = item.PaymentDatePaid;
-                    }
-                    ExcelApp.Cells[payCounter, 3] = item.PaymentAmountPaid;
-                    ExcelApp.Cells[payCounter, 4] = item.PaymentMethod;
-
-                    if (item.Balance > 0)
-                    {
-                        ExcelApp.Cells[payCounter, 5] = item.Balance;
-                    }
-                    else
-                    {
-                        ExcelApp.Cells[payCounter, 5] = "Paid in full";
-                    }
-
-                    payCounter++;
-                }
-
-                ExcelApp.Calculate();
-                ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
-                ExcelApp.Calculate();
-
-                db.Entry(QuotationSelect).State = EntityState.Modified;
-
-                var delivery = Deliveries.FirstOrDefault(d => d.QuotaId == QuotationSelect.Id);
-                var workOrder = WorkOrders.FirstOrDefault(w => w.QuotaId == QuotationSelect.Id);
-                var invoice = Invoices.FirstOrDefault(inv => inv.QuotaId == QuotationSelect.Id);
-
-                if (delivery != null)
-                {
-                    delivery.NumberQuota = QuotationSelect.NumberQuota;
-                    db.Entry(delivery).State = EntityState.Modified;
-                }
-                if (workOrder != null)
-                {
-                    workOrder.NumberQuota = QuotationSelect.NumberQuota;
-                    db.Entry(workOrder).State = EntityState.Modified;
-                }
-
-                db.SaveChanges();
-                Deliveries = null;
-                WorkOrders = null;
-                Quotations = null;
-
-                LoadQuotationsDB(CompanyName);
-                LoadWorkOrdersDB(CompanyName);
-                LoadDeliveriesDB(CompanyName, false);
+                QuotaPrintToExcelCMO("\\Blanks\\QuotaPDF.xltm");
+            }
+            else 
+            {
+                QuotaPrintToExcelNL("\\Blanks\\NLQuotaPDF.xltm");
             }
         }));
         public Command PaymentQuotation => _paymentQuotation ?? (_paymentQuotation = new Command(async obj =>
@@ -1778,6 +1582,7 @@ namespace Builders.ViewModels
                             work.QuotationSelect = quota.FirstOrDefault(q => q.Id == quotaId);
                             work.CreatOrder.Execute("");
                         }
+                        LoadWorkOrdersDB(CompanyName);
                     }
                     // Creating Invoice                    
                     if (quotaItem.PaidQuota && invoice == null && order != null)
@@ -2157,85 +1962,27 @@ namespace Builders.ViewModels
 
         //**********************************
         public Command PrintDelivery => _printDelivery ?? (_printDelivery = new Command(obj =>
-        {
-            if (DeliverySelect != null)
+        {            
+            if (CompanyName == "CMO")
             {
-                var material = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id);
-                var dic = db.DIC_Suppliers.FirstOrDefault(s => s.Id == DeliverySelect.SupplierId);
-                var quota = Quotations.FirstOrDefault(q => q.Id == DeliverySelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == DeliverySelect.QuotaId);
-                var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
-                Excel.Application ExcelApp = new Excel.Application();
-                Excel.Workbook ExcelWorkBook;
-                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\ListOfSuppliesPDF.xltm");   //Вказуємо шлях до шаблону
-
-                ExcelApp.Cells[3, 6] = DeliverySelect.DateCreating;
-                ExcelApp.Cells[6, 2] = "\"" + client?.NumberClient + " - " + quota?.NumberQuota + "\"";
-                ExcelApp.Cells[7, 2] = "\"CMO" + " - " + client?.PrimaryFullName + "\"";
-                ExcelApp.Cells[9, 2] = dic?.Supplier;
-                ExcelApp.Cells[10, 2] = dic?.Address;
-
-                int i = 14;
-                foreach (var item in material)
-                {
-                    ExcelApp.Cells[i, 1] = item.Description;
-                    ExcelApp.Cells[i, 6] = item.Quantity;
-                    i++;
-                }
-
-                ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
-                ExcelApp.Calculate();
-
-                DeliverySelect.Color = "Black";
-                DeliverySelect.IsEnabled = true;
-                db.Entry(DeliverySelect).State = EntityState.Modified;
-                db.SaveChanges();
-
-                Deliveries = null;
-                LoadDeliveriesDB(CompanyName, false);
+                DeliveryPrintToExcelCMO("\\Blanks\\ListOfSuppliesPDF.xltm");
+            }
+            else
+            {
+                DeliveryPrintToExcelNL("\\Blanks\\NLListOfSuppliesPDF.xltm");
             }
         }));
         public Command PrintDriverDelivery => _printDriverDelivery ?? (_printDriverDelivery = new Command(obj =>
-        {
-            if (DeliveryComboBoxSelect != null)
+        {            
+            if (CompanyName == "CMO")
             {
-                Excel.Application ExcelApp = new Excel.Application();
-                Excel.Workbook ExcelWorkBook;
-                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\DeliveryPDF.xltm");   //Вказуємо шлях до шаблону
-
-                string[] comboBox = DeliveryComboBoxSelect.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                string word = comboBox[0];
-                var supplier = db.Deliveries.Where(d => d.NumberQuota == word);
-                int? quotaId = supplier.FirstOrDefault(s => s.QuotaId > 0)?.QuotaId;
-                var quota = Quotations.FirstOrDefault(q => q.Id == quotaId); //db.Quotations.FirstOrDefault(q => q.Id == quotaId);
-                var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
-                if (supplier != null && quota != null && client != null)
-                {
-                    ExcelApp.Cells[3, 5] = DateTime.Today;
-                    ExcelApp.Cells[4, 5] = quota.NumberQuota;
-                    ExcelApp.Cells[9, 2] = client.PrimaryFullName;
-                    ExcelApp.Cells[10, 2] = client?.CompanyName;
-                    ExcelApp.Cells[11, 2] = client?.AddressBillStreet + client?.AddressBillCity + client?.AddressBillProvince + client?.AddressBillPostalCode + client?.AddressBillCountry;
-                    ExcelApp.Cells[12, 2] = client?.PrimaryPhoneNumber;
-                    ExcelApp.Cells[11, 4] = client?.AddressSiteStreet + client?.AddressSiteCity + client?.AddressSiteProvince + client?.AddressSitePostalCode + client?.AddressSiteCountry;
-                    ExcelApp.Cells[12, 4] = client?.PrimaryEmail;
-                    int i = 24;
-                    foreach (var item in supplier)
-                    {
-                        var temp = db.DeliveryMaterials.Where(m => m.DeliveryId == item.Id)?.Select(m => m.Quantity);
-                        decimal quantity = temp?.Sum() ?? (0m);
-                        var dictionary = db.DIC_Suppliers.FirstOrDefault(s => s.Id == item.SupplierId);
-
-                        ExcelApp.Cells[i, 1] = dictionary.Supplier;
-                        ExcelApp.Cells[i, 2] = dictionary.Address;
-                        ExcelApp.Cells[i, 3] = dictionary.Hours;
-                        ExcelApp.Cells[i, 4] = quantity;
-                        ExcelApp.Cells[i, 5] = item.OrderNumber;
-                        i++;
-                    }
-                }
-                ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
-                ExcelApp.Calculate();
+                DeliveryDriverPrintYoExcelCMO("\\Blanks\\DeliveryPDF.xltm");
             }
+            else
+            {
+                DeliveryDriverPrintYoExcelNL("\\Blanks\\NLDeliveryPDF.xltm");
+            }
+
         }));
         public Command SearchDelivery => _searchDelivery ?? (_searchDelivery = new Command(obj =>
         {
@@ -2583,6 +2330,7 @@ namespace Builders.ViewModels
             var work = new WorkOrderViewModel(ref db, EnumClient.Add, null);
             work.Quotations = Quotations;
             await displayRootRegistry.ShowModalPresentation(work);
+            LoadWorkOrdersDB(CompanyName);
         }));
         public Command InsWorkOrder => _insWorkOrder ?? (_insWorkOrder = new Command(async obj =>
         {
@@ -3718,7 +3466,8 @@ namespace Builders.ViewModels
                             PhoneNumber = quota.PhoneNumber,
                             Email = quota.Email,
                             SupplierId = dicSupp.Id,
-                            SupplierName = dicSupp.Supplier
+                            SupplierName = dicSupp.Supplier,
+                            CompanyName = quota.CompanyName
                         };
                         db.Deliveries.Add(delivery);
                         db.SaveChanges();
@@ -4868,6 +4617,609 @@ namespace Builders.ViewModels
             ExcelApp.Cells[1, 12] = "1";   // Записуємо дані в .pdf                       
             ExcelApp.Calculate();
 
+        }
+        /// <summary>
+        /// Формує файл Excel з шаблону CMO
+        /// </summary>
+        /// <param name="path"></param>
+        private void QuotaPrintToExcelCMO(string path)
+        {
+            if (QuotationSelect != null && NameQuotaSelect != null)
+            {
+                if (NameQuotaSelect == "INVOICE")
+                {
+                    // Додати зміну в назві поля !!!! наприклад РІ1004
+                    QuotationSelect.PrefixNumberQuota = "PI";
+                }
+                else
+                {
+                    QuotationSelect.PrefixNumberQuota = "Q";
+                }
+
+
+                int i = 0;
+                var clientData = Clients.Where(c => c.Id == QuotationSelect.ClientId).FirstOrDefault();
+                var materialData = db.MaterialQuotations.Where(q => q.QuotationId == QuotationSelect.Id);
+
+                Excel.Application ExcelApp = new Excel.Application();
+                Excel.Workbook ExcelWorkBook;
+                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
+
+
+                ExcelApp.Cells[1, 3] = NameQuotaSelect;
+
+                ExcelApp.Cells[2, 5] = QuotationSelect.QuotaDate;
+                ExcelApp.Cells[3, 5] = QuotationSelect.NumberQuota;
+                ExcelApp.Cells[4, 5] = clientData.NumberClient;
+                ExcelApp.Cells[6, 2] = QuotationSelect.JobDescription;
+
+                ExcelApp.Cells[7, 2] = clientData.CompanyName;
+
+                ExcelApp.Cells[8, 2] = clientData.PrimaryFirstName + " " + clientData.PrimaryLastName;
+                ExcelApp.Cells[9, 2] = clientData.PrimaryPhoneNumber;
+                ExcelApp.Cells[10, 2] = clientData.PrimaryEmail;
+                ExcelApp.Cells[11, 2] = clientData.AddressBillStreet + ", " + clientData.AddressBillCity + ", " + clientData.AddressBillProvince + ", " + clientData.AddressBillPostalCode + ", " + clientData.AddressBillCountry;
+
+                ExcelApp.Cells[8, 4] = clientData.SecondaryFirstName + " " + clientData.SecondaryLastName;
+                ExcelApp.Cells[9, 4] = clientData.SecondaryPhoneNumber;
+                ExcelApp.Cells[10, 4] = clientData.SecondaryEmail;
+                ExcelApp.Cells[11, 4] = clientData.AddressSiteStreet + ", " + clientData.AddressSiteCity + ", " + clientData.AddressSiteProvince + ", " + clientData.AddressSitePostalCode + ", " + clientData.AddressSiteCountry;
+
+                i = 19; // "FLOORING"
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "FLOORING")
+                    {
+                        //ExcelApp.Cells[i, 1] = item.Item;
+                        ExcelApp.Cells[i, 1] = item.Description;
+                        ExcelApp.Cells[i, 3] = item.Quantity;
+                        ExcelApp.Cells[i, 4] = item.Rate;
+                        ExcelApp.Cells[i, 5] = item.Price;
+                        i++;
+                    }
+                }
+
+                i = 28;  // "ACCESSORIES"
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "ACCESSORIES")
+                    {
+                        //ExcelApp.Cells[27 + i, 1] = item.Item;
+                        ExcelApp.Cells[i, 1] = item.Description;
+                        ExcelApp.Cells[i, 3] = item.Quantity;
+                        ExcelApp.Cells[i, 4] = item.Rate;
+                        ExcelApp.Cells[i, 5] = item.Price;
+                        i++;
+                    }
+                }
+
+                i = 57; // "INSTALLATION"
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "INSTALLATION")
+                    {
+                        ExcelApp.Cells[i, 1] = item.Item;
+                        ExcelApp.Cells[i, 2] = item.Description;
+                        ExcelApp.Cells[i, 3] = item.Quantity;
+                        ExcelApp.Cells[i, 4] = item.Rate;
+                        ExcelApp.Cells[i, 5] = item.Price;
+                        i++;
+                    }
+                }
+
+                i = 66; // "DEMOLITION"
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "DEMOLITION")
+                    {
+                        ExcelApp.Cells[i, 1] = item.Item;
+                        ExcelApp.Cells[i, 2] = item.Description;
+                        ExcelApp.Cells[i, 3] = item.Quantity;
+                        ExcelApp.Cells[i, 4] = item.Rate;
+                        ExcelApp.Cells[i, 5] = item.Price;
+                        i++;
+                    }
+                }
+
+                i = 72;  // "OPTIONAL SERVICES"
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "OPTIONAL SERVICES")
+                    {
+                        ExcelApp.Cells[i, 1] = item.Item;
+                        ExcelApp.Cells[i, 2] = item.Description;
+                        ExcelApp.Cells[i, 3] = item.Quantity;
+                        ExcelApp.Cells[i, 4] = item.Rate;
+                        ExcelApp.Cells[i, 5] = item.Price;
+                        i++;
+                    }
+                }
+
+                i = 80;  // "FLOORING DELIVERY"
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "FLOORING DELIVERY")
+                    {
+                        ExcelApp.Cells[i, 1] = item.Item;
+                        ExcelApp.Cells[i, 2] = item.Description;
+                        ExcelApp.Cells[i, 3] = item.Quantity;
+                        ExcelApp.Cells[i, 4] = item.Rate;
+                        ExcelApp.Cells[i, 5] = item.Price;
+                        i++;
+                    }
+                }
+
+                ExcelApp.Cells[14, 2] = QuotationSelect.JobNote;
+
+                ExcelApp.Cells[45, 5] = QuotationSelect.MaterialSubtotal;
+                ExcelApp.Cells[46, 5] = QuotationSelect.MaterialTax;
+                ExcelApp.Cells[47, 5] = QuotationSelect.MaterialDiscountAmount;
+                ExcelApp.Cells[48, 5] = QuotationSelect.MaterialTotal;
+
+                ExcelApp.Cells[84, 5] = QuotationSelect.LabourSubtotal;
+                ExcelApp.Cells[85, 5] = QuotationSelect.LabourTax;
+                ExcelApp.Cells[86, 5] = QuotationSelect.LabourDiscountAmount;
+                ExcelApp.Cells[87, 5] = QuotationSelect.LabourTotal;
+
+                ExcelApp.Cells[90, 2] = (QuotationSelect.FinancingYesNo) ? "Yes" : "No";
+                ExcelApp.Cells[91, 2] = QuotationSelect.FinancingAmount;
+                ExcelApp.Cells[92, 2] = QuotationSelect.AmountPaidByCreditCard;
+
+                ExcelApp.Cells[90, 5] = QuotationSelect.ProjectTotal;
+                ExcelApp.Cells[91, 5] = QuotationSelect.FinancingFee;
+                ExcelApp.Cells[92, 5] = QuotationSelect.ProcessingFee;
+                ExcelApp.Cells[93, 5] = QuotationSelect.InvoiceGrandTotal;
+
+                var pay = db.Payments.Where(p => p.QuotationId == QuotationSelect.Id).OrderBy(p => p.Id);
+
+                int payCounter = 98;
+                foreach (var item in pay)
+                {
+                    if (item.PaymentDatePaid == DateTime.MinValue)
+                    {
+                        ExcelApp.Cells[payCounter, 2] = "";
+                    }
+                    else
+                    {
+                        ExcelApp.Cells[payCounter, 2] = item.PaymentDatePaid;
+                    }
+                    ExcelApp.Cells[payCounter, 3] = item.PaymentAmountPaid;
+                    ExcelApp.Cells[payCounter, 4] = item.PaymentMethod;
+
+                    if (item.Balance > 0)
+                    {
+                        ExcelApp.Cells[payCounter, 5] = item.Balance;
+                    }
+                    else
+                    {
+                        ExcelApp.Cells[payCounter, 5] = "Paid in full";
+                    }
+
+                    payCounter++;
+                }
+
+                ExcelApp.Calculate();
+                ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
+                ExcelApp.Calculate();
+
+                db.Entry(QuotationSelect).State = EntityState.Modified;
+
+                var delivery = Deliveries.FirstOrDefault(d => d.QuotaId == QuotationSelect.Id);
+                var workOrder = WorkOrders.FirstOrDefault(w => w.QuotaId == QuotationSelect.Id);
+                var invoice = Invoices.FirstOrDefault(inv => inv.QuotaId == QuotationSelect.Id);
+
+                if (delivery != null)
+                {
+                    delivery.NumberQuota = QuotationSelect.NumberQuota;
+                    db.Entry(delivery).State = EntityState.Modified;
+                }
+                if (workOrder != null)
+                {
+                    workOrder.NumberQuota = QuotationSelect.NumberQuota;
+                    db.Entry(workOrder).State = EntityState.Modified;
+                }
+
+                db.SaveChanges();
+                Deliveries = null;
+                WorkOrders = null;
+                Quotations = null;
+
+                LoadQuotationsDB(CompanyName);
+                LoadWorkOrdersDB(CompanyName);
+                LoadDeliveriesDB(CompanyName, false);
+            }
+        }
+        /// <summary>
+        /// Формує файл Excel з шаблону Next Level
+        /// </summary>
+        /// <param name="path"></param>
+        private void QuotaPrintToExcelNL(string path)
+        {
+            if (QuotationSelect != null && NameQuotaSelect != null)
+            {
+                if (NameQuotaSelect == "INVOICE")
+                {
+                    // Додати зміну в назві поля !!!! наприклад РІ1004
+                    QuotationSelect.PrefixNumberQuota = "PI";
+                }
+                else
+                {
+                    QuotationSelect.PrefixNumberQuota = "Q";
+                }
+
+
+                int i = 0;
+                var clientData = Clients.Where(c => c.Id == QuotationSelect.ClientId).FirstOrDefault();
+                var materialData = db.MaterialQuotations.Where(q => q.QuotationId == QuotationSelect.Id);
+
+                Excel.Application ExcelApp = new Excel.Application();
+                Excel.Workbook ExcelWorkBook;
+                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
+
+
+                ExcelApp.Cells[1, 5] = NameQuotaSelect;
+
+                ExcelApp.Cells[2, 7] = QuotationSelect.QuotaDate;
+                ExcelApp.Cells[3, 7] = QuotationSelect.NumberQuota;
+                ExcelApp.Cells[4, 7] = clientData.NumberClient;
+                ExcelApp.Cells[6, 2] = QuotationSelect.JobDescription;
+
+                ExcelApp.Cells[7, 2] = clientData.CompanyName;
+
+                ExcelApp.Cells[8, 2] = clientData.PrimaryFirstName + " " + clientData.PrimaryLastName;
+                ExcelApp.Cells[9, 2] = clientData.PrimaryPhoneNumber;
+                ExcelApp.Cells[10, 2] = clientData.PrimaryEmail;
+                ExcelApp.Cells[11, 2] = clientData.AddressBillStreet + ", " + clientData.AddressBillCity + ", " + clientData.AddressBillProvince + ", " + clientData.AddressBillPostalCode + ", " + clientData.AddressBillCountry;
+
+                ExcelApp.Cells[8, 5] = clientData.SecondaryFirstName + " " + clientData.SecondaryLastName;
+                ExcelApp.Cells[9, 5] = clientData.SecondaryPhoneNumber;
+                ExcelApp.Cells[10, 5] = clientData.SecondaryEmail;
+                ExcelApp.Cells[11, 5] = clientData.AddressSiteStreet + ", " + clientData.AddressSiteCity + ", " + clientData.AddressSiteProvince + ", " + clientData.AddressSitePostalCode + ", " + clientData.AddressSiteCountry;
+                
+                ExcelApp.Cells[14, 2] = QuotationSelect.JobNote;
+
+                i = 19; // "FLOORING"
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "FLOORING")
+                    {
+                        //ExcelApp.Cells[i, 1] = item.Item;
+                        ExcelApp.Cells[i, 1] = item.Description;
+                        ExcelApp.Cells[i, 3] = item.QuantityNL;
+                        ExcelApp.Cells[i, 4] = item.Depth;
+                        ExcelApp.Cells[i, 5] = item.Mapei;
+                        ExcelApp.Cells[i, 6] = item.Rate;
+                        ExcelApp.Cells[i, 7] = item.Price;
+                        i++;
+                    }
+                }
+
+                i = 28;  // "ACCESSORIES"
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "ACCESSORIES")
+                    {
+                        //ExcelApp.Cells[27 + i, 1] = item.Item;
+                        ExcelApp.Cells[i, 1] = item.Description;
+                        ExcelApp.Cells[i, 5] = item.Quantity;
+                        ExcelApp.Cells[i, 6] = item.Rate;
+                        ExcelApp.Cells[i, 7] = item.Price;
+                        i++;
+                    }
+                }
+
+                i = 57; // "INSTALLATION"
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "INSTALLATION")
+                    {
+                        ExcelApp.Cells[i, 1] = item.Item;
+                        ExcelApp.Cells[i, 2] = item.Description;
+                        ExcelApp.Cells[i, 5] = item.Quantity;
+                        ExcelApp.Cells[i, 6] = item.Rate;
+                        ExcelApp.Cells[i, 7] = item.Price;
+                        i++;
+                    }
+                }
+
+                i = 66; // "DEMOLITION"
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "DEMOLITION")
+                    {
+                        ExcelApp.Cells[i, 1] = item.Item;
+                        ExcelApp.Cells[i, 2] = item.Description;
+                        ExcelApp.Cells[i, 5] = item.Quantity;
+                        ExcelApp.Cells[i, 6] = item.Rate;
+                        ExcelApp.Cells[i, 7] = item.Price;
+                        i++;
+                    }
+                }
+
+                i = 72;  // "OPTIONAL SERVICES"
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "OPTIONAL SERVICES")
+                    {
+                        ExcelApp.Cells[i, 1] = item.Item;
+                        ExcelApp.Cells[i, 2] = item.Description;
+                        ExcelApp.Cells[i, 5] = item.Quantity;
+                        ExcelApp.Cells[i, 6] = item.Rate;
+                        ExcelApp.Cells[i, 7] = item.Price;
+                        i++;
+                    }
+                }
+
+                i = 80;  // "FLOORING DELIVERY"
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "FLOORING DELIVERY")
+                    {
+                        ExcelApp.Cells[i, 1] = item.Item;
+                        ExcelApp.Cells[i, 2] = item.Description;
+                        ExcelApp.Cells[i, 5] = item.Quantity;
+                        ExcelApp.Cells[i, 6] = item.Rate;
+                        ExcelApp.Cells[i, 7] = item.Price;
+                        i++;
+                    }
+                }
+                               
+
+                ExcelApp.Cells[45, 7] = QuotationSelect.MaterialSubtotal;
+                ExcelApp.Cells[46, 7] = QuotationSelect.MaterialTax;
+                ExcelApp.Cells[47, 7] = QuotationSelect.MaterialDiscountAmount;
+                ExcelApp.Cells[48, 7] = QuotationSelect.MaterialTotal;
+
+                ExcelApp.Cells[84, 7] = QuotationSelect.LabourSubtotal;
+                ExcelApp.Cells[85, 7] = QuotationSelect.LabourTax;
+                ExcelApp.Cells[86, 7] = QuotationSelect.LabourDiscountAmount;
+                ExcelApp.Cells[87, 7] = QuotationSelect.LabourTotal;
+
+                ExcelApp.Cells[90, 2] = (QuotationSelect.FinancingYesNo) ? "Yes" : "No";
+                ExcelApp.Cells[91, 2] = QuotationSelect.FinancingAmount;
+                ExcelApp.Cells[92, 2] = QuotationSelect.AmountPaidByCreditCard;
+
+                ExcelApp.Cells[90, 7] = QuotationSelect.ProjectTotal;
+                ExcelApp.Cells[91, 7] = QuotationSelect.FinancingFee;
+                ExcelApp.Cells[92, 7] = QuotationSelect.ProcessingFee;
+                ExcelApp.Cells[93, 7] = QuotationSelect.InvoiceGrandTotal;
+
+                var pay = db.Payments.Where(p => p.QuotationId == QuotationSelect.Id).OrderBy(p => p.Id);
+
+                int payCounter = 98;
+                foreach (var item in pay)
+                {
+                    if (item.PaymentDatePaid == DateTime.MinValue)
+                    {
+                        ExcelApp.Cells[payCounter, 2] = "";
+                    }
+                    else
+                    {
+                        ExcelApp.Cells[payCounter, 2] = item.PaymentDatePaid;
+                    }
+                    ExcelApp.Cells[payCounter, 5] = item.PaymentAmountPaid;
+                    ExcelApp.Cells[payCounter, 6] = item.PaymentMethod;
+
+                    if (item.Balance > 0)
+                    {
+                        ExcelApp.Cells[payCounter, 7] = item.Balance;
+                    }
+                    else
+                    {
+                        ExcelApp.Cells[payCounter, 7] = "Paid in full";
+                    }
+
+                    payCounter++;
+                }
+
+                ExcelApp.Calculate();
+                ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
+                ExcelApp.Calculate();
+
+                db.Entry(QuotationSelect).State = EntityState.Modified;
+
+                var delivery = Deliveries.FirstOrDefault(d => d.QuotaId == QuotationSelect.Id);
+                var workOrder = WorkOrders.FirstOrDefault(w => w.QuotaId == QuotationSelect.Id);
+                var invoice = Invoices.FirstOrDefault(inv => inv.QuotaId == QuotationSelect.Id);
+
+                if (delivery != null)
+                {
+                    delivery.NumberQuota = QuotationSelect.NumberQuota;
+                    db.Entry(delivery).State = EntityState.Modified;
+                }
+                if (workOrder != null)
+                {
+                    workOrder.NumberQuota = QuotationSelect.NumberQuota;
+                    db.Entry(workOrder).State = EntityState.Modified;
+                }
+
+                db.SaveChanges();
+                Deliveries = null;
+                WorkOrders = null;
+                Quotations = null;
+
+                LoadQuotationsDB(CompanyName);
+                LoadWorkOrdersDB(CompanyName);
+                LoadDeliveriesDB(CompanyName, false);
+            }
+        }
+        /// <summary>
+        /// Формує файл Excel з шаблону CMO
+        /// </summary>
+        /// <param name="path"></param>
+        private void DeliveryPrintToExcelCMO(string path)
+        {
+            if (DeliverySelect != null)
+            {
+                var material = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id);
+                var dic = db.DIC_Suppliers.FirstOrDefault(s => s.Id == DeliverySelect.SupplierId);
+                var quota = Quotations.FirstOrDefault(q => q.Id == DeliverySelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == DeliverySelect.QuotaId);
+                var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+                Excel.Application ExcelApp = new Excel.Application();
+                Excel.Workbook ExcelWorkBook;
+                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
+
+                ExcelApp.Cells[3, 6] = DeliverySelect.DateCreating;
+                ExcelApp.Cells[6, 2] = "\"" + client?.NumberClient + " - " + quota?.NumberQuota + "\"";
+                ExcelApp.Cells[7, 2] = "\"CMO" + " - " + client?.PrimaryFullName + "\"";
+                ExcelApp.Cells[9, 2] = dic?.Supplier;
+                ExcelApp.Cells[10, 2] = dic?.Address;
+
+                int i = 14;
+                foreach (var item in material)
+                {
+                    ExcelApp.Cells[i, 1] = item.Description;
+                    ExcelApp.Cells[i, 6] = item.Quantity;
+                    i++;
+                }
+
+                ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
+                ExcelApp.Calculate();
+
+                DeliverySelect.Color = "Black";
+                DeliverySelect.IsEnabled = true;
+                db.Entry(DeliverySelect).State = EntityState.Modified;
+                db.SaveChanges();
+
+                Deliveries = null;
+                LoadDeliveriesDB(CompanyName, false);
+            }
+        }
+        /// <summary>
+        /// Формує файл Excel з шаблону Next Level
+        /// </summary>
+        /// <param name="path"></param>
+        private void DeliveryPrintToExcelNL(string path)
+        {
+            if (DeliverySelect != null)
+            {
+                var material = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id);
+                var dic = db.DIC_Suppliers.FirstOrDefault(s => s.Id == DeliverySelect.SupplierId);
+                var quota = Quotations.FirstOrDefault(q => q.Id == DeliverySelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == DeliverySelect.QuotaId);
+                var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+                Excel.Application ExcelApp = new Excel.Application();
+                Excel.Workbook ExcelWorkBook;
+                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
+
+                ExcelApp.Cells[3, 6] = DeliverySelect.DateCreating;
+                ExcelApp.Cells[6, 2] = "\"" + client?.NumberClient + " - " + quota?.NumberQuota + "\"";
+                ExcelApp.Cells[7, 2] = "\"CMO" + " - " + client?.PrimaryFullName + "\"";
+                ExcelApp.Cells[9, 2] = dic?.Supplier;
+                ExcelApp.Cells[10, 2] = dic?.Address;
+
+                int i = 14;
+                foreach (var item in material)
+                {
+                    ExcelApp.Cells[i, 1] = item.Description;
+                    ExcelApp.Cells[i, 6] = item.Quantity;
+                    i++;
+                }
+
+                ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
+                ExcelApp.Calculate();
+
+                DeliverySelect.Color = "Black";
+                DeliverySelect.IsEnabled = true;
+                db.Entry(DeliverySelect).State = EntityState.Modified;
+                db.SaveChanges();
+
+                Deliveries = null;
+                LoadDeliveriesDB(CompanyName, false);
+            }
+        }
+        /// <summary>
+        /// /// Формує файл Excel з шаблону CMO
+        /// </summary>
+        /// <param name="path"></param>
+        private void DeliveryDriverPrintYoExcelCMO(string path)
+        {
+            if (DeliveryComboBoxSelect != null)
+            {
+                Excel.Application ExcelApp = new Excel.Application();
+                Excel.Workbook ExcelWorkBook;
+                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
+
+                string[] comboBox = DeliveryComboBoxSelect.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                string word = comboBox[0];
+                var supplier = db.Deliveries.Where(d => d.NumberQuota == word);
+                int? quotaId = supplier.FirstOrDefault(s => s.QuotaId > 0)?.QuotaId;
+                var quota = Quotations.FirstOrDefault(q => q.Id == quotaId); //db.Quotations.FirstOrDefault(q => q.Id == quotaId);
+                var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+                if (supplier != null && quota != null && client != null)
+                {
+                    ExcelApp.Cells[3, 5] = DateTime.Today;
+                    ExcelApp.Cells[4, 5] = quota.NumberQuota;
+                    ExcelApp.Cells[9, 2] = client.PrimaryFullName;
+                    ExcelApp.Cells[10, 2] = client?.CompanyName;
+                    ExcelApp.Cells[11, 2] = client?.AddressBillStreet + client?.AddressBillCity + client?.AddressBillProvince + client?.AddressBillPostalCode + client?.AddressBillCountry;
+                    ExcelApp.Cells[12, 2] = client?.PrimaryPhoneNumber;
+                    ExcelApp.Cells[11, 4] = client?.AddressSiteStreet + client?.AddressSiteCity + client?.AddressSiteProvince + client?.AddressSitePostalCode + client?.AddressSiteCountry;
+                    ExcelApp.Cells[12, 4] = client?.PrimaryEmail;
+                    int i = 24;
+                    foreach (var item in supplier)
+                    {
+                        var temp = db.DeliveryMaterials.Where(m => m.DeliveryId == item.Id)?.Select(m => m.Quantity);
+                        decimal quantity = temp?.Sum() ?? (0m);
+                        var dictionary = db.DIC_Suppliers.FirstOrDefault(s => s.Id == item.SupplierId);
+
+                        ExcelApp.Cells[i, 1] = dictionary.Supplier;
+                        ExcelApp.Cells[i, 2] = dictionary.Address;
+                        ExcelApp.Cells[i, 3] = dictionary.Hours;
+                        ExcelApp.Cells[i, 4] = quantity;
+                        ExcelApp.Cells[i, 5] = item.OrderNumber;
+                        i++;
+                    }
+                }
+                ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
+                ExcelApp.Calculate();
+            }
+        }
+        /// <summary>
+        /// Формує файл Excel з шаблону Next Level
+        /// </summary>
+        /// <param name="path"></param>
+        private void DeliveryDriverPrintYoExcelNL(string path)
+        {
+            if (DeliveryComboBoxSelect != null)
+            {
+                Excel.Application ExcelApp = new Excel.Application();
+                Excel.Workbook ExcelWorkBook;
+                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
+
+                string[] comboBox = DeliveryComboBoxSelect.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                string word = comboBox[0];
+                var supplier = db.Deliveries.Where(d => d.NumberQuota == word);
+                int? quotaId = supplier.FirstOrDefault(s => s.QuotaId > 0)?.QuotaId;
+                var quota = Quotations.FirstOrDefault(q => q.Id == quotaId); //db.Quotations.FirstOrDefault(q => q.Id == quotaId);
+                var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+                if (supplier != null && quota != null && client != null)
+                {
+                    ExcelApp.Cells[3, 5] = DateTime.Today;
+                    ExcelApp.Cells[4, 5] = quota.NumberQuota;
+                    ExcelApp.Cells[9, 2] = client.PrimaryFullName;
+                    ExcelApp.Cells[10, 2] = client?.CompanyName;
+                    ExcelApp.Cells[11, 2] = client?.AddressBillStreet + client?.AddressBillCity + client?.AddressBillProvince + client?.AddressBillPostalCode + client?.AddressBillCountry;
+                    ExcelApp.Cells[12, 2] = client?.PrimaryPhoneNumber;
+                    ExcelApp.Cells[11, 4] = client?.AddressSiteStreet + client?.AddressSiteCity + client?.AddressSiteProvince + client?.AddressSitePostalCode + client?.AddressSiteCountry;
+                    ExcelApp.Cells[12, 4] = client?.PrimaryEmail;
+                    int i = 24;
+                    foreach (var item in supplier)
+                    {
+                        var temp = db.DeliveryMaterials.Where(m => m.DeliveryId == item.Id)?.Select(m => m.Quantity);
+                        decimal quantity = temp?.Sum() ?? (0m);
+                        var dictionary = db.DIC_Suppliers.FirstOrDefault(s => s.Id == item.SupplierId);
+
+                        ExcelApp.Cells[i, 1] = dictionary.Supplier;
+                        ExcelApp.Cells[i, 2] = dictionary.Address;
+                        ExcelApp.Cells[i, 3] = dictionary.Hours;
+                        ExcelApp.Cells[i, 4] = quantity;
+                        ExcelApp.Cells[i, 5] = item.OrderNumber;
+                        i++;
+                    }
+                }
+                ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
+                ExcelApp.Calculate();
+            }
         }
     }
 }

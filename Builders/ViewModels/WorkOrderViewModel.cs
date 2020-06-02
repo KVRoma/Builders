@@ -76,6 +76,7 @@ namespace Builders.ViewModels
         private decimal percent;
         private decimal ajust;
         private decimal rate;
+        private string companyName;
 
         public bool EnableWork
         {
@@ -93,6 +94,15 @@ namespace Builders.ViewModels
             {
                 enableButtonCreat = value;
                 OnPropertyChanged(nameof(EnableButtonCreat));
+            }
+        }
+        public string CompanyName
+        {
+            get { return companyName; }
+            set
+            {
+                companyName = value;
+                OnPropertyChanged(nameof(CompanyName));
             }
         }
         //********************************************************************* Models public
@@ -641,7 +651,8 @@ namespace Builders.ViewModels
                     LF = LF,
                     Baseboard = BaseboardSelect,
                     ReplacingYesNo = ReplacingSelect,
-                    ReplacingQuantity = Pieces,                    
+                    ReplacingQuantity = Pieces,
+                    CompanyName = QuotationSelect.CompanyName
                 };
                 db.WorkOrders.Add(workorder);
                 db.SaveChanges();
@@ -806,7 +817,9 @@ namespace Builders.ViewModels
         public WorkOrderViewModel(ref BuilderContext context, EnumClient client, int? IdWorkOrder)
         {
             db = context;
+
             
+
             db.WorkOrder_Works.Load();
             db.WorkOrder_Accessories.Load();
             db.WorkOrder_Installations.Load();
@@ -817,11 +830,11 @@ namespace Builders.ViewModels
             db.DIC_Contractors.Load();
             db.MaterialQuotations.Load();
 
-            Works = db.WorkOrder_Works.Local.ToBindingList();
-            Accessories = db.WorkOrder_Accessories.Local.ToBindingList();
-            Installations = db.WorkOrder_Installations.Local.ToBindingList().OrderBy(i => i.Groupe);                            //.ThenBy(c => c.Contractor);
+            //Works = db.WorkOrder_Works.Local.ToBindingList(); //.Where(w=>w.WorkOrderId == IdWorkOrder);
+            //Accessories = db.WorkOrder_Accessories.Local.ToBindingList(); //.Where(w => w.WorkOrderId == IdWorkOrder); 
+            //Installations = db.WorkOrder_Installations.Local.ToBindingList(); //.Where(w => w.WorkOrderId == IdWorkOrder).OrderBy(i => i.Groupe);                            //.ThenBy(c => c.Contractor);
             InstallationSelect = new List<WorkOrder_Installation>();
-            Contractors = db.WorkOrder_Contractors.Local.ToBindingList();
+            //Contractors = db.WorkOrder_Contractors.Local.ToBindingList();
             Areas = db.DIC_Areas.Local.ToBindingList().OrderBy(a=>a.Name);
             Rooms = db.DIC_Rooms.Local.ToBindingList().OrderBy(a => a.Name);
             Floors = db.DIC_ExistingFloors.Local.ToBindingList().OrderBy(a => a.Name);
@@ -829,7 +842,7 @@ namespace Builders.ViewModels
             ContractorWorks = db.DIC_Contractors.Local.ToBindingList().OrderBy(a => a.Name);
             AreasAccessories = db.DIC_Areas.Local.ToBindingList().OrderBy(a => a.Name);
             RoomsAccessories = db.DIC_Rooms.Local.ToBindingList().OrderBy(a => a.Name);
-            NewAccessories = db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == OrderSelect.QuotaId).Where(m=>m.Groupe == "FLOORING" || m.Groupe == "ACCESSORIES");
+            NewAccessories = db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == OrderSelect?.QuotaId).Where(m=>m.Groupe == "FLOORING" || m.Groupe == "ACCESSORIES");
             ContractorAccessories = db.DIC_Contractors.Local.ToBindingList().OrderBy(a => a.Name);
 
 

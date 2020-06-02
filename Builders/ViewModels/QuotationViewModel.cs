@@ -18,7 +18,7 @@ namespace Builders.ViewModels
         public int? QuotaId;
         private EnumClient result;
         private bool flagCreatQuota;
-       
+
 
         private Quotation quotaSelect;
         private IEnumerable<Quotation> quotas;
@@ -52,7 +52,7 @@ namespace Builders.ViewModels
         private DIC_DepthQuotation depthSelect;
         private IEnumerable<DIC_DepthQuotation> depths;
         private string roomDescription;
-        private string companyName;        
+        private string companyName;
         private int? mapei;
         private Visibility isVisibleStandart;
         private Visibility isVisibleLeveling;
@@ -66,7 +66,7 @@ namespace Builders.ViewModels
             {
                 quotaSelect = value;
                 OnPropertyChanged(nameof(QuotaSelect));
-                MaterialQuotations = (QuotaSelect != null) ? (db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == QuotaSelect.Id)) : null;                
+                MaterialQuotations = (QuotaSelect != null) ? (db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == QuotaSelect.Id)) : null;
             }
         }
         public IEnumerable<Quotation> Quotas
@@ -81,12 +81,12 @@ namespace Builders.ViewModels
 
         public MaterialQuotation MaterialQuotationSelect
         {
-            get {return materialQuotationSelect; }
-            set 
-            { 
-                materialQuotationSelect = value; 
+            get { return materialQuotationSelect; }
+            set
+            {
+                materialQuotationSelect = value;
                 OnPropertyChanged(nameof(MaterialQuotationSelect));
-                
+
                 if (MaterialQuotationSelect != null)
                 {
 
@@ -105,12 +105,12 @@ namespace Builders.ViewModels
                     {
                         IsVisibleStandart = Visibility.Collapsed;
                         IsVisibleRoomDescription = Visibility.Visible;
-                                                
+
 
                         DIC_GroupeSelect = (MaterialQuotationSelect?.Groupe != null) ? DIC_Groupes.FirstOrDefault(g => g.NameGroupe == MaterialQuotationSelect.Groupe) : null;
                         RoomDescription = MaterialQuotationSelect?.Description;
                         DepthSelect = (MaterialQuotationSelect?.Depth != null) ? Depths.FirstOrDefault(g => g.Name == MaterialQuotationSelect.Depth) : null;
-                        Quantity = 0m;
+                        Quantity = MaterialQuotationSelect.QuantityNL;
                         Rate = MaterialQuotationSelect?.Rate ?? 0m;
                     }
                     else
@@ -127,17 +127,17 @@ namespace Builders.ViewModels
                 }
             }
         }
-        public IEnumerable<MaterialQuotation> MaterialQuotations 
+        public IEnumerable<MaterialQuotation> MaterialQuotations
         {
-            get {return materialQuotations; } 
-            set 
-            { 
-                materialQuotations = value; 
+            get { return materialQuotations; }
+            set
+            {
+                materialQuotations = value;
                 OnPropertyChanged(nameof(MaterialQuotations));
                 MaterialView();
             }
         }
-        
+
         public IEnumerable<MaterialQuotation> QuotationsLabour
         {
             get { return quotationsLabour; }
@@ -157,18 +157,18 @@ namespace Builders.ViewModels
             }
         }
 
-        public DIC_GroupeQuotation DIC_GroupeSelect 
-        { 
-            get => dic_GroupeSelect; 
-            set 
-            { 
-                dic_GroupeSelect = value; 
+        public DIC_GroupeQuotation DIC_GroupeSelect
+        {
+            get => dic_GroupeSelect;
+            set
+            {
+                dic_GroupeSelect = value;
                 OnPropertyChanged(nameof(DIC_GroupeSelect));
                 if (CompanyName != "CMO" && DIC_GroupeSelect != null && DIC_GroupeSelect.NameGroupe == "FLOORING")
                 {
                     IsVisibleStandart = Visibility.Collapsed;
                     IsVisibleRoomDescription = Visibility.Visible;
-                    DIC_Items = null;
+                    //DIC_Items = null;
                 }
                 else
                 {
@@ -178,60 +178,53 @@ namespace Builders.ViewModels
                 }
             }
         }
-        public IEnumerable<DIC_GroupeQuotation> DIC_Groupes 
-        { 
-            get => dic_Groupes; 
-            set 
-            { 
-                dic_Groupes = value; 
-                OnPropertyChanged(nameof(DIC_Groupes)); 
+        public IEnumerable<DIC_GroupeQuotation> DIC_Groupes
+        {
+            get => dic_Groupes;
+            set
+            {
+                dic_Groupes = value;
+                OnPropertyChanged(nameof(DIC_Groupes));
             }
         }
-        
-        public DIC_ItemQuotation DIC_ItemSelect 
-        { 
-            get => dic_ItemSelect; 
-            set 
+
+        public DIC_ItemQuotation DIC_ItemSelect
+        {
+            get => dic_ItemSelect;
+            set
             {
-                dic_ItemSelect = value; 
+                dic_ItemSelect = value;
                 OnPropertyChanged(nameof(DIC_ItemSelect));
-                if (CompanyName != "CMO")
-                {
-                    DIC_Descriptions = null;
-                }
-                else
-                {
-                    DIC_Descriptions = (DIC_ItemSelect != null) ? (db.DIC_DescriptionQuotations.Local.ToBindingList().Where(d => d.ItemId == DIC_ItemSelect.Id).OrderBy(i => i.Name)) : null;
-                }
+                DIC_Descriptions = (DIC_ItemSelect != null) ? (db.DIC_DescriptionQuotations.Local.ToBindingList().Where(d => d.ItemId == DIC_ItemSelect.Id).OrderBy(i => i.Name)) : null;                
             }
         }
-        public IEnumerable<DIC_ItemQuotation> DIC_Items 
-        { 
-            get => dic_Items; 
-            set 
-            { 
-                dic_Items = value; 
-                OnPropertyChanged(nameof(DIC_Items)); 
-            }
-        }
-        
-        public DIC_DescriptionQuotation DIC_DescriptionSelect 
-        { 
-            get => dic_DescriptionSelect; 
-            set 
+        public IEnumerable<DIC_ItemQuotation> DIC_Items
+        {
+            get => dic_Items;
+            set
             {
-                dic_DescriptionSelect = value; 
+                dic_Items = value;
+                OnPropertyChanged(nameof(DIC_Items));
+            }
+        }
+
+        public DIC_DescriptionQuotation DIC_DescriptionSelect
+        {
+            get => dic_DescriptionSelect;
+            set
+            {
+                dic_DescriptionSelect = value;
                 OnPropertyChanged(nameof(DIC_DescriptionSelect));
                 Rate = (DIC_DescriptionSelect != null) ? (DIC_DescriptionSelect.Price) : 0;
             }
         }
-        public IEnumerable<DIC_DescriptionQuotation> DIC_Descriptions 
-        { 
-            get => dic_Descriptions; 
-            set 
+        public IEnumerable<DIC_DescriptionQuotation> DIC_Descriptions
+        {
+            get => dic_Descriptions;
+            set
             {
-                dic_Descriptions = value; 
-                OnPropertyChanged(nameof(DIC_Descriptions)); 
+                dic_Descriptions = value;
+                OnPropertyChanged(nameof(DIC_Descriptions));
             }
         }
 
@@ -256,12 +249,12 @@ namespace Builders.ViewModels
             }
         }
 
-        public Client ClientSelect 
-        { 
+        public Client ClientSelect
+        {
             get => clientSelect;
-            set 
-            { 
-                clientSelect = value; 
+            set
+            {
+                clientSelect = value;
                 OnPropertyChanged(nameof(ClientSelect));
                 if (ClientSelect != null)
                 {
@@ -274,15 +267,15 @@ namespace Builders.ViewModels
                         CopyClient = false;
                     }
                 }
-            } 
+            }
         }
         public IEnumerable<Client> Clients
         {
             get => clients;
-            set 
-            { 
-                clients = value; 
-                OnPropertyChanged(nameof(Clients)); 
+            set
+            {
+                clients = value;
+                OnPropertyChanged(nameof(Clients));
             }
         }
         public bool CopyClient
@@ -298,19 +291,19 @@ namespace Builders.ViewModels
         public decimal Quantity
         {
             get => quantity;
-            set 
-            { 
-                quantity = value; 
-                OnPropertyChanged(nameof(Quantity)); 
+            set
+            {
+                quantity = value;
+                OnPropertyChanged(nameof(Quantity));
             }
         }
         public decimal Rate
         {
             get => rate;
-            set 
-            { 
-                rate = value; 
-                OnPropertyChanged(nameof(Rate)); 
+            set
+            {
+                rate = value;
+                OnPropertyChanged(nameof(Rate));
             }
         }
 
@@ -347,9 +340,9 @@ namespace Builders.ViewModels
             set
             {
                 companyName = value;
-                OnPropertyChanged(nameof(CompanyName));                
+                OnPropertyChanged(nameof(CompanyName));
             }
-        }        
+        }
         public int? Mapei
         {
             get { return mapei; }
@@ -390,16 +383,16 @@ namespace Builders.ViewModels
         private Command _addItem;
         private Command _insItem;
         private Command _delItem;
-        private Command _otherQuotation;        
-        
+        private Command _otherQuotation;
 
-        public Command AddItem => _addItem ?? (_addItem = new Command(obj => 
+
+        public Command AddItem => _addItem ?? (_addItem = new Command(obj =>
         {
             if (ClientSelect != null && flagCreatQuota == false)
             {
                 Quotation quotation = new Quotation()
                 {
-                    
+
                     QuotaDate = DateTime.Today,
                     PrefixNumberQuota = "Q",
                     ClientId = ClientSelect.Id,
@@ -413,17 +406,17 @@ namespace Builders.ViewModels
 
                     CompanyName = CompanyName,
 
-                    MaterialSubtotal = 0m,                    
+                    MaterialSubtotal = 0m,
                     MaterialDiscountYN = 0m,
-                    MaterialDiscountAmount = 0m,                    
+                    MaterialDiscountAmount = 0m,
 
-                    LabourSubtotal = 0m,                    
+                    LabourSubtotal = 0m,
                     LabourDiscountYN = 0m,
                     LabourDiscountAmount = 0m,
-                    
+
                     FinancingYesNo = false,
                     AmountPaidByCreditCard = 0m
-                               
+
                 };
                 db.Quotations.Add(quotation);
                 db.SaveChanges();
@@ -433,10 +426,10 @@ namespace Builders.ViewModels
             }
             if (flagCreatQuota && QuotaSelect != null)
             {
-                
+
                 var temp = db.MaterialQuotations.Where(f => f.QuotationId == QuotaSelect.Id);
 
-                int flooring = (temp != null) ? (temp.Where(t=>t.Groupe == "FLOORING").Count()) : 0;
+                int flooring = (temp != null) ? (temp.Where(t => t.Groupe == "FLOORING").Count()) : 0;
                 int accessories = (temp != null) ? (temp.Where(t => t.Groupe == "ACCESSORIES").Count()) : 0;
                 int installation = (temp != null) ? (temp.Where(t => t.Groupe == "INSTALLATION").Count()) : 0;
                 int demolition = (temp != null) ? (temp.Where(t => t.Groupe == "DEMOLITION").Count()) : 0;
@@ -523,7 +516,7 @@ namespace Builders.ViewModels
                         { }
                         break;
                 }
-                
+
                 if (flagSaveItem)
                 {
                     if (CompanyName != "CMO" && DIC_GroupeSelect.NameGroupe == "FLOORING")
@@ -548,6 +541,7 @@ namespace Builders.ViewModels
                             Depth = DepthSelect?.Name,
                             Rate = decimal.Round(Rate, 2),
                             Quantity = mapei,
+                            QuantityNL = Quantity,
                             Price = decimal.Round(Rate * mapei, 2),
                             SupplierId = DIC_ItemSelect?.SupplierId
                         };
@@ -697,6 +691,7 @@ namespace Builders.ViewModels
                         tempMaterialSelect.Depth = DepthSelect?.Name;
                         tempMaterialSelect.Rate = decimal.Round(Rate, 2);
                         tempMaterialSelect.Quantity = mapei;
+                        tempMaterialSelect.QuantityNL = Quantity;
                         tempMaterialSelect.Price = decimal.Round(Rate * mapei, 2);
 
                         db.Entry(tempMaterialSelect).State = EntityState.Modified;
@@ -757,13 +752,13 @@ namespace Builders.ViewModels
                     QuotaSelect.FinancingYesNo = other.Financing;
                     QuotaSelect.AmountPaidByCreditCard = other.CreditCard;
                     db.Entry(QuotaSelect).State = EntityState.Modified;
-                    db.SaveChanges();                                       
+                    db.SaveChanges();
                 }
             }
         }));
 
-        
-        public QuotationViewModel( ref BuilderContext context, EnumClient res, Quotation select, string companyName)
+
+        public QuotationViewModel(ref BuilderContext context, EnumClient res, Quotation select, string companyName)
         {
             db = context;
             result = res;
@@ -788,21 +783,21 @@ namespace Builders.ViewModels
             switch (result)
             {
                 case EnumClient.Add:
-                {
+                    {
                         flagCreatQuota = false;
                         QuotaSelect = null;
-                }
-                break;
+                    }
+                    break;
                 case EnumClient.Ins:
-                {
+                    {
                         flagCreatQuota = true;
                         QuotaSelect = select;
-                        ClientSelect = db.Clients.FirstOrDefault(c=>c.Id == QuotaSelect.ClientId);
+                        ClientSelect = db.Clients.FirstOrDefault(c => c.Id == QuotaSelect.ClientId);
                         lastIdClient = ClientSelect.Id;
-                }
-                break;                    
-            }            
-            
+                    }
+                    break;
+            }
+
         }
         private void LoadGroup()
         {
@@ -832,6 +827,7 @@ namespace Builders.ViewModels
                 {
                     if (item.Groupe == "FLOORING" || item.Groupe == "ACCESSORIES")
                     {
+
                         material.Add(new MaterialQuotation()
                         {
                             Id = item.Id,
@@ -841,6 +837,7 @@ namespace Builders.ViewModels
                             Depth = item?.Depth,
                             Mapei = item?.Mapei,
                             Quantity = item.Quantity,
+                            QuantityNL = item.QuantityNL,
                             Price = item.Price,
                             Rate = item.Rate,
                             SupplierId = item?.SupplierId,
@@ -848,6 +845,7 @@ namespace Builders.ViewModels
                             Quotation = item.Quotation
                         });
                     }
+
                     else
                     {
                         labour.Add(new MaterialQuotation()
@@ -859,6 +857,7 @@ namespace Builders.ViewModels
                             Depth = item?.Depth,
                             Mapei = item?.Mapei,
                             Quantity = item.Quantity,
+                            QuantityNL = item.QuantityNL,
                             Price = item.Price,
                             Rate = item.Rate,
                             QuotationId = item.QuotationId,
@@ -878,6 +877,6 @@ namespace Builders.ViewModels
             }
         }
 
-        
+
     }
 }
