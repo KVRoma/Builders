@@ -44,6 +44,7 @@ namespace Builders.Models
         public DbSet<DIC_ExistingFloor> DIC_ExistingFloors { get; set; }
         public DbSet<DIC_Contractor> DIC_Contractors { get; set; }
         public DbSet<DIC_Supplier> DIC_Suppliers { get; set; }
+        public DbSet<DIC_DepthQuotation> DIC_DepthQuotations { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

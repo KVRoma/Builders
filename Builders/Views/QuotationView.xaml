@@ -133,10 +133,34 @@
                       UI:FocusAdvancement.AdvancesByEnterKey="True"/>
             <Label Content="QTY" 
                    Margin="580,0,0,0"                   
-                   Style="{StaticResource LabelBold}"/>
+                   Style="{StaticResource LabelBold}"
+                   Visibility="{Binding IsVisibleStandart}"/> <!-- Visibility="{Binding IsVisibleStandart}" -->
             <Label Content="Price" 
                    Margin="70,0,0,0" 
-                   Style="{StaticResource LabelBold}"/>
+                   Style="{StaticResource LabelBold}"
+                   Visibility="{Binding IsVisibleStandart}"/> <!-- Visibility="{Binding IsVisibleStandart}" -->
+            
+            <!-- Room Description -->
+            <Label Content="Room Description" 
+                   Margin="110,0,0,0"                   
+                   Style="{StaticResource LabelBold}"
+                   Visibility="{Binding IsVisibleRoomDescription}"/>
+            <Label Content="Depth" 
+                   Margin="130,0,0,0"                   
+                   Style="{StaticResource LabelBold}"
+                   Visibility="{Binding IsVisibleRoomDescription}"/>
+            <!--<Label Content="Mapei" 
+                   Margin="100,0,0,0"                   
+                   Style="{StaticResource LabelBold}"
+                   Visibility="Hidden"/>-->
+            <Label Content="QTY" 
+                   Margin="90,0,0,0"                   
+                   Style="{StaticResource LabelBold}"
+                   Visibility="{Binding IsVisibleRoomDescription}"/>
+            <Label Content="Price" 
+                   Margin="60,0,0,0"                   
+                   Style="{StaticResource LabelBold}"
+                   Visibility="{Binding IsVisibleRoomDescription}"/>
         </StackPanel>
 
         <StackPanel Grid.Row="9" 
@@ -148,20 +172,50 @@
                       SelectedItem="{Binding DIC_GroupeSelect, Mode=TwoWay}" 
                       DisplayMemberPath="NameGroupe"
                       UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+
+            
             <ComboBox Margin="5" 
                       HorizontalContentAlignment="Center" 
                       Width="200"
                       ItemsSource="{Binding DIC_Items}" 
                       SelectedItem="{Binding DIC_ItemSelect, Mode=TwoWay}" 
                       DisplayMemberPath="Name"
-                      UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+                      UI:FocusAdvancement.AdvancesByEnterKey="True"
+                      Visibility="{Binding IsVisibleStandart}"/> <!-- Visibility="{Binding IsVisibleStandart}" -->
+            <!-- Room Description -->
+            <TextBox Margin="5"
+                     HorizontalContentAlignment="Center"
+                     Width="363"
+                     Text="{Binding RoomDescription}"
+                     UI:FocusAdvancement.AdvancesByEnterKey="True"
+                     Visibility="{Binding IsVisibleRoomDescription}"/>
+            
+            
             <ComboBox Margin="5" 
                       HorizontalContentAlignment="Center" 
                       Width="320"
                       ItemsSource="{Binding DIC_Descriptions}" 
                       SelectedItem="{Binding DIC_DescriptionSelect, Mode=TwoWay}" 
                       DisplayMemberPath="Name"
-                      UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+                      UI:FocusAdvancement.AdvancesByEnterKey="True"
+                      Visibility="{Binding IsVisibleStandart}"/> <!-- Visibility="{Binding IsVisibleStandart}" -->
+            <!-- Room Description -->
+            <ComboBox Margin="5" 
+                      HorizontalContentAlignment="Center" 
+                      Width="160"
+                      ItemsSource="{Binding Depths}" 
+                      SelectedItem="{Binding DepthSelect, Mode=TwoWay}" 
+                      DisplayMemberPath="Name"
+                      UI:FocusAdvancement.AdvancesByEnterKey="True"
+                      Visibility="{Binding IsVisibleRoomDescription}"/>
+            <!--<TextBox Margin="5"
+                     IsEnabled="False"
+                     HorizontalContentAlignment="Center"                     
+                     Width="160"
+                     Text="{Binding Mapei}"
+                     UI:FocusAdvancement.AdvancesByEnterKey="True"
+                     Visibility="Hidden"/>-->
+
             <TextBox Margin="5" 
                      Width="100"
                      HorizontalContentAlignment="Center"

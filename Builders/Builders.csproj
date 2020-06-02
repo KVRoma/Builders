@@ -101,6 +101,7 @@
     <Compile Include="Models\DeliveryMaterial.cs" />
     <Compile Include="Models\DIC_Area.cs" />
     <Compile Include="Models\DIC_Contractor.cs" />
+    <Compile Include="Models\DIC_DepthQuotation.cs" />
     <Compile Include="Models\DIC_DescriptionQuotation.cs" />
     <Compile Include="Models\DIC_ExistingFloor.cs" />
     <Compile Include="Models\DIC_GroupeQuotation.cs" />

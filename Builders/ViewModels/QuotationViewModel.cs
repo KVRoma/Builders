@@ -49,11 +49,14 @@ namespace Builders.ViewModels
         private decimal quantity;
         private decimal rate;
 
-        private string companyName;
-        private string depth;
+        private DIC_DepthQuotation depthSelect;
+        private IEnumerable<DIC_DepthQuotation> depths;
+        private string roomDescription;
+        private string companyName;        
         private int? mapei;
-        private Visibility isVisibleCMO;
+        private Visibility isVisibleStandart;
         private Visibility isVisibleLeveling;
+        private Visibility isVisibleRoomDescription;
         //************************************************************************************************
 
         public Quotation QuotaSelect
@@ -98,11 +101,29 @@ namespace Builders.ViewModels
 
                     LoadGroup();
 
-                    DIC_GroupeSelect = (MaterialQuotationSelect.Groupe != null) ? DIC_Groupes.FirstOrDefault(g => g.NameGroupe == MaterialQuotationSelect.Groupe) : null;
-                    DIC_ItemSelect = (MaterialQuotationSelect.Item != null) ? DIC_Items.FirstOrDefault(i => i.Name == MaterialQuotationSelect.Item) : null;
-                    DIC_DescriptionSelect = (MaterialQuotationSelect.Description != null) ? DIC_Descriptions.FirstOrDefault(d => d.Name == MaterialQuotationSelect.Description) : null;
-                    Quantity = MaterialQuotationSelect.Quantity;
-                    Rate = MaterialQuotationSelect.Rate;
+                    if (CompanyName != "CMO" && MaterialQuotationSelect.Groupe == "FLOORING")
+                    {
+                        IsVisibleStandart = Visibility.Collapsed;
+                        IsVisibleRoomDescription = Visibility.Visible;
+                                                
+
+                        DIC_GroupeSelect = (MaterialQuotationSelect?.Groupe != null) ? DIC_Groupes.FirstOrDefault(g => g.NameGroupe == MaterialQuotationSelect.Groupe) : null;
+                        RoomDescription = MaterialQuotationSelect?.Description;
+                        DepthSelect = (MaterialQuotationSelect?.Depth != null) ? Depths.FirstOrDefault(g => g.Name == MaterialQuotationSelect.Depth) : null;
+                        Quantity = 0m;
+                        Rate = MaterialQuotationSelect?.Rate ?? 0m;
+                    }
+                    else
+                    {
+                        IsVisibleStandart = Visibility.Visible;
+                        IsVisibleRoomDescription = Visibility.Collapsed;
+                        //LoadGroup();
+                        DIC_GroupeSelect = (MaterialQuotationSelect?.Groupe != null) ? DIC_Groupes.FirstOrDefault(g => g.NameGroupe == MaterialQuotationSelect?.Groupe) : null;
+                        DIC_ItemSelect = (MaterialQuotationSelect?.Item != null) ? DIC_Items.FirstOrDefault(i => i.Name == MaterialQuotationSelect?.Item) : null;
+                        DIC_DescriptionSelect = (MaterialQuotationSelect?.Description != null) ? DIC_Descriptions.FirstOrDefault(d => d.Name == MaterialQuotationSelect?.Description) : null;
+                        Quantity = MaterialQuotationSelect.Quantity;
+                        Rate = MaterialQuotationSelect.Rate;
+                    }
                 }
             }
         }
@@ -143,7 +164,18 @@ namespace Builders.ViewModels
             { 
                 dic_GroupeSelect = value; 
                 OnPropertyChanged(nameof(DIC_GroupeSelect));
-                DIC_Items = (DIC_GroupeSelect != null) ? db.DIC_ItemQuotations.Local.ToBindingList().Where(i => i.GroupeId == DIC_GroupeSelect.Id).OrderBy(i=>i.Name) : null;
+                if (CompanyName != "CMO" && DIC_GroupeSelect != null && DIC_GroupeSelect.NameGroupe == "FLOORING")
+                {
+                    IsVisibleStandart = Visibility.Collapsed;
+                    IsVisibleRoomDescription = Visibility.Visible;
+                    DIC_Items = null;
+                }
+                else
+                {
+                    IsVisibleStandart = Visibility.Visible;
+                    IsVisibleRoomDescription = Visibility.Collapsed;
+                    DIC_Items = (DIC_GroupeSelect != null) ? db.DIC_ItemQuotations.Local.ToBindingList().Where(i => i.GroupeId == DIC_GroupeSelect.Id).OrderBy(i => i.Name) : null;
+                }
             }
         }
         public IEnumerable<DIC_GroupeQuotation> DIC_Groupes 
@@ -163,7 +195,14 @@ namespace Builders.ViewModels
             {
                 dic_ItemSelect = value; 
                 OnPropertyChanged(nameof(DIC_ItemSelect));
-                DIC_Descriptions = (DIC_ItemSelect != null) ? (db.DIC_DescriptionQuotations.Local.ToBindingList().Where(d => d.ItemId == DIC_ItemSelect.Id).OrderBy(i => i.Name)) : null;
+                if (CompanyName != "CMO")
+                {
+                    DIC_Descriptions = null;
+                }
+                else
+                {
+                    DIC_Descriptions = (DIC_ItemSelect != null) ? (db.DIC_DescriptionQuotations.Local.ToBindingList().Where(d => d.ItemId == DIC_ItemSelect.Id).OrderBy(i => i.Name)) : null;
+                }
             }
         }
         public IEnumerable<DIC_ItemQuotation> DIC_Items 
@@ -275,34 +314,42 @@ namespace Builders.ViewModels
             }
         }
 
+        public DIC_DepthQuotation DepthSelect
+        {
+            get { return depthSelect; }
+            set
+            {
+                depthSelect = value;
+                OnPropertyChanged(nameof(DepthSelect));
+            }
+        }
+        public IEnumerable<DIC_DepthQuotation> Depths
+        {
+            get { return depths; }
+            set
+            {
+                depths = value;
+                OnPropertyChanged(nameof(Depths));
+            }
+        }
+        public string RoomDescription
+        {
+            get { return roomDescription; }
+            set
+            {
+                roomDescription = value;
+                OnPropertyChanged(nameof(RoomDescription));
+            }
+        }
         public string CompanyName
         {
             get { return companyName; }
             set
             {
                 companyName = value;
-                OnPropertyChanged(nameof(CompanyName));
-                if (CompanyName == "CMO")
-                {
-                    IsVisibleCMO = Visibility.Visible;
-                    IsVisibleLeveling = Visibility.Collapsed;
-                }
-                else
-                {
-                    IsVisibleCMO = Visibility.Collapsed;
-                    IsVisibleLeveling = Visibility.Visible;
-                }
+                OnPropertyChanged(nameof(CompanyName));                
             }
-        }
-        public string Depth
-        {
-            get { return depth; }
-            set
-            {
-                depth = value;
-                OnPropertyChanged(nameof(Depth));
-            }
-        }
+        }        
         public int? Mapei
         {
             get { return mapei; }
@@ -312,13 +359,13 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(Mapei));
             }
         }
-        public Visibility IsVisibleCMO
+        public Visibility IsVisibleStandart
         {
-            get { return isVisibleCMO; }
+            get { return isVisibleStandart; }
             set
             {
-                isVisibleCMO = value;
-                OnPropertyChanged(nameof(IsVisibleCMO));
+                isVisibleStandart = value;
+                OnPropertyChanged(nameof(IsVisibleStandart));
             }
         }
         public Visibility IsVisibleLeveling
@@ -328,6 +375,15 @@ namespace Builders.ViewModels
             {
                 isVisibleLeveling = value;
                 OnPropertyChanged(nameof(IsVisibleLeveling));
+            }
+        }
+        public Visibility IsVisibleRoomDescription
+        {
+            get { return isVisibleRoomDescription; }
+            set
+            {
+                isVisibleRoomDescription = value;
+                OnPropertyChanged(nameof(IsVisibleRoomDescription));
             }
         }
         //**************************************************************************************************
@@ -355,26 +411,19 @@ namespace Builders.ViewModels
                     JobDescription = "",
                     JobNote = "",
 
-                    MaterialSubtotal = 0m,
-                    //MaterialTax = 0m,
-                    MaterialDiscountYN = 0m,
-                    MaterialDiscountAmount = 0m,
-                    //MaterialTotal = 0m,
+                    CompanyName = CompanyName,
 
-                    LabourSubtotal = 0m,
-                    //LabourTax = 0m,
+                    MaterialSubtotal = 0m,                    
+                    MaterialDiscountYN = 0m,
+                    MaterialDiscountAmount = 0m,                    
+
+                    LabourSubtotal = 0m,                    
                     LabourDiscountYN = 0m,
                     LabourDiscountAmount = 0m,
-                    //LabourTotal = 0m,
-
-                    //ProjectTotal = 0m,
-                    FinancingYesNo = false,
-                    //FinancingAmount = 0m,
-                    //FinancingFee = 0m,
-                    AmountPaidByCreditCard = 0m,
-                    //ProcessingFee = 0m,
-                    //InvoiceGrandTotal = 0m                    
                     
+                    FinancingYesNo = false,
+                    AmountPaidByCreditCard = 0m
+                               
                 };
                 db.Quotations.Add(quotation);
                 db.SaveChanges();
@@ -477,23 +526,58 @@ namespace Builders.ViewModels
                 
                 if (flagSaveItem)
                 {
-                    MaterialQuotation material = new MaterialQuotation()
+                    if (CompanyName != "CMO" && DIC_GroupeSelect.NameGroupe == "FLOORING")
                     {
-                        QuotationId = QuotaSelect.Id,
-                        Groupe = DIC_GroupeSelect?.NameGroupe,
-                        Item = DIC_ItemSelect?.Name,
-                        Description = DIC_DescriptionSelect?.Name,
-                        Rate = decimal.Round(Rate, 2),
-                        Quantity = Quantity,
-                        Price = decimal.Round(Rate * Quantity, 2),
-                        SupplierId = DIC_ItemSelect?.SupplierId
-                    };
-                    db.MaterialQuotations.Add(material);
-                    db.SaveChanges();
+                        int mapei = 0;
+                        if (Quantity > 0 && DepthSelect != null)
+                        {
+                            mapei = (int)decimal.Ceiling(Quantity / DepthSelect.Price);
+                        }
+                        else
+                        {
+                            mapei = 0;
+                        }
 
-                    MaterialQuotations = null;
-                    MaterialQuotations = db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == QuotaSelect.Id);
-                    MaterialQuotationSelect = material;
+                        MaterialQuotation material = new MaterialQuotation()
+                        {
+                            QuotationId = QuotaSelect.Id,
+                            Groupe = DIC_GroupeSelect?.NameGroupe,
+                            Item = null,
+                            Description = RoomDescription,
+                            Mapei = mapei,
+                            Depth = DepthSelect?.Name,
+                            Rate = decimal.Round(Rate, 2),
+                            Quantity = mapei,
+                            Price = decimal.Round(Rate * mapei, 2),
+                            SupplierId = DIC_ItemSelect?.SupplierId
+                        };
+                        db.MaterialQuotations.Add(material);
+                        db.SaveChanges();
+
+                        MaterialQuotations = null;
+                        MaterialQuotations = db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == QuotaSelect.Id);
+                        MaterialQuotationSelect = material;
+                    }
+                    else
+                    {
+                        MaterialQuotation material = new MaterialQuotation()
+                        {
+                            QuotationId = QuotaSelect.Id,
+                            Groupe = DIC_GroupeSelect?.NameGroupe,
+                            Item = DIC_ItemSelect?.Name,
+                            Description = DIC_DescriptionSelect?.Name,
+                            Rate = decimal.Round(Rate, 2),
+                            Quantity = Quantity,
+                            Price = decimal.Round(Rate * Quantity, 2),
+                            SupplierId = DIC_ItemSelect?.SupplierId
+                        };
+                        db.MaterialQuotations.Add(material);
+                        db.SaveChanges();
+
+                        MaterialQuotations = null;
+                        MaterialQuotations = db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == QuotaSelect.Id);
+                        MaterialQuotationSelect = material;
+                    }
                 }
             }
         }));
@@ -593,18 +677,49 @@ namespace Builders.ViewModels
                 }
                 if (flagSaveItem)
                 {
-                    tempMaterialSelect.Groupe = DIC_GroupeSelect?.NameGroupe;
-                    tempMaterialSelect.Item = DIC_ItemSelect?.Name;
-                    tempMaterialSelect.SupplierId = DIC_ItemSelect?.SupplierId;
-                    tempMaterialSelect.Description = DIC_DescriptionSelect?.Name;
-                    tempMaterialSelect.Rate = decimal.Round(Rate, 2);
-                    tempMaterialSelect.Quantity = Quantity;
-                    tempMaterialSelect.Price = decimal.Round(Rate * Quantity, 2);
+                    if (CompanyName != "CMO" && DIC_GroupeSelect.NameGroupe == "FLOORING")
+                    {
+                        int mapei = 0;
+                        if (Quantity > 0 && DepthSelect != null)
+                        {
+                            mapei = (int)decimal.Ceiling(Quantity / DepthSelect.Price);
+                        }
+                        else
+                        {
+                            mapei = 0;
+                        }
 
-                    db.Entry(tempMaterialSelect).State = EntityState.Modified;
-                    db.SaveChanges();
-                    MaterialQuotationSelect = null;
-                    MaterialQuotations = (QuotaSelect != null) ? (db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == QuotaSelect.Id)) : null;
+                        tempMaterialSelect.Groupe = DIC_GroupeSelect?.NameGroupe;
+                        tempMaterialSelect.Item = null;
+                        tempMaterialSelect.SupplierId = DIC_ItemSelect?.SupplierId;
+                        tempMaterialSelect.Description = RoomDescription;
+                        tempMaterialSelect.Mapei = mapei;
+                        tempMaterialSelect.Depth = DepthSelect?.Name;
+                        tempMaterialSelect.Rate = decimal.Round(Rate, 2);
+                        tempMaterialSelect.Quantity = mapei;
+                        tempMaterialSelect.Price = decimal.Round(Rate * mapei, 2);
+
+                        db.Entry(tempMaterialSelect).State = EntityState.Modified;
+                        db.SaveChanges();
+                        MaterialQuotationSelect = null;
+                        MaterialQuotations = (QuotaSelect != null) ? (db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == QuotaSelect.Id)) : null;
+
+                    }
+                    else
+                    {
+                        tempMaterialSelect.Groupe = DIC_GroupeSelect?.NameGroupe;
+                        tempMaterialSelect.Item = DIC_ItemSelect?.Name;
+                        tempMaterialSelect.SupplierId = DIC_ItemSelect?.SupplierId;
+                        tempMaterialSelect.Description = DIC_DescriptionSelect?.Name;
+                        tempMaterialSelect.Rate = decimal.Round(Rate, 2);
+                        tempMaterialSelect.Quantity = Quantity;
+                        tempMaterialSelect.Price = decimal.Round(Rate * Quantity, 2);
+
+                        db.Entry(tempMaterialSelect).State = EntityState.Modified;
+                        db.SaveChanges();
+                        MaterialQuotationSelect = null;
+                        MaterialQuotations = (QuotaSelect != null) ? (db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == QuotaSelect.Id)) : null;
+                    }
                 }
             }
         }));
@@ -646,8 +761,8 @@ namespace Builders.ViewModels
                 }
             }
         }));
-              
 
+        
         public QuotationViewModel( ref BuilderContext context, EnumClient res, Quotation select, string companyName)
         {
             db = context;
@@ -655,15 +770,21 @@ namespace Builders.ViewModels
             CompanyName = companyName;
             db.DIC_GroupeQuotations.Load();
             db.DIC_ItemQuotations.Load();
-            db.DIC_DescriptionQuotations.Load();            
+            db.DIC_DescriptionQuotations.Load();
+            db.DIC_DepthQuotations.Load();
             db.MaterialQuotations.Load();
+
+            Depths = db.DIC_DepthQuotations.Local.ToBindingList();
 
             DIC_Section = new List<string>();
             DIC_Section.Add("Material");
             DIC_Section.Add("Labour");
-            
+
+            IsVisibleStandart = Visibility.Visible;
+            IsVisibleRoomDescription = Visibility.Collapsed;
+
             //DIC_Groupes = db.DIC_GroupeQuotations.Local.ToBindingList();
-                        
+
             switch (result)
             {
                 case EnumClient.Add:
@@ -717,6 +838,8 @@ namespace Builders.ViewModels
                             Groupe = item?.Groupe,
                             Item = item?.Item,
                             Description = item?.Description,
+                            Depth = item?.Depth,
+                            Mapei = item?.Mapei,
                             Quantity = item.Quantity,
                             Price = item.Price,
                             Rate = item.Rate,
@@ -733,6 +856,8 @@ namespace Builders.ViewModels
                             Groupe = item?.Groupe,
                             Item = item?.Item,
                             Description = item?.Description,
+                            Depth = item?.Depth,
+                            Mapei = item?.Mapei,
                             Quantity = item.Quantity,
                             Price = item.Price,
                             Rate = item.Rate,

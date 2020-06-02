@@ -4489,26 +4489,30 @@ namespace Builders.ViewModels
         /// <returns></returns>
         private List<ReportAmount> ReportAmountGet(DateTime dateFrom, DateTime dateTo)
         {
-            var quota = Quotations.Where(q => q.Id > 0); //db.Quotations.Where(q => q.Id > 0);
-            var payment = db.Payments.Where(p => p.PaymentDatePaid >= dateFrom && p.PaymentDatePaid <= dateTo);
+            var quotations = Quotations.Where(q => q.Id > 0); //db.Quotations.Where(q => q.Id > 0);
+            
             List<ReportAmount> reports = new List<ReportAmount>();
-            if (quota.Count() > 0)
+            if (quotations.Count() > 0)
             {
-                foreach (var item in payment)
+                foreach (var quota in quotations)
                 {
-                    ReportAmount amount = new ReportAmount()
+                    var payment = db.Payments.Where(p =>p.QuotationId == quota.Id && p.PaymentDatePaid >= dateFrom && p.PaymentDatePaid <= dateTo);
+                    foreach (var item in payment)
                     {
-                        QuotaDate = quota.FirstOrDefault(q => q.Id == item.QuotationId).QuotaDate,
-                        NumberQuota = quota.FirstOrDefault(q => q.Id == item.QuotationId)?.NumberQuota,
-                        FullNameQuota = quota.FirstOrDefault(q => q.Id == item.QuotationId)?.FullName,
-                        PaymentDatePaid = item.PaymentDatePaid,
-                        PaymentAmountPaid = item.PaymentAmountPaid,
-                        PaymentMethod = item.PaymentMethod,
-                        PaymentPrincipalPaid = item.PaymentPrincipalPaid,
-                        ProcessingFee = item.ProcessingFee,
-                        Balance = item.Balance
-                    };
-                    reports.Add(amount);
+                        ReportAmount amount = new ReportAmount()
+                        {
+                            QuotaDate = quota.QuotaDate, 
+                            NumberQuota = quota.NumberQuota, 
+                            FullNameQuota = quota.FullName,
+                            PaymentDatePaid = item.PaymentDatePaid,
+                            PaymentAmountPaid = item.PaymentAmountPaid,
+                            PaymentMethod = item.PaymentMethod,
+                            PaymentPrincipalPaid = item.PaymentPrincipalPaid,
+                            ProcessingFee = item.ProcessingFee,
+                            Balance = item.Balance
+                        };
+                        reports.Add(amount);
+                    }
                 }
             }
             return reports?.OrderBy(r => r.PaymentDatePaid).ToList();
