@@ -1603,7 +1603,8 @@ namespace Builders.ViewModels
                                 FirstName = temp.PrimaryFirstName,
                                 LastName = temp.PrimaryLastName,
                                 PhoneNumber = temp.PrimaryPhoneNumber,
-                                Email = temp.PrimaryEmail
+                                Email = temp.PrimaryEmail,
+                                CompanyName = quotaItem.CompanyName
                             };
 
                             var deliveryToArchive = db.Deliveries.Where(d => d.QuotaId == quotaId);
@@ -2052,7 +2053,8 @@ namespace Builders.ViewModels
                     FirstName = temp.PrimaryFirstName,
                     LastName = temp.PrimaryLastName,
                     PhoneNumber = temp.PrimaryPhoneNumber,
-                    Email = temp.PrimaryEmail
+                    Email = temp.PrimaryEmail,
+                    CompanyName = invoiceViewModel.QuotaSelect.CompanyName
                 };
 
                 var deliveryToArchive = db.Deliveries.Where(d => d.QuotaId == inv.QuotaId);
@@ -2070,12 +2072,21 @@ namespace Builders.ViewModels
                 //Invoices = null;
                 //Invoices = db.Invoices.Local.ToBindingList();
 
-                int? NewInvoiceId = db.Invoices.Local.ToBindingList().OrderByDescending(q => q.Id).FirstOrDefault().Id;
+                //int? NewInvoiceId = db.Invoices.Local.ToBindingList().OrderByDescending(q => q.Id).FirstOrDefault().Id;
+                //AddMaterialProfit(NewInvoiceId);
+                //MaterialProfitCalculate(MaterialProfitSelect);
+                //AddLabourProfit(NewInvoiceId);
+                //LabourProfitCalculate(LabourProfitSelect);
+                //AddDebtsTab(NewInvoiceId);
+                //InvoiceCalculate(NewInvoiceId);
+                int? NewInvoiceId = Invoices.OrderByDescending(q => q.Id).FirstOrDefault().Id;
                 AddMaterialProfit(NewInvoiceId);
-                MaterialProfitCalculate(MaterialProfitSelect);
                 AddLabourProfit(NewInvoiceId);
-                LabourProfitCalculate(LabourProfitSelect);
                 AddDebtsTab(NewInvoiceId);
+                var material = MaterialProfits.FirstOrDefault(m => m.InvoiceId == NewInvoiceId);
+                var labour = LabourProfits.FirstOrDefault(l => l.InvoiceId == NewInvoiceId);
+                MaterialProfitCalculate(material);
+                LabourProfitCalculate(labour);
                 InvoiceCalculate(NewInvoiceId);
             }
         }));
@@ -2136,179 +2147,16 @@ namespace Builders.ViewModels
             }
         }));
         public Command PrintInvoice => _printInvoice ?? (_printInvoice = new Command(obj =>
-        {
-            if (InvoiceSelect != null)
+        {            
+            if (CompanyName == "CMO")
             {
-                int i = 0;
-                var quota = Quotations.FirstOrDefault(q => q.Id == InvoiceSelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == InvoiceSelect.QuotaId);
-                var clientData = Clients.Where(c => c.Id == quota.ClientId).FirstOrDefault(); //db.Clients.Where(c => c.Id == quota.ClientId).FirstOrDefault();
-                var materialData = db.MaterialQuotations.Where(q => q.QuotationId == quota.Id);
-
-                Excel.Application ExcelApp = new Excel.Application();
-                Excel.Workbook ExcelWorkBook;
-                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\InvoicePDF.xltm");   //Вказуємо шлях до шаблону
-
-                //ExcelApp.Cells[1, 3] = NameQuotaSelect;
-                ExcelApp.Cells[2, 3] = clientData.NumberClient;
-                ExcelApp.Cells[3, 3] = InvoiceSelect.UpNumber;
-                ExcelApp.Cells[4, 3] = InvoiceSelect.OrderNumber;
-
-                ExcelApp.Cells[2, 5] = InvoiceSelect.DateInvoice;
-                ExcelApp.Cells[3, 5] = InvoiceSelect.NumberInvoice;
-                ExcelApp.Cells[4, 5] = quota.NumberQuota;
-
-                ExcelApp.Cells[6, 2] = quota.JobDescription;
-
-                ExcelApp.Cells[7, 2] = clientData.CompanyName;
-
-                ExcelApp.Cells[8, 2] = clientData.PrimaryFirstName + " " + clientData.PrimaryLastName;
-                ExcelApp.Cells[9, 2] = clientData.PrimaryPhoneNumber;
-                ExcelApp.Cells[10, 2] = clientData.PrimaryEmail;
-                ExcelApp.Cells[11, 2] = clientData.AddressBillStreet + ", " + clientData.AddressBillCity + ", " + clientData.AddressBillProvince + ", " + clientData.AddressBillPostalCode + ", " + clientData.AddressBillCountry;
-
-                ExcelApp.Cells[8, 4] = clientData.SecondaryFirstName + " " + clientData.SecondaryLastName;
-                ExcelApp.Cells[9, 4] = clientData.SecondaryPhoneNumber;
-                ExcelApp.Cells[10, 4] = clientData.SecondaryEmail;
-                ExcelApp.Cells[11, 4] = clientData.AddressSiteStreet + ", " + clientData.AddressSiteCity + ", " + clientData.AddressSiteProvince + ", " + clientData.AddressSitePostalCode + ", " + clientData.AddressSiteCountry;
-
-                i = 0;
-                foreach (var item in materialData)
-                {
-                    if (item.Groupe == "FLOORING")
-                    {
-                        i++;
-                        //ExcelApp.Cells[18 + i, 1] = item.Item;
-                        ExcelApp.Cells[18 + i, 1] = item.Description;
-                        ExcelApp.Cells[18 + i, 3] = item.Quantity;
-                        ExcelApp.Cells[18 + i, 4] = item.Rate;
-                        ExcelApp.Cells[18 + i, 5] = item.Price;
-                    }
-                }
-
-                i = 0;
-                foreach (var item in materialData)
-                {
-                    if (item.Groupe == "ACCESSORIES")
-                    {
-                        i++;
-                        //ExcelApp.Cells[27 + i, 1] = item.Item;
-                        ExcelApp.Cells[27 + i, 1] = item.Description;
-                        ExcelApp.Cells[27 + i, 3] = item.Quantity;
-                        ExcelApp.Cells[27 + i, 4] = item.Rate;
-                        ExcelApp.Cells[27 + i, 5] = item.Price;
-                    }
-                }
-
-                i = 0;
-                foreach (var item in materialData)
-                {
-                    if (item.Groupe == "INSTALLATION")
-                    {
-                        i++;
-                        ExcelApp.Cells[56 + i, 1] = item.Item;
-                        ExcelApp.Cells[56 + i, 2] = item.Description;
-                        ExcelApp.Cells[56 + i, 3] = item.Quantity;
-                        ExcelApp.Cells[56 + i, 4] = item.Rate;
-                        ExcelApp.Cells[56 + i, 5] = item.Price;
-                    }
-                }
-
-                i = 0;
-                foreach (var item in materialData)
-                {
-                    if (item.Groupe == "DEMOLITION")
-                    {
-                        i++;
-                        ExcelApp.Cells[65 + i, 1] = item.Item;
-                        ExcelApp.Cells[65 + i, 2] = item.Description;
-                        ExcelApp.Cells[65 + i, 3] = item.Quantity;
-                        ExcelApp.Cells[65 + i, 4] = item.Rate;
-                        ExcelApp.Cells[65 + i, 5] = item.Price;
-                    }
-                }
-
-                i = 0;
-                foreach (var item in materialData)
-                {
-                    if (item.Groupe == "OPTIONAL SERVICES")
-                    {
-                        i++;
-                        ExcelApp.Cells[71 + i, 1] = item.Item;
-                        ExcelApp.Cells[71 + i, 2] = item.Description;
-                        ExcelApp.Cells[71 + i, 3] = item.Quantity;
-                        ExcelApp.Cells[71 + i, 4] = item.Rate;
-                        ExcelApp.Cells[71 + i, 5] = item.Price;
-                    }
-                }
-
-                i = 0;
-                foreach (var item in materialData)
-                {
-                    if (item.Groupe == "FLOORING DELIVERY")
-                    {
-                        i++;
-                        ExcelApp.Cells[79 + i, 1] = item.Item;
-                        ExcelApp.Cells[79 + i, 2] = item.Description;
-                        ExcelApp.Cells[79 + i, 3] = item.Quantity;
-                        ExcelApp.Cells[79 + i, 4] = item.Rate;
-                        ExcelApp.Cells[79 + i, 5] = item.Price;
-                    }
-                }
-
-                ExcelApp.Cells[14, 2] = quota.JobNote;
-
-                ExcelApp.Cells[45, 5] = quota.MaterialSubtotal;
-                ExcelApp.Cells[46, 5] = quota.MaterialTax;
-                ExcelApp.Cells[47, 5] = quota.MaterialDiscountAmount;
-                ExcelApp.Cells[48, 5] = quota.MaterialTotal;
-
-                ExcelApp.Cells[84, 5] = quota.LabourSubtotal;
-                ExcelApp.Cells[85, 5] = quota.LabourTax;
-                ExcelApp.Cells[86, 5] = quota.LabourDiscountAmount;
-                ExcelApp.Cells[87, 5] = quota.LabourTotal;
-
-                ExcelApp.Cells[90, 2] = (quota.FinancingYesNo) ? "Yes" : "No";
-                ExcelApp.Cells[91, 2] = quota.FinancingAmount;
-                ExcelApp.Cells[92, 2] = quota.AmountPaidByCreditCard;
-
-                ExcelApp.Cells[90, 5] = quota.ProjectTotal;
-                ExcelApp.Cells[91, 5] = quota.FinancingFee;
-                ExcelApp.Cells[92, 5] = quota.ProcessingFee;
-                ExcelApp.Cells[93, 5] = quota.InvoiceGrandTotal;
-
-                var pay = db.Payments.Where(p => p.QuotationId == quota.Id).OrderBy(p => p.Id);
-
-                int payCounter = 98;
-                foreach (var item in pay)
-                {
-                    if (item.PaymentDatePaid == DateTime.MinValue)
-                    {
-                        ExcelApp.Cells[payCounter, 2] = "";
-                    }
-                    else
-                    {
-                        ExcelApp.Cells[payCounter, 2] = item.PaymentDatePaid;
-                    }
-                    ExcelApp.Cells[payCounter, 3] = item.PaymentAmountPaid;
-                    ExcelApp.Cells[payCounter, 4] = item.PaymentMethod;
-
-                    if (item.Balance > 0)
-                    {
-                        ExcelApp.Cells[payCounter, 5] = item.Balance;
-                    }
-                    else
-                    {
-                        ExcelApp.Cells[payCounter, 5] = "Paid in full";
-                    }
-
-                    payCounter++;
-                }
-
-                ExcelApp.Calculate();
-                ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
-                ExcelApp.Calculate();
-
+                InvoicesPrintToExcelCMO("\\Blanks\\InvoicePDF.xltm");
             }
+            else
+            {
+                InvoicePrintToExcelNL("\\Blanks\\NLInvoicePDF.xltm");
+            }
+            
         }));
         public Command SearchInvoice => _searchInvoice ?? (_searchInvoice = new Command(obj =>
         {
@@ -3549,7 +3397,8 @@ namespace Builders.ViewModels
                 ProfitTax = decimal.Round(quota.MaterialTax - 0m, 2),
                 ProfitInclTax = decimal.Round((quota.MaterialSubtotal + quota.MaterialTax) - 0m, 2),
                 ProfitDiscount = quota.MaterialDiscountAmount,
-                ProfitTotal = decimal.Round((quota.MaterialSubtotal + quota.MaterialTax) - 0m, 2) - quota.MaterialDiscountAmount
+                ProfitTotal = decimal.Round((quota.MaterialSubtotal + quota.MaterialTax) - 0m, 2) - quota.MaterialDiscountAmount,
+                CompanyName = invoice.CompanyName
             };
             db.MaterialProfits.Add(mp);
             db.SaveChanges();
@@ -3660,7 +3509,8 @@ namespace Builders.ViewModels
                 FirstName = invoice.FirstName,
                 LastName = invoice.LastName,
                 PhoneNumber = invoice.PhoneNumber,
-                Email = invoice.Email
+                Email = invoice.Email,
+                CompanyName = invoice.CompanyName
             };
             db.LabourProfits.Add(profit);
             db.SaveChanges();
@@ -3829,7 +3679,8 @@ namespace Builders.ViewModels
                         NameDebts = "Payment to the contractor",
                         DescriptionDebts = item.Contractor,
                         AmountDebts = item.TotalContractor,
-                        DatePayment = DateTime.MinValue
+                        DatePayment = DateTime.MinValue,
+                        CompanyName = invoice.CompanyName
                     };
                     debts.Add(debt);
                 }
@@ -3871,7 +3722,8 @@ namespace Builders.ViewModels
                         NameDebts = "Payment to the contractor",
                         DescriptionDebts = item.Contractor,
                         AmountDebts = item.TotalContractor,
-                        DatePayment = DateTime.MinValue
+                        DatePayment = DateTime.MinValue,
+                        CompanyName = invoice.CompanyName
                     };
                     debts.Add(debt);
                 }
@@ -5219,6 +5071,366 @@ namespace Builders.ViewModels
                 }
                 ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
                 ExcelApp.Calculate();
+            }
+        }
+        /// <summary>
+        /// /// Формує файл Excel з шаблону CMO
+        /// </summary>
+        /// <param name="path"></param>
+        private void InvoicesPrintToExcelCMO(string path)
+        {
+            if (InvoiceSelect != null)
+            {
+                int i = 0;
+                var quota = Quotations.FirstOrDefault(q => q.Id == InvoiceSelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == InvoiceSelect.QuotaId);
+                var clientData = Clients.Where(c => c.Id == quota.ClientId).FirstOrDefault(); //db.Clients.Where(c => c.Id == quota.ClientId).FirstOrDefault();
+                var materialData = db.MaterialQuotations.Where(q => q.QuotationId == quota.Id);
+
+                Excel.Application ExcelApp = new Excel.Application();
+                Excel.Workbook ExcelWorkBook;
+                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
+
+                //ExcelApp.Cells[1, 3] = NameQuotaSelect;
+                ExcelApp.Cells[2, 3] = clientData.NumberClient;
+                ExcelApp.Cells[3, 3] = InvoiceSelect.UpNumber;
+                ExcelApp.Cells[4, 3] = InvoiceSelect.OrderNumber;
+
+                ExcelApp.Cells[2, 5] = InvoiceSelect.DateInvoice;
+                ExcelApp.Cells[3, 5] = InvoiceSelect.NumberInvoice;
+                ExcelApp.Cells[4, 5] = quota.NumberQuota;
+
+                ExcelApp.Cells[6, 2] = quota.JobDescription;
+
+                ExcelApp.Cells[7, 2] = clientData.CompanyName;
+
+                ExcelApp.Cells[8, 2] = clientData.PrimaryFirstName + " " + clientData.PrimaryLastName;
+                ExcelApp.Cells[9, 2] = clientData.PrimaryPhoneNumber;
+                ExcelApp.Cells[10, 2] = clientData.PrimaryEmail;
+                ExcelApp.Cells[11, 2] = clientData.AddressBillStreet + ", " + clientData.AddressBillCity + ", " + clientData.AddressBillProvince + ", " + clientData.AddressBillPostalCode + ", " + clientData.AddressBillCountry;
+
+                ExcelApp.Cells[8, 4] = clientData.SecondaryFirstName + " " + clientData.SecondaryLastName;
+                ExcelApp.Cells[9, 4] = clientData.SecondaryPhoneNumber;
+                ExcelApp.Cells[10, 4] = clientData.SecondaryEmail;
+                ExcelApp.Cells[11, 4] = clientData.AddressSiteStreet + ", " + clientData.AddressSiteCity + ", " + clientData.AddressSiteProvince + ", " + clientData.AddressSitePostalCode + ", " + clientData.AddressSiteCountry;
+
+                i = 0;
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "FLOORING")
+                    {
+                        i++;
+                        //ExcelApp.Cells[18 + i, 1] = item.Item;
+                        ExcelApp.Cells[18 + i, 1] = item.Description;
+                        ExcelApp.Cells[18 + i, 3] = item.Quantity;
+                        ExcelApp.Cells[18 + i, 4] = item.Rate;
+                        ExcelApp.Cells[18 + i, 5] = item.Price;
+                    }
+                }
+
+                i = 0;
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "ACCESSORIES")
+                    {
+                        i++;
+                        //ExcelApp.Cells[27 + i, 1] = item.Item;
+                        ExcelApp.Cells[27 + i, 1] = item.Description;
+                        ExcelApp.Cells[27 + i, 3] = item.Quantity;
+                        ExcelApp.Cells[27 + i, 4] = item.Rate;
+                        ExcelApp.Cells[27 + i, 5] = item.Price;
+                    }
+                }
+
+                i = 0;
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "INSTALLATION")
+                    {
+                        i++;
+                        ExcelApp.Cells[56 + i, 1] = item.Item;
+                        ExcelApp.Cells[56 + i, 2] = item.Description;
+                        ExcelApp.Cells[56 + i, 3] = item.Quantity;
+                        ExcelApp.Cells[56 + i, 4] = item.Rate;
+                        ExcelApp.Cells[56 + i, 5] = item.Price;
+                    }
+                }
+
+                i = 0;
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "DEMOLITION")
+                    {
+                        i++;
+                        ExcelApp.Cells[65 + i, 1] = item.Item;
+                        ExcelApp.Cells[65 + i, 2] = item.Description;
+                        ExcelApp.Cells[65 + i, 3] = item.Quantity;
+                        ExcelApp.Cells[65 + i, 4] = item.Rate;
+                        ExcelApp.Cells[65 + i, 5] = item.Price;
+                    }
+                }
+
+                i = 0;
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "OPTIONAL SERVICES")
+                    {
+                        i++;
+                        ExcelApp.Cells[71 + i, 1] = item.Item;
+                        ExcelApp.Cells[71 + i, 2] = item.Description;
+                        ExcelApp.Cells[71 + i, 3] = item.Quantity;
+                        ExcelApp.Cells[71 + i, 4] = item.Rate;
+                        ExcelApp.Cells[71 + i, 5] = item.Price;
+                    }
+                }
+
+                i = 0;
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "FLOORING DELIVERY")
+                    {
+                        i++;
+                        ExcelApp.Cells[79 + i, 1] = item.Item;
+                        ExcelApp.Cells[79 + i, 2] = item.Description;
+                        ExcelApp.Cells[79 + i, 3] = item.Quantity;
+                        ExcelApp.Cells[79 + i, 4] = item.Rate;
+                        ExcelApp.Cells[79 + i, 5] = item.Price;
+                    }
+                }
+
+                ExcelApp.Cells[14, 2] = quota.JobNote;
+
+                ExcelApp.Cells[45, 5] = quota.MaterialSubtotal;
+                ExcelApp.Cells[46, 5] = quota.MaterialTax;
+                ExcelApp.Cells[47, 5] = quota.MaterialDiscountAmount;
+                ExcelApp.Cells[48, 5] = quota.MaterialTotal;
+
+                ExcelApp.Cells[84, 5] = quota.LabourSubtotal;
+                ExcelApp.Cells[85, 5] = quota.LabourTax;
+                ExcelApp.Cells[86, 5] = quota.LabourDiscountAmount;
+                ExcelApp.Cells[87, 5] = quota.LabourTotal;
+
+                ExcelApp.Cells[90, 2] = (quota.FinancingYesNo) ? "Yes" : "No";
+                ExcelApp.Cells[91, 2] = quota.FinancingAmount;
+                ExcelApp.Cells[92, 2] = quota.AmountPaidByCreditCard;
+
+                ExcelApp.Cells[90, 5] = quota.ProjectTotal;
+                ExcelApp.Cells[91, 5] = quota.FinancingFee;
+                ExcelApp.Cells[92, 5] = quota.ProcessingFee;
+                ExcelApp.Cells[93, 5] = quota.InvoiceGrandTotal;
+
+                var pay = db.Payments.Where(p => p.QuotationId == quota.Id).OrderBy(p => p.Id);
+
+                int payCounter = 98;
+                foreach (var item in pay)
+                {
+                    if (item.PaymentDatePaid == DateTime.MinValue)
+                    {
+                        ExcelApp.Cells[payCounter, 2] = "";
+                    }
+                    else
+                    {
+                        ExcelApp.Cells[payCounter, 2] = item.PaymentDatePaid;
+                    }
+                    ExcelApp.Cells[payCounter, 3] = item.PaymentAmountPaid;
+                    ExcelApp.Cells[payCounter, 4] = item.PaymentMethod;
+
+                    if (item.Balance > 0)
+                    {
+                        ExcelApp.Cells[payCounter, 5] = item.Balance;
+                    }
+                    else
+                    {
+                        ExcelApp.Cells[payCounter, 5] = "Paid in full";
+                    }
+
+                    payCounter++;
+                }
+
+                ExcelApp.Calculate();
+                ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
+                ExcelApp.Calculate();
+
+            }
+            
+        }
+        /// <summary>
+        /// Формує файл Excel з шаблону Next Level
+        /// </summary>
+        /// <param name="path"></param>
+        private void InvoicePrintToExcelNL(string path)
+        {
+            if (InvoiceSelect != null)
+            {
+                int i = 0;
+                var quota = Quotations.FirstOrDefault(q => q.Id == InvoiceSelect.QuotaId);
+                var clientData = Clients.Where(c => c.Id == quota.ClientId).FirstOrDefault();
+                var materialData = db.MaterialQuotations.Where(q => q.QuotationId == quota.Id);
+
+                Excel.Application ExcelApp = new Excel.Application();
+                Excel.Workbook ExcelWorkBook;
+                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
+
+
+                //ExcelApp.Cells[1, 5] = //NameQuotaSelect;
+
+                ExcelApp.Cells[2, 7] = InvoiceSelect.DateInvoice;
+                ExcelApp.Cells[3, 7] = InvoiceSelect.NumberQuota;
+                ExcelApp.Cells[4, 7] = clientData.NumberClient;
+                ExcelApp.Cells[5, 7] = InvoiceSelect.NumberInvoice;
+                ExcelApp.Cells[6, 2] = quota.JobDescription;
+
+                ExcelApp.Cells[7, 2] = clientData.CompanyName;
+
+                ExcelApp.Cells[8, 2] = clientData.PrimaryFirstName + " " + clientData.PrimaryLastName;
+                ExcelApp.Cells[9, 2] = clientData.PrimaryPhoneNumber;
+                ExcelApp.Cells[10, 2] = clientData.PrimaryEmail;
+                ExcelApp.Cells[11, 2] = clientData.AddressBillStreet + ", " + clientData.AddressBillCity + ", " + clientData.AddressBillProvince + ", " + clientData.AddressBillPostalCode + ", " + clientData.AddressBillCountry;
+
+                ExcelApp.Cells[8, 5] = clientData.SecondaryFirstName + " " + clientData.SecondaryLastName;
+                ExcelApp.Cells[9, 5] = clientData.SecondaryPhoneNumber;
+                ExcelApp.Cells[10, 5] = clientData.SecondaryEmail;
+                ExcelApp.Cells[11, 5] = clientData.AddressSiteStreet + ", " + clientData.AddressSiteCity + ", " + clientData.AddressSiteProvince + ", " + clientData.AddressSitePostalCode + ", " + clientData.AddressSiteCountry;
+
+                ExcelApp.Cells[14, 2] = quota.JobNote;
+
+                i = 19; // "FLOORING"
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "FLOORING")
+                    {
+                        //ExcelApp.Cells[i, 1] = item.Item;
+                        ExcelApp.Cells[i, 1] = item.Description;
+                        ExcelApp.Cells[i, 3] = item.QuantityNL;
+                        ExcelApp.Cells[i, 4] = item.Depth;
+                        ExcelApp.Cells[i, 5] = item.Mapei;
+                        ExcelApp.Cells[i, 6] = item.Rate;
+                        ExcelApp.Cells[i, 7] = item.Price;
+                        i++;
+                    }
+                }
+
+                i = 28;  // "ACCESSORIES"
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "ACCESSORIES")
+                    {
+                        //ExcelApp.Cells[27 + i, 1] = item.Item;
+                        ExcelApp.Cells[i, 1] = item.Description;
+                        ExcelApp.Cells[i, 5] = item.Quantity;
+                        ExcelApp.Cells[i, 6] = item.Rate;
+                        ExcelApp.Cells[i, 7] = item.Price;
+                        i++;
+                    }
+                }
+
+                i = 57; // "INSTALLATION"
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "INSTALLATION")
+                    {
+                        ExcelApp.Cells[i, 1] = item.Item;
+                        ExcelApp.Cells[i, 2] = item.Description;
+                        ExcelApp.Cells[i, 5] = item.Quantity;
+                        ExcelApp.Cells[i, 6] = item.Rate;
+                        ExcelApp.Cells[i, 7] = item.Price;
+                        i++;
+                    }
+                }
+
+                i = 66; // "DEMOLITION"
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "DEMOLITION")
+                    {
+                        ExcelApp.Cells[i, 1] = item.Item;
+                        ExcelApp.Cells[i, 2] = item.Description;
+                        ExcelApp.Cells[i, 5] = item.Quantity;
+                        ExcelApp.Cells[i, 6] = item.Rate;
+                        ExcelApp.Cells[i, 7] = item.Price;
+                        i++;
+                    }
+                }
+
+                i = 72;  // "OPTIONAL SERVICES"
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "OPTIONAL SERVICES")
+                    {
+                        ExcelApp.Cells[i, 1] = item.Item;
+                        ExcelApp.Cells[i, 2] = item.Description;
+                        ExcelApp.Cells[i, 5] = item.Quantity;
+                        ExcelApp.Cells[i, 6] = item.Rate;
+                        ExcelApp.Cells[i, 7] = item.Price;
+                        i++;
+                    }
+                }
+
+                i = 80;  // "FLOORING DELIVERY"
+                foreach (var item in materialData)
+                {
+                    if (item.Groupe == "FLOORING DELIVERY")
+                    {
+                        ExcelApp.Cells[i, 1] = item.Item;
+                        ExcelApp.Cells[i, 2] = item.Description;
+                        ExcelApp.Cells[i, 5] = item.Quantity;
+                        ExcelApp.Cells[i, 6] = item.Rate;
+                        ExcelApp.Cells[i, 7] = item.Price;
+                        i++;
+                    }
+                }
+
+
+                ExcelApp.Cells[45, 7] = quota.MaterialSubtotal;
+                ExcelApp.Cells[46, 7] = quota.MaterialTax;
+                ExcelApp.Cells[47, 7] = quota.MaterialDiscountAmount;
+                ExcelApp.Cells[48, 7] = quota.MaterialTotal;
+
+                ExcelApp.Cells[84, 7] = quota.LabourSubtotal;
+                ExcelApp.Cells[85, 7] = quota.LabourTax;
+                ExcelApp.Cells[86, 7] = quota.LabourDiscountAmount;
+                ExcelApp.Cells[87, 7] = quota.LabourTotal;
+
+                ExcelApp.Cells[90, 2] = (quota.FinancingYesNo) ? "Yes" : "No";
+                ExcelApp.Cells[91, 2] = quota.FinancingAmount;
+                ExcelApp.Cells[92, 2] = quota.AmountPaidByCreditCard;
+
+                ExcelApp.Cells[90, 7] = quota.ProjectTotal;
+                ExcelApp.Cells[91, 7] = quota.FinancingFee;
+                ExcelApp.Cells[92, 7] = quota.ProcessingFee;
+                ExcelApp.Cells[93, 7] = quota.InvoiceGrandTotal;
+
+                var pay = db.Payments.Where(p => p.QuotationId == quota.Id).OrderBy(p => p.Id);
+
+                int payCounter = 98;
+                foreach (var item in pay)
+                {
+                    if (item.PaymentDatePaid == DateTime.MinValue)
+                    {
+                        ExcelApp.Cells[payCounter, 2] = "";
+                    }
+                    else
+                    {
+                        ExcelApp.Cells[payCounter, 2] = item.PaymentDatePaid;
+                    }
+                    ExcelApp.Cells[payCounter, 5] = item.PaymentAmountPaid;
+                    ExcelApp.Cells[payCounter, 6] = item.PaymentMethod;
+
+                    if (item.Balance > 0)
+                    {
+                        ExcelApp.Cells[payCounter, 7] = item.Balance;
+                    }
+                    else
+                    {
+                        ExcelApp.Cells[payCounter, 7] = "Paid in full";
+                    }
+
+                    payCounter++;
+                }
+
+                ExcelApp.Calculate();
+                ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
+                ExcelApp.Calculate();
+                
             }
         }
     }
