@@ -27,6 +27,7 @@ namespace Builders
             displayRootRegistry.RegisterWindowType<DIC_addDescriptionViewModel, DIC_addDescriptionView>();
             displayRootRegistry.RegisterWindowType<DIC_ContractorViewModel, DIC_ContractorView>();
             displayRootRegistry.RegisterWindowType<DIC_SupplierViewModel, DIC_SupplierView>();
+            displayRootRegistry.RegisterWindowType<DIC_DepthViewModel, DIC_DepthView>();
             displayRootRegistry.RegisterWindowType<QuotationViewModel, QuotationView>();
             displayRootRegistry.RegisterWindowType<SelectClientViewModel, SelectClientView>();
             displayRootRegistry.RegisterWindowType<QuotaOtherViewModel, QuotaOtherView>();
@@ -63,6 +64,7 @@ namespace Builders
             displayRootRegistry.UnregisterWindowType<DIC_addDescriptionViewModel>();
             displayRootRegistry.UnregisterWindowType<DIC_ContractorViewModel>();
             displayRootRegistry.UnregisterWindowType<DIC_SupplierViewModel>();
+            displayRootRegistry.UnregisterWindowType<DIC_DepthViewModel>();
             displayRootRegistry.UnregisterWindowType<QuotationViewModel>();
             displayRootRegistry.UnregisterWindowType<SelectClientViewModel>();
             displayRootRegistry.UnregisterWindowType<QuotaOtherViewModel>();

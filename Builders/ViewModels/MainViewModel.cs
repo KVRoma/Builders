@@ -1024,6 +1024,7 @@ namespace Builders.ViewModels
         private Command _dicQuotation;
         private Command _dicContractors;
         private Command _dicSupplier;
+        private Command _dicDepth;
         //*************************************
         #endregion
         #region Public Command
@@ -3035,7 +3036,12 @@ namespace Builders.ViewModels
             var supplierViewModel = new DIC_SupplierViewModel(ref db);
             await displayRootRegistry.ShowModalPresentation(supplierViewModel);
         }));
-
+        public Command DIC_Depth => _dicDepth ?? (_dicDepth = new Command(async obj=> 
+        {
+            var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+            var depthViewModel = new DIC_DepthViewModel(ref db);
+            await displayRootRegistry.ShowModalPresentation(depthViewModel);
+        }));
 
         #endregion
         public MainViewModel()
