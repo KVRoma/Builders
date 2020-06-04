@@ -399,6 +399,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Resource Include="Views\CMO_logo.png" />
+    <Resource Include="Views\NL_logo.png" />
     <Resource Include="Views\LogoLeveling.jpg" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

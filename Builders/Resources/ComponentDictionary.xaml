@@ -134,8 +134,7 @@
     <!--**********************************************************-->
     <!-- Авто стиль для TextBox Wrap and PressEnter -->
     <Style TargetType="{x:Type TextBox}">
-        <Setter Property="TextWrapping" Value="Wrap"/>
-        
+        <Setter Property="TextWrapping" Value="Wrap"/>        
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="FontWeight" Value="Bold"/>
