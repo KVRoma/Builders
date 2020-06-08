@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using Builders.Commands;
 using Builders.Models;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -306,7 +307,7 @@ namespace Builders.ViewModels
         }));
         public Command PrintCommand => printCommand ?? (printCommand = new Command(obj=> 
         {
-            PrintReciept("\\Blanks\\RecieptPDF.xltm");            
+            PrintReciept("\\Blanks\\RecieptPDF");  // "\\Blanks\\RecieptPDF.xltm"           
         }));
 
         public PaymentViewModel( ref BuilderContext context, Quotation select)
@@ -339,74 +340,84 @@ namespace Builders.ViewModels
         {
             if (PaymentSelect != null)
             {
-                Excel.Application ExcelApp = new Excel.Application();
-                Excel.Workbook ExcelWorkBook;
-                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
-
-                var client = db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
-                var payDo = Payments.Where(p => p.Id <= PaymentSelect.Id).OrderBy(i => i.Id);
-                
-                int count = 45;
-                foreach (var item in payDo)
+                try
                 {
-                    ExcelApp.Cells[count, 1] = item.PaymentDatePaid;
-                    ExcelApp.Cells[count, 2] = item.PaymentAmountPaid;   
-                    ExcelApp.Cells[count, 3] = item.PaymentPrincipalPaid;  
-                    ExcelApp.Cells[count, 4] = item.ProcessingFee;
-                    ExcelApp.Cells[count, 5] = item.PaymentMethod;
-                    if (item.Balance > 0)
+                    Excel.Application ExcelApp = new Excel.Application();
+                    Excel.Workbook ExcelWorkBook;
+                    ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
+
+                    var client = db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+                    var payDo = Payments.Where(p => p.Id <= PaymentSelect.Id).OrderBy(i => i.Id);
+
+                    int count = 45;
+                    foreach (var item in payDo)
                     {
-                        ExcelApp.Cells[count, 6] = item.Balance;
-                    }
-                    else
-                    {
-                        ExcelApp.Cells[count, 6] = "Paid in full";
+                        ExcelApp.Cells[count, 1] = item.PaymentDatePaid;
+                        ExcelApp.Cells[count, 2] = item.PaymentAmountPaid;
+                        ExcelApp.Cells[count, 3] = item.PaymentPrincipalPaid;
+                        ExcelApp.Cells[count, 4] = item.ProcessingFee;
+                        ExcelApp.Cells[count, 5] = item.PaymentMethod;
+                        if (item.Balance > 0)
+                        {
+                            ExcelApp.Cells[count, 6] = item.Balance;
+                        }
+                        else
+                        {
+                            ExcelApp.Cells[count, 6] = "Paid in full";
+                        }
+
+                        count++;
                     }
 
-                    count++;
+                    ExcelApp.Cells[3, 6] = PaymentSelect.PaymentDatePaid;
+
+                    ExcelApp.Cells[38, 6] = PaymentSelect.PaymentAmountPaid;
+                    ExcelApp.Cells[39, 6] = PaymentSelect.PaymentMethod;
+                    ExcelApp.Cells[40, 6] = PaymentSelect.ProcessingFee;
+                    ExcelApp.Cells[41, 6] = PaymentSelect.PaymentPrincipalPaid;
+                    ExcelApp.Cells[34, 6] = payDo.Select(p => p.PaymentPrincipalPaid).Sum();      // сплачено до цього часу
+
+                    ExcelApp.Cells[4, 6] = RecieptSelect?.Number;
+                    ExcelApp.Cells[6, 6] = quota.NumberQuota;
+
+                    ExcelApp.Cells[9, 2] = quota.JobDescription;
+                    ExcelApp.Cells[10, 2] = client.CompanyName;
+                    ExcelApp.Cells[11, 2] = client.PrimaryFirstName + " " + client.PrimaryLastName;
+                    ExcelApp.Cells[12, 2] = client.PrimaryPhoneNumber;
+                    ExcelApp.Cells[13, 2] = client.PrimaryEmail;
+                    ExcelApp.Cells[14, 2] = client.AddressBillStreet + ", " + client.AddressBillCity + ", " + client.AddressBillProvince + ", " + client.AddressBillPostalCode + ", " + client.AddressBillCountry;
+
+                    ExcelApp.Cells[11, 5] = client.SecondaryFirstName + " " + client.SecondaryLastName;
+                    ExcelApp.Cells[12, 5] = client.SecondaryPhoneNumber;
+                    ExcelApp.Cells[13, 5] = client.SecondaryEmail;
+                    ExcelApp.Cells[14, 5] = client.AddressSiteStreet + ", " + client.AddressSiteCity + ", " + client.AddressSiteProvince + ", " + client.AddressSitePostalCode + ", " + client.AddressSiteCountry;
+
+                    ExcelApp.Cells[18, 2] = quota.JobNote;
+
+                    ExcelApp.Cells[21, 6] = quota.MaterialSubtotal;
+                    ExcelApp.Cells[22, 6] = quota.MaterialTax;
+                    ExcelApp.Cells[23, 6] = quota.MaterialDiscountAmount;
+                    ExcelApp.Cells[24, 6] = quota.MaterialTotal;
+
+                    ExcelApp.Cells[26, 6] = quota.LabourSubtotal;
+                    ExcelApp.Cells[27, 6] = quota.LabourTax;
+                    ExcelApp.Cells[28, 6] = quota.LabourDiscountAmount;
+                    ExcelApp.Cells[29, 6] = quota.LabourTotal;
+
+                    ExcelApp.Cells[21, 6] = quota.MaterialSubtotal;
+                    ExcelApp.Cells[31, 6] = quota?.ProcessingFee + quota?.FinancingFee;
+
+                    ExcelApp.Calculate();
+                    ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
+                    ExcelApp.Calculate();
                 }
-                                
-                ExcelApp.Cells[3, 6] = PaymentSelect.PaymentDatePaid;
-
-                ExcelApp.Cells[38, 6] = PaymentSelect.PaymentAmountPaid;     
-                ExcelApp.Cells[39, 6] = PaymentSelect.PaymentMethod;
-                ExcelApp.Cells[40, 6] = PaymentSelect.ProcessingFee;
-                ExcelApp.Cells[41, 6] = PaymentSelect.PaymentPrincipalPaid;   
-                ExcelApp.Cells[34, 6] = payDo.Select(p => p.PaymentPrincipalPaid).Sum();      // сплачено до цього часу
-
-                ExcelApp.Cells[4, 6] = RecieptSelect?.Number;
-                ExcelApp.Cells[6, 6] = quota.NumberQuota;
-
-                ExcelApp.Cells[9, 2] = quota.JobDescription;
-                ExcelApp.Cells[10, 2] = client.CompanyName;
-                ExcelApp.Cells[11, 2] = client.PrimaryFirstName + " " + client.PrimaryLastName;
-                ExcelApp.Cells[12, 2] = client.PrimaryPhoneNumber;
-                ExcelApp.Cells[13, 2] = client.PrimaryEmail;
-                ExcelApp.Cells[14, 2] = client.AddressBillStreet + ", " + client.AddressBillCity + ", " + client.AddressBillProvince + ", " + client.AddressBillPostalCode + ", " + client.AddressBillCountry;
-
-                ExcelApp.Cells[11, 5] = client.SecondaryFirstName + " " + client.SecondaryLastName;
-                ExcelApp.Cells[12, 5] = client.SecondaryPhoneNumber;
-                ExcelApp.Cells[13, 5] = client.SecondaryEmail;
-                ExcelApp.Cells[14, 5] = client.AddressSiteStreet + ", " + client.AddressSiteCity + ", " + client.AddressSiteProvince + ", " + client.AddressSitePostalCode + ", " + client.AddressSiteCountry;
-
-                ExcelApp.Cells[18, 2] = quota.JobNote;
-
-                ExcelApp.Cells[21, 6] = quota.MaterialSubtotal;
-                ExcelApp.Cells[22, 6] = quota.MaterialTax;
-                ExcelApp.Cells[23, 6] = quota.MaterialDiscountAmount;
-                ExcelApp.Cells[24, 6] = quota.MaterialTotal;
-
-                ExcelApp.Cells[26, 6] = quota.LabourSubtotal;
-                ExcelApp.Cells[27, 6] = quota.LabourTax;
-                ExcelApp.Cells[28, 6] = quota.LabourDiscountAmount;
-                ExcelApp.Cells[29, 6] = quota.LabourTotal;
-
-                ExcelApp.Cells[21, 6] = quota.MaterialSubtotal;
-                ExcelApp.Cells[31, 6] = quota?.ProcessingFee + quota?.FinancingFee;
-
-                ExcelApp.Calculate();
-                ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
-                ExcelApp.Calculate();
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error message: " + Environment.NewLine + 
+                                           ex.Message + Environment.NewLine + Environment.NewLine + 
+                                           "StackTrace message: " + Environment.NewLine + 
+                                           ex.StackTrace, "Warning !!!");
+                }
             }
         }
     }

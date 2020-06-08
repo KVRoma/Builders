@@ -1293,40 +1293,50 @@ namespace Builders.ViewModels
         public Command TemplateClient => _templateClient ?? (_templateClient = new Command(obj =>
         {
             if (worker != null && worker.IsBusy) { return; }
+
             worker = new BackgroundWorker();
             worker.DoWork += worker_DoWork;
             worker.RunWorkerAsync();
             void worker_DoWork(object sender, DoWorkEventArgs e)
             {
                 ProgressStart();
-
-                // Основні затратні задачі
-                Excel.Application ExcelApp = new Excel.Application();
-                Excel.Workbook ExcelWorkBook;
-                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\TemplateClient.xltm");   //Вказуємо шлях до шаблону
-
-                var typeClient = db.DIC_TypeOfClients.Where(c => c.Id > 0);
-                var howClient = db.DIC_HearAboutsUse.Where(h => h.Id > 0);
-                int i = 2;
-                foreach (var item in typeClient)
+                try
                 {
-                    ExcelApp.Sheets[2].Cells[i, 1] = item.Name;
-                    i++;
-                }
+                    // Основні затратні задачі
+                    Excel.Application ExcelApp = new Excel.Application();
+                    Excel.Workbook ExcelWorkBook;
+                    ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\TemplateClient");   //Вказуємо шлях до шаблону "\\Blanks\\TemplateClient.xltm"
 
-                i = 2;
-                foreach (var item in howClient)
+                    var typeClient = db.DIC_TypeOfClients.Where(c => c.Id > 0);
+                    var howClient = db.DIC_HearAboutsUse.Where(h => h.Id > 0);
+                    int i = 2;
+                    foreach (var item in typeClient)
+                    {
+                        ExcelApp.Sheets[2].Cells[i, 1] = item.Name;
+                        i++;
+                    }
+
+                    i = 2;
+                    foreach (var item in howClient)
+                    {
+                        ExcelApp.Sheets[2].Cells[i, 2] = item.Name;
+                        i++;
+                    }
+
+                    ExcelApp.Visible = true;           // Робим книгу видимою
+                    ExcelApp.UserControl = true;       // Передаємо керування користувачу  
+                                                        //************************
+                }
+                catch (Exception ex)
                 {
-                    ExcelApp.Sheets[2].Cells[i, 2] = item.Name;
-                    i++;
+                    MessageBox.Show("Error message: " + Environment.NewLine +
+                                           ex.Message + Environment.NewLine + Environment.NewLine +
+                                           "StackTrace message: " + Environment.NewLine +
+                                           ex.StackTrace, "Warning !!!");
                 }
-
-                ExcelApp.Visible = true;           // Робим книгу видимою
-                ExcelApp.UserControl = true;       // Передаємо керування користувачу  
-                                                   //************************
-
                 ProgressStop();
             }
+
         }));
 
         //**********************************
@@ -1528,14 +1538,24 @@ namespace Builders.ViewModels
             }
         }));
         public Command PrintQuotation => _printQuotation ?? (_printQuotation = new Command(obj =>
-        {            
-            if (CompanyName == "CMO")
+        {
+            try
             {
-                QuotaPrintToExcelCMO("\\Blanks\\QuotaPDF.xltm");
+                if (CompanyName == "CMO")
+                {
+                    QuotaPrintToExcelCMO("\\Blanks\\QuotaPDF");   //"\\Blanks\\QuotaPDF.xltm"
+                }
+                else
+                {
+                    QuotaPrintToExcelNL("\\Blanks\\NLQuotaPDF");   // "\\Blanks\\NLQuotaPDF.xltm"
+                }
             }
-            else 
+            catch (Exception ex)
             {
-                QuotaPrintToExcelNL("\\Blanks\\NLQuotaPDF.xltm");
+                MessageBox.Show("Error message: " + Environment.NewLine +
+                                       ex.Message + Environment.NewLine + Environment.NewLine +
+                                       "StackTrace message: " + Environment.NewLine +
+                                       ex.StackTrace, "Warning !!!");
             }
         }));
         public Command PaymentQuotation => _paymentQuotation ?? (_paymentQuotation = new Command(async obj =>
@@ -1919,44 +1939,52 @@ namespace Builders.ViewModels
             void worker_DoWork(object sender, DoWorkEventArgs e)
             {
                 ProgressStart();
-
-                // Основні затратні задачі
-                Excel.Application ExcelApp = new Excel.Application();
-                Excel.Workbook ExcelWorkBook;
-                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\TemplateQuota.xltm");   //Вказуємо шлях до шаблону
-
-                var groups = db.DIC_GroupeQuotations.Where(g => g.Id > 0);
-                var dic_item = db.DIC_ItemQuotations.Where(g => g.Id > 0);
-                var dic_des = db.DIC_DescriptionQuotations.Where(g => g.Id > 0);
-
-                int i = 2;
-                int its = 2;
-                foreach (var group in groups)
+                try
                 {
-                    var items = dic_item.Where(it => it.GroupeId == group.Id).OrderBy(it => it.Name);
-                    foreach (var item in items)
-                    {
-                        ExcelApp.Sheets[2].Cells[its, 1] = item.Name;
-                        ExcelApp.Sheets[2].Cells[its, 2] = group.NameGroupe;
-                        its++;
+                    // Основні затратні задачі
+                    Excel.Application ExcelApp = new Excel.Application();
+                    Excel.Workbook ExcelWorkBook;
+                    ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\TemplateQuota");   //Вказуємо шлях до шаблону  "\\Blanks\\TemplateQuota.xltm"
 
-                        var descroptions = dic_des.Where(d => d.ItemId == item.Id);
-                        foreach (var description in descroptions)
+                    var groups = db.DIC_GroupeQuotations.Where(g => g.Id > 0);
+                    var dic_item = db.DIC_ItemQuotations.Where(g => g.Id > 0);
+                    var dic_des = db.DIC_DescriptionQuotations.Where(g => g.Id > 0);
+
+                    int i = 2;
+                    int its = 2;
+                    foreach (var group in groups)
+                    {
+                        var items = dic_item.Where(it => it.GroupeId == group.Id).OrderBy(it => it.Name);
+                        foreach (var item in items)
                         {
-                            ExcelApp.Sheets[2].Cells[i, 4] = group.NameGroupe;
-                            ExcelApp.Sheets[2].Cells[i, 5] = item.Name;
-                            ExcelApp.Sheets[2].Cells[i, 6] = description.Name;
-                            i++;
+                            ExcelApp.Sheets[2].Cells[its, 1] = item.Name;
+                            ExcelApp.Sheets[2].Cells[its, 2] = group.NameGroupe;
+                            its++;
+
+                            var descroptions = dic_des.Where(d => d.ItemId == item.Id);
+                            foreach (var description in descroptions)
+                            {
+                                ExcelApp.Sheets[2].Cells[i, 4] = group.NameGroupe;
+                                ExcelApp.Sheets[2].Cells[i, 5] = item.Name;
+                                ExcelApp.Sheets[2].Cells[i, 6] = description.Name;
+                                i++;
+                            }
                         }
                     }
-                }
-                groups = null;
-                dic_item = null;
-                dic_des = null;
+                    groups = null;
+                    dic_item = null;
+                    dic_des = null;
 
-                ExcelApp.Visible = true;           // Робим книгу видимою
-                ExcelApp.UserControl = true;       // Передаємо керування користувачу 
-                                                   //************************
+                    ExcelApp.Visible = true;           // Робим книгу видимою
+                    ExcelApp.UserControl = true;       // Передаємо керування користувачу 
+                }                                      //************************
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error message: " + Environment.NewLine +
+                                           ex.Message + Environment.NewLine + Environment.NewLine +
+                                           "StackTrace message: " + Environment.NewLine +
+                                           ex.StackTrace, "Warning !!!");
+                }
 
                 ProgressStop();
             }
@@ -1964,27 +1992,47 @@ namespace Builders.ViewModels
 
         //**********************************
         public Command PrintDelivery => _printDelivery ?? (_printDelivery = new Command(obj =>
-        {            
-            if (CompanyName == "CMO")
+        {
+            try
             {
-                DeliveryPrintToExcelCMO("\\Blanks\\ListOfSuppliesPDF.xltm");
+                if (CompanyName == "CMO")
+                {
+                    DeliveryPrintToExcelCMO("\\Blanks\\ListOfSuppliesPDF");   //  "\\Blanks\\ListOfSuppliesPDF.xltm"
+                }
+                else
+                {
+                    DeliveryPrintToExcelNL("\\Blanks\\NLListOfSuppliesPDF");   //  "\\Blanks\\NLListOfSuppliesPDF.xltm"
+                }
             }
-            else
+            catch (Exception ex)
             {
-                DeliveryPrintToExcelNL("\\Blanks\\NLListOfSuppliesPDF.xltm");
+                MessageBox.Show("Error message: " + Environment.NewLine +
+                                       ex.Message + Environment.NewLine + Environment.NewLine +
+                                       "StackTrace message: " + Environment.NewLine +
+                                       ex.StackTrace, "Warning !!!");
             }
         }));
         public Command PrintDriverDelivery => _printDriverDelivery ?? (_printDriverDelivery = new Command(obj =>
-        {            
-            if (CompanyName == "CMO")
+        {
+            try
             {
-                DeliveryDriverPrintYoExcelCMO("\\Blanks\\DeliveryPDF.xltm");
-            }
-            else
-            {
-                DeliveryDriverPrintYoExcelNL("\\Blanks\\NLDeliveryPDF.xltm");
-            }
 
+                if (CompanyName == "CMO")
+                {
+                    DeliveryDriverPrintYoExcelCMO("\\Blanks\\DeliveryPDF");    // "\\Blanks\\DeliveryPDF.xltm"
+                }
+                else
+                {
+                    DeliveryDriverPrintYoExcelNL("\\Blanks\\NLDeliveryPDF");   //  "\\Blanks\\NLDeliveryPDF.xltm"
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error message: " + Environment.NewLine +
+                                       ex.Message + Environment.NewLine + Environment.NewLine +
+                                       "StackTrace message: " + Environment.NewLine +
+                                       ex.StackTrace, "Warning !!!");
+            }
         }));
         public Command SearchDelivery => _searchDelivery ?? (_searchDelivery = new Command(obj =>
         {
@@ -2148,16 +2196,26 @@ namespace Builders.ViewModels
             }
         }));
         public Command PrintInvoice => _printInvoice ?? (_printInvoice = new Command(obj =>
-        {            
-            if (CompanyName == "CMO")
+        {
+            try
             {
-                InvoicesPrintToExcelCMO("\\Blanks\\InvoicePDF.xltm");
+
+                if (CompanyName == "CMO")
+                {
+                    InvoicesPrintToExcelCMO("\\Blanks\\InvoicePDF");   //  "\\Blanks\\InvoicePDF.xltm"
+                }
+                else
+                {
+                    InvoicePrintToExcelNL("\\Blanks\\NLInvoicePDF");   //  "\\Blanks\\NLInvoicePDF.xltm"
+                }
             }
-            else
+            catch (Exception ex)
             {
-                InvoicePrintToExcelNL("\\Blanks\\NLInvoicePDF.xltm");
+                MessageBox.Show("Error message: " + Environment.NewLine +
+                                       ex.Message + Environment.NewLine + Environment.NewLine +
+                                       "StackTrace message: " + Environment.NewLine +
+                                       ex.StackTrace, "Warning !!!");
             }
-            
         }));
         public Command SearchInvoice => _searchInvoice ?? (_searchInvoice = new Command(obj =>
         {
@@ -2229,19 +2287,29 @@ namespace Builders.ViewModels
         {
             if (WorkOrderSelect != null)
             {
-                var contractors = db.WorkOrder_Contractors.Where(c => c.WorkOrderId == WorkOrderSelect.Id).OrderBy(c => c.Contractor);
-                foreach (var contractor in contractors)
+                try
                 {
-                    int? room = db.WorkOrder_Works.Where(w => w.Contractor == contractor.Contractor)?.Count();
-                    int? accessories = db.WorkOrder_Accessories.Where(a => a.Contractor == contractor.Contractor)?.Count();
-                    if (room > 4 || accessories > 7)
+                    var contractors = db.WorkOrder_Contractors.Where(c => c.WorkOrderId == WorkOrderSelect.Id).OrderBy(c => c.Contractor);
+                    foreach (var contractor in contractors)
                     {
-                        WorkOrderPrintMaxToExcel(contractor, "\\Blanks\\WorkOrderPDFmax.xltm");
+                        int? room = db.WorkOrder_Works.Where(w => w.Contractor == contractor.Contractor)?.Count();
+                        int? accessories = db.WorkOrder_Accessories.Where(a => a.Contractor == contractor.Contractor)?.Count();
+                        if (room > 4 || accessories > 7)
+                        {
+                            WorkOrderPrintMaxToExcel(contractor, "\\Blanks\\WorkOrderPDFmax");   //   "\\Blanks\\WorkOrderPDFmax.xltm"
+                        }
+                        else
+                        {
+                            WorkOrderPrintMinToExcel(contractor, "\\Blanks\\WorkOrderPDFmin");   //   "\\Blanks\\WorkOrderPDFmin.xltm"
+                        }
                     }
-                    else
-                    {
-                        WorkOrderPrintMinToExcel(contractor, "\\Blanks\\WorkOrderPDFmin.xltm");
-                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error message: " + Environment.NewLine +
+                                           ex.Message + Environment.NewLine + Environment.NewLine +
+                                           "StackTrace message: " + Environment.NewLine +
+                                           ex.StackTrace, "Warning !!!");
                 }
             }
         }));
@@ -2274,103 +2342,113 @@ namespace Builders.ViewModels
         {
             if (MaterialProfitSelect != null)
             {
-                int i = 0;
-                var invoice = db.Invoices.FirstOrDefault(inv => inv.Id == MaterialProfitSelect.InvoiceId);
-                var quota = db.Quotations.FirstOrDefault(q => q.Id == invoice.QuotaId);
-                var clientData = db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
-                var material = db.Materials.Where(m => m.MaterialProfitId == MaterialProfitSelect.Id);
-
-                Excel.Application ExcelApp = new Excel.Application();
-                Excel.Workbook ExcelWorkBook;
-                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\MaterialProfitPDF.xltm");   //Вказуємо шлях до шаблону
-
-                ExcelApp.Cells[2, 2] = invoice.NumberInvoice;
-                ExcelApp.Cells[4, 2] = clientData.PrimaryFirstName + " " + clientData.PrimaryLastName;
-                ExcelApp.Cells[5, 2] = clientData.SecondaryFirstName + " " + clientData.SecondaryLastName;
-                ExcelApp.Cells[6, 2] = clientData.CompanyName;
-                ExcelApp.Cells[2, 11] = MaterialProfitSelect.InvoiceDate;
-                ExcelApp.Cells[4, 8] = quota.JobDescription;
-                ExcelApp.Cells[5, 8] = clientData.AddressSiteStreet + ", " + clientData.AddressSiteCity + ", " + clientData.AddressSiteProvince + ", " + clientData.AddressSitePostalCode + ", " + clientData.AddressSiteCountry;
-
-
-                i = 11;
-                foreach (var item in material)
+                try
                 {
-                    if (item.Groupe == "FLOORING")
-                    {
-                        ExcelApp.Cells[i, 1] = item.Item;
-                        ExcelApp.Cells[i, 2] = item.Description;
-                        ExcelApp.Cells[i, 4] = item.Quantity;
-                        ExcelApp.Cells[i, 5] = item.Rate;
-                        ExcelApp.Cells[i, 6] = item.Price;
-                        ExcelApp.Cells[i, 7] = (item.CostQuantity != 0) ? (item.CostQuantity).ToString() : "";
-                        ExcelApp.Cells[i, 8] = (item.CostUnitPrice != 0) ? (item.CostUnitPrice).ToString() : "";
-                        ExcelApp.Cells[i, 9] = (item.CostSubtotal != 0) ? (item.CostSubtotal).ToString() : "";
-                        ExcelApp.Cells[i, 10] = (item.CostEPRate != 0) ? (item.CostEPRate).ToString() : "";
-                        ExcelApp.Cells[i, 11] = (item.CostTax != 0) ? (item.CostTax).ToString() : "";
-                        ExcelApp.Cells[i, 12] = (item.CostTotal != 0) ? (item.CostTotal).ToString() : "";
-                        i++;
-                    }
-                }
+                    int i = 0;
+                    var invoice = db.Invoices.FirstOrDefault(inv => inv.Id == MaterialProfitSelect.InvoiceId);
+                    var quota = db.Quotations.FirstOrDefault(q => q.Id == invoice.QuotaId);
+                    var clientData = db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+                    var material = db.Materials.Where(m => m.MaterialProfitId == MaterialProfitSelect.Id);
 
-                i = 20;
-                foreach (var item in material)
+                    Excel.Application ExcelApp = new Excel.Application();
+                    Excel.Workbook ExcelWorkBook;
+                    ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\MaterialProfitPDF");   //Вказуємо шлях до шаблону   "\\Blanks\\MaterialProfitPDF.xltm"
+
+                    ExcelApp.Cells[2, 2] = invoice.NumberInvoice;
+                    ExcelApp.Cells[4, 2] = clientData.PrimaryFirstName + " " + clientData.PrimaryLastName;
+                    ExcelApp.Cells[5, 2] = clientData.SecondaryFirstName + " " + clientData.SecondaryLastName;
+                    ExcelApp.Cells[6, 2] = clientData.CompanyName;
+                    ExcelApp.Cells[2, 11] = MaterialProfitSelect.InvoiceDate;
+                    ExcelApp.Cells[4, 8] = quota.JobDescription;
+                    ExcelApp.Cells[5, 8] = clientData.AddressSiteStreet + ", " + clientData.AddressSiteCity + ", " + clientData.AddressSiteProvince + ", " + clientData.AddressSitePostalCode + ", " + clientData.AddressSiteCountry;
+
+
+                    i = 11;
+                    foreach (var item in material)
+                    {
+                        if (item.Groupe == "FLOORING")
+                        {
+                            ExcelApp.Cells[i, 1] = item.Item;
+                            ExcelApp.Cells[i, 2] = item.Description;
+                            ExcelApp.Cells[i, 4] = item.Quantity;
+                            ExcelApp.Cells[i, 5] = item.Rate;
+                            ExcelApp.Cells[i, 6] = item.Price;
+                            ExcelApp.Cells[i, 7] = (item.CostQuantity != 0) ? (item.CostQuantity) : 0m;
+                            ExcelApp.Cells[i, 8] = (item.CostUnitPrice != 0) ? (item.CostUnitPrice) : 0m;
+                            ExcelApp.Cells[i, 9] = (item.CostSubtotal != 0) ? (item.CostSubtotal) : 0m;
+                            ExcelApp.Cells[i, 10] = (item.CostEPRate != 0) ? (item.CostEPRate) : 0m;
+                            ExcelApp.Cells[i, 11] = (item.CostTax != 0) ? (item.CostTax) : 0m;
+                            ExcelApp.Cells[i, 12] = (item.CostTotal != 0) ? (item.CostTotal) : 0m;
+                            i++;
+                        }
+                    }
+
+                    i = 20;
+                    foreach (var item in material)
+                    {
+                        if (item.Groupe == "ACCESSORIES")
+                        {
+                            ExcelApp.Cells[i, 1] = item.Item;
+                            ExcelApp.Cells[i, 2] = item.Description;
+                            ExcelApp.Cells[i, 4] = item.Quantity;
+                            ExcelApp.Cells[i, 5] = item.Rate;
+                            ExcelApp.Cells[i, 6] = item.Price;
+                            ExcelApp.Cells[i, 7] = (item.CostQuantity != 0) ? (item.CostQuantity) : 0m;
+                            ExcelApp.Cells[i, 8] = (item.CostUnitPrice != 0) ? (item.CostUnitPrice) : 0m;
+                            ExcelApp.Cells[i, 9] = (item.CostSubtotal != 0) ? (item.CostSubtotal) : 0m;
+                            ExcelApp.Cells[i, 10] = (item.CostEPRate != 0) ? (item.CostEPRate) : 0m;
+                            ExcelApp.Cells[i, 11] = (item.CostTax != 0) ? (item.CostTax) : 0m;
+                            ExcelApp.Cells[i, 12] = (item.CostTotal != 0) ? (item.CostTotal) : 0m;
+                            i++;
+                        }
+                    }
+
+                    i = 42;
+                    foreach (var item in material)
+                    {
+                        if (item.Groupe == "OTHER")
+                        {
+                            ExcelApp.Cells[i, 1] = item.Item;
+                            ExcelApp.Cells[i, 2] = item.Description;
+                            ExcelApp.Cells[i, 3] = item.CostQuantity;
+                            ExcelApp.Cells[i, 4] = item.CostUnitPrice;
+                            ExcelApp.Cells[i, 5] = item.CostSubtotal;
+                            ExcelApp.Cells[i, 6] = item.CostEPRate;
+                            ExcelApp.Cells[i, 7] = item.CostTax;
+                            ExcelApp.Cells[i, 8] = item.CostTotal;
+                            i++;
+                        }
+                    }
+
+
+
+                    ExcelApp.Cells[36, 4] = MaterialProfitSelect.MaterialSubtotal;
+                    ExcelApp.Cells[37, 4] = MaterialProfitSelect.MaterialTax;
+                    ExcelApp.Cells[38, 4] = MaterialProfitSelect.MaterialTotal;
+
+                    ExcelApp.Cells[55, 7] = MaterialProfitSelect.CostMaterialSubtotal;
+                    ExcelApp.Cells[56, 7] = MaterialProfitSelect.CostMaterialTax;
+                    ExcelApp.Cells[57, 7] = MaterialProfitSelect.CostMaterialTotal;
+
+                    ExcelApp.Cells[61, 5] = MaterialProfitSelect.ProfitBeforTax;
+                    ExcelApp.Cells[62, 5] = MaterialProfitSelect.ProfitTax;
+                    ExcelApp.Cells[63, 5] = MaterialProfitSelect.ProfitInclTax;
+                    ExcelApp.Cells[64, 5] = MaterialProfitSelect.ProfitDiscount;
+                    ExcelApp.Cells[65, 5] = MaterialProfitSelect.ProfitTotal;
+
+
+
+                    ExcelApp.Calculate();
+                    ExcelApp.Cells[1, 14] = "1";   // Записуємо дані в .pdf    
+                    ExcelApp.Calculate();
+                }
+                catch (Exception ex)
                 {
-                    if (item.Groupe == "ACCESSORIES")
-                    {
-                        ExcelApp.Cells[i, 1] = item.Item;
-                        ExcelApp.Cells[i, 2] = item.Description;
-                        ExcelApp.Cells[i, 4] = item.Quantity;
-                        ExcelApp.Cells[i, 5] = item.Rate;
-                        ExcelApp.Cells[i, 6] = item.Price;
-                        ExcelApp.Cells[i, 7] = (item.CostQuantity != 0) ? (item.CostQuantity).ToString() : "";
-                        ExcelApp.Cells[i, 8] = (item.CostUnitPrice != 0) ? (item.CostUnitPrice).ToString() : "";
-                        ExcelApp.Cells[i, 9] = (item.CostSubtotal != 0) ? (item.CostSubtotal).ToString() : "";
-                        ExcelApp.Cells[i, 10] = (item.CostEPRate != 0) ? (item.CostEPRate).ToString() : "";
-                        ExcelApp.Cells[i, 11] = (item.CostTax != 0) ? (item.CostTax).ToString() : "";
-                        ExcelApp.Cells[i, 12] = (item.CostTotal != 0) ? (item.CostTotal).ToString() : "";
-                        i++;
-                    }
+                    MessageBox.Show("Error message: " + Environment.NewLine +
+                                           ex.Message + Environment.NewLine + Environment.NewLine +
+                                           "StackTrace message: " + Environment.NewLine +
+                                           ex.StackTrace, "Warning !!!");
                 }
-
-                i = 42;
-                foreach (var item in material)
-                {
-                    if (item.Groupe == "OTHER")
-                    {
-                        ExcelApp.Cells[i, 1] = item.Item;
-                        ExcelApp.Cells[i, 2] = item.Description;
-                        ExcelApp.Cells[i, 3] = item.CostQuantity;
-                        ExcelApp.Cells[i, 4] = item.CostUnitPrice;
-                        ExcelApp.Cells[i, 5] = item.CostSubtotal;
-                        ExcelApp.Cells[i, 6] = item.CostEPRate;
-                        ExcelApp.Cells[i, 7] = item.CostTax;
-                        ExcelApp.Cells[i, 8] = item.CostTotal;
-                        i++;
-                    }
-                }
-
-
-
-                ExcelApp.Cells[36, 4] = MaterialProfitSelect.MaterialSubtotal;
-                ExcelApp.Cells[37, 4] = MaterialProfitSelect.MaterialTax;
-                ExcelApp.Cells[38, 4] = MaterialProfitSelect.MaterialTotal;
-
-                ExcelApp.Cells[55, 7] = MaterialProfitSelect.CostMaterialSubtotal;
-                ExcelApp.Cells[56, 7] = MaterialProfitSelect.CostMaterialTax;
-                ExcelApp.Cells[57, 7] = MaterialProfitSelect.CostMaterialTotal;
-
-                ExcelApp.Cells[61, 5] = MaterialProfitSelect.ProfitBeforTax;
-                ExcelApp.Cells[62, 5] = MaterialProfitSelect.ProfitTax;
-                ExcelApp.Cells[63, 5] = MaterialProfitSelect.ProfitInclTax;
-                ExcelApp.Cells[64, 5] = MaterialProfitSelect.ProfitDiscount;
-                ExcelApp.Cells[65, 5] = MaterialProfitSelect.ProfitTotal;
-
-
-
-                ExcelApp.Calculate();
-                ExcelApp.Cells[1, 14] = "1";   // Записуємо дані в .pdf    
-                ExcelApp.Calculate();
 
             }
         }));
@@ -2453,135 +2531,146 @@ namespace Builders.ViewModels
         {
             if (LabourProfitSelect != null)
             {
-                int i = 0;
-                var invoice = db.Invoices.FirstOrDefault(inv => inv.Id == LabourProfitSelect.InvoiceId);
-                var quota = db.Quotations.FirstOrDefault(q => q.Id == invoice.QuotaId);
-                var clientData = db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
-                var labour = db.Labours.Where(m => m.LabourProfitId == LabourProfitSelect.Id);
-                var contractor = db.LabourContractors.Where(c => c.LabourProfitId == LabourProfitSelect.Id);
-
-                Excel.Application ExcelApp = new Excel.Application();
-                Excel.Workbook ExcelWorkBook;
-                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\LabourProfitPDF.xltm");   //Вказуємо шлях до шаблону
-
-                ExcelApp.Cells[3, 2] = invoice.NumberInvoice;
-                ExcelApp.Cells[4, 2] = clientData.PrimaryFirstName + " " + clientData.PrimaryLastName;
-                ExcelApp.Cells[5, 2] = clientData.SecondaryFirstName + " " + clientData.SecondaryLastName;
-                ExcelApp.Cells[6, 2] = clientData.CompanyName;
-                ExcelApp.Cells[3, 5] = invoice.DateInvoice;
-                ExcelApp.Cells[4, 5] = quota.JobDescription;
-                ExcelApp.Cells[5, 5] = clientData.AddressSiteStreet + ", " + clientData.AddressSiteCity + ", " + clientData.AddressSiteProvince + ", " + clientData.AddressSitePostalCode + ", " + clientData.AddressSiteCountry;
-
-
-                i = 10;
-                foreach (var item in labour)
+                try
                 {
-                    if (item.Groupe == "INSTALLATION")
+
+                    int i = 0;
+                    var invoice = db.Invoices.FirstOrDefault(inv => inv.Id == LabourProfitSelect.InvoiceId);
+                    var quota = db.Quotations.FirstOrDefault(q => q.Id == invoice.QuotaId);
+                    var clientData = db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+                    var labour = db.Labours.Where(m => m.LabourProfitId == LabourProfitSelect.Id);
+                    var contractor = db.LabourContractors.Where(c => c.LabourProfitId == LabourProfitSelect.Id);
+
+                    Excel.Application ExcelApp = new Excel.Application();
+                    Excel.Workbook ExcelWorkBook;
+                    ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\LabourProfitPDF");   //Вказуємо шлях до шаблону   "\\Blanks\\LabourProfitPDF.xltm"
+
+                    ExcelApp.Cells[3, 2] = invoice.NumberInvoice;
+                    ExcelApp.Cells[4, 2] = clientData.PrimaryFirstName + " " + clientData.PrimaryLastName;
+                    ExcelApp.Cells[5, 2] = clientData.SecondaryFirstName + " " + clientData.SecondaryLastName;
+                    ExcelApp.Cells[6, 2] = clientData.CompanyName;
+                    ExcelApp.Cells[3, 5] = invoice.DateInvoice;
+                    ExcelApp.Cells[4, 5] = quota.JobDescription;
+                    ExcelApp.Cells[5, 5] = clientData.AddressSiteStreet + ", " + clientData.AddressSiteCity + ", " + clientData.AddressSiteProvince + ", " + clientData.AddressSitePostalCode + ", " + clientData.AddressSiteCountry;
+
+
+                    i = 10;
+                    foreach (var item in labour)
                     {
-                        ExcelApp.Cells[i, 1] = item.Item;
-                        ExcelApp.Cells[i, 2] = item.Description;
-                        ExcelApp.Cells[i, 3] = item.Contractor;
-                        ExcelApp.Cells[i, 4] = item.Quantity;
-                        ExcelApp.Cells[i, 5] = item.Rate;
-                        ExcelApp.Cells[i, 6] = item.Price;
-                        ExcelApp.Cells[i, 7] = item.Percent;
-                        ExcelApp.Cells[i, 8] = item.Payout;
-                        ExcelApp.Cells[i, 9] = item.Profit;
+                        if (item.Groupe == "INSTALLATION")
+                        {
+                            ExcelApp.Cells[i, 1] = item.Item;
+                            ExcelApp.Cells[i, 2] = item.Description;
+                            ExcelApp.Cells[i, 3] = item.Contractor;
+                            ExcelApp.Cells[i, 4] = item.Quantity;
+                            ExcelApp.Cells[i, 5] = item.Rate;
+                            ExcelApp.Cells[i, 6] = item.Price;
+                            ExcelApp.Cells[i, 7] = item.Percent;
+                            ExcelApp.Cells[i, 8] = item.Payout;
+                            ExcelApp.Cells[i, 9] = item.Profit;
+
+                            i++;
+                        }
+                    }
+
+                    i = 19;
+                    foreach (var item in labour)
+                    {
+                        if (item.Groupe == "DEMOLITION")
+                        {
+                            ExcelApp.Cells[i, 1] = item.Item;
+                            ExcelApp.Cells[i, 2] = item.Description;
+                            ExcelApp.Cells[i, 3] = item.Contractor;
+                            ExcelApp.Cells[i, 4] = item.Quantity;
+                            ExcelApp.Cells[i, 5] = item.Rate;
+                            ExcelApp.Cells[i, 6] = item.Price;
+                            ExcelApp.Cells[i, 7] = item.Percent;
+                            ExcelApp.Cells[i, 8] = item.Payout;
+                            ExcelApp.Cells[i, 9] = item.Profit;
+
+                            i++;
+                        }
+                    }
+
+                    i = 25;
+                    foreach (var item in labour)
+                    {
+                        if (item.Groupe == "OPTIONAL SERVICES")
+                        {
+                            ExcelApp.Cells[i, 1] = item.Item;
+                            ExcelApp.Cells[i, 2] = item.Description;
+                            ExcelApp.Cells[i, 3] = item.Contractor;
+                            ExcelApp.Cells[i, 4] = item.Quantity;
+                            ExcelApp.Cells[i, 5] = item.Rate;
+                            ExcelApp.Cells[i, 6] = item.Price;
+                            ExcelApp.Cells[i, 7] = item.Percent;
+                            ExcelApp.Cells[i, 8] = item.Payout;
+                            ExcelApp.Cells[i, 9] = item.Profit;
+
+                            i++;
+                        }
+                    }
+
+                    i = 33;
+                    foreach (var item in labour)
+                    {
+                        if (item.Groupe == "FLOORING DELIVERY")
+                        {
+                            ExcelApp.Cells[i, 1] = item.Item;
+                            ExcelApp.Cells[i, 2] = item.Description;
+                            ExcelApp.Cells[i, 3] = item.Contractor;
+                            ExcelApp.Cells[i, 4] = item.Quantity;
+                            ExcelApp.Cells[i, 5] = item.Rate;
+                            ExcelApp.Cells[i, 6] = item.Price;
+                            ExcelApp.Cells[i, 7] = item.Percent;
+                            ExcelApp.Cells[i, 8] = item.Payout;
+                            ExcelApp.Cells[i, 9] = item.Profit;
+
+                            i++;
+                        }
+                    }
+
+
+                    ExcelApp.Cells[42, 3] = LabourProfitSelect.CollectedSubtotal;
+                    ExcelApp.Cells[43, 3] = LabourProfitSelect.CollectedGST;
+                    ExcelApp.Cells[44, 3] = LabourProfitSelect.CollectedTotal;
+
+                    ExcelApp.Cells[42, 4] = LabourProfitSelect.PayoutSubtotal;
+                    ExcelApp.Cells[43, 4] = LabourProfitSelect.PayoutGST;
+                    ExcelApp.Cells[44, 4] = LabourProfitSelect.PayoutTotal;
+
+                    ExcelApp.Cells[42, 5] = LabourProfitSelect.StoreSubtotal;
+                    ExcelApp.Cells[43, 5] = LabourProfitSelect.StoreGST;
+                    ExcelApp.Cells[44, 5] = LabourProfitSelect.StoreTotal;
+
+                    ExcelApp.Cells[45, 5] = LabourProfitSelect.Discount;
+                    ExcelApp.Cells[46, 5] = LabourProfitSelect.ProfitTotal;
+
+                    i = 50;
+                    foreach (var item in contractor)
+                    {
+                        ExcelApp.Cells[i, 2] = item.Contractor;
+                        ExcelApp.Cells[i, 3] = item.Payout;
+                        ExcelApp.Cells[i, 4] = item.Adjust;
+                        ExcelApp.Cells[i, 5] = item.Total;
+                        ExcelApp.Cells[i, 6] = item.TAX;
+                        ExcelApp.Cells[i, 7] = item.GST;
+                        ExcelApp.Cells[i, 8] = item.TotalContractor;
 
                         i++;
                     }
-                }
 
-                i = 19;
-                foreach (var item in labour)
+                    ExcelApp.Calculate();
+                    ExcelApp.Cells[1, 11] = "1";   // Записуємо дані в .pdf    
+                    ExcelApp.Calculate();
+                }
+                catch (Exception ex)
                 {
-                    if (item.Groupe == "DEMOLITION")
-                    {
-                        ExcelApp.Cells[i, 1] = item.Item;
-                        ExcelApp.Cells[i, 2] = item.Description;
-                        ExcelApp.Cells[i, 3] = item.Contractor;
-                        ExcelApp.Cells[i, 4] = item.Quantity;
-                        ExcelApp.Cells[i, 5] = item.Rate;
-                        ExcelApp.Cells[i, 6] = item.Price;
-                        ExcelApp.Cells[i, 7] = item.Percent;
-                        ExcelApp.Cells[i, 8] = item.Payout;
-                        ExcelApp.Cells[i, 9] = item.Profit;
-
-                        i++;
-                    }
+                    MessageBox.Show("Error message: " + Environment.NewLine +
+                                           ex.Message + Environment.NewLine + Environment.NewLine +
+                                           "StackTrace message: " + Environment.NewLine +
+                                           ex.StackTrace, "Warning !!!");
                 }
-
-                i = 25;
-                foreach (var item in labour)
-                {
-                    if (item.Groupe == "OPTIONAL SERVICES")
-                    {
-                        ExcelApp.Cells[i, 1] = item.Item;
-                        ExcelApp.Cells[i, 2] = item.Description;
-                        ExcelApp.Cells[i, 3] = item.Contractor;
-                        ExcelApp.Cells[i, 4] = item.Quantity;
-                        ExcelApp.Cells[i, 5] = item.Rate;
-                        ExcelApp.Cells[i, 6] = item.Price;
-                        ExcelApp.Cells[i, 7] = item.Percent;
-                        ExcelApp.Cells[i, 8] = item.Payout;
-                        ExcelApp.Cells[i, 9] = item.Profit;
-
-                        i++;
-                    }
-                }
-
-                i = 33;
-                foreach (var item in labour)
-                {
-                    if (item.Groupe == "FLOORING DELIVERY")
-                    {
-                        ExcelApp.Cells[i, 1] = item.Item;
-                        ExcelApp.Cells[i, 2] = item.Description;
-                        ExcelApp.Cells[i, 3] = item.Contractor;
-                        ExcelApp.Cells[i, 4] = item.Quantity;
-                        ExcelApp.Cells[i, 5] = item.Rate;
-                        ExcelApp.Cells[i, 6] = item.Price;
-                        ExcelApp.Cells[i, 7] = item.Percent;
-                        ExcelApp.Cells[i, 8] = item.Payout;
-                        ExcelApp.Cells[i, 9] = item.Profit;
-
-                        i++;
-                    }
-                }
-
-
-                ExcelApp.Cells[42, 3] = LabourProfitSelect.CollectedSubtotal;
-                ExcelApp.Cells[43, 3] = LabourProfitSelect.CollectedGST;
-                ExcelApp.Cells[44, 3] = LabourProfitSelect.CollectedTotal;
-
-                ExcelApp.Cells[42, 4] = LabourProfitSelect.PayoutSubtotal;
-                ExcelApp.Cells[43, 4] = LabourProfitSelect.PayoutGST;
-                ExcelApp.Cells[44, 4] = LabourProfitSelect.PayoutTotal;
-
-                ExcelApp.Cells[42, 5] = LabourProfitSelect.StoreSubtotal;
-                ExcelApp.Cells[43, 5] = LabourProfitSelect.StoreGST;
-                ExcelApp.Cells[44, 5] = LabourProfitSelect.StoreTotal;
-
-                ExcelApp.Cells[45, 5] = LabourProfitSelect.Discount;
-                ExcelApp.Cells[46, 5] = LabourProfitSelect.ProfitTotal;
-
-                i = 50;
-                foreach (var item in contractor)
-                {
-                    ExcelApp.Cells[i, 2] = item.Contractor;
-                    ExcelApp.Cells[i, 3] = item.Payout;
-                    ExcelApp.Cells[i, 4] = item.Adjust;
-                    ExcelApp.Cells[i, 5] = item.Total;
-                    ExcelApp.Cells[i, 6] = item.TAX;
-                    ExcelApp.Cells[i, 7] = item.GST;
-                    ExcelApp.Cells[i, 8] = item.TotalContractor;
-
-                    i++;
-                }
-
-                ExcelApp.Calculate();
-                ExcelApp.Cells[1, 11] = "1";   // Записуємо дані в .pdf    
-                ExcelApp.Calculate();
 
             }
         }));
@@ -2983,17 +3072,25 @@ namespace Builders.ViewModels
             void worker_DoWork(object sender, DoWorkEventArgs e)
             {
                 ProgressStart();
+                try
+                {
+                    // Основні затратні задачі
+                    Excel.Application ExcelApp = new Excel.Application();
+                    Excel.Workbook ExcelWorkBook;
+                    ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\TemplateExpenses");   //Вказуємо шлях до шаблону  "\\Blanks\\TemplateExpenses.xltm"
 
-                // Основні затратні задачі
-                Excel.Application ExcelApp = new Excel.Application();
-                Excel.Workbook ExcelWorkBook;
-                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + "\\Blanks\\TemplateExpenses.xltm");   //Вказуємо шлях до шаблону
+                    ExcelApp.Cells[3, 1] = DateTime.Today.ToShortDateString();
 
-                ExcelApp.Cells[3, 1] = DateTime.Today.ToShortDateString();
-
-                ExcelApp.Visible = true;           // Робим книгу видимою
-                ExcelApp.UserControl = true;       // Передаємо керування користувачу
-                                                   //************************
+                    ExcelApp.Visible = true;           // Робим книгу видимою
+                    ExcelApp.UserControl = true;       // Передаємо керування користувачу
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error message: " + Environment.NewLine +
+                                           ex.Message + Environment.NewLine + Environment.NewLine +
+                                           "StackTrace message: " + Environment.NewLine +
+                                           ex.StackTrace, "Warning !!!");
+                }
 
                 ProgressStop();
             }
@@ -3036,7 +3133,7 @@ namespace Builders.ViewModels
             var supplierViewModel = new DIC_SupplierViewModel(ref db);
             await displayRootRegistry.ShowModalPresentation(supplierViewModel);
         }));
-        public Command DIC_Depth => _dicDepth ?? (_dicDepth = new Command(async obj=> 
+        public Command DIC_Depth => _dicDepth ?? (_dicDepth = new Command(async obj =>
         {
             var displayRootRegistry = (Application.Current as App).displayRootRegistry;
             var depthViewModel = new DIC_DepthViewModel(ref db);
@@ -3127,7 +3224,7 @@ namespace Builders.ViewModels
         private void LoadDeliveriesDB(string companyName, bool isArchive)
         {
             Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == isArchive && d.CompanyName == companyName);
-        }        
+        }
         private async void StartLoadDB()
         {
             ProgressStart();
@@ -3151,7 +3248,7 @@ namespace Builders.ViewModels
                     LoadInvoicesDB(companyName);
                     LoadMaterialProfitsDB(companyName);
                     LoadLabourProfitsDB(companyName);
-                    LoadDebtsDB(companyName);                    
+                    LoadDebtsDB(companyName);
                 });
             }
         }
@@ -4097,19 +4194,19 @@ namespace Builders.ViewModels
         private List<ReportAmount> ReportAmountGet(DateTime dateFrom, DateTime dateTo)
         {
             var quotations = Quotations.Where(q => q.Id > 0); //db.Quotations.Where(q => q.Id > 0);
-            
+
             List<ReportAmount> reports = new List<ReportAmount>();
             if (quotations.Count() > 0)
             {
                 foreach (var quota in quotations)
                 {
-                    var payment = db.Payments.Where(p =>p.QuotationId == quota.Id && p.PaymentDatePaid >= dateFrom && p.PaymentDatePaid <= dateTo);
+                    var payment = db.Payments.Where(p => p.QuotationId == quota.Id && p.PaymentDatePaid >= dateFrom && p.PaymentDatePaid <= dateTo);
                     foreach (var item in payment)
                     {
                         ReportAmount amount = new ReportAmount()
                         {
-                            QuotaDate = quota.QuotaDate, 
-                            NumberQuota = quota.NumberQuota, 
+                            QuotaDate = quota.QuotaDate,
+                            NumberQuota = quota.NumberQuota,
                             FullNameQuota = quota.FullName,
                             PaymentDatePaid = item.PaymentDatePaid,
                             PaymentAmountPaid = item.PaymentAmountPaid,
@@ -4733,7 +4830,7 @@ namespace Builders.ViewModels
                 ExcelApp.Cells[9, 5] = clientData.SecondaryPhoneNumber;
                 ExcelApp.Cells[10, 5] = clientData.SecondaryEmail;
                 ExcelApp.Cells[11, 5] = clientData.AddressSiteStreet + ", " + clientData.AddressSiteCity + ", " + clientData.AddressSiteProvince + ", " + clientData.AddressSitePostalCode + ", " + clientData.AddressSiteCountry;
-                
+
                 ExcelApp.Cells[14, 2] = QuotationSelect.JobNote;
 
                 i = 19; // "FLOORING"
@@ -4821,7 +4918,7 @@ namespace Builders.ViewModels
                         i++;
                     }
                 }
-                               
+
 
                 ExcelApp.Cells[45, 7] = QuotationSelect.MaterialSubtotal;
                 ExcelApp.Cells[46, 7] = QuotationSelect.MaterialTax;
@@ -5257,7 +5354,7 @@ namespace Builders.ViewModels
                 ExcelApp.Calculate();
 
             }
-            
+
         }
         /// <summary>
         /// Формує файл Excel з шаблону Next Level
@@ -5436,7 +5533,7 @@ namespace Builders.ViewModels
                 ExcelApp.Calculate();
                 ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
                 ExcelApp.Calculate();
-                
+
             }
         }
     }
