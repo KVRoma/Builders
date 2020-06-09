@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using Builders.Commands;
 using Builders.Models;
+
+//using NPOI.XSSF.UserModel;
+//using Org.BouncyCastle.Asn1.Ocsp;
+//using Spire.Xls;
+using Microsoft.Office.Interop.Excel;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Builders.ViewModels
@@ -336,6 +342,114 @@ namespace Builders.ViewModels
                 EnableAdd = true;
             }
         }
+        //private void PrintRecieptNEW(string path)
+        //{
+        //    if (PaymentSelect != null)
+        //    {
+        //        try
+        //        {
+        //            //XSSFWorkbook workbook;
+        //            //XSSFSheet sheet = new XSSFSheet();
+        //            //using (FileStream stream = new FileStream(Environment.CurrentDirectory + path, FileMode.Open, FileAccess.Read))
+        //            //{
+        //            //    workbook = new XSSFWorkbook(stream);
+
+        //            //    sheet = (XSSFSheet)workbook.GetSheetAt(0);
+        //            //}
+        //            //sheet.GetRow(0).CreateCell(7).SetCellValue("Test NPOI");
+
+        //            //using (FileStream stream = new FileStream("Temp.xlsx", FileMode.Create, FileAccess.Write))
+        //            //{
+        //            //    workbook.Write(stream);
+        //            //}
+        //            //System.Diagnostics.Process.Start("Temp.xlsx");
+
+
+        //            Workbook ExcelWorkBook = new Workbook();
+
+        //            ExcelWorkBook.LoadFromFile(Environment.CurrentDirectory + path, ExcelVersion.Version2016);
+
+
+        //            Worksheet sheet = ExcelWorkBook.Worksheets[0];
+
+        //            //var client = db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+        //            //var payDo = Payments.Where(p => p.Id <= PaymentSelect.Id).OrderBy(i => i.Id);
+
+        //            //int count = 45;
+        //            //foreach (var item in payDo)
+        //            //{
+        //            //    sheet.Range[count, 1].Value2 = item.PaymentDatePaid;
+        //            //    sheet.Range[count, 2].Value2 = item.PaymentAmountPaid;
+        //            //    sheet.Range[count, 3].Value2 = item.PaymentPrincipalPaid;
+        //            //    sheet.Range[count, 4].Value2 = item.ProcessingFee;
+        //            //    sheet.Range[count, 5].Value2 = item.PaymentMethod;
+        //            //    if (item.Balance > 0)
+        //            //    {
+        //            //        sheet.Range[count, 6].Value2 = item.Balance;
+        //            //    }
+        //            //    else
+        //            //    {
+        //            //        sheet.Range[count, 6].Value2 = "Paid in full";
+        //            //    }
+
+        //            //    count++;
+        //            //}
+
+        //            //sheet.Range[3, 6].Value2 = PaymentSelect.PaymentDatePaid;
+
+        //            //sheet.Range[38, 6].Value2 = PaymentSelect.PaymentAmountPaid;
+        //            //sheet.Range[39, 6].Value2 = PaymentSelect.PaymentMethod;
+        //            //sheet.Range[40, 6].Value2 = PaymentSelect.ProcessingFee;
+        //            //sheet.Range[41, 6].Value2 = PaymentSelect.PaymentPrincipalPaid;
+        //            //sheet.Range[34, 6].Value2 = payDo.Select(p => p.PaymentPrincipalPaid).Sum();      // сплачено до цього часу
+
+        //            //sheet.Range[4, 6].Value2 = RecieptSelect?.Number;
+        //            //sheet.Range[6, 6].Value2 = quota.NumberQuota;
+
+        //            //sheet.Range[9, 2].Value2 = quota.JobDescription;
+        //            //sheet.Range[10, 2].Value2 = client.CompanyName;
+        //            //sheet.Range[11, 2].Value2 = client.PrimaryFirstName + " " + client.PrimaryLastName;
+        //            //sheet.Range[12, 2].Value2 = client.PrimaryPhoneNumber;
+        //            //sheet.Range[13, 2].Value2 = client.PrimaryEmail;
+        //            //sheet.Range[14, 2].Value2 = client.AddressBillStreet + ", " + client.AddressBillCity + ", " + client.AddressBillProvince + ", " + client.AddressBillPostalCode + ", " + client.AddressBillCountry;
+
+        //            //sheet.Range[11, 5].Value2 = client.SecondaryFirstName + " " + client.SecondaryLastName;
+        //            //sheet.Range[12, 5].Value2 = client.SecondaryPhoneNumber;
+        //            //sheet.Range[13, 5].Value2 = client.SecondaryEmail;
+        //            //sheet.Range[14, 5].Value2 = client.AddressSiteStreet + ", " + client.AddressSiteCity + ", " + client.AddressSiteProvince + ", " + client.AddressSitePostalCode + ", " + client.AddressSiteCountry;
+
+        //            //sheet.Range[18, 2].Value2 = quota.JobNote;
+
+        //            //sheet.Range[21, 6].Value2 = quota.MaterialSubtotal;
+        //            //sheet.Range[22, 6].Value2 = quota.MaterialTax;
+        //            //sheet.Range[23, 6].Value2 = quota.MaterialDiscountAmount;
+        //            //sheet.Range[24, 6].Value2 = quota.MaterialTotal;
+
+        //            //sheet.Range[26, 6].Value2 = quota.LabourSubtotal;
+        //            //sheet.Range[27, 6].Value2 = quota.LabourTax;
+        //            //sheet.Range[28, 6].Value2 = quota.LabourDiscountAmount;
+        //            //sheet.Range[29, 6].Value2 = quota.LabourTotal;
+
+        //            //sheet.Range[21, 6].Value2 = quota.MaterialSubtotal;
+        //            //sheet.Range[31, 6].Value2 = quota?.ProcessingFee + quota?.FinancingFee;
+
+
+        //            //sheet.Range[1, 9].NumberValue = 1;   // Записуємо дані в .pdf  
+
+
+        //            ExcelWorkBook.SaveToFile("Temp.xlsm");
+        //            System.Diagnostics.Process.Start("Temp.xlsm");
+
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show("Error message: " + Environment.NewLine +
+        //                                   ex.Message + Environment.NewLine + Environment.NewLine +
+        //                                   "StackTrace message: " + Environment.NewLine +
+        //                                   ex.StackTrace, "Warning !!!");
+        //        }
+        //    }
+        //}
         private void PrintReciept(string path)
         {
             if (PaymentSelect != null)
@@ -413,9 +527,9 @@ namespace Builders.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error message: " + Environment.NewLine + 
-                                           ex.Message + Environment.NewLine + Environment.NewLine + 
-                                           "StackTrace message: " + Environment.NewLine + 
+                    MessageBox.Show("Error message: " + Environment.NewLine +
+                                           ex.Message + Environment.NewLine + Environment.NewLine +
+                                           "StackTrace message: " + Environment.NewLine +
                                            ex.StackTrace, "Warning !!!");
                 }
             }

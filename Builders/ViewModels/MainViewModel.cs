@@ -1332,7 +1332,7 @@ namespace Builders.ViewModels
                     MessageBox.Show("Error message: " + Environment.NewLine +
                                            ex.Message + Environment.NewLine + Environment.NewLine +
                                            "StackTrace message: " + Environment.NewLine +
-                                           ex.StackTrace, "Warning !!!");
+                                           ex.StackTrace, "Warning !!!");                    
                 }
                 ProgressStop();
             }
