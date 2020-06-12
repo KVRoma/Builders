@@ -50,7 +50,7 @@
                    FontSize="20" 
                    FontWeight="Bold"/>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal">
+        <!--<StackPanel Grid.Row="2" Orientation="Horizontal">
             <Label Content="QTY" 
                    Margin="730,0,0,0"                   
                    Style="{StaticResource LabelBold}"/>
@@ -60,7 +60,7 @@
             <Label Content="Total" 
                    Margin="20,0,0,0" 
                    Style="{StaticResource LabelBold}"/>
-        </StackPanel>
+        </StackPanel> 
 
         <ListBox Grid.Row="3" ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
                  ItemsSource="{Binding QuotationsMaterial, UpdateSourceTrigger=PropertyChanged}" 
@@ -79,7 +79,22 @@
                     </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-        </ListBox>
+        </ListBox> -->
+        <DataGrid Grid.Row="3" 
+                  AutoGenerateColumns="False"                          
+                  IsReadOnly="True" 
+                  ItemsSource="{Binding QuotationsMaterial, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding MaterialQuotationSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Groupe" Width="150"  Binding="{Binding Path=Groupe}" />
+                <DataGridTextColumn Header="Item" Width="200" Binding="{Binding Path=Item}"/>
+                <DataGridTextColumn Header="Description" Width="*" Binding="{Binding Path=Description}" />
+                <DataGridTextColumn Header="QTY" Width="70" Binding="{Binding Path=Quantity}" />
+                <DataGridTextColumn Header="Prise" Width="70" Binding="{Binding Path=Rate, StringFormat='0.00'}"/>
+                <DataGridTextColumn Header="Total" Width="100" Binding="{Binding Path=Price, StringFormat='0.00'}" />                
+            </DataGrid.Columns>
+        </DataGrid>
+
 
         <TextBlock Grid.Row="4" 
                    HorizontalAlignment="Center" 
@@ -89,7 +104,7 @@
                    FontSize="20" 
                    FontWeight="Bold"/>
 
-        <StackPanel Grid.Row="5" Orientation="Horizontal">
+        <!--<StackPanel Grid.Row="5" Orientation="Horizontal">
             <Label Content="QTY" 
                    Margin="730,0,0,0"                   
                    Style="{StaticResource LabelBold}"/>
@@ -118,7 +133,22 @@
                     </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-        </ListBox>
+        </ListBox> -->
+
+        <DataGrid Grid.Row="6" 
+                  AutoGenerateColumns="False"                          
+                  IsReadOnly="True" 
+                  ItemsSource="{Binding QuotationsLabour, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding MaterialQuotationSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Groupe" Width="150"  Binding="{Binding Path=Groupe}" />
+                <DataGridTextColumn Header="Item" Width="200" Binding="{Binding Path=Item}"/>
+                <DataGridTextColumn Header="Description" Width="*" Binding="{Binding Path=Description}" />
+                <DataGridTextColumn Header="QTY" Width="70" Binding="{Binding Path=Quantity}" />
+                <DataGridTextColumn Header="Prise" Width="70" Binding="{Binding Path=Rate, StringFormat='0.00'}"/>
+                <DataGridTextColumn Header="Total" Width="100" Binding="{Binding Path=Price, StringFormat='0.00'}" />
+            </DataGrid.Columns>
+        </DataGrid>
 
 
         <Label Grid.Row="7" 
@@ -166,7 +196,7 @@
         <StackPanel Grid.Row="9" 
                     Orientation="Horizontal">
             <ComboBox Margin="5" 
-                      HorizontalContentAlignment="Center" 
+                      HorizontalContentAlignment="Left" 
                       Width="150"
                       ItemsSource="{Binding DIC_Groupes}" 
                       SelectedItem="{Binding DIC_GroupeSelect, Mode=TwoWay}" 
@@ -175,7 +205,7 @@
 
             
             <ComboBox Margin="5" 
-                      HorizontalContentAlignment="Center" 
+                      HorizontalContentAlignment="Left" 
                       Width="200"
                       ItemsSource="{Binding DIC_Items}" 
                       SelectedItem="{Binding DIC_ItemSelect, Mode=TwoWay}" 
@@ -192,7 +222,7 @@
             
             
             <ComboBox Margin="5" 
-                      HorizontalContentAlignment="Center" 
+                      HorizontalContentAlignment="Left" 
                       Width="320"
                       ItemsSource="{Binding DIC_Descriptions}" 
                       SelectedItem="{Binding DIC_DescriptionSelect, Mode=TwoWay}" 
