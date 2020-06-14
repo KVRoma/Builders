@@ -33,6 +33,14 @@ namespace Builders.Models
         public DbSet<Delivery> Deliveries { get; set; }
         public DbSet<DeliveryMaterial> DeliveryMaterials { get; set; }
 
+        public DbSet<Generated> Generateds { get; set; }
+        public DbSet<GeneratedAccessories> GeneratedAccessories { get; set; }
+        public DbSet<GeneratedFlood> GeneratedFloods { get; set; }
+        public DbSet<GeneratedMaterial> GeneratedMaterials { get; set; }
+        public DbSet<GeneratedMolding> GeneratedMoldings { get; set; }
+        public DbSet<GeneratedStairs> GeneratedStairs { get; set; }
+        public DbSet<GeneratedSuplementary> GeneratedSuplementaries { get; set; }
+
         public DbSet<DIC_TypeOfClient> DIC_TypeOfClients { get; set; }
         public DbSet<DIC_HearAboutsUs> DIC_HearAboutsUse { get; set; }
         public DbSet<DIC_GroupeQuotation> DIC_GroupeQuotations { get; set; }
@@ -45,6 +53,19 @@ namespace Builders.Models
         public DbSet<DIC_Contractor> DIC_Contractors { get; set; }
         public DbSet<DIC_Supplier> DIC_Suppliers { get; set; }
         public DbSet<DIC_DepthQuotation> DIC_DepthQuotations { get; set; }
+
+        public DbSet<DIC_G_AccessoriesFloor> DIC_G_AccessoriesFloors { get; set; }
+        public DbSet<DIC_G_Additional> DIC_G_Additionals { get; set; }
+        public DbSet<DIC_G_Floor> DIC_G_Floors { get; set; }
+        public DbSet<DIC_G_GradeLevel> DIC_G_GradeLevels { get; set; }
+        public DbSet<DIC_G_Modeling> DIC_G_Modelings { get; set; }
+        public DbSet<DIC_G_Painting> DIC_G_Paintings { get; set; }
+        public DbSet<DIC_G_Partition> DIC_G_Partitions { get; set; }
+        public DbSet<DIC_G_TypeAccessoriesFloor> DIC_G_TypeAccessoriesFloors { get; set; }
+        public DbSet<DIC_G_TypeLeveling> DIC_G_TypeLevelings { get; set; }
+        public DbSet<DIC_G_TypeModeling> DIC_G_TypeModelings { get; set; }
+        public DbSet<DIC_G_TypeStairs> DIC_G_TypeStairs { get; set; }
+        public DbSet<DIC_G_TypeTrim> DIC_G_TypeTrims { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

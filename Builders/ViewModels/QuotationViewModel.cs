@@ -43,8 +43,8 @@ namespace Builders.ViewModels
 
         private Client clientSelect;
         private IEnumerable<Client> clients;
-        private bool copyClient; // для копіювання квоти на другого клієнта
-        private int? lastIdClient;               // Для збереження попереднього клієнта  
+        private bool copyClient;    // для копіювання квоти на другого клієнта
+        private int? lastIdClient;  // Для збереження попереднього клієнта  
 
         private decimal quantity;
         private decimal rate;
@@ -58,11 +58,17 @@ namespace Builders.ViewModels
         private Visibility isVisibleLeveling;
         private Visibility isVisibleRoomDescription;
 
+        //private string gradeLevelSelect;
+        //private List<string> gradeLevel;
+        //private string partitionSelect;
+        //private string aditionalSelect;
+
         private string calcFlooring;
         private string calcAccessories;
         private string calcInstallation;
         private string calcDemolition;
         private string calcServices;
+
         //************************************************************************************************
 
         public Quotation QuotaSelect

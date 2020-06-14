@@ -7,10 +7,11 @@
         xmlns:UI="clr-namespace:Builders.Commands"
         mc:Ignorable="d"
         Title="{Binding WindowName}" 
-        MinHeight="500"
-        MinWidth="950"
+        MinHeight="700"
+        MinWidth="1400"
         Height="700" 
-        Width="950" 
+        Width="1400" 
+        WindowState="Maximized"
         Style="{StaticResource WindowStyle}">
     
     <Grid>
@@ -21,11 +22,11 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition />
             <RowDefinition Height="auto"/>
-            <RowDefinition/>
+            <RowDefinition />
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
-            <RowDefinition/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -34,10 +35,11 @@
         
         <StackPanel Grid.Row="0" 
                     Orientation="Horizontal"
-                    Style="{StaticResource FooterMenu}">
-            <!--<Image Source="Logo.jpg"/>
-            <Image Source="LogoText.jpg"/> -->
-            <Label Content="Select Id Client" VerticalAlignment="Center" Style="{StaticResource LabelHeder1}"/>
+                    Style="{StaticResource FooterMenu}">           
+            <Label Content="Select Id Client" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource LabelBold}"
+                   FontSize="13"/>
             <ComboBox Margin="2" 
                       VerticalAlignment="Center" 
                       VerticalContentAlignment="Center"
@@ -56,7 +58,7 @@
                    FontWeight="Bold"/>
 
         
-        <DataGrid Grid.Row="3" 
+        <DataGrid Grid.Row="2" 
                   AutoGenerateColumns="False"                          
                   IsReadOnly="True" 
                   ItemsSource="{Binding QuotationsMaterial, UpdateSourceTrigger=PropertyChanged}"
@@ -72,7 +74,7 @@
         </DataGrid>
 
 
-        <TextBlock Grid.Row="4" 
+        <TextBlock Grid.Row="3" 
                    HorizontalAlignment="Center" 
                    VerticalAlignment="Center"
                    Text="Labour" 
@@ -81,7 +83,7 @@
                    FontWeight="Bold"/>
         
 
-        <DataGrid Grid.Row="6" 
+        <DataGrid Grid.Row="4" 
                   AutoGenerateColumns="False"                          
                   IsReadOnly="True" 
                   ItemsSource="{Binding QuotationsLabour, UpdateSourceTrigger=PropertyChanged}"
@@ -96,11 +98,35 @@
             </DataGrid.Columns>
         </DataGrid>
 
+        <Label Grid.Row="5" 
+               Content="Please select Room Details..." 
+               FontSize="13"
+               Style="{StaticResource LabelBold}"/>
+
+        <StackPanel Grid.Row="6" Orientation="Horizontal">
+            <ComboBox Margin="5,5,5,0"                      
+                      Width="150"
+                      ItemsSource="{Binding DIC_}" 
+                      SelectedItem="{Binding DIC_, Mode=TwoWay}"
+                      UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+            <ComboBox Margin="5,5,5,0"                      
+                      Width="150"
+                      ItemsSource="{Binding DIC_}" 
+                      SelectedItem="{Binding DIC_, Mode=TwoWay}"
+                      UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+            <ComboBox Margin="5,5,5,0"                      
+                      Width="150"
+                      ItemsSource="{Binding DIC_}" 
+                      SelectedItem="{Binding DIC_, Mode=TwoWay}"
+                      UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+        </StackPanel>
+
 
         <Label Grid.Row="7" 
                Content="Please select values..." 
                FontSize="13"
                Style="{StaticResource LabelBold}"/>
+        
         <StackPanel Grid.Row="8" Orientation="Horizontal">
             <ComboBox Margin="5,5,5,0"                      
                       Width="150"
@@ -147,9 +173,7 @@
                       ItemsSource="{Binding DIC_Groupes}" 
                       SelectedItem="{Binding DIC_GroupeSelect, Mode=TwoWay}" 
                       DisplayMemberPath="NameGroupe"
-                      UI:FocusAdvancement.AdvancesByEnterKey="True"/>
-
-            
+                      UI:FocusAdvancement.AdvancesByEnterKey="True"/>            
             <ComboBox Margin="5" 
                       HorizontalContentAlignment="Left" 
                       Width="200"
@@ -164,9 +188,7 @@
                      Width="363"
                      Text="{Binding RoomDescription}"
                      UI:FocusAdvancement.AdvancesByEnterKey="True"
-                     Visibility="{Binding IsVisibleRoomDescription}"/>
-            
-            
+                     Visibility="{Binding IsVisibleRoomDescription}"/>            
             <ComboBox Margin="5" 
                       HorizontalContentAlignment="Left" 
                       Width="320"
@@ -191,7 +213,6 @@
                      Text="{Binding Mapei}"
                      UI:FocusAdvancement.AdvancesByEnterKey="True"
                      Visibility="Hidden"/>-->
-
             <TextBox Margin="5" 
                      Width="100"
                      HorizontalContentAlignment="Center"
@@ -240,31 +261,43 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="1" 
-                           TextWrapping="Wrap" 
-                           Margin="10">
-                    <Run Text="FLOORING" Foreground="Red"/>
-                    <LineBreak/>                    
-                    <Run Text="{Binding CalcFlooring}" 
-                         Foreground="Blue"/>
+                <ScrollViewer Grid.Row="1" 
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Auto"
+                              Margin="5">
+                    <TextBlock TextWrapping="Wrap" 
+                               Margin="5">
+                        <Run Text=" FLOORING" Foreground="Red"/>
+                        <LineBreak/>                    
+                        <Run Text="{Binding CalcFlooring}" Foreground="Blue"/>
                     
-                    <Run Text="ACCESSORIES" Foreground="Red"/>
-                    <LineBreak/>
-                    <Run Text="{Binding CalcAccessories}" Foreground="Blue"/>
+                        <Run Text="ACCESSORIES" Foreground="Red"/>
+                        <LineBreak/>
+                        <Run Text="{Binding CalcAccessories}" Foreground="Blue"/>
                     
-                    <Run Text="INSTALLATION" Foreground="Red"/>
-                    <LineBreak/>
-                    <Run Text="{Binding CalcInstallation}" Foreground="Blue"/>
+                        <Run Text="INSTALLATION" Foreground="Red"/>
+                        <LineBreak/>
+                        <Run Text="{Binding CalcInstallation}" Foreground="Blue"/>
                     
-                    <Run Text="DEMOLITION" Foreground="Red"/>
-                    <LineBreak/>
-                    <Run Text="{Binding CalcDemolition}" Foreground="Blue"/>
+                        <Run Text="DEMOLITION" Foreground="Red"/>
+                        <LineBreak/>
+                        <Run Text="{Binding CalcDemolition}" Foreground="Blue"/>
                     
-                    <Run Text="OPTIONAL SERVICES" Foreground="Red"/> 
-                    <LineBreak/>
-                    <Run Text="{Binding CalcServices}" Foreground="Blue"/>
-                    
-                </TextBlock>
+                        <Run Text="OPTIONAL SERVICES" Foreground="Red"/> 
+                        <LineBreak/>
+                        <Run Text="{Binding CalcServices}" Foreground="Blue"/>
+
+                    </TextBlock>
+                </ScrollViewer>
+
+                <StackPanel Grid.Row="2" 
+                            Orientation="Horizontal" 
+                            HorizontalAlignment="Center">
+                    <Button Content="Generator" 
+                            Style="{StaticResource FooterButton}"
+                            Foreground="Blue"
+                            BorderBrush="Blue"/>
+                </StackPanel>
             </Grid>            
         </Border>
     </Grid>

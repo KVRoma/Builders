@@ -2266,13 +2266,8 @@ namespace Builders.ViewModels
 
                 WorkOrderSelect.Parking = work.Parking;
                 WorkOrderSelect.DateServices = work.ServiceDate;
-                WorkOrderSelect.DateCompletion = work.CompletionDate;
-                //WorkOrderSelect.Trim = work.TrimSelect;
-                //WorkOrderSelect.Colour = work.ColourSelect;
-                WorkOrderSelect.Notes = work.Notes;
-                //WorkOrderSelect.Baseboard = work.BaseboardSelect;
-                //WorkOrderSelect.ReplacingYesNo = work.ReplacingSelect;
-                //WorkOrderSelect.ReplacingQuantity = work.Pieces;
+                WorkOrderSelect.DateCompletion = work.CompletionDate;                
+                WorkOrderSelect.Notes = work.Notes;      
 
                 db.Entry(WorkOrderSelect).State = EntityState.Modified;
                 db.SaveChanges();

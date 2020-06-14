@@ -573,6 +573,7 @@ namespace Builders.ViewModels
                 }
 
                 Installations = db.WorkOrder_Installations.Local.ToBindingList().Where(i => i.WorkOrderId == OrderSelect.Id).OrderBy(i => i.Groupe).ThenBy(c => c.Contractor);
+                NewAccessories = db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == OrderSelect?.QuotaId).Where(m => m.Groupe == "FLOORING" || m.Groupe == "ACCESSORIES");
                 EnableWork = true;
                 EnableButtonCreat = false;
             }
