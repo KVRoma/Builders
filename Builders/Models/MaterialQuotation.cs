@@ -20,6 +20,11 @@ namespace Builders.Models
         public decimal QuantityNL { get; set; } = 0m; // Використовується для зберенження кількості в Leveling Quota
         public int? SupplierId { get; set; }
 
+        // Привязка до поверху, типу кімнати та ще якоїсь херні
+        public string GradeLevel { get; set; }
+        public string Partition { get; set; }
+        public string Aditional { get; set; }
+
         public int? QuotationId { get; set; }
         public Quotation Quotation { get; set; }
     }

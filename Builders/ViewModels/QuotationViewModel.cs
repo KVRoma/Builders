@@ -57,6 +57,12 @@ namespace Builders.ViewModels
         private Visibility isVisibleStandart;
         private Visibility isVisibleLeveling;
         private Visibility isVisibleRoomDescription;
+
+        private string calcFlooring;
+        private string calcAccessories;
+        private string calcInstallation;
+        private string calcDemolition;
+        private string calcServices;
         //************************************************************************************************
 
         public Quotation QuotaSelect
@@ -377,6 +383,52 @@ namespace Builders.ViewModels
             {
                 isVisibleRoomDescription = value;
                 OnPropertyChanged(nameof(IsVisibleRoomDescription));
+            }
+        }
+
+        public string CalcFlooring
+        {
+            get { return calcFlooring; }
+            set
+            {
+                calcFlooring = value;
+                OnPropertyChanged(nameof(CalcFlooring));
+            }
+        }
+        public string CalcAccessories
+        {
+            get { return calcAccessories; }
+            set
+            {
+                calcAccessories = value;
+                OnPropertyChanged(nameof(CalcAccessories));
+            }
+        }
+        public string CalcInstallation
+        {
+            get { return calcInstallation; }
+            set
+            {
+                calcInstallation = value;
+                OnPropertyChanged(nameof(CalcInstallation));
+            }
+        }
+        public string CalcDemolition
+        {
+            get { return calcDemolition; }
+            set
+            {
+                calcDemolition = value;
+                OnPropertyChanged(nameof(CalcDemolition));
+            }
+        }
+        public string CalcServices
+        {
+            get { return calcServices; }
+            set
+            {
+                calcServices = value;
+                OnPropertyChanged(nameof(CalcServices));
             }
         }
         //**************************************************************************************************
@@ -757,6 +809,7 @@ namespace Builders.ViewModels
             }
         }));
 
+        
 
         public QuotationViewModel(ref BuilderContext context, EnumClient res, Quotation select, string companyName)
         {
@@ -777,6 +830,7 @@ namespace Builders.ViewModels
 
             IsVisibleStandart = Visibility.Visible;
             IsVisibleRoomDescription = Visibility.Collapsed;
+                        
 
             //DIC_Groupes = db.DIC_GroupeQuotations.Local.ToBindingList();
 

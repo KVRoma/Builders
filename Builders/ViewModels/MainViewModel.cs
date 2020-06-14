@@ -1437,12 +1437,28 @@ namespace Builders.ViewModels
                 db.MaterialQuotations.RemoveRange(material);
                 db.Quotations.Remove(QuotationSelect);
                 db.SaveChanges();
+
                 Quotations = null;
                 LoadQuotationsDB(CompanyName);
 
                 Deliveries = null;
                 LoadDeliveriesDB(CompanyName, false);
                 IsCheckedArchiveDelivery = false;
+
+                WorkOrders = null;
+                LoadWorkOrdersDB(CompanyName);
+
+                Invoices = null;
+                LoadInvoicesDB(CompanyName);
+
+                MaterialProfits = null;
+                LoadMaterialProfitsDB(CompanyName);
+
+                LabourProfits = null;
+                LoadLabourProfitsDB(CompanyName);
+
+                Debts = null;
+                LoadDebtsDB(CompanyName);
             }
         }));
         public Command CopyQuotation => _copyQuotation ?? (_copyQuotation = new Command(async obj =>

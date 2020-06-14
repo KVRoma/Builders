@@ -14,6 +14,10 @@
         Style="{StaticResource WindowStyle}">
     
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="0.5*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -29,10 +33,11 @@
         </Grid.RowDefinitions>
         
         <StackPanel Grid.Row="0" 
-                    Orientation="Horizontal">
-            <Image Source="Logo.jpg"/>
-            <Image Source="LogoText.jpg"/>
-            <Label Content="Select Id Claent" VerticalAlignment="Center" Style="{StaticResource LabelHeder1}"/>
+                    Orientation="Horizontal"
+                    Style="{StaticResource FooterMenu}">
+            <!--<Image Source="Logo.jpg"/>
+            <Image Source="LogoText.jpg"/> -->
+            <Label Content="Select Id Client" VerticalAlignment="Center" Style="{StaticResource LabelHeder1}"/>
             <ComboBox Margin="2" 
                       VerticalAlignment="Center" 
                       VerticalContentAlignment="Center"
@@ -50,36 +55,7 @@
                    FontSize="20" 
                    FontWeight="Bold"/>
 
-        <!--<StackPanel Grid.Row="2" Orientation="Horizontal">
-            <Label Content="QTY" 
-                   Margin="730,0,0,0"                   
-                   Style="{StaticResource LabelBold}"/>
-            <Label Content="Price" 
-                   Margin="20,0,0,0" 
-                   Style="{StaticResource LabelBold}"/>
-            <Label Content="Total" 
-                   Margin="20,0,0,0" 
-                   Style="{StaticResource LabelBold}"/>
-        </StackPanel> 
-
-        <ListBox Grid.Row="3" ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                 ItemsSource="{Binding QuotationsMaterial, UpdateSourceTrigger=PropertyChanged}" 
-                 SelectedItem="{Binding MaterialQuotationSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Border Style="{StaticResource BorderRadius}">
-                    <StackPanel Orientation="Horizontal" Margin="0,5,0,5">                        
-                        <TextBlock Width="150" Text="{Binding Path=Groupe, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Width="200" Text="{Binding Path=Item, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Width="350" Text="{Binding Path=Description, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Width="50" Margin="50,0,0,0" Text="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Width="50" Text="{Binding Path=Rate, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F2\}}"/>
-                        <TextBlock Width="50" Text="{Binding Path=Price, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F2\}}"/>
-                    </StackPanel>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox> -->
+        
         <DataGrid Grid.Row="3" 
                   AutoGenerateColumns="False"                          
                   IsReadOnly="True" 
@@ -103,37 +79,7 @@
                    Foreground="Red" 
                    FontSize="20" 
                    FontWeight="Bold"/>
-
-        <!--<StackPanel Grid.Row="5" Orientation="Horizontal">
-            <Label Content="QTY" 
-                   Margin="730,0,0,0"                   
-                   Style="{StaticResource LabelBold}"/>
-            <Label Content="Price" 
-                   Margin="20,0,0,0" 
-                   Style="{StaticResource LabelBold}"/>
-            <Label Content="Total" 
-                   Margin="20,0,0,0" 
-                   Style="{StaticResource LabelBold}"/>
-        </StackPanel>
-
-        <ListBox Grid.Row="6" ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                 ItemsSource="{Binding QuotationsLabour, UpdateSourceTrigger=PropertyChanged}" 
-                 SelectedItem="{Binding MaterialQuotationSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Border Style="{StaticResource BorderRadius}">
-                        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                            <TextBlock Width="150" Text="{Binding Path=Groupe, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Width="200" Text="{Binding Path=Item, UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Width="350" Text="{Binding Path=Description, UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Width="50" Margin="50,0,0,0" Text="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Width="50" Text="{Binding Path=Rate, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F2\}}"/>
-                            <TextBlock Width="50" Text="{Binding Path=Price, UpdateSourceTrigger=PropertyChanged, StringFormat=\{0:F2\}}"/>
-                        </StackPanel>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox> -->
+        
 
         <DataGrid Grid.Row="6" 
                   AutoGenerateColumns="False"                          
@@ -283,6 +229,44 @@
                     Style="{StaticResource FooterButton}" 
                     Command="{Binding OtherQuotation}"/>
         </StackPanel>
+
+        <Border Grid.Column="1" 
+                Grid.RowSpan="11" 
+                Style="{StaticResource BorderRadiusBlack}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="1" 
+                           TextWrapping="Wrap" 
+                           Margin="10">
+                    <Run Text="FLOORING" Foreground="Red"/>
+                    <LineBreak/>                    
+                    <Run Text="{Binding CalcFlooring}" 
+                         Foreground="Blue"/>
+                    
+                    <Run Text="ACCESSORIES" Foreground="Red"/>
+                    <LineBreak/>
+                    <Run Text="{Binding CalcAccessories}" Foreground="Blue"/>
+                    
+                    <Run Text="INSTALLATION" Foreground="Red"/>
+                    <LineBreak/>
+                    <Run Text="{Binding CalcInstallation}" Foreground="Blue"/>
+                    
+                    <Run Text="DEMOLITION" Foreground="Red"/>
+                    <LineBreak/>
+                    <Run Text="{Binding CalcDemolition}" Foreground="Blue"/>
+                    
+                    <Run Text="OPTIONAL SERVICES" Foreground="Red"/> 
+                    <LineBreak/>
+                    <Run Text="{Binding CalcServices}" Foreground="Blue"/>
+                    
+                </TextBlock>
+            </Grid>            
+        </Border>
     </Grid>
     
 </Window>
