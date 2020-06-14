@@ -58,10 +58,12 @@ namespace Builders.ViewModels
         private Visibility isVisibleLeveling;
         private Visibility isVisibleRoomDescription;
 
-        //private string gradeLevelSelect;
-        //private List<string> gradeLevel;
-        //private string partitionSelect;
-        //private string aditionalSelect;
+        private DIC_G_GradeLevel gradeLevelSelect;
+        private List<DIC_G_GradeLevel> gradeLevels;
+        private DIC_G_Partition partitionSelect;
+        private List<DIC_G_Partition> partitions;
+        private DIC_G_Additional additionalSelect;
+        private List<DIC_G_Additional> additionals;
 
         private string calcFlooring;
         private string calcAccessories;
@@ -392,6 +394,61 @@ namespace Builders.ViewModels
             }
         }
 
+        public DIC_G_GradeLevel GradeLevelSelect
+        {
+            get { return gradeLevelSelect; }
+            set
+            {
+                gradeLevelSelect = value;
+                OnPropertyChanged(nameof(GradeLevelSelect));
+            }
+        }
+        public List<DIC_G_GradeLevel> GradeLevels
+        {
+            get { return gradeLevels; }
+            set
+            {
+                gradeLevels = value;
+                OnPropertyChanged(nameof(GradeLevels));
+            }
+        }
+        public DIC_G_Partition PartitionSelect
+        {
+            get { return partitionSelect; }
+            set
+            {
+                partitionSelect = value;
+                OnPropertyChanged(nameof(PartitionSelect));
+            }
+        }
+        public List<DIC_G_Partition> Partitions
+        {
+            get { return partitions; }
+            set
+            {
+                partitions = value;
+                OnPropertyChanged(nameof(Partitions));
+            }
+        }
+        public DIC_G_Additional AdditionalSelect
+        {
+            get { return additionalSelect; }
+            set
+            {
+                additionalSelect = value;
+                OnPropertyChanged(nameof(AdditionalSelect));
+            }
+        }
+        public List<DIC_G_Additional> Additionals
+        {
+            get { return additionals; }
+            set
+            {
+                additionals = value;
+                OnPropertyChanged(nameof(Additionals));
+            }
+        }
+
         public string CalcFlooring
         {
             get { return calcFlooring; }
@@ -442,6 +499,7 @@ namespace Builders.ViewModels
         private Command _insItem;
         private Command _delItem;
         private Command _otherQuotation;
+        private Command _generated;
 
 
         public Command AddItem => _addItem ?? (_addItem = new Command(obj =>
@@ -601,7 +659,10 @@ namespace Builders.ViewModels
                             Quantity = mapei,
                             QuantityNL = Quantity,
                             Price = decimal.Round(Rate * mapei, 2),
-                            SupplierId = DIC_ItemSelect?.SupplierId
+                            SupplierId = DIC_ItemSelect?.SupplierId,
+                            GradeLevel = GradeLevelSelect?.Name,
+                            Partition = PartitionSelect?.Name,
+                            Aditional = AdditionalSelect?.Name
                         };
                         db.MaterialQuotations.Add(material);
                         db.SaveChanges();
@@ -621,7 +682,10 @@ namespace Builders.ViewModels
                             Rate = decimal.Round(Rate, 2),
                             Quantity = Quantity,
                             Price = decimal.Round(Rate * Quantity, 2),
-                            SupplierId = DIC_ItemSelect?.SupplierId
+                            SupplierId = DIC_ItemSelect?.SupplierId,
+                            GradeLevel = GradeLevelSelect?.Name,
+                            Partition = PartitionSelect?.Name,
+                            Aditional = AdditionalSelect?.Name
                         };
                         db.MaterialQuotations.Add(material);
                         db.SaveChanges();
@@ -751,6 +815,9 @@ namespace Builders.ViewModels
                         tempMaterialSelect.Quantity = mapei;
                         tempMaterialSelect.QuantityNL = Quantity;
                         tempMaterialSelect.Price = decimal.Round(Rate * mapei, 2);
+                        tempMaterialSelect.GradeLevel = GradeLevelSelect?.Name;
+                        tempMaterialSelect.Partition = PartitionSelect?.Name;
+                        tempMaterialSelect.Aditional = AdditionalSelect?.Name;
 
                         db.Entry(tempMaterialSelect).State = EntityState.Modified;
                         db.SaveChanges();
@@ -767,6 +834,9 @@ namespace Builders.ViewModels
                         tempMaterialSelect.Rate = decimal.Round(Rate, 2);
                         tempMaterialSelect.Quantity = Quantity;
                         tempMaterialSelect.Price = decimal.Round(Rate * Quantity, 2);
+                        tempMaterialSelect.GradeLevel = GradeLevelSelect?.Name;
+                        tempMaterialSelect.Partition = PartitionSelect?.Name;
+                        tempMaterialSelect.Aditional = AdditionalSelect?.Name;
 
                         db.Entry(tempMaterialSelect).State = EntityState.Modified;
                         db.SaveChanges();
@@ -814,6 +884,12 @@ namespace Builders.ViewModels
                 }
             }
         }));
+        public Command Generated => _generated ?? (_generated = new Command(async obj=> 
+        {
+            var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+            var generator = new GeneratedViewModel();
+            await displayRootRegistry.ShowModalPresentation(generator);
+        }));
 
         
 
@@ -833,6 +909,8 @@ namespace Builders.ViewModels
             DIC_Section = new List<string>();
             DIC_Section.Add("Material");
             DIC_Section.Add("Labour");
+
+            LoadComboBox();
 
             IsVisibleStandart = Visibility.Visible;
             IsVisibleRoomDescription = Visibility.Collapsed;
@@ -877,6 +955,16 @@ namespace Builders.ViewModels
                 DIC_Groupes = null;
             }
         }
+        private void LoadComboBox()
+        {
+            GradeLevels = new List<DIC_G_GradeLevel>();
+            Partitions = new List<DIC_G_Partition>();
+            Additionals = new List<DIC_G_Additional>();
+
+            GradeLevels = db.DIC_G_GradeLevels.ToList();
+            Partitions = db.DIC_G_Partitions.ToList();
+            Additionals = db.DIC_G_Additionals.ToList();
+        }
         private void MaterialView()
         {
             if (MaterialQuotations != null)
@@ -902,7 +990,10 @@ namespace Builders.ViewModels
                             Rate = item.Rate,
                             SupplierId = item?.SupplierId,
                             QuotationId = item.QuotationId,
-                            Quotation = item.Quotation
+                            Quotation = item.Quotation,
+                            GradeLevel = item?.GradeLevel,
+                            Partition = item?.Partition,
+                            Aditional = item?.Aditional
                         });
                     }
 
@@ -921,7 +1012,10 @@ namespace Builders.ViewModels
                             Price = item.Price,
                             Rate = item.Rate,
                             QuotationId = item.QuotationId,
-                            Quotation = item.Quotation
+                            Quotation = item.Quotation,
+                            GradeLevel = item?.GradeLevel,
+                            Partition = item?.Partition,
+                            Aditional = item?.Aditional
                         });
                     }
                 }

@@ -4605,7 +4605,34 @@ namespace Builders.ViewModels
 
                 int i = 0;
                 var clientData = Clients.Where(c => c.Id == QuotationSelect.ClientId).FirstOrDefault();
-                var materialData = db.MaterialQuotations.Where(q => q.QuotationId == QuotationSelect.Id);
+                //var materialData = db.MaterialQuotations.Where(q => q.QuotationId == QuotationSelect.Id);
+
+                List<MaterialQuotation> materialData = new List<MaterialQuotation>(); 
+                var mat = db.MaterialQuotations.Where(q => q.QuotationId == QuotationSelect.Id).ToList();
+                List<string> singleton = mat.Select(m => m.MaterialDetail)?.Distinct().ToList();
+                foreach (var item in singleton)
+                {
+                    var temp = mat.Where(m => m.MaterialDetail == item).ToList();
+                    if (temp != null)
+                    {
+                       
+                        materialData.Add(new MaterialQuotation() 
+                        {   
+                            Id = temp.Select(t => t.Id).FirstOrDefault(),
+                            Depth = temp.Select(t=>t.Depth).FirstOrDefault(),
+                            Groupe = temp.Select(t => t.Groupe).FirstOrDefault(),
+                            Item = temp.Select(t => t.Item).FirstOrDefault(),
+                            Description = temp.Select(t => t.Description).FirstOrDefault(),
+                            Price = temp.Select(t=>t.Price)?.Sum() ?? 0m,
+                            Quantity = temp.Select(t => t.Quantity)?.Sum() ?? 0m,
+                            QuantityNL = temp.Select(t => t.QuantityNL)?.Sum() ?? 0m,
+                            Rate = temp.Select(t => t.Rate).FirstOrDefault(),
+                            QuotationId = temp.Select(t => t.QuotationId).FirstOrDefault(),
+                            SupplierId = temp.Select(t => t.SupplierId).FirstOrDefault(),
+                        });
+                    }
+                    
+                }
 
                 Excel.Application ExcelApp = new Excel.Application();
                 Excel.Workbook ExcelWorkBook;
@@ -4633,7 +4660,7 @@ namespace Builders.ViewModels
 
                 i = 19; // "FLOORING"
                 foreach (var item in materialData)
-                {
+                { 
                     if (item.Groupe == "FLOORING")
                     {
                         //ExcelApp.Cells[i, 1] = item.Item;
@@ -4816,7 +4843,34 @@ namespace Builders.ViewModels
 
                 int i = 0;
                 var clientData = Clients.Where(c => c.Id == QuotationSelect.ClientId).FirstOrDefault();
-                var materialData = db.MaterialQuotations.Where(q => q.QuotationId == QuotationSelect.Id);
+                //var materialData = db.MaterialQuotations.Where(q => q.QuotationId == QuotationSelect.Id);
+
+                List<MaterialQuotation> materialData = new List<MaterialQuotation>();
+                var mat = db.MaterialQuotations.Where(q => q.QuotationId == QuotationSelect.Id).ToList();
+                List<string> singleton = mat.Select(m => m.MaterialDetail)?.Distinct().ToList();
+                foreach (var item in singleton)
+                {
+                    var temp = mat.Where(m => m.MaterialDetail == item).ToList();
+                    if (temp != null)
+                    {
+
+                        materialData.Add(new MaterialQuotation()
+                        {
+                            Id = temp.Select(t => t.Id).FirstOrDefault(),
+                            Depth = temp.Select(t => t.Depth).FirstOrDefault(),
+                            Groupe = temp.Select(t => t.Groupe).FirstOrDefault(),
+                            Item = temp.Select(t => t.Item).FirstOrDefault(),
+                            Description = temp.Select(t => t.Description).FirstOrDefault(),
+                            Price = temp.Select(t => t.Price)?.Sum() ?? 0m,
+                            Quantity = temp.Select(t => t.Quantity)?.Sum() ?? 0m,
+                            QuantityNL = temp.Select(t => t.QuantityNL)?.Sum() ?? 0m,
+                            Rate = temp.Select(t => t.Rate).FirstOrDefault(),
+                            QuotationId = temp.Select(t => t.QuotationId).FirstOrDefault(),
+                            SupplierId = temp.Select(t => t.SupplierId).FirstOrDefault(),
+                        });
+                    }
+
+                }
 
                 Excel.Application ExcelApp = new Excel.Application();
                 Excel.Workbook ExcelWorkBook;
@@ -5198,7 +5252,34 @@ namespace Builders.ViewModels
                 int i = 0;
                 var quota = Quotations.FirstOrDefault(q => q.Id == InvoiceSelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == InvoiceSelect.QuotaId);
                 var clientData = Clients.Where(c => c.Id == quota.ClientId).FirstOrDefault(); //db.Clients.Where(c => c.Id == quota.ClientId).FirstOrDefault();
-                var materialData = db.MaterialQuotations.Where(q => q.QuotationId == quota.Id);
+                //var materialData = db.MaterialQuotations.Where(q => q.QuotationId == quota.Id);
+
+                List<MaterialQuotation> materialData = new List<MaterialQuotation>();
+                var mat = db.MaterialQuotations.Where(q => q.QuotationId == quota.Id).ToList();
+                List<string> singleton = mat.Select(m => m.MaterialDetail)?.Distinct().ToList();
+                foreach (var item in singleton)
+                {
+                    var temp = mat.Where(m => m.MaterialDetail == item).ToList();
+                    if (temp != null)
+                    {
+
+                        materialData.Add(new MaterialQuotation()
+                        {
+                            Id = temp.Select(t => t.Id).FirstOrDefault(),
+                            Depth = temp.Select(t => t.Depth).FirstOrDefault(),
+                            Groupe = temp.Select(t => t.Groupe).FirstOrDefault(),
+                            Item = temp.Select(t => t.Item).FirstOrDefault(),
+                            Description = temp.Select(t => t.Description).FirstOrDefault(),
+                            Price = temp.Select(t => t.Price)?.Sum() ?? 0m,
+                            Quantity = temp.Select(t => t.Quantity)?.Sum() ?? 0m,
+                            QuantityNL = temp.Select(t => t.QuantityNL)?.Sum() ?? 0m,
+                            Rate = temp.Select(t => t.Rate).FirstOrDefault(),
+                            QuotationId = temp.Select(t => t.QuotationId).FirstOrDefault(),
+                            SupplierId = temp.Select(t => t.SupplierId).FirstOrDefault(),
+                        });
+                    }
+
+                }
 
                 Excel.Application ExcelApp = new Excel.Application();
                 Excel.Workbook ExcelWorkBook;
@@ -5378,7 +5459,34 @@ namespace Builders.ViewModels
                 int i = 0;
                 var quota = Quotations.FirstOrDefault(q => q.Id == InvoiceSelect.QuotaId);
                 var clientData = Clients.Where(c => c.Id == quota.ClientId).FirstOrDefault();
-                var materialData = db.MaterialQuotations.Where(q => q.QuotationId == quota.Id);
+                //var materialData = db.MaterialQuotations.Where(q => q.QuotationId == quota.Id);
+
+                List<MaterialQuotation> materialData = new List<MaterialQuotation>();
+                var mat = db.MaterialQuotations.Where(q => q.QuotationId == quota.Id).ToList();
+                List<string> singleton = mat.Select(m => m.MaterialDetail)?.Distinct().ToList();
+                foreach (var item in singleton)
+                {
+                    var temp = mat.Where(m => m.MaterialDetail == item).ToList();
+                    if (temp != null)
+                    {
+
+                        materialData.Add(new MaterialQuotation()
+                        {
+                            Id = temp.Select(t => t.Id).FirstOrDefault(),
+                            Depth = temp.Select(t => t.Depth).FirstOrDefault(),
+                            Groupe = temp.Select(t => t.Groupe).FirstOrDefault(),
+                            Item = temp.Select(t => t.Item).FirstOrDefault(),
+                            Description = temp.Select(t => t.Description).FirstOrDefault(),
+                            Price = temp.Select(t => t.Price)?.Sum() ?? 0m,
+                            Quantity = temp.Select(t => t.Quantity)?.Sum() ?? 0m,
+                            QuantityNL = temp.Select(t => t.QuantityNL)?.Sum() ?? 0m,
+                            Rate = temp.Select(t => t.Rate).FirstOrDefault(),
+                            QuotationId = temp.Select(t => t.QuotationId).FirstOrDefault(),
+                            SupplierId = temp.Select(t => t.SupplierId).FirstOrDefault(),
+                        });
+                    }
+
+                }
 
                 Excel.Application ExcelApp = new Excel.Application();
                 Excel.Workbook ExcelWorkBook;

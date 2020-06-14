@@ -24,6 +24,17 @@ namespace Builders.Models
         public string GradeLevel { get; set; }
         public string Partition { get; set; }
         public string Aditional { get; set; }
+        public int? GeneratedId { get; set; }
+
+        public string RoomDetail
+        {
+            get { return GradeLevel + " " + Partition + " " + Aditional; }
+        }
+
+        public string MaterialDetail
+        {
+            get { return Groupe + Item + Description + Depth + Rate; }
+        }
 
         public int? QuotationId { get; set; }
         public Quotation Quotation { get; set; }

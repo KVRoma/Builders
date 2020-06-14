@@ -57,13 +57,14 @@
                    FontSize="20" 
                    FontWeight="Bold"/>
 
-        
-        <DataGrid Grid.Row="2" 
+
+        <DataGrid Grid.Row="2"  
                   AutoGenerateColumns="False"                          
                   IsReadOnly="True" 
                   ItemsSource="{Binding QuotationsMaterial, UpdateSourceTrigger=PropertyChanged}"
                   SelectedItem="{Binding MaterialQuotationSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <DataGrid.Columns>
+                <DataGridTextColumn Header="Room" Width="150"  Binding="{Binding Path=RoomDetail}" />
                 <DataGridTextColumn Header="Groupe" Width="150"  Binding="{Binding Path=Groupe}" />
                 <DataGridTextColumn Header="Item" Width="200" Binding="{Binding Path=Item}"/>
                 <DataGridTextColumn Header="Description" Width="*" Binding="{Binding Path=Description}" />
@@ -89,6 +90,7 @@
                   ItemsSource="{Binding QuotationsLabour, UpdateSourceTrigger=PropertyChanged}"
                   SelectedItem="{Binding MaterialQuotationSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <DataGrid.Columns>
+                <DataGridTextColumn Header="Room" Width="150"  Binding="{Binding Path=RoomDetail}" />
                 <DataGridTextColumn Header="Groupe" Width="150"  Binding="{Binding Path=Groupe}" />
                 <DataGridTextColumn Header="Item" Width="200" Binding="{Binding Path=Item}"/>
                 <DataGridTextColumn Header="Description" Width="*" Binding="{Binding Path=Description}" />
@@ -106,18 +108,21 @@
         <StackPanel Grid.Row="6" Orientation="Horizontal">
             <ComboBox Margin="5,5,5,0"                      
                       Width="150"
-                      ItemsSource="{Binding DIC_}" 
-                      SelectedItem="{Binding DIC_, Mode=TwoWay}"
+                      ItemsSource="{Binding GradeLevels}" 
+                      SelectedItem="{Binding GradeLevelSelect, Mode=TwoWay}"
+                      DisplayMemberPath="Name"
                       UI:FocusAdvancement.AdvancesByEnterKey="True"/>
             <ComboBox Margin="5,5,5,0"                      
                       Width="150"
-                      ItemsSource="{Binding DIC_}" 
-                      SelectedItem="{Binding DIC_, Mode=TwoWay}"
+                      ItemsSource="{Binding Partitions}" 
+                      SelectedItem="{Binding PartitionSelect, Mode=TwoWay}"
+                      DisplayMemberPath="Name"
                       UI:FocusAdvancement.AdvancesByEnterKey="True"/>
             <ComboBox Margin="5,5,5,0"                      
                       Width="150"
-                      ItemsSource="{Binding DIC_}" 
-                      SelectedItem="{Binding DIC_, Mode=TwoWay}"
+                      ItemsSource="{Binding Additionals}" 
+                      SelectedItem="{Binding AdditionalSelect, Mode=TwoWay}"
+                      DisplayMemberPath="Name"
                       UI:FocusAdvancement.AdvancesByEnterKey="True"/>
         </StackPanel>
 
@@ -296,7 +301,8 @@
                     <Button Content="Generator" 
                             Style="{StaticResource FooterButton}"
                             Foreground="Blue"
-                            BorderBrush="Blue"/>
+                            BorderBrush="Blue"
+                            Command="{Binding Generated}"/>
                 </StackPanel>
             </Grid>            
         </Border>

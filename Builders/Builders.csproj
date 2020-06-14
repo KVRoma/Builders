@@ -189,6 +189,7 @@
     <Compile Include="ViewModels\DIC_SupplierViewModel.cs" />
     <Compile Include="ViewModels\ExpensesViewModel.cs" />
     <Compile Include="ViewModels\FotoViewModel.cs" />
+    <Compile Include="ViewModels\GeneratedViewModel.cs" />
     <Compile Include="ViewModels\InvoiceViewModel.cs" />
     <Compile Include="ViewModels\LabourProfitViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -250,6 +251,9 @@
     </Compile>
     <Compile Include="Views\FotoView.xaml.cs">
       <DependentUpon>FotoView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GeneratedView.xaml.cs">
+      <DependentUpon>GeneratedView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\InvoiceView.xaml.cs">
       <DependentUpon>InvoiceView.xaml</DependentUpon>
@@ -355,6 +359,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FotoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\GeneratedView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
