@@ -27,12 +27,12 @@ namespace Builders.Models
         public DateTime DateServices { get; set; }
         public DateTime DateCompletion { get; set; }
         public string Parking { get; set; }
-        public string Trim { get; set; }
-        public string Colour { get; set; }
-        public string LF { get; set; }
-        public string Baseboard { get; set; }
-        public string ReplacingYesNo { get; set; }
-        public int? ReplacingQuantity { get; set; }
+        //public string Trim { get; set; }
+        //public string Colour { get; set; }
+        public string Notes { get; set; }
+        //public string Baseboard { get; set; }
+        //public string ReplacingYesNo { get; set; }
+        //public int? ReplacingQuantity { get; set; }
 
         public string CompanyName { get; set; } = "CMO";
 

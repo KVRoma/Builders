@@ -62,7 +62,7 @@
                        FontWeight="Bold"/>
                 <TextBox Grid.Row="2" Grid.Column="1" 
                          Grid.ColumnSpan="3" 
-                         Text="{Binding LF}"
+                         Text="{Binding Notes}"
                          HorizontalContentAlignment="Center" 
                          TextWrapping="Wrap" 
                          AcceptsReturn="True"/>

@@ -2267,12 +2267,12 @@ namespace Builders.ViewModels
                 WorkOrderSelect.Parking = work.Parking;
                 WorkOrderSelect.DateServices = work.ServiceDate;
                 WorkOrderSelect.DateCompletion = work.CompletionDate;
-                WorkOrderSelect.Trim = work.TrimSelect;
-                WorkOrderSelect.Colour = work.ColourSelect;
-                WorkOrderSelect.LF = work.LF;
-                WorkOrderSelect.Baseboard = work.BaseboardSelect;
-                WorkOrderSelect.ReplacingYesNo = work.ReplacingSelect;
-                WorkOrderSelect.ReplacingQuantity = work.Pieces;
+                //WorkOrderSelect.Trim = work.TrimSelect;
+                //WorkOrderSelect.Colour = work.ColourSelect;
+                WorkOrderSelect.Notes = work.Notes;
+                //WorkOrderSelect.Baseboard = work.BaseboardSelect;
+                //WorkOrderSelect.ReplacingYesNo = work.ReplacingSelect;
+                //WorkOrderSelect.ReplacingQuantity = work.Pieces;
 
                 db.Entry(WorkOrderSelect).State = EntityState.Modified;
                 db.SaveChanges();
@@ -4357,14 +4357,14 @@ namespace Builders.ViewModels
             ExcelApp.Cells[7, 6] = WorkOrderSelect.Parking;
             ExcelApp.Cells[8, 6] = WorkOrderSelect.DateServices;
             ExcelApp.Cells[9, 6] = WorkOrderSelect.DateCompletion;
-            ExcelApp.Cells[11, 2] = WorkOrderSelect.LF; //quota.JobNote;
+            ExcelApp.Cells[11, 2] = WorkOrderSelect.Notes; //quota.JobNote;
 
-            ExcelApp.Cells[17, 3] = WorkOrderSelect.Trim;
-            ExcelApp.Cells[17, 6] = WorkOrderSelect.Colour;
-            //ExcelApp.Cells[17, 8] = WorkOrderSelect.LF;
-            ExcelApp.Cells[18, 3] = WorkOrderSelect.Baseboard;
-            ExcelApp.Cells[18, 7] = WorkOrderSelect.ReplacingYesNo;
-            ExcelApp.Cells[18, 8] = WorkOrderSelect.ReplacingQuantity;
+            //ExcelApp.Cells[17, 3] = WorkOrderSelect.Trim;
+            //ExcelApp.Cells[17, 6] = WorkOrderSelect.Colour;
+            //ExcelApp.Cells[17, 8] = WorkOrderSelect.Notes;
+            //ExcelApp.Cells[18, 3] = WorkOrderSelect.Baseboard;
+            //ExcelApp.Cells[18, 7] = WorkOrderSelect.ReplacingYesNo;
+            //ExcelApp.Cells[18, 8] = WorkOrderSelect.ReplacingQuantity;
 
             int i = 21;
             foreach (var item in work)
@@ -4489,14 +4489,14 @@ namespace Builders.ViewModels
             ExcelApp.Cells[7, 6] = WorkOrderSelect.Parking;
             ExcelApp.Cells[8, 6] = WorkOrderSelect.DateServices;
             ExcelApp.Cells[9, 6] = WorkOrderSelect.DateCompletion;
-            ExcelApp.Cells[11, 2] = WorkOrderSelect.LF; //quota.JobNote;
+            ExcelApp.Cells[11, 2] = WorkOrderSelect.Notes; //quota.JobNote;
 
-            ExcelApp.Cells[17, 3] = WorkOrderSelect.Trim;
-            ExcelApp.Cells[17, 6] = WorkOrderSelect.Colour;
-            //ExcelApp.Cells[17, 8] = WorkOrderSelect.LF;
-            ExcelApp.Cells[18, 3] = WorkOrderSelect.Baseboard;
-            ExcelApp.Cells[18, 7] = WorkOrderSelect.ReplacingYesNo;
-            ExcelApp.Cells[18, 8] = WorkOrderSelect.ReplacingQuantity;
+            //ExcelApp.Cells[17, 3] = WorkOrderSelect.Trim;
+            //ExcelApp.Cells[17, 6] = WorkOrderSelect.Colour;
+            //ExcelApp.Cells[17, 8] = WorkOrderSelect.Notes;
+            //ExcelApp.Cells[18, 3] = WorkOrderSelect.Baseboard;
+            //ExcelApp.Cells[18, 7] = WorkOrderSelect.ReplacingYesNo;
+            //ExcelApp.Cells[18, 8] = WorkOrderSelect.ReplacingQuantity;
 
             int i = 21;
             foreach (var item in work)

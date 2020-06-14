@@ -32,15 +32,7 @@ namespace Builders.ViewModels
         private IEnumerable<WorkOrder_Contractor> contractors;
         //******************************************************************** ComboBox privat
         private Quotation quotationSelect;
-        private IEnumerable<Quotation> quotations;
-        private string trimSelect;
-        private List<string> trim;
-        private string baseboardSelect;
-        private List<string> baseboard;
-        private string colourSelect;
-        private List<string> colour;
-        private string replacingSelect;
-        private List<string> replacing;
+        private IEnumerable<Quotation> quotations;        
         private string taxSelect;
         private List<string> tax;
         private DIC_Area areaSelect;
@@ -69,8 +61,7 @@ namespace Builders.ViewModels
         private string parking;
         private DateTime serviceDate;
         private DateTime completionDate;
-        private string lf;
-        private int? pieces;
+        private string notes;        
         private string newFloor;
         private string misc;
         private decimal percent;
@@ -224,79 +215,7 @@ namespace Builders.ViewModels
                 quotations = value;
                 OnPropertyChanged(nameof(Quotations));
             }
-        }
-        public string TrimSelect
-        {
-            get { return trimSelect; }
-            set
-            {
-                trimSelect = value;
-                OnPropertyChanged(nameof(TrimSelect));
-            }
-        }
-        public List<string> Trim
-        {
-            get { return trim; }
-            set
-            {
-                trim = value;
-                OnPropertyChanged(nameof(Trim));
-            }
-        }
-        public string BaseboardSelect
-        {
-            get { return baseboardSelect; }
-            set
-            {
-                baseboardSelect = value;
-                OnPropertyChanged(nameof(BaseboardSelect));
-            }
-        }
-        public List<string> Baseboard
-        {
-            get { return baseboard; }
-            set
-            {
-                baseboard = value;
-                OnPropertyChanged(nameof(Baseboard));
-            }
-        }
-        public string ColourSelect
-        {
-            get { return colourSelect; }
-            set
-            {
-                colourSelect = value;
-                OnPropertyChanged(nameof(ColourSelect));
-            }
-        }
-        public List<string> Colour
-        {
-            get { return colour; }
-            set
-            {
-                colour = value;
-                OnPropertyChanged(nameof(Colour));
-            }
-        }
-        public string ReplacingSelect
-        {
-            get { return replacingSelect; }
-            set
-            {
-                replacingSelect = value;
-                OnPropertyChanged(nameof(replacingSelect));
-            }
-        }
-        public List<string> Replacing
-        {
-            get { return replacing; }
-            set
-            {
-                replacing = value;
-                OnPropertyChanged(nameof(Replacing));
-            }
-        }
+        }        
         public string TaxSelect
         {
             get { return taxSelect; }
@@ -547,24 +466,15 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(CompletionDate));
             }
         }
-        public string LF
+        public string Notes
         {
-            get { return lf; }
+            get { return notes; }
             set
             {
-                lf = value;
-                OnPropertyChanged(nameof(LF));
+                notes = value;
+                OnPropertyChanged(nameof(Notes));
             }
-        }
-        public int? Pieces
-        {
-            get { return pieces; }
-            set
-            {
-                pieces = value;
-                OnPropertyChanged(nameof(Pieces));
-            }
-        }
+        }        
         public string NewFloor
         {
             get { return newFloor; }
@@ -645,13 +555,8 @@ namespace Builders.ViewModels
                     DateWork = DateTime.Today,
                     Parking = Parking,
                     DateServices = ServiceDate,
-                    DateCompletion = CompletionDate,
-                    Trim = TrimSelect,
-                    Colour = ColourSelect,
-                    LF = LF,
-                    Baseboard = BaseboardSelect,
-                    ReplacingYesNo = ReplacingSelect,
-                    ReplacingQuantity = Pieces,
+                    DateCompletion = CompletionDate,                    
+                    Notes = Notes,                    
                     CompanyName = QuotationSelect.CompanyName
                 };
                 db.WorkOrders.Add(workorder);
@@ -816,9 +721,7 @@ namespace Builders.ViewModels
         //*********************************************************************
         public WorkOrderViewModel(ref BuilderContext context, EnumClient client, int? IdWorkOrder)
         {
-            db = context;
-
-            
+            db = context;            
 
             db.WorkOrder_Works.Load();
             db.WorkOrder_Accessories.Load();
@@ -829,12 +732,9 @@ namespace Builders.ViewModels
             db.DIC_ExistingFloors.Load();
             db.DIC_Contractors.Load();
             db.MaterialQuotations.Load();
-
-            //Works = db.WorkOrder_Works.Local.ToBindingList(); //.Where(w=>w.WorkOrderId == IdWorkOrder);
-            //Accessories = db.WorkOrder_Accessories.Local.ToBindingList(); //.Where(w => w.WorkOrderId == IdWorkOrder); 
-            //Installations = db.WorkOrder_Installations.Local.ToBindingList(); //.Where(w => w.WorkOrderId == IdWorkOrder).OrderBy(i => i.Groupe);                            //.ThenBy(c => c.Contractor);
+                                               
             InstallationSelect = new List<WorkOrder_Installation>();
-            //Contractors = db.WorkOrder_Contractors.Local.ToBindingList();
+            
             Areas = db.DIC_Areas.Local.ToBindingList().OrderBy(a=>a.Name);
             Rooms = db.DIC_Rooms.Local.ToBindingList().OrderBy(a => a.Name);
             Floors = db.DIC_ExistingFloors.Local.ToBindingList().OrderBy(a => a.Name);
@@ -845,11 +745,7 @@ namespace Builders.ViewModels
             NewAccessories = db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == OrderSelect?.QuotaId).Where(m=>m.Groupe == "FLOORING" || m.Groupe == "ACCESSORIES");
             ContractorAccessories = db.DIC_Contractors.Local.ToBindingList().OrderBy(a => a.Name);
 
-
-            TrimLoad();
-            BaseboardLoad();
-            //ColourLoad();
-            ReplacingLoad();
+           
             TaxLoad();
             FurnitureLoad();
 
@@ -871,13 +767,8 @@ namespace Builders.ViewModels
                         OrderSelect = db.WorkOrders.FirstOrDefault(o=>o.Id == IdWorkOrder);
                         Parking = OrderSelect?.Parking;
                         ServiceDate = OrderSelect.DateServices;
-                        CompletionDate = OrderSelect.DateCompletion;
-                        TrimSelect = OrderSelect.Trim;
-                        ColourSelect = OrderSelect.Colour;
-                        LF = OrderSelect.LF;
-                        BaseboardSelect = OrderSelect.Baseboard;
-                        ReplacingSelect = OrderSelect.ReplacingYesNo;
-                        Pieces = OrderSelect.ReplacingQuantity;
+                        CompletionDate = OrderSelect.DateCompletion;                       
+                        Notes = OrderSelect.Notes;                        
                         QuotationSelect = db.Quotations.FirstOrDefault(q => q.Id == OrderSelect.QuotaId);
                         Works = db.WorkOrder_Works.Local.ToBindingList().Where(w => w.WorkOrderId == OrderSelect.Id);
                         Accessories = db.WorkOrder_Accessories.Local.ToBindingList().Where(a => a.WorkOrderId == OrderSelect.Id);
@@ -893,26 +784,7 @@ namespace Builders.ViewModels
         
         //********************************************************************
 
-        private void TrimLoad()
-        {
-            Trim = new List<string>();
-            Trim.Add("None");
-            Trim.Add("Window");
-            Trim.Add("Kitchen Cabinetry");
-            Trim.Add("Window & Kitchen Cabinetry");
-        }
-        private void BaseboardLoad()
-        {
-            Baseboard = new List<string>();
-            Baseboard.Add("Remove & Reuse");
-            Baseboard.Add("Remove & Dispose");
-        }        
-        private void ReplacingLoad()
-        {
-            Replacing = new List<string>();
-            Replacing.Add("Yes");
-            Replacing.Add("No");
-        }
+        
         private void TaxLoad()
         {
             Tax = new List<string>();
@@ -1036,13 +908,8 @@ namespace Builders.ViewModels
         {
             work.Parking = Parking;
             work.DateServices = ServiceDate;
-            work.DateCompletion = CompletionDate;
-            work.Trim = TrimSelect;
-            work.Colour = ColourSelect;
-            work.LF = LF;
-            work.Baseboard = BaseboardSelect;
-            work.ReplacingYesNo = ReplacingSelect;
-            work.ReplacingQuantity = Pieces;
+            work.DateCompletion = CompletionDate;           
+            work.Notes = Notes;           
             db.Entry(work).State = EntityState.Modified;
             db.SaveChanges();
         }
