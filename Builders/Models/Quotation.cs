@@ -92,6 +92,8 @@ namespace Builders.Models
         public string Color { get; set; } = "Black";
 
         public string CompanyName { get; set; } = "CMO";
+
+        public int? GeneratedId { get; set; }
        
 
         public ICollection<MaterialQuotation> MaterialQuotation { get; set; }

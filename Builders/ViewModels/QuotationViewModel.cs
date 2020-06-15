@@ -543,14 +543,14 @@ namespace Builders.ViewModels
             if (flagCreatQuota && QuotaSelect != null)
             {
 
-                var temp = db.MaterialQuotations.Where(f => f.QuotationId == QuotaSelect.Id);
+                var temp = MaterialQuotations; //db.MaterialQuotations.Where(f => f.QuotationId == QuotaSelect.Id);
 
-                int flooring = (temp != null) ? (temp.Where(t => t.Groupe == "FLOORING").Count()) : 0;
-                int accessories = (temp != null) ? (temp.Where(t => t.Groupe == "ACCESSORIES").Count()) : 0;
-                int installation = (temp != null) ? (temp.Where(t => t.Groupe == "INSTALLATION").Count()) : 0;
-                int demolition = (temp != null) ? (temp.Where(t => t.Groupe == "DEMOLITION").Count()) : 0;
-                int services = (temp != null) ? (temp.Where(t => t.Groupe == "OPTIONAL SERVICES").Count()) : 0;
-                int delivery = (temp != null) ? (temp.Where(t => t.Groupe == "FLOORING DELIVERY").Count()) : 0;
+                int flooring = (temp != null) ? (temp.Where(t => t.Groupe == "FLOORING").ToList().Select(t=>t.MaterialDetail).Distinct().Count()) : 0;
+                int accessories = (temp != null) ? (temp.Where(t => t.Groupe == "ACCESSORIES").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
+                int installation = (temp != null) ? (temp.Where(t => t.Groupe == "INSTALLATION").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
+                int demolition = (temp != null) ? (temp.Where(t => t.Groupe == "DEMOLITION").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
+                int services = (temp != null) ? (temp.Where(t => t.Groupe == "OPTIONAL SERVICES").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
+                int delivery = (temp != null) ? (temp.Where(t => t.Groupe == "FLOORING DELIVERY").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
 
                 bool flagSaveItem = false;
 
@@ -701,15 +701,15 @@ namespace Builders.ViewModels
         {
             if (MaterialQuotationSelect != null)
             {
-                var temp = db.MaterialQuotations.Where(f => f.QuotationId == QuotaSelect.Id);
+                var temp = MaterialQuotations; //db.MaterialQuotations.Where(f => f.QuotationId == QuotaSelect.Id);
                 var tempMaterialSelect = db.MaterialQuotations.FirstOrDefault(m => m.Id == MaterialQuotationSelect.Id);
 
-                int flooring = (temp != null) ? (temp.Where(t => t.Groupe == "FLOORING").Count()) : 0;
-                int accessories = (temp != null) ? (temp.Where(t => t.Groupe == "ACCESSORIES").Count()) : 0;
-                int installation = (temp != null) ? (temp.Where(t => t.Groupe == "INSTALLATION").Count()) : 0;
-                int demolition = (temp != null) ? (temp.Where(t => t.Groupe == "DEMOLITION").Count()) : 0;
-                int services = (temp != null) ? (temp.Where(t => t.Groupe == "OPTIONAL SERVICES").Count()) : 0;
-                int delivery = (temp != null) ? (temp.Where(t => t.Groupe == "FLOORING DELIVERY").Count()) : 0;
+                int flooring = (temp != null) ? (temp.Where(t => t.Groupe == "FLOORING").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
+                int accessories = (temp != null) ? (temp.Where(t => t.Groupe == "ACCESSORIES").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
+                int installation = (temp != null) ? (temp.Where(t => t.Groupe == "INSTALLATION").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
+                int demolition = (temp != null) ? (temp.Where(t => t.Groupe == "DEMOLITION").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
+                int services = (temp != null) ? (temp.Where(t => t.Groupe == "OPTIONAL SERVICES").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
+                int delivery = (temp != null) ? (temp.Where(t => t.Groupe == "FLOORING DELIVERY").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
 
                 bool flagSaveItem = false;
 

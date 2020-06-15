@@ -10,6 +10,108 @@
         Width="800"
         Style="{StaticResource WindowStyle}">
     <Grid>
+        <TabControl Grid.Row="1" 
+                    TabStripPlacement="Left" 
+                    ItemContainerStyle="{StaticResource TabItemStyle1}">
+            <!-- "Materials Details" -->
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="15" 
+                                   Text="Materials Details"                                   
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Border Style="{StaticResource BorderRadiusBlack}">
+                        
+                    </Border>
+                </TabItem.Content>
+            </TabItem>
+
+            <!-- "Materials Accesories" -->
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="15" 
+                                   Text="Materials Accesories" 
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Border Style="{StaticResource BorderRadiusBlack}">
+
+                    </Border>
+                </TabItem.Content>
+            </TabItem>
+
+            <!-- "Stairs and Leveling" -->
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="15" 
+                                   Text="Stairs and Leveling" 
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Border Style="{StaticResource BorderRadiusBlack}">
+
+                    </Border>
+                </TabItem.Content>
+            </TabItem>
+
+            <!-- "Molding" -->
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="15" 
+                                   Text="Molding" 
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Border Style="{StaticResource BorderRadiusBlack}">
+
+                    </Border>
+                </TabItem.Content>
+            </TabItem>
+
+            <!-- "Suplementary" -->
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="15" 
+                                   Text="Suplementary" 
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Border Style="{StaticResource BorderRadiusBlack}">
+
+                    </Border>
+                </TabItem.Content>
+            </TabItem>
+
+            <!-- "Flood Leveling" -->
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="15" 
+                                   Text="Flood Leveling" 
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Border Style="{StaticResource BorderRadiusBlack}">
+
+                    </Border>
+                </TabItem.Content>
+            </TabItem>
+
+        </TabControl>
         
+        
+
     </Grid>
 </Window>
