@@ -6,8 +6,11 @@
         xmlns:local="clr-namespace:Builders.Views"
         mc:Ignorable="d"
         Title="{Binding WindowName}" 
-        Height="450" 
-        Width="800"
+        MinHeight="650" 
+        MinWidth="1000"
+        Height="650"
+        Width="1000"
+        WindowState="Maximized"
         Style="{StaticResource WindowStyle}">
     <Grid>
         <TabControl Grid.Row="1" 
@@ -24,6 +27,230 @@
                 </TabItem.Header>
                 <TabItem.Content>
                     <Border Style="{StaticResource BorderRadiusBlack}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0" 
+                                        Grid.ColumnSpan="2"
+                                        Orientation="Horizontal" 
+                                        HorizontalAlignment="Center"
+                                        Margin="5">
+                                <Label Content="Grade Level"/>
+                                <ComboBox Width="100" 
+                                          Margin="5"/>
+                                <Label Content="Partition"/>
+                                <ComboBox Width="100" 
+                                          Margin="5"/>
+                                <Label Content="Additional"/>
+                                <ComboBox Width="100" 
+                                          Margin="5"/>
+                            </StackPanel>
+
+                            <GroupBox Grid.Row="1" 
+                                      Grid.Column="0" 
+                                      Header="Transitions" 
+                                      BorderThickness="2" 
+                                      BorderBrush="Blue">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Label Grid.Column="0" 
+                                           Grid.Row="0" 
+                                           Content="R" 
+                                           VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"/>
+                                    <TextBox Grid.Column="1" 
+                                             Grid.Row="0"
+                                             Margin="5"
+                                             Width="50"
+                                             Text=""/>
+                                    <Label Grid.Column="0" 
+                                           Grid.Row="1" 
+                                           Content="T"
+                                           VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"/>
+                                    <TextBox Grid.Column="1" 
+                                             Grid.Row="1"
+                                             Margin="5"
+                                             Width="50"
+                                             Text=""/>
+                                    <Label Grid.Column="0" 
+                                           Grid.Row="2" 
+                                           Content="Others"
+                                           VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"/>
+                                    <TextBox Grid.Column="1" 
+                                             Grid.Row="2"
+                                             Margin="5"
+                                             Width="50"
+                                             Text=""/>
+                                    <TextBox Grid.Column="2" 
+                                             Grid.Row="2"
+                                             Margin="5"
+                                             Text=""/>
+                                </Grid>
+                            </GroupBox>
+
+                            <GroupBox Grid.Row="2" 
+                                      Grid.Column="0" 
+                                      Header="Trim" 
+                                      BorderThickness="2" 
+                                      BorderBrush="Blue">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Label Grid.Column="0" 
+                                           Grid.Row="0" 
+                                           Content="Type Trim" 
+                                           VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"/>
+                                    <ComboBox Grid.Column="1" 
+                                              Grid.Row="0"
+                                              Margin="5"/>
+                                    <Label Grid.Column="0" 
+                                           Grid.Row="1" 
+                                           Content="Qty. Trim"
+                                           VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"/>
+                                    <TextBox Grid.Column="1" 
+                                             Grid.Row="1"
+                                             Margin="5"
+                                             Width="50"
+                                             HorizontalAlignment="Left"
+                                             Text=""/>
+                                </Grid>                                
+                            </GroupBox>
+
+                            <GroupBox Grid.Row="1" 
+                                      Grid.RowSpan="2"  
+                                      Grid.Column="1" 
+                                      Header="Material Type" 
+                                      BorderThickness="2" 
+                                      BorderBrush="Blue">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Label Grid.Column="0" 
+                                           Grid.Row="0" 
+                                           Content="Existing" 
+                                           VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"/>
+                                    <ComboBox Grid.Column="1" 
+                                              Grid.Row="0"
+                                              Margin="5"/>
+                                    <Label Grid.Column="0" 
+                                           Grid.Row="1"                                           
+                                           Content="Demolition" 
+                                           VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"/>
+                                    <ComboBox Grid.Column="1" 
+                                              Grid.Row="1"
+                                              Margin="5"/>
+                                    <Label Grid.Column="0" 
+                                           Grid.Row="2" 
+                                           Content="New" 
+                                           VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"/>
+                                    <ComboBox Grid.Column="1" 
+                                              Grid.Row="2"
+                                              Margin="5"/>
+                                    <Label Grid.ColumnSpan="2"
+                                           Grid.Row="3"
+                                           Content="Measurements"
+                                           HorizontalContentAlignment="Center"/>
+                                    <Label Grid.Column="0" 
+                                           Grid.Row="4" 
+                                           Content="Lenght (ft)"
+                                           VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"/>
+                                    <TextBox Grid.Column="1" 
+                                             Grid.Row="4"
+                                             Margin="5"
+                                             Text=""/>
+                                    <Label Grid.Column="0" 
+                                           Grid.Row="5" 
+                                           Content="Width (ft)"
+                                           VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"/>
+                                    <TextBox Grid.Column="1" 
+                                             Grid.Row="5"
+                                             Margin="5"
+                                             Text=""/>
+                                </Grid>                             
+                            </GroupBox>
+
+                            <DataGrid Grid.Row="3"
+                                      Grid.ColumnSpan="2"
+                                      AutoGenerateColumns="False" 
+                                      IsReadOnly="True" 
+                                      ItemsSource="{Binding W, UpdateSourceTrigger=PropertyChanged}" 
+                                      SelectedItem="{Binding Select, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">                                
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Level" Binding="{Binding Path=L}"/>
+                                    <DataGridTextColumn Header="Partition" Binding="{Binding Path=P}" />
+                                    <DataGridTextColumn Header="Additional" Binding="{Binding Path=A}"/>
+                                    <DataGridTextColumn Header="Existing" Width="*" Binding="{Binding Path=E}"/>
+                                    <DataGridTextColumn Header="New" Width="*" Binding="{Binding Path=N}"/>
+                                    <DataGridTextColumn Header="L(ft)" Width="auto" Binding="{Binding Path=L}"/>
+                                    <DataGridTextColumn Header="W(ft)" Width="auto" Binding="{Binding Path=W}"/>
+                                    <DataGridTextColumn Header="R" Width="auto" Binding="{Binding Path=R}"/>
+                                    <DataGridTextColumn Header="T" Width="auto" Binding="{Binding Path=T}"/>
+                                    <DataGridTextColumn Header="Trim" Width="*" Binding="{Binding Path=T}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <StackPanel Grid.Row="4"
+                                        Grid.ColumnSpan="2"
+                                        Orientation="Horizontal" 
+                                        Style="{StaticResource FooterMenu}">
+                                <Button Content="Add"
+                                        Style="{StaticResource FooterButton}"
+                                        Foreground="Green"
+                                        BorderBrush="Green"/>
+                                <Button Content="Edit"
+                                        Style="{StaticResource FooterButton}"
+                                        Foreground="Brown"
+                                        BorderBrush="Brown"/>
+                                <Button Content="Del"
+                                        Style="{StaticResource FooterButton}"
+                                        Foreground="Red"
+                                        BorderBrush="Red"/>
+                            </StackPanel>
+                        </Grid>
                         
                     </Border>
                 </TabItem.Content>
@@ -40,7 +267,70 @@
                 </TabItem.Header>
                 <TabItem.Content>
                     <Border Style="{StaticResource BorderRadiusBlack}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Column="0" 
+                                   Grid.Row="0"
+                                   Margin="5"
+                                   HorizontalContentAlignment="Center"
+                                   Content="Total Material"/>
+                            <Label Grid.Column="1" 
+                                   Grid.Row="0"
+                                   Margin="5"
+                                   HorizontalContentAlignment="Center"
+                                   Content="Accessories"/>
+                            <Label Grid.Column="2" 
+                                   Grid.Row="0"
+                                   Margin="5"
+                                   HorizontalContentAlignment="Center"
+                                   Content="Type Accessories"/>
+                            <TextBlock Grid.Column="0"
+                                       Grid.Row="1"
+                                       Margin="5"
+                                       Text=""/>
+                            <ComboBox Grid.Column="1"
+                                      Grid.Row="1"
+                                      Margin="5"/>
+                            <ComboBox Grid.Column="2"
+                                      Grid.Row="1"
+                                      Margin="5"/>
+                            
+                            <DataGrid Grid.Row="2"
+                                      Grid.ColumnSpan="3"
+                                      AutoGenerateColumns="False" 
+                                      IsReadOnly="True" 
+                                      ItemsSource="{Binding W, UpdateSourceTrigger=PropertyChanged}" 
+                                      SelectedItem="{Binding Select, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="New Floor" Width="*" Binding="{Binding Path=L}"/>
+                                    <DataGridTextColumn Header="Total Floor" Binding="{Binding Path=E}"/>
+                                    <DataGridTextColumn Header="Accessories" Width="*" Binding="{Binding Path=P}" />
+                                    <DataGridTextColumn Header="Type" Width="*" Binding="{Binding Path=A}"/>                                    
+                                    <DataGridTextColumn Header="Total Acc Floor" Width="*" Binding="{Binding Path=N}"/>                                    
+                                </DataGrid.Columns>
+                            </DataGrid>
 
+                            <StackPanel Grid.Row="3" 
+                                        Grid.ColumnSpan="3"
+                                        Orientation="Horizontal"
+                                        Style="{StaticResource FooterMenu}">
+                                <Button Content="Edit"
+                                        Style="{StaticResource FooterButton}"
+                                        Foreground="Brown"
+                                        BorderBrush="Brown"/>
+                            </StackPanel>
+
+                        </Grid>
                     </Border>
                 </TabItem.Content>
             </TabItem>
@@ -56,7 +346,142 @@
                 </TabItem.Header>
                 <TabItem.Content>
                     <Border Style="{StaticResource BorderRadiusBlack}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.ColumnSpan="2" 
+                                        Grid.Row="0"
+                                        Orientation="Horizontal"
+                                        HorizontalAlignment="Center">
+                                <Label Content="Grade Level" 
+                                       Margin="5"/>
+                                <ComboBox Width="150" 
+                                          Margin="5"/>
+                            </StackPanel>
 
+                            <GroupBox Grid.Row="1" 
+                                      Grid.Column="0" 
+                                      Header="Stairs" 
+                                      BorderThickness="2" 
+                                      BorderBrush="Blue">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Label Grid.Column="0" 
+                                           Grid.Row="0" 
+                                           Content="Type Stair" 
+                                           VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"/>
+                                    <ComboBox Grid.Column="1" 
+                                              Grid.Row="0"
+                                              Margin="5"/>
+                                    <Label Grid.Column="0" 
+                                           Grid.Row="1" 
+                                           Content="Qty. Stairs" 
+                                           VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"/>
+                                    <TextBox Grid.Column="1" 
+                                             Grid.Row="1"
+                                             Margin="5"                                             
+                                             Text=""/>
+                                    <Label Grid.Column="0" 
+                                           Grid.Row="2" 
+                                           Content="Lenght (ft)" 
+                                           VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"/>
+                                    <TextBox Grid.Column="1" 
+                                             Grid.Row="2"
+                                             Margin="5"                                             
+                                             Text=""/>
+                                </Grid>
+                                
+                            </GroupBox>
+
+                            <GroupBox Grid.Row="1" 
+                                      Grid.Column="1" 
+                                      Header="Leveling" 
+                                      BorderThickness="2" 
+                                      BorderBrush="Blue">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>                                       
+                                    </Grid.RowDefinitions>
+                                    <Label Grid.Column="0" 
+                                           Grid.Row="0" 
+                                           Content="Type Leveling" 
+                                           VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"/>
+                                    <ComboBox Grid.Column="1" 
+                                              Grid.Row="0"
+                                              Margin="5"/>
+                                    <Label Grid.Column="0" 
+                                           Grid.Row="1" 
+                                           Content="Qty. Leveling" 
+                                           VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"/>
+                                    <TextBox Grid.Column="1" 
+                                             Grid.Row="1"
+                                             Margin="5"                                             
+                                             Text=""/>                                    
+                                </Grid>
+                            </GroupBox>
+
+                            <DataGrid Grid.Row="2"
+                                      Grid.ColumnSpan="2"
+                                      AutoGenerateColumns="False" 
+                                      IsReadOnly="True" 
+                                      ItemsSource="{Binding W, UpdateSourceTrigger=PropertyChanged}" 
+                                      SelectedItem="{Binding Select, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Level" Width="*" Binding="{Binding Path=L}"/>
+                                    <DataGridTextColumn Header="Type Stair" Width="*" Binding="{Binding Path=P}" />
+                                    <DataGridTextColumn Header="QTY" Binding="{Binding Path=A}"/>
+                                    <DataGridTextColumn Header="L(ft)" Binding="{Binding Path=E}"/>
+                                    <DataGridTextColumn Header="QTY-L" Binding="{Binding Path=N}"/>
+                                    <DataGridTextColumn Header="Type Leveling" Width="*" Binding="{Binding Path=L}"/>
+                                    <DataGridTextColumn Header="QTY" Binding="{Binding Path=W}"/>                                    
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <StackPanel Grid.Row="3"
+                                        Grid.ColumnSpan="2"
+                                        Orientation="Horizontal" 
+                                        Style="{StaticResource FooterMenu}">
+                                <Button Content="Add"
+                                        Style="{StaticResource FooterButton}"
+                                        Foreground="Green"
+                                        BorderBrush="Green"/>
+                                <Button Content="Edit"
+                                        Style="{StaticResource FooterButton}"
+                                        Foreground="Brown"
+                                        BorderBrush="Brown"/>
+                                <Button Content="Del"
+                                        Style="{StaticResource FooterButton}"
+                                        Foreground="Red"
+                                        BorderBrush="Red"/>
+                            </StackPanel>
+
+                        </Grid>
                     </Border>
                 </TabItem.Content>
             </TabItem>
@@ -72,7 +497,109 @@
                 </TabItem.Header>
                 <TabItem.Content>
                     <Border Style="{StaticResource BorderRadiusBlack}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Column="0" 
+                                   Grid.Row="0"
+                                   Margin="5"
+                                   HorizontalContentAlignment="Right"
+                                   Content="Accesory"/>
+                            <ComboBox Grid.Column="1" 
+                                      Grid.Row="0" 
+                                      Width="100" 
+                                      Margin="5"
+                                      HorizontalAlignment="Left"/>
+                            
+                            <Label Grid.Column="0" 
+                                   Grid.Row="1"
+                                   Margin="5"
+                                   HorizontalContentAlignment="Right"
+                                   Content="Type Accesory"/>
+                            <ComboBox Grid.Column="1" 
+                                      Grid.Row="1" 
+                                      Width="100" 
+                                      Margin="5"
+                                      HorizontalAlignment="Left"/>
+                            
+                            <Label Grid.Column="0" 
+                                   Grid.Row="2"
+                                   Margin="5"
+                                   HorizontalContentAlignment="Right"
+                                   Content="QTY Accesory"/>
+                            <TextBox Grid.Column="1" 
+                                      Grid.Row="2" 
+                                      Width="100" 
+                                      Margin="5"
+                                      HorizontalAlignment="Left"/>
+                            
+                            <Label Grid.Column="0" 
+                                   Grid.Row="3"
+                                   Margin="5"
+                                   HorizontalContentAlignment="Right"
+                                   Content="Height (ft)"/>
+                            <TextBox Grid.Column="1" 
+                                      Grid.Row="3" 
+                                      Width="100" 
+                                      Margin="5"
+                                      HorizontalAlignment="Left"/>
+                            
+                            <Label Grid.Column="0" 
+                                   Grid.Row="4"
+                                   Margin="5"
+                                   HorizontalContentAlignment="Right"
+                                   Content="Painting"/>
+                            <ComboBox Grid.Column="1" 
+                                      Grid.Row="4" 
+                                      Width="100" 
+                                      Margin="5"
+                                      HorizontalAlignment="Left"/>
 
+                            <DataGrid Grid.Row="5"
+                                      Grid.ColumnSpan="2"
+                                      AutoGenerateColumns="False" 
+                                      IsReadOnly="True" 
+                                      ItemsSource="{Binding W, UpdateSourceTrigger=PropertyChanged}" 
+                                      SelectedItem="{Binding Select, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Molding" Width="*" Binding="{Binding Path=L}"/>
+                                    <DataGridTextColumn Header="Type Molding" Width="*" Binding="{Binding Path=P}" />
+                                    <DataGridTextColumn Header="QTY" Binding="{Binding Path=A}"/>
+                                    <DataGridTextColumn Header="H(ft)" Binding="{Binding Path=E}"/>
+                                    <DataGridTextColumn Header="Baseboard" Binding="{Binding Path=N}"/>
+                                    <DataGridTextColumn Header="Painting" Width="*" Binding="{Binding Path=L}"/>                                    
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <StackPanel Grid.Row="6"
+                                        Grid.ColumnSpan="2"
+                                        Orientation="Horizontal" 
+                                        Style="{StaticResource FooterMenu}">
+                                <Button Content="Add"
+                                        Style="{StaticResource FooterButton}"
+                                        Foreground="Green"
+                                        BorderBrush="Green"/>
+                                <Button Content="Edit"
+                                        Style="{StaticResource FooterButton}"
+                                        Foreground="Brown"
+                                        BorderBrush="Brown"/>
+                                <Button Content="Del"
+                                        Style="{StaticResource FooterButton}"
+                                        Foreground="Red"
+                                        BorderBrush="Red"/>
+                            </StackPanel>
+                        </Grid>
                     </Border>
                 </TabItem.Content>
             </TabItem>
@@ -88,7 +615,110 @@
                 </TabItem.Header>
                 <TabItem.Content>
                     <Border Style="{StaticResource BorderRadiusBlack}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Column="0"
+                                   Grid.Row="0"
+                                   Margin="5"
+                                   HorizontalContentAlignment="Right"
+                                   Content="Furniture Handeling / Room"/>
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="0" 
+                                     Width="100" 
+                                     HorizontalAlignment="Left"
+                                     Margin="5"/>
 
+                            <Label Grid.Column="0"
+                                   Grid.Row="1"
+                                   Margin="5"
+                                   HorizontalContentAlignment="Right"
+                                   Content="Rate Disposal"/>
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="1" 
+                                     Width="100" 
+                                     HorizontalAlignment="Left"
+                                     Margin="5"/>
+
+                            <Label Grid.Column="0"
+                                   Grid.Row="2"
+                                   Margin="5"
+                                   HorizontalContentAlignment="Right"
+                                   Content="Flooring Delivery"/>
+                            <ComboBox Grid.Column="1"
+                                      Grid.Row="2" 
+                                      Width="100" 
+                                      HorizontalAlignment="Left"
+                                      Margin="5"/>
+
+                            <Label Grid.Column="0"
+                                   Grid.Row="3"
+                                   Margin="5"
+                                   HorizontalContentAlignment="Right"
+                                   Content="QTY Delivery"/>
+                            <TextBox Grid.Column="1"
+                                      Grid.Row="3" 
+                                      Width="100" 
+                                      HorizontalAlignment="Left"
+                                      Margin="5"/>
+
+                            <Label Grid.Column="0"
+                                   Grid.Row="4"
+                                   Margin="5"
+                                   HorizontalContentAlignment="Right"
+                                   VerticalContentAlignment="Center"
+                                   Content="General Notes"/>
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="4"                             
+                                     Margin="5"
+                                     TextWrapping="Wrap"
+                                     AcceptsReturn="True"
+                                     Height="100"/>
+
+                            <DataGrid Grid.Row="5"
+                                      Grid.ColumnSpan="2"
+                                      AutoGenerateColumns="False" 
+                                      IsReadOnly="True" 
+                                      ItemsSource="{Binding W, UpdateSourceTrigger=PropertyChanged}" 
+                                      SelectedItem="{Binding Select, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Furniture" Binding="{Binding Path=L}"/>
+                                    <DataGridTextColumn Header="Rate" Binding="{Binding Path=P}" />
+                                    <DataGridTextColumn Header="Flooring Delivery" Width="*" Binding="{Binding Path=A}"/>
+                                    <DataGridTextColumn Header="QTY" Binding="{Binding Path=E}"/>
+                                    <DataGridTextColumn Header="Notes" Width="*" Binding="{Binding Path=N}"/>                                    
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <StackPanel Grid.Row="6"
+                                        Grid.ColumnSpan="2"
+                                        Orientation="Horizontal" 
+                                        Style="{StaticResource FooterMenu}">
+                                <Button Content="Add"
+                                        Style="{StaticResource FooterButton}"
+                                        Foreground="Green"
+                                        BorderBrush="Green"/>
+                                <Button Content="Edit"
+                                        Style="{StaticResource FooterButton}"
+                                        Foreground="Brown"
+                                        BorderBrush="Brown"/>
+                                <Button Content="Del"
+                                        Style="{StaticResource FooterButton}"
+                                        Foreground="Red"
+                                        BorderBrush="Red"/>
+                            </StackPanel>
+                        </Grid>
                     </Border>
                 </TabItem.Content>
             </TabItem>
@@ -104,7 +734,83 @@
                 </TabItem.Header>
                 <TabItem.Content>
                     <Border Style="{StaticResource BorderRadiusBlack}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Column="0"
+                                   Grid.Row="0"
+                                   Margin="5"
+                                   HorizontalContentAlignment="Right"
+                                   Content="Room Description"/>
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="0" 
+                                     Width="200" 
+                                     HorizontalAlignment="Left"
+                                     Margin="5"/>
+                            
+                            <Label Grid.Column="0"
+                                   Grid.Row="1"
+                                   Margin="5"
+                                   HorizontalContentAlignment="Right"
+                                   Content="Size"/>
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="1" 
+                                     Width="100" 
+                                     HorizontalAlignment="Left"
+                                     Margin="5"/>
+                            
+                            <Label Grid.Column="0"
+                                   Grid.Row="2"
+                                   Margin="5"
+                                   HorizontalContentAlignment="Right"
+                                   Content="Depth"/>
+                            <ComboBox Grid.Column="1"
+                                      Grid.Row="2" 
+                                      Width="100" 
+                                      HorizontalAlignment="Left"
+                                      Margin="5"/>
 
+                            <DataGrid Grid.Row="3"
+                                      Grid.ColumnSpan="2"
+                                      AutoGenerateColumns="False" 
+                                      IsReadOnly="True" 
+                                      ItemsSource="{Binding W, UpdateSourceTrigger=PropertyChanged}" 
+                                      SelectedItem="{Binding Select, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Room" Width="*" Binding="{Binding Path=L}"/>
+                                    <DataGridTextColumn Header="Size" Binding="{Binding Path=P}" />
+                                    <DataGridTextColumn Header="Depth" Binding="{Binding Path=A}"/>
+                                    <DataGridTextColumn Header="QTY" Binding="{Binding Path=E}"/>                                    
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <StackPanel Grid.Row="4"
+                                        Grid.ColumnSpan="2"
+                                        Orientation="Horizontal" 
+                                        Style="{StaticResource FooterMenu}">
+                                <Button Content="Add"
+                                        Style="{StaticResource FooterButton}"
+                                        Foreground="Green"
+                                        BorderBrush="Green"/>
+                                <Button Content="Edit"
+                                        Style="{StaticResource FooterButton}"
+                                        Foreground="Brown"
+                                        BorderBrush="Brown"/>
+                                <Button Content="Del"
+                                        Style="{StaticResource FooterButton}"
+                                        Foreground="Red"
+                                        BorderBrush="Red"/>
+                            </StackPanel>
+                        </Grid>
                     </Border>
                 </TabItem.Content>
             </TabItem>
