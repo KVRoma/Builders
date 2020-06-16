@@ -193,8 +193,9 @@
                             <DataGridTextColumn Header="Date" Binding="{Binding Path=QuotaDate, StringFormat=\{0:dd.MM.yyyy\}}"/>
                             <DataGridTextColumn Header="ClientId" Width="auto" Binding="{Binding Path=NumberClient}"/>
                             <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=FullName}"/>
+                            <DataGridTextColumn Header="Description" Width="*" Binding="{Binding Path=JobDescription}"/>
                             <DataGridTextColumn Header="Phone" Width="*" Binding="{Binding Path=PhoneNumber}"/>
-                            <DataGridTextColumn Header="Email" Width="*" Binding="{Binding Path=Email}"/>
+                            <DataGridTextColumn Header="Email" Width="*" Binding="{Binding Path=Email}"/>                            
                             <DataGridTextColumn Header="Material Total" Width="auto" Binding="{Binding Path=MaterialTotal}"/>
                             <DataGridTextColumn Header="Labour Total" Width="auto" Binding="{Binding Path=LabourTotal}"/>
                             <DataGridTextColumn Header="Grand Total" Width="auto" Binding="{Binding Path=InvoiceGrandTotal}"/>

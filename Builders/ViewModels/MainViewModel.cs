@@ -1513,13 +1513,21 @@ namespace Builders.ViewModels
                     {
                         MaterialQuotation material = new MaterialQuotation()
                         {
-                            Description = item.Description,
-                            Groupe = item.Groupe,
-                            Item = item.Item,
-                            Price = item.Price,
-                            Quantity = item.Quantity,
+                            Description = item?.Description,
+                            Groupe = item?.Groupe,
+                            Item = item?.Item,
+                            Price = item?.Price ?? 0m,
+                            Quantity = item?.Quantity ?? 0m,
                             QuotationId = QuotationSelect.Id,
-                            Rate = item.Rate
+                            Rate = item?.Rate ?? 0m,
+                            Depth = item?.Depth,
+                            Aditional = item?.Aditional,
+                            GeneratedId = item?.GeneratedId,
+                            GradeLevel = item?.GradeLevel,
+                            Mapei = item?.Mapei,
+                            Partition = item?.Partition,
+                            QuantityNL = item?.QuantityNL ?? 0m,
+                            SupplierId = item?.SupplierId
                         };
                         db.MaterialQuotations.Add(material);
                         db.SaveChanges();
@@ -4279,7 +4287,7 @@ namespace Builders.ViewModels
         private List<string> DeliveriesComboBoxGet()
         {
             List<string> comboBox = new List<string>();
-            var name = db.Deliveries.Where(d => d.IsArchive == false).ToList();
+            var name = db.Deliveries.Where(d => d.IsArchive == false)?.ToList();
 
             if (name.Count > 0)
             {
@@ -4303,7 +4311,7 @@ namespace Builders.ViewModels
         private List<string> DeliveriesComboBoxArchiveGet()
         {
             List<string> comboBox = new List<string>();
-            var name = db.Deliveries.Where(d => d.IsArchive == true).ToList();
+            var name = db.Deliveries.Where(d => d.IsArchive == true)?.ToList();
 
             if (name.Count > 0)
             {

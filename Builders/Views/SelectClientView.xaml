@@ -22,7 +22,7 @@
                   HorizontalContentAlignment="Center"
                   ItemsSource="{Binding Clients }" 
                   SelectedItem="{Binding ClientSelect, Mode=TwoWay}"
-                  DisplayMemberPath="NumberClient"/>
+                  DisplayMemberPath="NumberComboBox"/>
         <Button Grid.Row="1"
                 Style="{StaticResource FooterButton}"
                 Content="Ok"
