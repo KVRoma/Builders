@@ -927,7 +927,7 @@ namespace Builders.ViewModels
         public Command Generated => _generated ?? (_generated = new Command(async obj=> 
         {
             var displayRootRegistry = (Application.Current as App).displayRootRegistry;
-            var generator = new GeneratedViewModel();
+            var generator = new GeneratedViewModel(ref db, QuotaSelect.ClientId);
             await displayRootRegistry.ShowModalPresentation(generator);
         }));
 
