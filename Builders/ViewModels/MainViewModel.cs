@@ -5079,7 +5079,8 @@ namespace Builders.ViewModels
         {
             if (DeliverySelect != null)
             {
-                var material = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id);
+                //var material = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id);
+                var material = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id).Select(m => m.Description).ToList().Distinct();
                 var dic = db.DIC_Suppliers.FirstOrDefault(s => s.Id == DeliverySelect.SupplierId);
                 var quota = Quotations.FirstOrDefault(q => q.Id == DeliverySelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == DeliverySelect.QuotaId);
                 var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
@@ -5096,8 +5097,11 @@ namespace Builders.ViewModels
                 int i = 14;
                 foreach (var item in material)
                 {
-                    ExcelApp.Cells[i, 1] = item.Description;
-                    ExcelApp.Cells[i, 6] = item.Quantity;
+                    //ExcelApp.Cells[i, 1] = item.Description;
+                    //ExcelApp.Cells[i, 6] = item.Quantity;
+                    decimal quantity = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id && m.Description == item)?.Select(m => m.Quantity)?.Sum() ?? 0m;
+                    ExcelApp.Cells[i, 1] = item;
+                    ExcelApp.Cells[i, 6] = quantity;
                     i++;
                 }
 
@@ -5121,7 +5125,8 @@ namespace Builders.ViewModels
         {
             if (DeliverySelect != null)
             {
-                var material = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id);
+                //var material = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id);
+                var material = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id).Select(m => m.Description).ToList().Distinct();
                 var dic = db.DIC_Suppliers.FirstOrDefault(s => s.Id == DeliverySelect.SupplierId);
                 var quota = Quotations.FirstOrDefault(q => q.Id == DeliverySelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == DeliverySelect.QuotaId);
                 var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
@@ -5138,8 +5143,11 @@ namespace Builders.ViewModels
                 int i = 14;
                 foreach (var item in material)
                 {
-                    ExcelApp.Cells[i, 1] = item.Description;
-                    ExcelApp.Cells[i, 6] = item.Quantity;
+                    //ExcelApp.Cells[i, 1] = item.Description;
+                    //ExcelApp.Cells[i, 6] = item.Quantity;
+                    decimal quantity = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id && m.Description == item)?.Select(m => m.Quantity)?.Sum() ?? 0m;
+                    ExcelApp.Cells[i, 1] = item;
+                    ExcelApp.Cells[i, 6] = quantity;
                     i++;
                 }
 

@@ -46,7 +46,13 @@
                       Width="250"
                       ItemsSource="{Binding Clients}" 
                       SelectedItem="{Binding ClientSelect, Mode=TwoWay}" 
-                      DisplayMemberPath="NumberComboBox"/>            
+                      DisplayMemberPath="NumberComboBox"
+                      IsEnabled="{Binding IsEnableCreat}"/>
+            <Button Content="  Created Quota " 
+                    Margin="20,5,5,5"
+                    Foreground="Blue"
+                    IsEnabled="{Binding IsEnableCreat}"
+                    Command="{Binding AddItem}"/>
         </StackPanel>
         
         <TextBlock Grid.Row="1" 
@@ -111,19 +117,31 @@
                       ItemsSource="{Binding GradeLevels}" 
                       SelectedItem="{Binding GradeLevelSelect, Mode=TwoWay}"
                       DisplayMemberPath="Name"
-                      UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+                      UI:FocusAdvancement.AdvancesByEnterKey="True"
+                      IsEnabled="{Binding IsEnableGenerator}"/>
             <ComboBox Margin="5,5,5,0"                      
                       Width="150"
                       ItemsSource="{Binding Partitions}" 
                       SelectedItem="{Binding PartitionSelect, Mode=TwoWay}"
                       DisplayMemberPath="Name"
-                      UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+                      UI:FocusAdvancement.AdvancesByEnterKey="True"
+                      IsEnabled="{Binding IsEnableGenerator}"/>
             <ComboBox Margin="5,5,5,0"                      
                       Width="150"
                       ItemsSource="{Binding Additionals}" 
                       SelectedItem="{Binding AdditionalSelect, Mode=TwoWay}"
                       DisplayMemberPath="Name"
-                      UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+                      UI:FocusAdvancement.AdvancesByEnterKey="True"
+                      IsEnabled="{Binding IsEnableGenerator}"/>
+            <Button Content="{Binding NameButton}" 
+                    Margin="50,5,5,0"
+                    Foreground="Red"
+                    FontFamily="Font\LEMONMILK-BoldItalic"
+                    FontSize="10"
+                    FontWeight="Bold"
+                    FontStyle="Italic"
+                    Command="{Binding ClearRoom}"
+                    IsEnabled="{Binding IsEnableGenerator}"/>
         </StackPanel>
 
 
@@ -137,7 +155,8 @@
                       Width="150"
                       ItemsSource="{Binding DIC_Section}" 
                       SelectedItem="{Binding DIC_SectionSelect, Mode=TwoWay}"
-                      UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+                      UI:FocusAdvancement.AdvancesByEnterKey="True"
+                      IsEnabled="{Binding IsEnableGenerator}"/>
             <Label Content="QTY" 
                    Margin="580,0,0,0"                   
                    Style="{StaticResource LabelBold}"
@@ -178,7 +197,8 @@
                       ItemsSource="{Binding DIC_Groupes}" 
                       SelectedItem="{Binding DIC_GroupeSelect, Mode=TwoWay}" 
                       DisplayMemberPath="NameGroupe"
-                      UI:FocusAdvancement.AdvancesByEnterKey="True"/>            
+                      UI:FocusAdvancement.AdvancesByEnterKey="True"
+                      IsEnabled="{Binding IsEnableGenerator}"/>            
             <ComboBox Margin="5" 
                       HorizontalContentAlignment="Left" 
                       Width="200"
@@ -186,6 +206,7 @@
                       SelectedItem="{Binding DIC_ItemSelect, Mode=TwoWay}" 
                       DisplayMemberPath="Name"
                       UI:FocusAdvancement.AdvancesByEnterKey="True"
+                      IsEnabled="{Binding IsEnableGenerator}"
                       Visibility="{Binding IsVisibleStandart}"/> <!-- Visibility="{Binding IsVisibleStandart}" -->
             <!-- Room Description -->
             <TextBox Margin="5"
@@ -193,6 +214,7 @@
                      Width="363"
                      Text="{Binding RoomDescription}"
                      UI:FocusAdvancement.AdvancesByEnterKey="True"
+                     IsEnabled="{Binding IsEnableGenerator}"
                      Visibility="{Binding IsVisibleRoomDescription}"/>            
             <ComboBox Margin="5" 
                       HorizontalContentAlignment="Left" 
@@ -201,6 +223,7 @@
                       SelectedItem="{Binding DIC_DescriptionSelect, Mode=TwoWay}" 
                       DisplayMemberPath="Name"
                       UI:FocusAdvancement.AdvancesByEnterKey="True"
+                      IsEnabled="{Binding IsEnableGenerator}"
                       Visibility="{Binding IsVisibleStandart}"/> <!-- Visibility="{Binding IsVisibleStandart}" -->
             <!-- Room Description -->
             <ComboBox Margin="5" 
@@ -210,6 +233,7 @@
                       SelectedItem="{Binding DepthSelect, Mode=TwoWay}" 
                       DisplayMemberPath="Name"
                       UI:FocusAdvancement.AdvancesByEnterKey="True"
+                      IsEnabled="{Binding IsEnableGenerator}"
                       Visibility="{Binding IsVisibleRoomDescription}"/>
             <!--<TextBox Margin="5"
                      IsEnabled="False"
@@ -222,12 +246,14 @@
                      Width="100"
                      HorizontalContentAlignment="Center"
                      Text="{Binding Quantity}"
-                     UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+                     UI:FocusAdvancement.AdvancesByEnterKey="True"
+                     IsEnabled="{Binding IsEnableGenerator}"/>
             <TextBox Margin="10,5,5,5" 
                      Width="100" 
                      HorizontalContentAlignment="Center"
                      Text="{Binding Rate, StringFormat=\{0:F2\}}"
-                     UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+                     UI:FocusAdvancement.AdvancesByEnterKey="True"
+                     IsEnabled="{Binding IsEnableGenerator}"/>
         </StackPanel>
 
         <StackPanel Grid.Row="10" 
@@ -237,23 +263,27 @@
                     BorderBrush="Green"
                     Style="{StaticResource FooterButton}" 
                     Command="{Binding AddItem}"
-                    UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+                    UI:FocusAdvancement.AdvancesByEnterKey="True"
+                    IsEnabled="{Binding IsEnableGenerator}"/>
             <Button Content="Edit" 
                     Foreground="Brown"
                     BorderBrush="Brown"
                     Style="{StaticResource FooterButton}" 
-                    Command="{Binding InsItem}"/>
+                    Command="{Binding InsItem}"
+                    IsEnabled="{Binding IsEnableGenerator}"/>
             <Button Content="Del" 
                     Foreground="Red" 
                     BorderBrush="Red"
                     Style="{StaticResource FooterButton}" 
-                    Command="{Binding DelItem}"/>
+                    Command="{Binding DelItem}"
+                    IsEnabled="{Binding IsEnableGenerator}"/>
             <Button Content="Other.." 
                     Margin="50,0,0,0" 
                     Foreground="Green"
                     BorderBrush="Green"
                     Style="{StaticResource FooterButton}" 
-                    Command="{Binding OtherQuotation}"/>
+                    Command="{Binding OtherQuotation}"
+                    IsEnabled="{Binding IsEnableGenerator}"/>
         </StackPanel>
 
         <Border Grid.Column="1" 
@@ -302,6 +332,7 @@
                             Style="{StaticResource FooterButton}"
                             Foreground="Blue"
                             BorderBrush="Blue"
+                            IsEnabled="{Binding IsEnableGenerator}"
                             Command="{Binding Generated}"/>
                 </StackPanel>
             </Grid>            

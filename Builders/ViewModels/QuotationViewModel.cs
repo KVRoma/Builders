@@ -8,12 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
 
 namespace Builders.ViewModels
 {
     public class QuotationViewModel : ViewModel
     {
         public string WindowName { get; } = "Builder - Quotation";
+        public string NameButton { get; } = "  <- Clear    ";
         public BuilderContext db;
         public int? QuotaId;
         private EnumClient result;
@@ -64,6 +66,9 @@ namespace Builders.ViewModels
         private List<DIC_G_Partition> partitions;
         private DIC_G_Additional additionalSelect;
         private List<DIC_G_Additional> additionals;
+
+        private bool isEnableGenerator;
+        private bool isEnableCreat;
 
         private string calcFlooring;
         private string calcAccessories;
@@ -449,6 +454,33 @@ namespace Builders.ViewModels
             }
         }
 
+        public bool IsEnableGenerator
+        {
+            get { return isEnableGenerator; }
+            set
+            {
+                isEnableGenerator = value;
+                OnPropertyChanged(nameof(IsEnableGenerator));
+                if (IsEnableGenerator)
+                {
+                    IsEnableCreat = false;
+                }
+                else
+                {
+                    IsEnableCreat = true;
+                }
+            }
+        }
+        public bool IsEnableCreat
+        {
+            get { return isEnableCreat; }
+            set
+            {
+                isEnableCreat = value;
+                OnPropertyChanged(nameof(IsEnableCreat));
+            }
+        }
+
         public string CalcFlooring
         {
             get { return calcFlooring; }
@@ -499,8 +531,9 @@ namespace Builders.ViewModels
         private Command _insItem;
         private Command _delItem;
         private Command _otherQuotation;
+        private Command _clearRoom;
         private Command _generated;
-
+        
 
         public Command AddItem => _addItem ?? (_addItem = new Command(obj =>
         {
@@ -539,6 +572,7 @@ namespace Builders.ViewModels
                 flagCreatQuota = true;
                 QuotaSelect = db.Quotations.Local.ToBindingList().OrderByDescending(q => q.Id).FirstOrDefault();
                 QuotaId = QuotaSelect.Id;
+                IsEnableGenerator = true;
             }
             if (flagCreatQuota && QuotaSelect != null)
             {
@@ -884,6 +918,12 @@ namespace Builders.ViewModels
                 }
             }
         }));
+        public Command ClearRoom => _clearRoom ?? (_clearRoom = new Command(obj=> 
+        {
+            GradeLevelSelect = null;
+            PartitionSelect = null;
+            AdditionalSelect = null;
+        }));
         public Command Generated => _generated ?? (_generated = new Command(async obj=> 
         {
             var displayRootRegistry = (Application.Current as App).displayRootRegistry;
@@ -892,12 +932,12 @@ namespace Builders.ViewModels
         }));
 
         
-
         public QuotationViewModel(ref BuilderContext context, EnumClient res, Quotation select, string companyName)
         {
             db = context;
             result = res;
             CompanyName = companyName;
+            IsEnableGenerator = false;
             db.DIC_GroupeQuotations.Load();
             db.DIC_ItemQuotations.Load();
             db.DIC_DescriptionQuotations.Load();
@@ -928,6 +968,7 @@ namespace Builders.ViewModels
                     break;
                 case EnumClient.Ins:
                     {
+                        IsEnableGenerator = true;
                         flagCreatQuota = true;
                         QuotaSelect = select;
                         ClientSelect = db.Clients.FirstOrDefault(c => c.Id == QuotaSelect.ClientId);
