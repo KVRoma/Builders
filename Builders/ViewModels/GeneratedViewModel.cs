@@ -640,6 +640,69 @@ namespace Builders.ViewModels
                 generatedSuplementarys = value;
                 OnPropertyChanged(nameof(GeneratedSuplementarys));
             }
+        }                
+        #endregion
+        #region Flood Property
+        private string roomFlood;
+        private decimal sizeFlood;
+        private DIC_DepthQuotation depthFloodSelect;
+        private List<DIC_DepthQuotation> depthFloods;
+        private GeneratedFlood generatedFloodSelect;
+        private List<GeneratedFlood> generatedFloods;
+
+        public string RoomFlood
+        {
+            get => roomFlood; 
+            set
+            {
+                roomFlood = value;
+                OnPropertyChanged(nameof(RoomFlood));
+            }
+        }
+        public decimal SizeFlood
+        {
+            get => sizeFlood; 
+            set
+            {
+                sizeFlood = value;
+                OnPropertyChanged(nameof(SizeFlood));
+            }
+        }
+        public DIC_DepthQuotation DepthFloodSelect
+        {
+            get => depthFloodSelect; 
+            set
+            {
+                depthFloodSelect = value;
+                OnPropertyChanged(nameof(DepthFloodSelect));
+            }
+        }
+        public List<DIC_DepthQuotation> DepthFloods
+        {
+            get => depthFloods; 
+            set
+            {
+                depthFloods = value;
+                OnPropertyChanged(nameof(DepthFloods));
+            }
+        }
+        public GeneratedFlood GeneratedFloodSelect
+        {
+            get => generatedFloodSelect; 
+            set
+            {
+                generatedFloodSelect = value;
+                OnPropertyChanged(nameof(GeneratedFloodSelect));
+            }
+        }
+        public List<GeneratedFlood> GeneratedFloods
+        {
+            get => generatedFloods; 
+            set
+            {
+                generatedFloods = value;
+                OnPropertyChanged(nameof(GeneratedFloods));
+            }
         }
         #endregion
 
@@ -654,6 +717,7 @@ namespace Builders.ViewModels
             LoadStairs();
             LoadMolding();
             LoadSuplementary();
+            LoadFlood();
         }
 
         private void LoadGenerator(int id)
@@ -710,7 +774,8 @@ namespace Builders.ViewModels
                     DeliverySuplementarys.Add(des.Name);
                 }
             }
-
+            // Depth
+            DepthFloods = db.DIC_DepthQuotations.ToList();
         }
         private void LoadDetail()
         {
@@ -731,6 +796,10 @@ namespace Builders.ViewModels
         private void LoadSuplementary()
         {
             GeneratedSuplementarys = db.GeneratedSuplementaries.Where(g => g.GeneratedId == generatedSelect.Id).ToList();
+        }
+        private void LoadFlood()
+        {
+            GeneratedFloods = db.GeneratedFloods.Where(g => g.GeneratedId == generatedSelect.Id).ToList();
         }
     }
 }

@@ -844,6 +844,7 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
@@ -856,7 +857,8 @@
                                      Grid.Row="0" 
                                      Width="200" 
                                      HorizontalAlignment="Left"
-                                     Margin="5"/>
+                                     Margin="5"
+                                     Text="{Binding RoomFlood}"/>
                             
                             <Label Grid.Column="0"
                                    Grid.Row="1"
@@ -867,7 +869,8 @@
                                      Grid.Row="1" 
                                      Width="100" 
                                      HorizontalAlignment="Left"
-                                     Margin="5"/>
+                                     Margin="5"
+                                     Text="{Binding SizeFlood}"/>
                             
                             <Label Grid.Column="0"
                                    Grid.Row="2"
@@ -878,23 +881,34 @@
                                       Grid.Row="2" 
                                       Width="100" 
                                       HorizontalAlignment="Left"
-                                      Margin="5"/>
+                                      Margin="5"
+                                      ItemsSource="{Binding DepthFloods }" 
+                                      SelectedItem="{Binding DepthFloodSelect, Mode=TwoWay}"
+                                      DisplayMemberPath="Name"/>
 
-                            <DataGrid Grid.Row="3"
+                            <Button Grid.Row="3" 
+                                    Grid.Column="1"
+                                    Style="{StaticResource FooterButton}"
+                                    HorizontalAlignment="Right"
+                                    Content="Clear Data"
+                                    Foreground="Red"
+                                    BorderBrush="Red"/>
+
+                            <DataGrid Grid.Row="4"
                                       Grid.ColumnSpan="2"
                                       AutoGenerateColumns="False" 
                                       IsReadOnly="True" 
-                                      ItemsSource="{Binding W, UpdateSourceTrigger=PropertyChanged}" 
-                                      SelectedItem="{Binding Select, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                      ItemsSource="{Binding GeneratedFloods, UpdateSourceTrigger=PropertyChanged}" 
+                                      SelectedItem="{Binding GeneratedFloodSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Room" Width="*" Binding="{Binding Path=L}"/>
-                                    <DataGridTextColumn Header="Size" Binding="{Binding Path=P}" />
-                                    <DataGridTextColumn Header="Depth" Binding="{Binding Path=A}"/>
-                                    <DataGridTextColumn Header="QTY" Binding="{Binding Path=E}"/>                                    
+                                    <DataGridTextColumn Header="Room" Width="*" Binding="{Binding Path=RoomDescription}"/>
+                                    <DataGridTextColumn Header="Size" Binding="{Binding Path=Size}" />
+                                    <DataGridTextColumn Header="Depth" Binding="{Binding Path=Depth}"/>
+                                    <DataGridTextColumn Header="QTY" Binding="{Binding Path=QtyNovoplan}"/>                                    
                                 </DataGrid.Columns>
                             </DataGrid>
 
-                            <StackPanel Grid.Row="4"
+                            <StackPanel Grid.Row="5"
                                         Grid.ColumnSpan="2"
                                         Orientation="Horizontal" 
                                         Style="{StaticResource FooterMenu}">
