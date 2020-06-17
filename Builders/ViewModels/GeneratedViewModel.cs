@@ -559,6 +559,8 @@ namespace Builders.ViewModels
             }
         }
         #endregion
+        #region Suplementary Property
+        #endregion
 
         public GeneratedViewModel(ref BuilderContext context, int id)
         {
@@ -569,6 +571,7 @@ namespace Builders.ViewModels
             LoadDetail();
             LoadAccessoriess();
             LoadStairs();
+            LoadMolding();
         }
 
         private void LoadGenerator(int id)
@@ -609,6 +612,10 @@ namespace Builders.ViewModels
             DemolitionStairs.Add("No");
             DemolitionStairSelect = DemolitionStairs[1];
             TypeLevelingStairs = db.DIC_G_TypeLevelings.ToList();
+            // Molding
+            AccessoriesMoldings = db.DIC_G_Modelings.ToList();
+            TypeMoldings = db.DIC_G_TypeModelings.ToList();
+            PaintingMoldings = db.DIC_G_Paintings.ToList();
         }
         private void LoadDetail()
         {
@@ -621,6 +628,10 @@ namespace Builders.ViewModels
         private void LoadStairs()
         {
             GeneratedStairs = db.GeneratedStairs.Where(g => g.GeneratedId == generatedSelect.Id).ToList();
+        }
+        private void LoadMolding()
+        {
+            GeneratedMoldings = db.GeneratedMoldings.Where(g => g.GeneratedId == generatedSelect.Id).ToList();
         }
     }
 }

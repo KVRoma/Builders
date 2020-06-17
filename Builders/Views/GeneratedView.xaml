@@ -577,6 +577,7 @@
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
+                            
                             <Label Grid.Column="0" 
                                    Grid.Row="0"
                                    Margin="5"
@@ -586,7 +587,10 @@
                                       Grid.Row="0" 
                                       Width="100" 
                                       Margin="5"
-                                      HorizontalAlignment="Left"/>
+                                      HorizontalAlignment="Left"
+                                      ItemsSource="{Binding AccessoriesMoldings }" 
+                                      SelectedItem="{Binding AccessoriesMoldingSelect, Mode=TwoWay}"
+                                      DisplayMemberPath="Name"/>
                             
                             <Label Grid.Column="0" 
                                    Grid.Row="1"
@@ -597,7 +601,10 @@
                                       Grid.Row="1" 
                                       Width="100" 
                                       Margin="5"
-                                      HorizontalAlignment="Left"/>
+                                      HorizontalAlignment="Left"
+                                      ItemsSource="{Binding TypeMoldings }" 
+                                      SelectedItem="{Binding TypeMoldingSelect, Mode=TwoWay}"
+                                      DisplayMemberPath="Name"/>
                             
                             <Label Grid.Column="0" 
                                    Grid.Row="2"
@@ -608,7 +615,8 @@
                                       Grid.Row="2" 
                                       Width="100" 
                                       Margin="5"
-                                      HorizontalAlignment="Left"/>
+                                      HorizontalAlignment="Left"
+                                      Text="{Binding QtyMolding}"/>
                             
                             <Label Grid.Column="0" 
                                    Grid.Row="3"
@@ -619,7 +627,8 @@
                                       Grid.Row="3" 
                                       Width="100" 
                                       Margin="5"
-                                      HorizontalAlignment="Left"/>
+                                      HorizontalAlignment="Left"
+                                      Text="{Binding HeightMolding}"/>
                             
                             <Label Grid.Column="0" 
                                    Grid.Row="4"
@@ -630,7 +639,10 @@
                                       Grid.Row="4" 
                                       Width="100" 
                                       Margin="5"
-                                      HorizontalAlignment="Left"/>
+                                      HorizontalAlignment="Left"
+                                      ItemsSource="{Binding PaintingMoldings }" 
+                                      SelectedItem="{Binding PaintingMoldingSelect, Mode=TwoWay}"
+                                      DisplayMemberPath="Name"/>
 
                             <Button Grid.Row="5" 
                                     Grid.Column="1"
@@ -644,15 +656,15 @@
                                       Grid.ColumnSpan="2"
                                       AutoGenerateColumns="False" 
                                       IsReadOnly="True" 
-                                      ItemsSource="{Binding W, UpdateSourceTrigger=PropertyChanged}" 
-                                      SelectedItem="{Binding Select, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                      ItemsSource="{Binding GeneratedMoldings, UpdateSourceTrigger=PropertyChanged}" 
+                                      SelectedItem="{Binding GeneratedMoldingSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Molding" Width="*" Binding="{Binding Path=L}"/>
-                                    <DataGridTextColumn Header="Type Molding" Width="*" Binding="{Binding Path=P}" />
-                                    <DataGridTextColumn Header="QTY" Binding="{Binding Path=A}"/>
-                                    <DataGridTextColumn Header="H(ft)" Binding="{Binding Path=E}"/>
-                                    <DataGridTextColumn Header="Baseboard" Binding="{Binding Path=N}"/>
-                                    <DataGridTextColumn Header="Painting" Width="*" Binding="{Binding Path=L}"/>                                    
+                                    <DataGridTextColumn Header="Molding" Width="*" Binding="{Binding Path=MoldingName}"/>
+                                    <DataGridTextColumn Header="Type Molding" Width="*" Binding="{Binding Path=TypeMolding}" />
+                                    <DataGridTextColumn Header="QTY" Binding="{Binding Path=QtyMolding}"/>
+                                    <DataGridTextColumn Header="H(ft)" Binding="{Binding Path=HeightMolding}"/>
+                                    <DataGridTextColumn Header="Baseboard" Binding="{Binding Path=BaseboardMaterial}"/>
+                                    <DataGridTextColumn Header="Painting" Width="*" Binding="{Binding Path=Painting}"/>                                    
                                 </DataGrid.Columns>
                             </DataGrid>
 

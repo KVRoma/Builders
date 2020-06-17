@@ -4289,7 +4289,7 @@ namespace Builders.ViewModels
             List<string> comboBox = new List<string>();
             var name = db.Deliveries.Where(d => d.IsArchive == false)?.ToList();
 
-            if (name.Count > 0)
+            if (name?.Count > 0)
             {
                 foreach (var item in name)
                 {
@@ -4313,7 +4313,7 @@ namespace Builders.ViewModels
             List<string> comboBox = new List<string>();
             var name = db.Deliveries.Where(d => d.IsArchive == true)?.ToList();
 
-            if (name.Count > 0)
+            if (name?.Count > 0)
             {
                 foreach (var item in name)
                 {
