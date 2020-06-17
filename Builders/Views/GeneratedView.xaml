@@ -712,6 +712,7 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
@@ -724,7 +725,8 @@
                                      Grid.Row="0" 
                                      Width="100" 
                                      HorizontalAlignment="Left"
-                                     Margin="5"/>
+                                     Margin="5"
+                                     Text="{Binding RoomSuplementary}"/>
 
                             <Label Grid.Column="0"
                                    Grid.Row="1"
@@ -735,7 +737,8 @@
                                      Grid.Row="1" 
                                      Width="100" 
                                      HorizontalAlignment="Left"
-                                     Margin="5"/>
+                                     Margin="5"
+                                     Text="{Binding DisposalSuplementary}"/>
 
                             <Label Grid.Column="0"
                                    Grid.Row="2"
@@ -746,7 +749,9 @@
                                       Grid.Row="2" 
                                       Width="100" 
                                       HorizontalAlignment="Left"
-                                      Margin="5"/>
+                                      Margin="5"
+                                      ItemsSource="{Binding DeliverySuplementarys }" 
+                                      SelectedItem="{Binding DeliverySuplementarySelect, Mode=TwoWay}"/>
 
                             <Label Grid.Column="0"
                                    Grid.Row="3"
@@ -757,7 +762,8 @@
                                       Grid.Row="3" 
                                       Width="100" 
                                       HorizontalAlignment="Left"
-                                      Margin="5"/>
+                                      Margin="5"
+                                      Text="{Binding QtyDeliverySuplementary}"/>
 
                             <Label Grid.Column="0"
                                    Grid.Row="4"
@@ -770,24 +776,33 @@
                                      Margin="5"
                                      TextWrapping="Wrap"
                                      AcceptsReturn="True"
-                                     Height="100"/>
+                                     Height="100"
+                                     Text="{Binding NotesSuplementary}"/>
 
-                            <DataGrid Grid.Row="5"
+                            <Button Grid.Row="5" 
+                                    Grid.Column="1"
+                                    Style="{StaticResource FooterButton}"
+                                    HorizontalAlignment="Right"
+                                    Content="Clear Data"
+                                    Foreground="Red"
+                                    BorderBrush="Red"/>
+
+                            <DataGrid Grid.Row="6"
                                       Grid.ColumnSpan="2"
                                       AutoGenerateColumns="False" 
                                       IsReadOnly="True" 
-                                      ItemsSource="{Binding W, UpdateSourceTrigger=PropertyChanged}" 
-                                      SelectedItem="{Binding Select, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                      ItemsSource="{Binding GeneratedSuplementarys, UpdateSourceTrigger=PropertyChanged}" 
+                                      SelectedItem="{Binding GeneratedSuplementarySelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Furniture" Binding="{Binding Path=L}"/>
-                                    <DataGridTextColumn Header="Rate" Binding="{Binding Path=P}" />
-                                    <DataGridTextColumn Header="Flooring Delivery" Width="*" Binding="{Binding Path=A}"/>
-                                    <DataGridTextColumn Header="QTY" Binding="{Binding Path=E}"/>
-                                    <DataGridTextColumn Header="Notes" Width="*" Binding="{Binding Path=N}"/>                                    
+                                    <DataGridTextColumn Header="Furniture" Binding="{Binding Path=FurnitureHandelingRoom}"/>
+                                    <DataGridTextColumn Header="Rate" Binding="{Binding Path=RateDisposal}" />
+                                    <DataGridTextColumn Header="Flooring Delivery" Width="*" Binding="{Binding Path=DeliveryName}"/>
+                                    <DataGridTextColumn Header="QTY" Binding="{Binding Path=DeliveryQty}"/>
+                                    <DataGridTextColumn Header="Notes" Width="*" Binding="{Binding Path=GeneralNotes}"/>                                    
                                 </DataGrid.Columns>
                             </DataGrid>
 
-                            <StackPanel Grid.Row="6"
+                            <StackPanel Grid.Row="7"
                                         Grid.ColumnSpan="2"
                                         Orientation="Horizontal" 
                                         Style="{StaticResource FooterMenu}">

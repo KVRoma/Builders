@@ -557,9 +557,90 @@ namespace Builders.ViewModels
                 generatedMoldings = value;
                 OnPropertyChanged(nameof(GeneratedMoldings));
             }
-        }
+        }        
         #endregion
         #region Suplementary Property
+        private decimal roomSuplementary;
+        private decimal disposalSuplementary;
+        private string deliverySuplementarySelect;
+        private List<string> deliverySuplementarys;
+        private decimal qtyDeliverySuplementary;
+        private string notesSuplementary;
+        private GeneratedSuplementary generatedSuplementarySelect;
+        private List<GeneratedSuplementary> generatedSuplementarys;
+
+        public decimal RoomSuplementary
+        {
+            get => roomSuplementary; 
+            set
+            {
+                roomSuplementary = value;
+                OnPropertyChanged(nameof(RoomSuplementary));
+            }
+        }
+        public decimal DisposalSuplementary
+        {
+            get => disposalSuplementary; 
+            set
+            {
+                disposalSuplementary = value;
+                OnPropertyChanged(nameof(DisposalSuplementary));
+            }
+        }
+        public string DeliverySuplementarySelect
+        {
+            get => deliverySuplementarySelect; 
+            set
+            {
+                deliverySuplementarySelect = value;
+                OnPropertyChanged(nameof(DeliverySuplementarySelect));
+            }
+        }
+        public List<string> DeliverySuplementarys
+        {
+            get => deliverySuplementarys; 
+            set
+            {
+                deliverySuplementarys = value;
+                OnPropertyChanged(nameof(DeliverySuplementarys));
+            }
+        }
+        public decimal QtyDeliverySuplementary
+        {
+            get => qtyDeliverySuplementary; 
+            set
+            {
+                qtyDeliverySuplementary = value;
+                OnPropertyChanged(nameof(QtyDeliverySuplementary));
+            }
+        }
+        public string NotesSuplementary
+        {
+            get => notesSuplementary; 
+            set
+            {
+                notesSuplementary = value;
+                OnPropertyChanged(nameof(NotesSuplementary));
+            }
+        }
+        public GeneratedSuplementary GeneratedSuplementarySelect
+        {
+            get => generatedSuplementarySelect; 
+            set
+            {
+                generatedSuplementarySelect = value;
+                OnPropertyChanged(nameof(GeneratedSuplementarySelect));
+            }
+        }
+        public List<GeneratedSuplementary> GeneratedSuplementarys
+        {
+            get => generatedSuplementarys; 
+            set
+            {
+                generatedSuplementarys = value;
+                OnPropertyChanged(nameof(GeneratedSuplementarys));
+            }
+        }
         #endregion
 
         public GeneratedViewModel(ref BuilderContext context, int id)
@@ -572,6 +653,7 @@ namespace Builders.ViewModels
             LoadAccessoriess();
             LoadStairs();
             LoadMolding();
+            LoadSuplementary();
         }
 
         private void LoadGenerator(int id)
@@ -616,6 +698,19 @@ namespace Builders.ViewModels
             AccessoriesMoldings = db.DIC_G_Modelings.ToList();
             TypeMoldings = db.DIC_G_TypeModelings.ToList();
             PaintingMoldings = db.DIC_G_Paintings.ToList();
+            // Suplementary
+            DeliverySuplementarys = new List<string>();
+            var groupe = db.DIC_GroupeQuotations.FirstOrDefault(g => g.NameGroupe == "FLOORING DELIVERY");
+            var items = db.DIC_ItemQuotations.Where(i => i.GroupeId == groupe.Id);
+            foreach (var item in items)
+            {
+                var descriptions = db.DIC_DescriptionQuotations.Where(d => d.ItemId == item.Id);
+                foreach (var des in descriptions)
+                {
+                    DeliverySuplementarys.Add(des.Name);
+                }
+            }
+
         }
         private void LoadDetail()
         {
@@ -632,6 +727,10 @@ namespace Builders.ViewModels
         private void LoadMolding()
         {
             GeneratedMoldings = db.GeneratedMoldings.Where(g => g.GeneratedId == generatedSelect.Id).ToList();
+        }
+        private void LoadSuplementary()
+        {
+            GeneratedSuplementarys = db.GeneratedSuplementaries.Where(g => g.GeneratedId == generatedSelect.Id).ToList();
         }
     }
 }
