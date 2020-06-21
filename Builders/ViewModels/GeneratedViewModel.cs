@@ -314,6 +314,14 @@ namespace Builders.ViewModels
             {
                 generatedAccessorieSelect = value;
                 OnPropertyChanged(nameof(GeneratedAccessorieSelect));
+                if (GeneratedAccessorieSelect != null)
+                {
+                    TotalMaterialAccessorie = GeneratedAccessorieSelect.NewFloor;
+                }
+                else 
+                {
+                    TotalMaterialAccessorie = null;
+                }
             }
         }
         public List<GeneratedAccessories> GeneratedAccessories
@@ -795,6 +803,18 @@ namespace Builders.ViewModels
             DemolitionDetailSelect = DemolitionDetails[1];
             LenghtDetail = 0m;
             WidthDetail = 0m;
+        }));
+        #endregion
+        #region Accessories Command
+        private Command _insAccessoriesCommand;
+
+        public Command InsAccessoriesCommand => _insAccessoriesCommand ?? (_insAccessoriesCommand = new Command(obj=> 
+        {
+            GeneratedAccessorieSelect.AccessoriesFloor = FloorNameAccessorieSelect.Name;
+            GeneratedAccessorieSelect.TypeAccessoriesFloor = FloorTypeAccessorieSelect.Name;
+            db.Entry(GeneratedAccessorieSelect).State = EntityState.Modified;
+            db.SaveChanges();
+            LoadAccessoriess();
         }));
         #endregion
 
