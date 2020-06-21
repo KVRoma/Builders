@@ -150,6 +150,7 @@
     <Compile Include="Models\Generated.cs" />
     <Compile Include="Models\GeneratedAccessories.cs" />
     <Compile Include="Models\GeneratedFlood.cs" />
+    <Compile Include="Models\GeneratedList.cs" />
     <Compile Include="Models\GeneratedMaterial.cs" />
     <Compile Include="Models\GeneratedMolding.cs" />
     <Compile Include="Models\GeneratedStairs.cs" />

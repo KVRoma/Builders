@@ -1044,6 +1044,62 @@ namespace Builders.ViewModels
             NotesSuplementary = null;
         }));
         #endregion
+        #region Flood Command
+        private Command _addFloodCommand;
+        private Command _insFloodCommand;
+        private Command _delFloodCommand;
+        private Command _clearFloodCommand;
+
+        public Command AddFloodCommand => _addFloodCommand ?? (_addFloodCommand = new Command(obj=> 
+        {
+            if(DepthFloodSelect != null)
+            {
+                GeneratedFlood flood = new GeneratedFlood() 
+                {
+                    Depth = DepthFloodSelect.Name,
+                    GeneratedId = generatedSelect.Id,
+                    QtyNovoplan = decimal.Ceiling(SizeFlood / DepthFloodSelect.Price),
+                    RoomDescription = RoomFlood,
+                    Size = SizeFlood,
+                    Concatenar = RoomFlood + " - Size " + SizeFlood + " - Depth " + DepthFloodSelect.Name
+                };
+                db.GeneratedFloods.Add(flood);
+                db.SaveChanges();
+                LoadFlood();
+            }
+        }));
+        public Command InsFloodCommand => _insFloodCommand ?? (_insFloodCommand = new Command(obj=> 
+        {
+            if (GeneratedFloodSelect != null && DepthFloodSelect != null)
+            {
+                GeneratedFloodSelect.Depth = DepthFloodSelect.Name;
+                GeneratedFloodSelect.GeneratedId = generatedSelect.Id;
+                GeneratedFloodSelect.QtyNovoplan = decimal.Ceiling(SizeFlood / DepthFloodSelect.Price);
+                GeneratedFloodSelect.RoomDescription = RoomFlood;
+                GeneratedFloodSelect.Size = SizeFlood;
+                GeneratedFloodSelect.Concatenar = RoomFlood + " - Size " + SizeFlood + " - Depth " + DepthFloodSelect.Name;
+
+                db.Entry(GeneratedFloodSelect).State = EntityState.Modified;
+                db.SaveChanges();
+                LoadFlood();
+            }
+        }));
+        public Command DelFloodCommand => _delFloodCommand ?? (_delFloodCommand = new Command(obj=> 
+        {
+            if (GeneratedFloodSelect != null)
+            {
+                db.GeneratedFloods.Remove(GeneratedFloodSelect);
+                db.SaveChanges();
+                LoadFlood();
+            }
+        }));
+        public Command ClearFloodCommand => _clearFloodCommand ?? (_clearFloodCommand = new Command(obj=> 
+        {
+            RoomFlood = null;
+            SizeFlood = 0m;
+            DepthFloodSelect = null;
+        }));
+        #endregion
 
         public GeneratedViewModel(ref BuilderContext context, int id)
         {

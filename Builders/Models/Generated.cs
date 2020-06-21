@@ -20,6 +20,7 @@ namespace Builders.Models
         public ICollection<GeneratedSuplementary> GeneratedSuplementaries { get; set; }
         public ICollection<GeneratedMolding> GeneratedMoldings { get; set; }
         public ICollection<GeneratedFlood> GeneratedFloods { get; set; }
+        public ICollection<GeneratedList> GeneratedLists { get; set; }
         public Generated()
         {
             GeneratedMaterials = new List<GeneratedMaterial>();
@@ -28,6 +29,7 @@ namespace Builders.Models
             GeneratedSuplementaries = new List<GeneratedSuplementary>();
             GeneratedMoldings = new List<GeneratedMolding>();
             GeneratedFloods = new List<GeneratedFlood>();
+            GeneratedLists = new List<GeneratedList>();
         }
     }
 }

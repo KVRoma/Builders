@@ -40,6 +40,7 @@ namespace Builders.Models
         public DbSet<GeneratedMolding> GeneratedMoldings { get; set; }
         public DbSet<GeneratedStairs> GeneratedStairs { get; set; }
         public DbSet<GeneratedSuplementary> GeneratedSuplementaries { get; set; }
+        public DbSet<GeneratedList> GeneratedLists { get; set; }
 
         public DbSet<DIC_TypeOfClient> DIC_TypeOfClients { get; set; }
         public DbSet<DIC_HearAboutsUs> DIC_HearAboutsUse { get; set; }

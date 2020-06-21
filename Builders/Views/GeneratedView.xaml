@@ -925,7 +925,8 @@
                                     HorizontalAlignment="Right"
                                     Content="Clear Data"
                                     Foreground="Red"
-                                    BorderBrush="Red"/>
+                                    BorderBrush="Red"
+                                    Command="{Binding ClearFloodCommand}"/>
 
                             <DataGrid Grid.Row="4"
                                       Grid.ColumnSpan="2"
@@ -948,15 +949,18 @@
                                 <Button Content="Add"
                                         Style="{StaticResource FooterButton}"
                                         Foreground="Green"
-                                        BorderBrush="Green"/>
+                                        BorderBrush="Green"
+                                        Command="{Binding AddFloodCommand}"/>
                                 <Button Content="Edit"
                                         Style="{StaticResource FooterButton}"
                                         Foreground="Brown"
-                                        BorderBrush="Brown"/>
+                                        BorderBrush="Brown"
+                                        Command="{Binding InsFloodCommand}"/>
                                 <Button Content="Del"
                                         Style="{StaticResource FooterButton}"
                                         Foreground="Red"
-                                        BorderBrush="Red"/>
+                                        BorderBrush="Red"
+                                        Command="{Binding DelFloodCommand}"/>
                             </StackPanel>
                         </Grid>
                     </Border>
