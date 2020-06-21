@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Builders.Views"
+        xmlns:UI="clr-namespace:Builders.Commands"
         mc:Ignorable="d"
         Title="{Binding WindowName}" 
         MinHeight="650" 
@@ -51,19 +52,22 @@
                                           Margin="5"
                                           ItemsSource="{Binding LevelDetails }" 
                                           SelectedItem="{Binding LevelDetailSelect, Mode=TwoWay}"
-                                          DisplayMemberPath="Name"/>
+                                          DisplayMemberPath="Name"
+                                          UI:FocusAdvancement.AdvancesByEnterKey="True"/>
                                 <Label Content="Partition"/>
                                 <ComboBox Width="100" 
                                           Margin="5"
                                           ItemsSource="{Binding PartitionDetails }" 
                                           SelectedItem="{Binding PartitionDetailSelect, Mode=TwoWay}"
-                                          DisplayMemberPath="Name"/>
+                                          DisplayMemberPath="Name"
+                                          UI:FocusAdvancement.AdvancesByEnterKey="True"/>
                                 <Label Content="Additional"/>
                                 <ComboBox Width="100" 
                                           Margin="5"
                                           ItemsSource="{Binding AdditionalDetails }" 
                                           SelectedItem="{Binding AdditionalDetailSelect, Mode=TwoWay}"
-                                          DisplayMemberPath="Name"/>
+                                          DisplayMemberPath="Name"
+                                          UI:FocusAdvancement.AdvancesByEnterKey="True"/>
                             </StackPanel>
 
                             <GroupBox Grid.Row="1" 
@@ -91,7 +95,8 @@
                                              Grid.Row="0"
                                              Margin="5"
                                              Width="50"
-                                             Text="{Binding TransitionRDetail}"/>
+                                             Text="{Binding TransitionRDetail}"
+                                             UI:FocusAdvancement.AdvancesByEnterKey="True"/>
                                     <Label Grid.Column="0" 
                                            Grid.Row="1" 
                                            Content="T"
@@ -101,7 +106,8 @@
                                              Grid.Row="1"
                                              Margin="5"
                                              Width="50"
-                                             Text="{Binding TransitionTDetail}"/>
+                                             Text="{Binding TransitionTDetail}"
+                                             UI:FocusAdvancement.AdvancesByEnterKey="True"/>
                                     <Label Grid.Column="0" 
                                            Grid.Row="2" 
                                            Content="Others"
@@ -111,11 +117,13 @@
                                              Grid.Row="2"
                                              Margin="5"
                                              Width="50"
-                                             Text="{Binding TransitionOtherDetail}"/>
+                                             Text="{Binding TransitionOtherDetail}"
+                                             UI:FocusAdvancement.AdvancesByEnterKey="True"/>
                                     <TextBox Grid.Column="2" 
                                              Grid.Row="2"
                                              Margin="5"
-                                             Text="{Binding TransitionOtherNameDetail}"/>
+                                             Text="{Binding TransitionOtherNameDetail}"
+                                             UI:FocusAdvancement.AdvancesByEnterKey="True"/>
                                 </Grid>
                             </GroupBox>
 
@@ -143,7 +151,8 @@
                                               Margin="5"
                                               ItemsSource="{Binding TrimDetails }" 
                                               SelectedItem="{Binding TrimDetailSelect, Mode=TwoWay}"
-                                              DisplayMemberPath="Name"/>
+                                              DisplayMemberPath="Name"
+                                              UI:FocusAdvancement.AdvancesByEnterKey="True"/>
                                     <Label Grid.Column="0" 
                                            Grid.Row="1" 
                                            Content="Qty. Trim"
@@ -154,7 +163,8 @@
                                              Margin="5"
                                              Width="50"
                                              HorizontalAlignment="Left"
-                                             Text="{Binding TrimQtyDetail}"/>
+                                             Text="{Binding TrimQtyDetail}"
+                                             UI:FocusAdvancement.AdvancesByEnterKey="True"/>
                                 </Grid>                                
                             </GroupBox>
 
@@ -187,7 +197,8 @@
                                               Margin="5"
                                               ItemsSource="{Binding ExistingDetails }" 
                                               SelectedItem="{Binding ExistingDetailSelect, Mode=TwoWay}"
-                                              DisplayMemberPath="Name"/>
+                                              DisplayMemberPath="Name"
+                                              UI:FocusAdvancement.AdvancesByEnterKey="True"/>
                                     <Label Grid.Column="0" 
                                            Grid.Row="1"                                           
                                            Content="Demolition" 
@@ -197,7 +208,8 @@
                                               Grid.Row="1"
                                               Margin="5"
                                               ItemsSource="{Binding DemolitionDetails }" 
-                                              SelectedItem="{Binding DemolitionDetailSelect, Mode=TwoWay}"/>
+                                              SelectedItem="{Binding DemolitionDetailSelect, Mode=TwoWay}"
+                                              UI:FocusAdvancement.AdvancesByEnterKey="True"/>
                                     <Label Grid.Column="0" 
                                            Grid.Row="2" 
                                            Content="New" 
@@ -208,7 +220,8 @@
                                               Margin="5"
                                               ItemsSource="{Binding NewFloorDetails }" 
                                               SelectedItem="{Binding NewFloorDetailSelect, Mode=TwoWay}"
-                                              DisplayMemberPath="Name"/>
+                                              DisplayMemberPath="Name"
+                                              UI:FocusAdvancement.AdvancesByEnterKey="True"/>
                                     <Label Grid.ColumnSpan="2"
                                            Grid.Row="3"
                                            Content="Measurements"
@@ -221,7 +234,8 @@
                                     <TextBox Grid.Column="1" 
                                              Grid.Row="4"
                                              Margin="5"
-                                             Text="{Binding LenghtDetail}"/>
+                                             Text="{Binding LenghtDetail}"
+                                             UI:FocusAdvancement.AdvancesByEnterKey="True"/>
                                     <Label Grid.Column="0" 
                                            Grid.Row="5" 
                                            Content="Width (ft)"
@@ -240,7 +254,8 @@
                                     HorizontalAlignment="Right"
                                     Content="Clear Data"
                                     Foreground="Red"
-                                    BorderBrush="Red"/>
+                                    BorderBrush="Red"
+                                    Command="{Binding ClearDetailCommand}"/>
 
                             <DataGrid Grid.Row="4"
                                       Grid.ColumnSpan="2"
@@ -269,15 +284,18 @@
                                 <Button Content="Add"
                                         Style="{StaticResource FooterButton}"
                                         Foreground="Green"
-                                        BorderBrush="Green"/>
-                                <Button Content="Edit"
+                                        BorderBrush="Green"
+                                        Command="{Binding AddDetailCommand}"/>
+                                <!--<Button Content="Edit"
                                         Style="{StaticResource FooterButton}"
                                         Foreground="Brown"
-                                        BorderBrush="Brown"/>
+                                        BorderBrush="Brown"
+                                        Command="{Binding InsDetailCommand}"/>-->
                                 <Button Content="Del"
                                         Style="{StaticResource FooterButton}"
                                         Foreground="Red"
-                                        BorderBrush="Red"/>
+                                        BorderBrush="Red"
+                                        Command="{Binding DelDetailCommand}"/>
                             </StackPanel>
                         </Grid>
                         

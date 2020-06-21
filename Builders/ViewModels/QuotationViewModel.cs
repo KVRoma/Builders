@@ -67,6 +67,8 @@ namespace Builders.ViewModels
         private DIC_G_Additional additionalSelect;
         private List<DIC_G_Additional> additionals;
 
+        private string descriptions;
+
         private bool isEnableGenerator;
         private bool isEnableCreat;
 
@@ -454,6 +456,16 @@ namespace Builders.ViewModels
             }
         }
 
+        public string Descriptions
+        {
+            get { return descriptions; }
+            set
+            {
+                descriptions = value;
+                OnPropertyChanged(nameof(Descriptions));
+            }
+        }
+
         public bool IsEnableGenerator
         {
             get { return isEnableGenerator; }
@@ -550,7 +562,7 @@ namespace Builders.ViewModels
                     LastName = ClientSelect.PrimaryLastName,
                     PhoneNumber = ClientSelect.PrimaryPhoneNumber,
                     Email = ClientSelect.PrimaryEmail,
-                    JobDescription = "",
+                    JobDescription = Descriptions,
                     JobNote = "",
 
                     CompanyName = CompanyName,
@@ -915,6 +927,7 @@ namespace Builders.ViewModels
                     QuotaSelect.AmountPaidByCreditCard = other.CreditCard;
                     db.Entry(QuotaSelect).State = EntityState.Modified;
                     db.SaveChanges();
+                    Descriptions = other.Description;
                 }
             }
         }));
@@ -929,9 +942,7 @@ namespace Builders.ViewModels
             var displayRootRegistry = (Application.Current as App).displayRootRegistry;
             var generator = new GeneratedViewModel(ref db, QuotaSelect.ClientId);
             await displayRootRegistry.ShowModalPresentation(generator);
-        }));
-
-        
+        }));              
         public QuotationViewModel(ref BuilderContext context, EnumClient res, Quotation select, string companyName)
         {
             db = context;
@@ -971,6 +982,7 @@ namespace Builders.ViewModels
                         IsEnableGenerator = true;
                         flagCreatQuota = true;
                         QuotaSelect = select;
+                        Descriptions = select?.JobDescription;
                         ClientSelect = db.Clients.FirstOrDefault(c => c.Id == QuotaSelect.ClientId);
                         lastIdClient = ClientSelect.Id;
                     }

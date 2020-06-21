@@ -1,16 +1,19 @@
-﻿using Builders.Models;
+﻿using Builders.Commands;
+using Builders.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.Entity;
 
 namespace Builders.ViewModels
 {
     public class GeneratedViewModel : ViewModel
     {
         public string WindowName { get; set; } = "Generator";
-        private BuilderContext db;        
+        private BuilderContext db;
         private Generated generatedSelect;
 
         #region Material Detail Property
@@ -40,7 +43,7 @@ namespace Builders.ViewModels
 
         public DIC_G_GradeLevel LevelDetailSelect
         {
-            get => levelDetailSelect; 
+            get => levelDetailSelect;
             set
             {
                 levelDetailSelect = value;
@@ -49,7 +52,7 @@ namespace Builders.ViewModels
         }
         public List<DIC_G_GradeLevel> LevelDetails
         {
-            get => levelDetails; 
+            get => levelDetails;
             set
             {
                 levelDetails = value;
@@ -58,7 +61,7 @@ namespace Builders.ViewModels
         }
         public DIC_G_Partition PartitionDetailSelect
         {
-            get => partitionDetailSelect; 
+            get => partitionDetailSelect;
             set
             {
                 partitionDetailSelect = value;
@@ -67,7 +70,7 @@ namespace Builders.ViewModels
         }
         public List<DIC_G_Partition> PartitionDetails
         {
-            get => partitionDetails; 
+            get => partitionDetails;
             set
             {
                 partitionDetails = value;
@@ -76,7 +79,7 @@ namespace Builders.ViewModels
         }
         public DIC_G_Additional AdditionalDetailSelect
         {
-            get => additionalDetailSelect; 
+            get => additionalDetailSelect;
             set
             {
                 additionalDetailSelect = value;
@@ -85,7 +88,7 @@ namespace Builders.ViewModels
         }
         public List<DIC_G_Additional> AdditionalDetails
         {
-            get => additionalDetails; 
+            get => additionalDetails;
             set
             {
                 additionalDetails = value;
@@ -94,7 +97,7 @@ namespace Builders.ViewModels
         }
         public decimal TransitionRDetail
         {
-            get => transitionRDetail; 
+            get => transitionRDetail;
             set
             {
                 transitionRDetail = value;
@@ -103,7 +106,7 @@ namespace Builders.ViewModels
         }
         public decimal TransitionTDetail
         {
-            get => transitionTDetail; 
+            get => transitionTDetail;
             set
             {
                 transitionTDetail = value;
@@ -112,7 +115,7 @@ namespace Builders.ViewModels
         }
         public decimal TransitionOtherDetail
         {
-            get => transitionOtherDetail; 
+            get => transitionOtherDetail;
             set
             {
                 transitionOtherDetail = value;
@@ -121,7 +124,7 @@ namespace Builders.ViewModels
         }
         public string TransitionOtherNameDetail
         {
-            get => transitionOtherNameDetail; 
+            get => transitionOtherNameDetail;
             set
             {
                 transitionOtherNameDetail = value;
@@ -130,7 +133,7 @@ namespace Builders.ViewModels
         }
         public DIC_G_TypeTrim TrimDetailSelect
         {
-            get => trimDetailSelect; 
+            get => trimDetailSelect;
             set
             {
                 trimDetailSelect = value;
@@ -139,7 +142,7 @@ namespace Builders.ViewModels
         }
         public List<DIC_G_TypeTrim> TrimDetails
         {
-            get => trimDetails; 
+            get => trimDetails;
             set
             {
                 trimDetails = value;
@@ -148,7 +151,7 @@ namespace Builders.ViewModels
         }
         public decimal TrimQtyDetail
         {
-            get => trimQtyDetail; 
+            get => trimQtyDetail;
             set
             {
                 trimQtyDetail = value;
@@ -157,7 +160,7 @@ namespace Builders.ViewModels
         }
         public DIC_G_Floor ExistingDetailSelect
         {
-            get => existingDetailSelect; 
+            get => existingDetailSelect;
             set
             {
                 existingDetailSelect = value;
@@ -166,7 +169,7 @@ namespace Builders.ViewModels
         }
         public List<DIC_G_Floor> ExistingDetails
         {
-            get => existingDetails; 
+            get => existingDetails;
             set
             {
                 existingDetails = value;
@@ -175,7 +178,7 @@ namespace Builders.ViewModels
         }
         public DIC_G_Floor NewFloorDetailSelect
         {
-            get => newFloorDetailSelect; 
+            get => newFloorDetailSelect;
             set
             {
                 newFloorDetailSelect = value;
@@ -193,7 +196,7 @@ namespace Builders.ViewModels
         }
         public string DemolitionDetailSelect
         {
-            get => demolitionDetailSelect; 
+            get => demolitionDetailSelect;
             set
             {
                 demolitionDetailSelect = value;
@@ -202,7 +205,7 @@ namespace Builders.ViewModels
         }
         public List<string> DemolitionDetails
         {
-            get => demolitionDetails; 
+            get => demolitionDetails;
             set
             {
                 demolitionDetails = value;
@@ -211,7 +214,7 @@ namespace Builders.ViewModels
         }
         public decimal LenghtDetail
         {
-            get => lenghtDetail; 
+            get => lenghtDetail;
             set
             {
                 lenghtDetail = value;
@@ -220,7 +223,7 @@ namespace Builders.ViewModels
         }
         public decimal WidthDetail
         {
-            get => widthDetail; 
+            get => widthDetail;
             set
             {
                 widthDetail = value;
@@ -229,7 +232,7 @@ namespace Builders.ViewModels
         }
         public GeneratedMaterial GeneratedMaterialSelect
         {
-            get => generatedMaterialSelect; 
+            get => generatedMaterialSelect;
             set
             {
                 generatedMaterialSelect = value;
@@ -238,7 +241,7 @@ namespace Builders.ViewModels
         }
         public List<GeneratedMaterial> GeneratedMaterials
         {
-            get => generatedMaterials; 
+            get => generatedMaterials;
             set
             {
                 generatedMaterials = value;
@@ -257,20 +260,20 @@ namespace Builders.ViewModels
 
         public DIC_G_AccessoriesFloor FloorNameAccessorieSelect
         {
-            get => floorNameAccessorieSelect; 
+            get => floorNameAccessorieSelect;
             set
             {
                 floorNameAccessorieSelect = value;
                 OnPropertyChanged(nameof(FloorNameAccessorieSelect));
                 if (FloorNameAccessorieSelect != null)
                 {
-                    FloorTypeAccessories = db.DIC_G_TypeAccessoriesFloors.Where(t=>t.DIC_G_AccessoriesFloorId == FloorNameAccessorieSelect.Id).ToList();
+                    FloorTypeAccessories = db.DIC_G_TypeAccessoriesFloors.Where(t => t.DIC_G_AccessoriesFloorId == FloorNameAccessorieSelect.Id).ToList();
                 }
             }
         }
         public List<DIC_G_AccessoriesFloor> FloorNameAccessories
         {
-            get => floorNameAccessories; 
+            get => floorNameAccessories;
             set
             {
                 floorNameAccessories = value;
@@ -279,7 +282,7 @@ namespace Builders.ViewModels
         }
         public DIC_G_TypeAccessoriesFloor FloorTypeAccessorieSelect
         {
-            get => floorTypeAccessorieSelect; 
+            get => floorTypeAccessorieSelect;
             set
             {
                 floorTypeAccessorieSelect = value;
@@ -288,7 +291,7 @@ namespace Builders.ViewModels
         }
         public List<DIC_G_TypeAccessoriesFloor> FloorTypeAccessories
         {
-            get => floorTypeAccessories; 
+            get => floorTypeAccessories;
             set
             {
                 floorTypeAccessories = value;
@@ -297,7 +300,7 @@ namespace Builders.ViewModels
         }
         public string TotalMaterialAccessorie
         {
-            get => totalMaterialAccessorie; 
+            get => totalMaterialAccessorie;
             set
             {
                 totalMaterialAccessorie = value;
@@ -306,7 +309,7 @@ namespace Builders.ViewModels
         }
         public GeneratedAccessories GeneratedAccessorieSelect
         {
-            get => generatedAccessorieSelect; 
+            get => generatedAccessorieSelect;
             set
             {
                 generatedAccessorieSelect = value;
@@ -315,14 +318,14 @@ namespace Builders.ViewModels
         }
         public List<GeneratedAccessories> GeneratedAccessories
         {
-            get => generatedAccessories; 
+            get => generatedAccessories;
             set
             {
                 generatedAccessories = value;
                 OnPropertyChanged(nameof(GeneratedAccessories));
             }
-        }                
-        #endregion        
+        }
+        #endregion
         #region Stairs Property
         private DIC_G_GradeLevel levelStairSelect;
         private List<DIC_G_GradeLevel> levelStairs;
@@ -340,7 +343,7 @@ namespace Builders.ViewModels
 
         public DIC_G_GradeLevel LevelStairSelect
         {
-            get => levelStairSelect; 
+            get => levelStairSelect;
             set
             {
                 levelStairSelect = value;
@@ -349,7 +352,7 @@ namespace Builders.ViewModels
         }
         public List<DIC_G_GradeLevel> LevelStairs
         {
-            get => levelStairs; 
+            get => levelStairs;
             set
             {
                 levelStairs = value;
@@ -358,7 +361,7 @@ namespace Builders.ViewModels
         }
         public DIC_G_TypeStairs TypeStairSelect
         {
-            get => typeStairSelect; 
+            get => typeStairSelect;
             set
             {
                 typeStairSelect = value;
@@ -367,7 +370,7 @@ namespace Builders.ViewModels
         }
         public List<DIC_G_TypeStairs> TypeStairs
         {
-            get => typeStairs; 
+            get => typeStairs;
             set
             {
                 typeStairs = value;
@@ -376,7 +379,7 @@ namespace Builders.ViewModels
         }
         public decimal QtyStairs
         {
-            get => qtyStairs; 
+            get => qtyStairs;
             set
             {
                 qtyStairs = value;
@@ -385,7 +388,7 @@ namespace Builders.ViewModels
         }
         public decimal LenghtStairs
         {
-            get => lenghtStairs; 
+            get => lenghtStairs;
             set
             {
                 lenghtStairs = value;
@@ -394,7 +397,7 @@ namespace Builders.ViewModels
         }
         public string DemolitionStairSelect
         {
-            get => demolitionStairSelect; 
+            get => demolitionStairSelect;
             set
             {
                 demolitionStairSelect = value;
@@ -403,7 +406,7 @@ namespace Builders.ViewModels
         }
         public List<string> DemolitionStairs
         {
-            get => demolitionStairs; 
+            get => demolitionStairs;
             set
             {
                 demolitionStairs = value;
@@ -412,7 +415,7 @@ namespace Builders.ViewModels
         }
         public DIC_G_TypeLeveling TypeLevelingStairSelect
         {
-            get => typeLevelingStairSelect; 
+            get => typeLevelingStairSelect;
             set
             {
                 typeLevelingStairSelect = value;
@@ -421,7 +424,7 @@ namespace Builders.ViewModels
         }
         public List<DIC_G_TypeLeveling> TypeLevelingStairs
         {
-            get => typeLevelingStairs; 
+            get => typeLevelingStairs;
             set
             {
                 typeLevelingStairs = value;
@@ -430,7 +433,7 @@ namespace Builders.ViewModels
         }
         public decimal QtyLevelingStairs
         {
-            get => qtyLevelingStairs; 
+            get => qtyLevelingStairs;
             set
             {
                 qtyLevelingStairs = value;
@@ -439,7 +442,7 @@ namespace Builders.ViewModels
         }
         public GeneratedStairs GeneratedStairSelect
         {
-            get => generatedStairSelect; 
+            get => generatedStairSelect;
             set
             {
                 generatedStairSelect = value;
@@ -448,13 +451,13 @@ namespace Builders.ViewModels
         }
         public List<GeneratedStairs> GeneratedStairs
         {
-            get => generatedStairs; 
+            get => generatedStairs;
             set
             {
                 generatedStairs = value;
                 OnPropertyChanged(nameof(GeneratedStairs));
             }
-        }        
+        }
         #endregion
         #region Moldings Property
         private DIC_G_Modeling accessoriesMoldingSelect;
@@ -470,7 +473,7 @@ namespace Builders.ViewModels
 
         public DIC_G_Modeling AccessoriesMoldingSelect
         {
-            get => accessoriesMoldingSelect; 
+            get => accessoriesMoldingSelect;
             set
             {
                 accessoriesMoldingSelect = value;
@@ -479,7 +482,7 @@ namespace Builders.ViewModels
         }
         public List<DIC_G_Modeling> AccessoriesMoldings
         {
-            get => accessoriesMoldings; 
+            get => accessoriesMoldings;
             set
             {
                 accessoriesMoldings = value;
@@ -488,7 +491,7 @@ namespace Builders.ViewModels
         }
         public DIC_G_TypeModeling TypeMoldingSelect
         {
-            get => typeMoldingSelect; 
+            get => typeMoldingSelect;
             set
             {
                 typeMoldingSelect = value;
@@ -497,7 +500,7 @@ namespace Builders.ViewModels
         }
         public List<DIC_G_TypeModeling> TypeMoldings
         {
-            get => typeMoldings; 
+            get => typeMoldings;
             set
             {
                 typeMoldings = value;
@@ -506,7 +509,7 @@ namespace Builders.ViewModels
         }
         public decimal QtyMolding
         {
-            get => qtyMolding; 
+            get => qtyMolding;
             set
             {
                 qtyMolding = value;
@@ -515,7 +518,7 @@ namespace Builders.ViewModels
         }
         public decimal HeightMolding
         {
-            get => heightMolding; 
+            get => heightMolding;
             set
             {
                 heightMolding = value;
@@ -524,7 +527,7 @@ namespace Builders.ViewModels
         }
         public DIC_G_Painting PaintingMoldingSelect
         {
-            get => paintingMoldingSelect; 
+            get => paintingMoldingSelect;
             set
             {
                 paintingMoldingSelect = value;
@@ -533,7 +536,7 @@ namespace Builders.ViewModels
         }
         public List<DIC_G_Painting> PaintingMoldings
         {
-            get => paintingMoldings; 
+            get => paintingMoldings;
             set
             {
                 paintingMoldings = value;
@@ -542,7 +545,7 @@ namespace Builders.ViewModels
         }
         public GeneratedMolding GeneratedMoldingSelect
         {
-            get => generatedMoldingSelect; 
+            get => generatedMoldingSelect;
             set
             {
                 generatedMoldingSelect = value;
@@ -551,13 +554,13 @@ namespace Builders.ViewModels
         }
         public List<GeneratedMolding> GeneratedMoldings
         {
-            get => generatedMoldings; 
+            get => generatedMoldings;
             set
             {
                 generatedMoldings = value;
                 OnPropertyChanged(nameof(GeneratedMoldings));
             }
-        }        
+        }
         #endregion
         #region Suplementary Property
         private decimal roomSuplementary;
@@ -571,7 +574,7 @@ namespace Builders.ViewModels
 
         public decimal RoomSuplementary
         {
-            get => roomSuplementary; 
+            get => roomSuplementary;
             set
             {
                 roomSuplementary = value;
@@ -580,7 +583,7 @@ namespace Builders.ViewModels
         }
         public decimal DisposalSuplementary
         {
-            get => disposalSuplementary; 
+            get => disposalSuplementary;
             set
             {
                 disposalSuplementary = value;
@@ -589,7 +592,7 @@ namespace Builders.ViewModels
         }
         public string DeliverySuplementarySelect
         {
-            get => deliverySuplementarySelect; 
+            get => deliverySuplementarySelect;
             set
             {
                 deliverySuplementarySelect = value;
@@ -598,7 +601,7 @@ namespace Builders.ViewModels
         }
         public List<string> DeliverySuplementarys
         {
-            get => deliverySuplementarys; 
+            get => deliverySuplementarys;
             set
             {
                 deliverySuplementarys = value;
@@ -607,7 +610,7 @@ namespace Builders.ViewModels
         }
         public decimal QtyDeliverySuplementary
         {
-            get => qtyDeliverySuplementary; 
+            get => qtyDeliverySuplementary;
             set
             {
                 qtyDeliverySuplementary = value;
@@ -616,7 +619,7 @@ namespace Builders.ViewModels
         }
         public string NotesSuplementary
         {
-            get => notesSuplementary; 
+            get => notesSuplementary;
             set
             {
                 notesSuplementary = value;
@@ -625,7 +628,7 @@ namespace Builders.ViewModels
         }
         public GeneratedSuplementary GeneratedSuplementarySelect
         {
-            get => generatedSuplementarySelect; 
+            get => generatedSuplementarySelect;
             set
             {
                 generatedSuplementarySelect = value;
@@ -634,13 +637,13 @@ namespace Builders.ViewModels
         }
         public List<GeneratedSuplementary> GeneratedSuplementarys
         {
-            get => generatedSuplementarys; 
+            get => generatedSuplementarys;
             set
             {
                 generatedSuplementarys = value;
                 OnPropertyChanged(nameof(GeneratedSuplementarys));
             }
-        }                
+        }
         #endregion
         #region Flood Property
         private string roomFlood;
@@ -652,7 +655,7 @@ namespace Builders.ViewModels
 
         public string RoomFlood
         {
-            get => roomFlood; 
+            get => roomFlood;
             set
             {
                 roomFlood = value;
@@ -661,7 +664,7 @@ namespace Builders.ViewModels
         }
         public decimal SizeFlood
         {
-            get => sizeFlood; 
+            get => sizeFlood;
             set
             {
                 sizeFlood = value;
@@ -670,7 +673,7 @@ namespace Builders.ViewModels
         }
         public DIC_DepthQuotation DepthFloodSelect
         {
-            get => depthFloodSelect; 
+            get => depthFloodSelect;
             set
             {
                 depthFloodSelect = value;
@@ -679,7 +682,7 @@ namespace Builders.ViewModels
         }
         public List<DIC_DepthQuotation> DepthFloods
         {
-            get => depthFloods; 
+            get => depthFloods;
             set
             {
                 depthFloods = value;
@@ -688,7 +691,7 @@ namespace Builders.ViewModels
         }
         public GeneratedFlood GeneratedFloodSelect
         {
-            get => generatedFloodSelect; 
+            get => generatedFloodSelect;
             set
             {
                 generatedFloodSelect = value;
@@ -697,7 +700,7 @@ namespace Builders.ViewModels
         }
         public List<GeneratedFlood> GeneratedFloods
         {
-            get => generatedFloods; 
+            get => generatedFloods;
             set
             {
                 generatedFloods = value;
@@ -706,9 +709,98 @@ namespace Builders.ViewModels
         }
         #endregion
 
+        #region Material Detail Command
+        private Command _addDetailCommand;
+        //private Command _insDetailCommand;
+        private Command _delDetailCommand;
+        private Command _clearDetailCommand;
+
+        public Command AddDetailCommand => _addDetailCommand ?? (_addDetailCommand = new Command(obj =>
+        {
+            GeneratedMaterial material = new GeneratedMaterial()
+            {
+                Aditional = AdditionalDetailSelect?.Name,
+                ExistingFloor = ExistingDetailSelect?.Name,
+                GeneratedId = generatedSelect.Id,
+                GradeLevel = LevelDetailSelect?.Name,
+                LenghtFloor = LenghtDetail,
+                NeedDemolition = DemolitionDetailSelect,
+                NewFloor = NewFloorDetailSelect?.Name,
+                NoteTransitionOther = TransitionOtherNameDetail,
+                Partition = PartitionDetailSelect?.Name,
+                QtyTrim = TrimQtyDetail,
+                TotalFloor = decimal.Round(WidthDetail * LenghtDetail, 2),
+                TotalFlooringMaterial = decimal.Round((WidthDetail * LenghtDetail) * 1.1m, 2),
+                TransitionOther = TransitionOtherDetail,
+                TransitionR = TransitionRDetail,
+                TransitionT = TransitionTDetail,
+                TypeTrim = TrimDetailSelect?.Name,
+                WidthFloor = WidthDetail
+            };
+            db.GeneratedMaterials.Add(material);
+            db.SaveChanges();
+            CalculateAccessories(material, true);
+            LoadDetail();            
+        }));
+        //public Command InsDetailCommand => _insDetailCommand ?? (_insDetailCommand = new Command(obj =>
+        //{
+        //    if (GeneratedMaterialSelect != null)
+        //    {
+        //        GeneratedMaterialSelect.Aditional = AdditionalDetailSelect?.Name;
+        //        GeneratedMaterialSelect.ExistingFloor = ExistingDetailSelect?.Name;
+        //        GeneratedMaterialSelect.GeneratedId = generatedSelect.Id;
+        //        GeneratedMaterialSelect.GradeLevel = LevelDetailSelect?.Name;
+        //        GeneratedMaterialSelect.LenghtFloor = LenghtDetail;
+        //        GeneratedMaterialSelect.NeedDemolition = DemolitionDetailSelect;
+        //        GeneratedMaterialSelect.NewFloor = NewFloorDetailSelect?.Name;
+        //        GeneratedMaterialSelect.NoteTransitionOther = TransitionOtherNameDetail;
+        //        GeneratedMaterialSelect.Partition = PartitionDetailSelect?.Name;
+        //        GeneratedMaterialSelect.QtyTrim = TrimQtyDetail;
+        //        GeneratedMaterialSelect.TotalFloor = decimal.Round(WidthDetail * LenghtDetail, 2);
+        //        GeneratedMaterialSelect.TotalFlooringMaterial = decimal.Round((WidthDetail * LenghtDetail) * 1.1m, 2);
+        //        GeneratedMaterialSelect.TransitionOther = TransitionOtherDetail;
+        //        GeneratedMaterialSelect.TransitionR = TransitionRDetail;
+        //        GeneratedMaterialSelect.TransitionT = TransitionTDetail;
+        //        GeneratedMaterialSelect.TypeTrim = TrimDetailSelect?.Name;
+        //        GeneratedMaterialSelect.WidthFloor = WidthDetail;
+        //    }
+        //    db.Entry(GeneratedMaterialSelect).State = EntityState.Modified;
+        //    db.SaveChanges();
+        //    CalculateAccessories(GeneratedMaterialSelect, true);
+        //    LoadDetail();            
+        //}));
+        public Command DelDetailCommand => _delDetailCommand ?? (_delDetailCommand = new Command(obj =>
+        {
+            if (GeneratedMaterialSelect != null)
+            {
+                CalculateAccessories(GeneratedMaterialSelect, false);
+                db.GeneratedMaterials.Remove(GeneratedMaterialSelect);
+                db.SaveChanges();
+                LoadDetail();
+            }
+        }));
+        public Command ClearDetailCommand => _clearDetailCommand ?? (_clearDetailCommand = new Command(obj =>
+        {
+            LevelDetailSelect = null;
+            PartitionDetailSelect = null;
+            AdditionalDetailSelect = null;
+            TransitionRDetail = 0m;
+            TransitionTDetail = 0m;
+            TransitionOtherDetail = 0m;
+            TransitionOtherNameDetail = null;
+            TrimDetailSelect = null;
+            TrimQtyDetail = 0m;
+            ExistingDetailSelect = null;
+            NewFloorDetailSelect = null;
+            DemolitionDetailSelect = DemolitionDetails[1];
+            LenghtDetail = 0m;
+            WidthDetail = 0m;
+        }));
+        #endregion
+
         public GeneratedViewModel(ref BuilderContext context, int id)
         {
-            db = context;            
+            db = context;
 
             LoadGenerator(id);
             LoadComboBox();
@@ -719,7 +811,10 @@ namespace Builders.ViewModels
             LoadSuplementary();
             LoadFlood();
         }
-
+        /// <summary>
+        /// Завантажує якщо є, або створює Generator для заданої Quota
+        /// </summary>
+        /// <param name="id"></param>
         private void LoadGenerator(int id)
         {
             generatedSelect = db.Generateds.FirstOrDefault(g => g.ClientId == id);
@@ -735,6 +830,9 @@ namespace Builders.ViewModels
                 generatedSelect = db.Generateds.FirstOrDefault(g => g.ClientId == id);
             }
         }
+        /// <summary>
+        /// Завантажує дані в ComboBox
+        /// </summary>
         private void LoadComboBox()
         {
             // Details
@@ -777,29 +875,146 @@ namespace Builders.ViewModels
             // Depth
             DepthFloods = db.DIC_DepthQuotations.ToList();
         }
+        /// <summary>
+        /// Завантажує GeneratedMaterials
+        /// </summary>
         private void LoadDetail()
         {
-            GeneratedMaterials = db.GeneratedMaterials.Where(g=>g.GeneratedId == generatedSelect.Id).ToList();            
+            GeneratedMaterials = null;
+            GeneratedMaterials = db.GeneratedMaterials.Where(g => g.GeneratedId == generatedSelect.Id).ToList();
         }
+        /// <summary>
+        /// Завантажує GeneratedAccessories
+        /// </summary>
         private void LoadAccessoriess()
         {
+            GeneratedAccessories = null;
             GeneratedAccessories = db.GeneratedAccessories.Where(g => g.GeneratedId == generatedSelect.Id).ToList();
         }
+        /// <summary>
+        /// Завантажує GeneratedStairs
+        /// </summary>
         private void LoadStairs()
         {
+            GeneratedStairs = null;
             GeneratedStairs = db.GeneratedStairs.Where(g => g.GeneratedId == generatedSelect.Id).ToList();
         }
+        /// <summary>
+        /// Завантажує GeneratedMoldings
+        /// </summary>
         private void LoadMolding()
         {
+            GeneratedMoldings = null;
             GeneratedMoldings = db.GeneratedMoldings.Where(g => g.GeneratedId == generatedSelect.Id).ToList();
         }
+        /// <summary>
+        /// Завантажує GeneratedSuplementarys
+        /// </summary>
         private void LoadSuplementary()
         {
+            GeneratedSuplementarys = null;
             GeneratedSuplementarys = db.GeneratedSuplementaries.Where(g => g.GeneratedId == generatedSelect.Id).ToList();
         }
+        /// <summary>
+        /// Завантажує GeneratedFloods
+        /// </summary>
         private void LoadFlood()
         {
+            GeneratedFloods = null;
             GeneratedFloods = db.GeneratedFloods.Where(g => g.GeneratedId == generatedSelect.Id).ToList();
+        }
+        /// <summary>
+        /// Округляє до верхньої ближньої сотні (264 -> 300)
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        private decimal RoundToHundreds(decimal number)
+        {
+            decimal result = 0m;
+            if (number < 100)
+            {
+                result = decimal.Ceiling(number / 10) * 10m;
+            }
+            else if (number >= 100)
+            {
+                result = decimal.Ceiling(number / 100) * 100m;
+            }
+            
+            return result;
+        }
+        /// <summary>
+        /// Перераховує, або створює назву та кількість NewFloor в Accessories 
+        /// </summary>
+        /// <param name="generatedMaterial">Вибраний екземпляр Detail</param>
+        /// <param name="key">true - додати елемент, false - відняти</param>
+        private void CalculateAccessories(GeneratedMaterial generatedMaterial, bool key)
+        {
+            GeneratedAccessories accessories = GeneratedAccessories.FirstOrDefault(a => a.NewFloor == generatedMaterial.NewFloor);
+            if (key)
+            {
+                if (accessories != null)
+                {
+                    accessories.TotalFloor += generatedMaterial?.TotalFloor ?? 0m;
+                    accessories.TotalAccessoriesFloor = RoundToHundreds(accessories?.TotalFloor ?? 0m);
+                    db.Entry(accessories).State = EntityState.Modified;
+                    db.SaveChanges();
+                    LoadAccessoriess();
+                }
+                else
+                {
+                    if (generatedMaterial.NewFloor != null)
+                    {
+                        GeneratedAccessories accessorie = new GeneratedAccessories()
+                        {
+                            NewFloor = generatedMaterial.NewFloor,
+                            TotalFloor = generatedMaterial?.TotalFloor ?? 0m,
+                            TotalAccessoriesFloor = RoundToHundreds(generatedMaterial?.TotalFloor ?? 0m),
+                            GeneratedId = generatedMaterial.GeneratedId
+                        };
+                        db.GeneratedAccessories.Add(accessorie);
+                        db.SaveChanges();
+                        LoadAccessoriess();
+                    }
+                }
+            }
+            else 
+            {
+                if (accessories != null)
+                {
+                    accessories.TotalFloor -= generatedMaterial?.TotalFloor ?? 0m;
+                    if (accessories.TotalFloor != 0)
+                    {
+                        accessories.TotalAccessoriesFloor = RoundToHundreds(accessories?.TotalFloor ?? 0m);
+                        db.Entry(accessories).State = EntityState.Modified;
+                    }
+                    else
+                    {
+                        db.GeneratedAccessories.Remove(accessories);
+                    }
+                    db.SaveChanges();
+                    LoadAccessoriess();
+                }
+            }
+            //else
+            //{
+            //    var access = GeneratedAccessories.Where(a => a.GeneratedId == generatedMaterial.GeneratedId);
+            //    foreach(var item in access)
+            //    {
+            //        var res = db.GeneratedMaterials.Where(a => a.GeneratedId == generatedMaterial.GeneratedId && a.NewFloor == item.NewFloor);
+            //        if (res != null)
+            //        {
+            //            item.TotalFloor = res.Select(r => r.TotalFloor)?.Sum() ?? 0m;
+            //            item.TotalAccessoriesFloor = RoundToHundreds(res.Select(r=>r.TotalFloor)?.Sum() ?? 0m);
+            //            db.Entry(item).State = EntityState.Modified;
+            //        }
+            //        else
+            //        {
+            //            db.GeneratedAccessories.Remove(item);
+            //        }
+            //    }
+            //    db.SaveChanges();
+            
+            LoadAccessoriess();
         }
     }
 }

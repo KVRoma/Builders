@@ -4870,6 +4870,7 @@ namespace Builders.ViewModels
                             Item = temp.Select(t => t.Item).FirstOrDefault(),
                             Description = temp.Select(t => t.Description).FirstOrDefault(),
                             Price = temp.Select(t => t.Price)?.Sum() ?? 0m,
+                            Mapei = temp.Select(t => t.Mapei)?.Sum() ?? 0,
                             Quantity = temp.Select(t => t.Quantity)?.Sum() ?? 0m,
                             QuantityNL = temp.Select(t => t.QuantityNL)?.Sum() ?? 0m,
                             Rate = temp.Select(t => t.Rate).FirstOrDefault(),
