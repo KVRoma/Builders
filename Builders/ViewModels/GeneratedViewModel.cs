@@ -905,6 +905,90 @@ namespace Builders.ViewModels
             QtyLevelingStairs = 0m;
         }));
         #endregion
+        #region Moldings Command
+        private Command _addMoldingsCommand;
+        private Command _insMoldingsCommand;
+        private Command _delMoldingsCommand;
+        private Command _clearMoldingsCommand;
+
+        public Command AddMoldingsCommand => _addMoldingsCommand ?? (_addMoldingsCommand = new Command(obj=> 
+        {
+            decimal qty = 0m;
+            if (AccessoriesMoldingSelect?.Name == "Baseboards")
+            {
+                qty = (decimal.Ceiling(QtyMolding / 16m) * 16m) + 16m;
+            }
+            else if (AccessoriesMoldingSelect?.Name == "Door Casing - Over Size")
+            {
+                qty = decimal.Ceiling(QtyMolding * 1.5m) * 16m;
+            }
+            else if (AccessoriesMoldingSelect?.Name == "Door Casing")
+            {
+                qty = decimal.Ceiling(QtyMolding * 1.25m) * 16m;
+            }
+            GeneratedMolding molding = new GeneratedMolding() 
+            {
+                BaseboardMaterial = qty,
+                GeneratedId = generatedSelect.Id,
+                HeightMolding = HeightMolding,
+                MoldingName = AccessoriesMoldingSelect?.Name,
+                Painting = PaintingMoldingSelect?.Name,
+                QtyMolding = QtyMolding,
+                TypeMolding = TypeMoldingSelect?.Name                
+            };
+            db.GeneratedMoldings.Add(molding);
+            db.SaveChanges();
+            LoadMolding();
+        }));
+        public Command InsMoldingsCommand => _insMoldingsCommand ?? (_insMoldingsCommand = new Command(obj=> 
+        {
+            if (GeneratedMoldingSelect != null)
+            {
+                decimal qty = 0m;
+                if (AccessoriesMoldingSelect?.Name == "Baseboards")
+                {
+                    qty = (decimal.Ceiling(QtyMolding / 16m) * 16m) + 16m;
+                }
+                else if (AccessoriesMoldingSelect?.Name == "Door Casing - Over Size")
+                {
+                    qty = decimal.Ceiling(QtyMolding * 1.5m) * 16m;
+                }
+                else if (AccessoriesMoldingSelect?.Name == "Door Casing")
+                {
+                    qty = decimal.Ceiling(QtyMolding * 1.25m) * 16m;
+                }
+
+                GeneratedMoldingSelect.BaseboardMaterial = qty;
+                GeneratedMoldingSelect.GeneratedId = generatedSelect.Id;
+                GeneratedMoldingSelect.HeightMolding = HeightMolding;
+                GeneratedMoldingSelect.MoldingName = AccessoriesMoldingSelect?.Name;
+                GeneratedMoldingSelect.Painting = PaintingMoldingSelect?.Name;
+                GeneratedMoldingSelect.QtyMolding = QtyMolding;
+                GeneratedMoldingSelect.TypeMolding = TypeMoldingSelect?.Name;
+
+                db.Entry(GeneratedMoldingSelect).State = EntityState.Modified;
+                db.SaveChanges();
+                LoadMolding();
+            }
+        }));
+        public Command DelMoldingsCommand => _delMoldingsCommand ?? (_delMoldingsCommand = new Command(obj=> 
+        {
+            if (GeneratedMoldingSelect != null)
+            {
+                db.GeneratedMoldings.Remove(GeneratedMoldingSelect);
+                db.SaveChanges();
+                LoadMolding();
+            }
+        }));
+        public Command ClearMoldingsCommand => _clearMoldingsCommand ?? (_clearMoldingsCommand = new Command(obj=>
+        {
+            AccessoriesMoldingSelect = null;
+            TypeMoldingSelect = null;
+            QtyMolding = 0m;
+            HeightMolding = 0m;
+            PaintingMoldingSelect = null;
+        }));
+        #endregion
 
         public GeneratedViewModel(ref BuilderContext context, int id)
         {
