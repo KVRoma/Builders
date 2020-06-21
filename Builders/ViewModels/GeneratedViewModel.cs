@@ -817,6 +817,94 @@ namespace Builders.ViewModels
             LoadAccessoriess();
         }));
         #endregion
+        #region Stairs Command
+        private Command _addStairsCommand;
+        private Command _insStairsCommand;
+        private Command _delStairsCommand;
+        private Command _clearStairsCommand;
+
+        public Command AddStairsCommand => _addStairsCommand ?? (_addStairsCommand = new Command(obj =>
+        {
+            decimal qty = 0m;
+            if (TypeStairSelect?.Name == "Overlap Nosing" ||
+                TypeStairSelect?.Name == "Regular Nosing" ||
+                TypeStairSelect?.Name == "Overlap Nosing - over size" ||
+                TypeStairSelect?.Name == "Regular Nosing - over size")
+            {
+                qty = decimal.Round(QtyStairs * LenghtStairs, 2);
+            }
+            else 
+            {
+                qty = QtyStairs;
+            }
+
+            GeneratedStairs stairs = new GeneratedStairs()
+            {
+                Demolition = DemolitionStairSelect,
+                GeneratedId = generatedSelect.Id,
+                GradeLevel = LevelStairSelect?.Name,
+                LenghtStairs = LenghtStairs,
+                QtyLeveling = QtyLevelingStairs,
+                QtyStairs = QtyStairs,
+                QtyStairsLenght = qty,
+                TypeLeveling = TypeLevelingStairSelect?.Name,
+                TypeStairs = TypeStairSelect?.Name                
+            };
+            db.GeneratedStairs.Add(stairs);
+            db.SaveChanges();
+            LoadStairs();
+        }));
+        public Command InsStairsCommand => _insStairsCommand ?? (_insStairsCommand = new Command(obj=> 
+        {
+            if (GeneratedStairSelect != null)
+            {
+                decimal qty = 0m;
+                if (TypeStairSelect.Name == "Overlap Nosing" ||
+                    TypeStairSelect.Name == "Regular Nosing" ||
+                    TypeStairSelect.Name == "Overlap Nosing - over size" ||
+                    TypeStairSelect.Name == "Regular Nosing - over size")
+                {
+                    qty = decimal.Round(QtyStairs * LenghtStairs, 2);
+                }
+                else
+                {
+                    qty = QtyStairs;
+                }
+
+                GeneratedStairSelect.Demolition = DemolitionStairSelect;
+                GeneratedStairSelect.GeneratedId = generatedSelect.Id;
+                GeneratedStairSelect.GradeLevel = LevelStairSelect?.Name;
+                GeneratedStairSelect.LenghtStairs = LenghtStairs;
+                GeneratedStairSelect.QtyLeveling = QtyLevelingStairs;
+                GeneratedStairSelect.QtyStairs = QtyStairs;
+                GeneratedStairSelect.QtyStairsLenght = qty;
+                GeneratedStairSelect.TypeLeveling = TypeLevelingStairSelect?.Name;
+                GeneratedStairSelect.TypeStairs = TypeStairSelect?.Name;
+                db.Entry(GeneratedStairSelect).State = EntityState.Modified;
+                db.SaveChanges();
+                LoadStairs();
+            }
+        }));
+        public Command DelStairsCommand => _delStairsCommand ?? (_delStairsCommand = new Command(obj=> 
+        {
+            if (GeneratedStairSelect != null)
+            {
+                db.GeneratedStairs.Remove(GeneratedStairSelect);
+                db.SaveChanges();
+                LoadStairs();
+            }
+        }));
+        public Command ClearStairsCommand => _clearStairsCommand ?? (_clearStairsCommand = new Command(obj=> 
+        {
+            LevelStairSelect = null;
+            TypeStairSelect = null;
+            QtyStairs = 0m;
+            LenghtStairs = 0m;
+            DemolitionStairSelect = DemolitionStairs[1];
+            TypeLevelingStairSelect = null;
+            QtyLevelingStairs = 0m;
+        }));
+        #endregion
 
         public GeneratedViewModel(ref BuilderContext context, int id)
         {
