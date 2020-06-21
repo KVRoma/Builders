@@ -989,6 +989,61 @@ namespace Builders.ViewModels
             PaintingMoldingSelect = null;
         }));
         #endregion
+        #region Suplementary Command
+        private Command _addSuplementaryCommand;
+        private Command _insSuplementaryCommand;
+        private Command _delSuplementaryCommand;
+        private Command _clearSuplementaryCommand;
+
+        public Command AddSuplementaryCommand => _addSuplementaryCommand ?? (_addSuplementaryCommand = new Command(obj=> 
+        {
+            GeneratedSuplementary suplementary = new GeneratedSuplementary()
+            {
+                DeliveryName = DeliverySuplementarySelect,
+                DeliveryQty = QtyDeliverySuplementary,
+                FurnitureHandelingRoom = RoomSuplementary,
+                GeneralNotes = NotesSuplementary,
+                GeneratedId = generatedSelect.Id,
+                RateDisposal = DisposalSuplementary
+            };
+            db.GeneratedSuplementaries.Add(suplementary);
+            db.SaveChanges();
+            LoadSuplementary();
+        }));
+        public Command InsSuplementaryCommand => _insSuplementaryCommand ?? (_insSuplementaryCommand = new Command(obj=> 
+        {
+            if (GeneratedSuplementarySelect != null)
+            {
+                GeneratedSuplementarySelect.DeliveryName = DeliverySuplementarySelect;
+                GeneratedSuplementarySelect.DeliveryQty = QtyDeliverySuplementary;
+                GeneratedSuplementarySelect.FurnitureHandelingRoom = RoomSuplementary;
+                GeneratedSuplementarySelect.GeneralNotes = NotesSuplementary;
+                GeneratedSuplementarySelect.GeneratedId = generatedSelect.Id;
+                GeneratedSuplementarySelect.RateDisposal = DisposalSuplementary;
+
+                db.Entry(GeneratedSuplementarySelect).State = EntityState.Modified;
+                db.SaveChanges();
+                LoadSuplementary();
+            }
+        }));
+        public Command DelSuplementaryCommand => _delSuplementaryCommand ?? (_delSuplementaryCommand = new Command(obj=> 
+        {
+            if (GeneratedSuplementarySelect != null)
+            {
+                db.GeneratedSuplementaries.Remove(GeneratedSuplementarySelect);
+                db.SaveChanges();
+                LoadSuplementary();
+            }
+        }));
+        public Command ClearSuplementaryCommand => _clearSuplementaryCommand ?? (_clearSuplementaryCommand = new Command(obj=> 
+        {
+            RoomSuplementary = 0m;
+            DisposalSuplementary = 0m;
+            DeliverySuplementarySelect = null;
+            QtyDeliverySuplementary = 0m;
+            NotesSuplementary = null;
+        }));
+        #endregion
 
         public GeneratedViewModel(ref BuilderContext context, int id)
         {

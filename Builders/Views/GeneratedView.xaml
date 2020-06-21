@@ -814,7 +814,8 @@
                                     HorizontalAlignment="Right"
                                     Content="Clear Data"
                                     Foreground="Red"
-                                    BorderBrush="Red"/>
+                                    BorderBrush="Red"
+                                    Command="{Binding ClearSuplementaryCommand}"/>
 
                             <DataGrid Grid.Row="6"
                                       Grid.ColumnSpan="2"
@@ -838,15 +839,18 @@
                                 <Button Content="Add"
                                         Style="{StaticResource FooterButton}"
                                         Foreground="Green"
-                                        BorderBrush="Green"/>
+                                        BorderBrush="Green"
+                                        Command="{Binding AddSuplementaryCommand}"/>
                                 <Button Content="Edit"
                                         Style="{StaticResource FooterButton}"
                                         Foreground="Brown"
-                                        BorderBrush="Brown"/>
+                                        BorderBrush="Brown"
+                                        Command="{Binding InsSuplementaryCommand}"/>
                                 <Button Content="Del"
                                         Style="{StaticResource FooterButton}"
                                         Foreground="Red"
-                                        BorderBrush="Red"/>
+                                        BorderBrush="Red"
+                                        Command="{Binding DelSuplementaryCommand}"/>
                             </StackPanel>
                         </Grid>
                     </Border>
