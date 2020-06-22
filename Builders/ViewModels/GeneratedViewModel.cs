@@ -14,7 +14,7 @@ namespace Builders.ViewModels
     {
         public string WindowName { get; set; } = "Generator";
         private BuilderContext db;
-        private Generated generatedSelect;
+        public Generated generatedSelect;
 
         #region Material Detail Property
         private DIC_G_GradeLevel levelDetailSelect;
@@ -829,7 +829,8 @@ namespace Builders.ViewModels
             if (TypeStairSelect?.Name == "Overlap Nosing" ||
                 TypeStairSelect?.Name == "Regular Nosing" ||
                 TypeStairSelect?.Name == "Overlap Nosing - over size" ||
-                TypeStairSelect?.Name == "Regular Nosing - over size")
+                TypeStairSelect?.Name == "Regular Nosing - over size" ||
+                TypeStairSelect?.Name == "Pie Step")
             {
                 qty = decimal.Round(QtyStairs * LenghtStairs, 2);
             }
@@ -848,7 +849,9 @@ namespace Builders.ViewModels
                 QtyStairs = QtyStairs,
                 QtyStairsLenght = qty,
                 TypeLeveling = TypeLevelingStairSelect?.Name,
-                TypeStairs = TypeStairSelect?.Name                
+                TypeStairs = TypeStairSelect?.Name,
+                Description = "",
+                NameLeveling = (TypeLevelingStairSelect?.Name == "Leveling Bags") ? ("Patch Leveling") : (TypeLevelingStairSelect?.Name)
             };
             db.GeneratedStairs.Add(stairs);
             db.SaveChanges();
@@ -862,7 +865,8 @@ namespace Builders.ViewModels
                 if (TypeStairSelect.Name == "Overlap Nosing" ||
                     TypeStairSelect.Name == "Regular Nosing" ||
                     TypeStairSelect.Name == "Overlap Nosing - over size" ||
-                    TypeStairSelect.Name == "Regular Nosing - over size")
+                    TypeStairSelect.Name == "Regular Nosing - over size" ||
+                    TypeStairSelect?.Name == "Pie Step")
                 {
                     qty = decimal.Round(QtyStairs * LenghtStairs, 2);
                 }
@@ -880,6 +884,8 @@ namespace Builders.ViewModels
                 GeneratedStairSelect.QtyStairsLenght = qty;
                 GeneratedStairSelect.TypeLeveling = TypeLevelingStairSelect?.Name;
                 GeneratedStairSelect.TypeStairs = TypeStairSelect?.Name;
+                GeneratedStairSelect.Description = "";
+                GeneratedStairSelect.NameLeveling = (TypeLevelingStairSelect?.Name == "Leveling Bags") ? ("Patch Leveling") : (TypeLevelingStairSelect?.Name);
                 db.Entry(GeneratedStairSelect).State = EntityState.Modified;
                 db.SaveChanges();
                 LoadStairs();
@@ -913,22 +919,27 @@ namespace Builders.ViewModels
 
         public Command AddMoldingsCommand => _addMoldingsCommand ?? (_addMoldingsCommand = new Command(obj=> 
         {
-            decimal qty = 0m;
+            decimal qtyMaterial = 0m;
+            decimal qtyLabour = 0m;
             if (AccessoriesMoldingSelect?.Name == "Baseboards")
             {
-                qty = (decimal.Ceiling(QtyMolding / 16m) * 16m) + 16m;
+                qtyMaterial = (decimal.Ceiling(QtyMolding / 16m) * 16m) + 16m;
+                qtyLabour = qtyMaterial;
             }
             else if (AccessoriesMoldingSelect?.Name == "Door Casing - Over Size")
             {
-                qty = decimal.Ceiling(QtyMolding * 1.5m) * 16m;
+                qtyMaterial = decimal.Ceiling(QtyMolding * 1.5m) * 16m;
+                qtyLabour = QtyMolding;
             }
             else if (AccessoriesMoldingSelect?.Name == "Door Casing")
             {
-                qty = decimal.Ceiling(QtyMolding * 1.25m) * 16m;
+                qtyMaterial = decimal.Ceiling(QtyMolding * 1.25m) * 16m;
+                qtyLabour = QtyMolding;
             }
             GeneratedMolding molding = new GeneratedMolding() 
             {
-                BaseboardMaterial = qty,
+                BaseboardMaterial = qtyMaterial,
+                BaseboardLabour = qtyLabour,
                 GeneratedId = generatedSelect.Id,
                 HeightMolding = HeightMolding,
                 MoldingName = AccessoriesMoldingSelect?.Name,
@@ -944,21 +955,26 @@ namespace Builders.ViewModels
         {
             if (GeneratedMoldingSelect != null)
             {
-                decimal qty = 0m;
+                decimal qtyMaterial = 0m;
+                decimal qtyLabour = 0m;
                 if (AccessoriesMoldingSelect?.Name == "Baseboards")
                 {
-                    qty = (decimal.Ceiling(QtyMolding / 16m) * 16m) + 16m;
+                    qtyMaterial = (decimal.Ceiling(QtyMolding / 16m) * 16m) + 16m;
+                    qtyLabour = qtyMaterial;
                 }
                 else if (AccessoriesMoldingSelect?.Name == "Door Casing - Over Size")
                 {
-                    qty = decimal.Ceiling(QtyMolding * 1.5m) * 16m;
+                    qtyMaterial = decimal.Ceiling(QtyMolding * 1.5m) * 16m;
+                    qtyLabour = QtyMolding;
                 }
                 else if (AccessoriesMoldingSelect?.Name == "Door Casing")
                 {
-                    qty = decimal.Ceiling(QtyMolding * 1.25m) * 16m;
+                    qtyMaterial = decimal.Ceiling(QtyMolding * 1.25m) * 16m;
+                    qtyLabour = QtyMolding;
                 }
 
-                GeneratedMoldingSelect.BaseboardMaterial = qty;
+                GeneratedMoldingSelect.BaseboardMaterial = qtyMaterial;
+                GeneratedMoldingSelect.BaseboardLabour = qtyLabour;
                 GeneratedMoldingSelect.GeneratedId = generatedSelect.Id;
                 GeneratedMoldingSelect.HeightMolding = HeightMolding;
                 GeneratedMoldingSelect.MoldingName = AccessoriesMoldingSelect?.Name;
@@ -1101,7 +1117,7 @@ namespace Builders.ViewModels
         }));
         #endregion
 
-        public GeneratedViewModel(ref BuilderContext context, int id)
+        public GeneratedViewModel(ref BuilderContext context, int? id)
         {
             db = context;
 
@@ -1118,19 +1134,19 @@ namespace Builders.ViewModels
         /// Завантажує якщо є, або створює Generator для заданої Quota
         /// </summary>
         /// <param name="id"></param>
-        private void LoadGenerator(int id)
+        private void LoadGenerator(int? id)
         {
-            generatedSelect = db.Generateds.FirstOrDefault(g => g.ClientId == id);
+            generatedSelect = db.Generateds.FirstOrDefault(g => g.QuotaId == id);
             if (generatedSelect == null)
             {
                 generatedSelect = new Generated()
-                {
-                    ClientId = id
+                {                    
+                    QuotaId = id
                 };
                 db.Generateds.Add(generatedSelect);
                 db.SaveChanges();
                 generatedSelect = null;
-                generatedSelect = db.Generateds.FirstOrDefault(g => g.ClientId == id);
+                generatedSelect = db.Generateds.FirstOrDefault(g => g.QuotaId == id);
             }
         }
         /// <summary>

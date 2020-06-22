@@ -17,6 +17,8 @@ namespace Builders.Models
         public string TypeLeveling { get; set; }
         public decimal QtyLeveling { get; set; }
         public string Demolition { get; set; }
+        public string Description { get; set; }
+        public string NameLeveling { get; set; }
 
         public int? GeneratedId { get; set; }
         public Generated Generated { get; set; }

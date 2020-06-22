@@ -14,6 +14,7 @@ namespace Builders.Models
         public decimal QtyMolding { get; set; }
         public decimal HeightMolding { get; set; }
         public decimal BaseboardMaterial { get; set; }
+        public decimal BaseboardLabour { get; set; }
         public string Painting { get; set; }
 
         public int? GeneratedId { get; set; }

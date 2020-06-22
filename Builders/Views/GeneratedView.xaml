@@ -794,7 +794,7 @@
                                       Margin="5"
                                       Text="{Binding QtyDeliverySuplementary}"/>
 
-                            <Label Grid.Column="0"
+                            <!--<Label Grid.Column="0"
                                    Grid.Row="4"
                                    Margin="5"
                                    HorizontalContentAlignment="Right"
@@ -806,7 +806,7 @@
                                      TextWrapping="Wrap"
                                      AcceptsReturn="True"
                                      Height="100"
-                                     Text="{Binding NotesSuplementary}"/>
+                                     Text="{Binding NotesSuplementary}"/>-->
 
                             <Button Grid.Row="5" 
                                     Grid.Column="1"
@@ -828,7 +828,7 @@
                                     <DataGridTextColumn Header="Rate" Binding="{Binding Path=RateDisposal}" />
                                     <DataGridTextColumn Header="Flooring Delivery" Width="*" Binding="{Binding Path=DeliveryName}"/>
                                     <DataGridTextColumn Header="QTY" Binding="{Binding Path=DeliveryQty}"/>
-                                    <DataGridTextColumn Header="Notes" Width="*" Binding="{Binding Path=GeneralNotes}"/>                                    
+                                    <!--<DataGridTextColumn Header="Notes" Width="*" Binding="{Binding Path=GeneralNotes}"/>-->                                    
                                 </DataGrid.Columns>
                             </DataGrid>
 

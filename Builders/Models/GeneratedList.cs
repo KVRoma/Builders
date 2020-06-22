@@ -15,6 +15,10 @@ namespace Builders.Models
         public string Aditional { get; set; }
         public string Name { get; set; }
         public decimal Count { get; set; }
+        public string FullRoom 
+        {
+            get { return GradeLevel + " " + Partition + " " + Aditional; }
+        }
 
         public int? GeneratedId { get; set; }
         public Generated Generated { get; set; }

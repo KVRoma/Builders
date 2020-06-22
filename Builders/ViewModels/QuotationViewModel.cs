@@ -78,6 +78,9 @@ namespace Builders.ViewModels
         private string calcDemolition;
         private string calcServices;
 
+        private GeneratedList generatedListSelect;
+        private List<GeneratedList> generatedLists;
+
         //************************************************************************************************
 
         public Quotation QuotaSelect
@@ -538,6 +541,25 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(CalcServices));
             }
         }
+
+        public GeneratedList GeneratedListSelect
+        {
+            get { return generatedListSelect; }
+            set
+            {
+                generatedListSelect = value;
+                OnPropertyChanged(nameof(GeneratedListSelect));
+            }
+        }
+        public List<GeneratedList> GeneratedLists
+        {
+            get { return generatedLists; }
+            set
+            {
+                generatedLists = value;
+                OnPropertyChanged(nameof(GeneratedLists));
+            }
+        }
         //**************************************************************************************************
         private Command _addItem;
         private Command _insItem;
@@ -939,10 +961,14 @@ namespace Builders.ViewModels
         }));
         public Command Generated => _generated ?? (_generated = new Command(async obj=> 
         {
+            GeneratedLists = null;
             var displayRootRegistry = (Application.Current as App).displayRootRegistry;
-            var generator = new GeneratedViewModel(ref db, QuotaSelect.ClientId);
+            var generator = new GeneratedViewModel(ref db, QuotaSelect.Id);
             await displayRootRegistry.ShowModalPresentation(generator);
-        }));              
+            GeneratedLists = CalculateGenerated(generator.generatedSelect);
+        }));
+               
+
         public QuotationViewModel(ref BuilderContext context, EnumClient res, Quotation select, string companyName)
         {
             db = context;
@@ -985,6 +1011,11 @@ namespace Builders.ViewModels
                         Descriptions = select?.JobDescription;
                         ClientSelect = db.Clients.FirstOrDefault(c => c.Id == QuotaSelect.ClientId);
                         lastIdClient = ClientSelect.Id;
+                        var generator = db.Generateds.FirstOrDefault(g => g.QuotaId == select.Id);
+                        if (generator != null)
+                        {
+                            GeneratedLists = db.GeneratedLists.Where(g => g.GeneratedId == generator.Id).ToList();
+                        }
                     }
                     break;
             }
@@ -1083,7 +1114,354 @@ namespace Builders.ViewModels
                 QuotationsMaterial = null;
             }
         }
+        private List<GeneratedList> CalculateGenerated(Generated select)
+        {
+            var temp = db.GeneratedLists.Where(g => g.GeneratedId == select.Id);
+            if (temp != null)
+            {
+                db.GeneratedLists.RemoveRange(temp);
+                db.SaveChanges();
+            }
 
 
+            var material = db.GeneratedMaterials.Where(m => m.GeneratedId == select.Id).ToList();
+            var accessories = db.GeneratedAccessories.Where(a => a.GeneratedId == select.Id).ToList();
+            var stairs = db.GeneratedStairs.Where(s => s.GeneratedId == select.Id).ToList();
+            var molding = db.GeneratedMoldings.Where(m => m.GeneratedId == select.Id).ToList();
+            var suplementary = db.GeneratedSuplementaries.Where(s => s.GeneratedId == select.Id).ToList();
+            var flood = db.GeneratedFloods.Where(f => f.GeneratedId == select.Id).ToList();
+
+            GeneratedList list = new GeneratedList();
+            List<GeneratedList> result = new List<GeneratedList>();
+
+            foreach (var item in material)
+            {
+                if (item.NewFloor != null)
+                {
+                    list.GeneratedId = select.Id;
+                    list.Groupe = "FLOORING";
+                    list.GradeLevel = item?.GradeLevel;
+                    list.Partition = item?.Partition;
+                    list.Aditional = item?.Aditional;
+                    list.Name = item?.NewFloor;
+                    list.Count = item.TotalFlooringMaterial;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+
+                    list.GeneratedId = select.Id;
+                    list.Groupe = "INSTALLATION";
+                    list.GradeLevel = item?.GradeLevel;
+                    list.Partition = item?.Partition;
+                    list.Aditional = item?.Aditional;
+                    list.Name = item?.NewFloor;
+                    list.Count = item.TotalFloor;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+                }
+
+                if (item.NeedDemolition == "Yes")
+                {
+                    list.GeneratedId = select.Id;
+                    list.Groupe = "DEMOLITION";
+                    list.GradeLevel = item?.GradeLevel;
+                    list.Partition = item?.Partition;
+                    list.Aditional = item?.Aditional;
+                    list.Name = item?.ExistingFloor;
+                    list.Count = item.TotalFloor;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+                }
+
+                if (item.TransitionR != 0m)
+                {
+                    list.GeneratedId = select.Id;
+                    list.Groupe = "ACCESSORIES";
+                    list.GradeLevel = item?.GradeLevel;
+                    list.Partition = item?.Partition;
+                    list.Aditional = item?.Aditional;
+                    list.Name = "Transition (R)";
+                    list.Count = item.TransitionR;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+                }
+
+                if (item.TransitionT != 0m)
+                {
+                    list.GeneratedId = select.Id;
+                    list.Groupe = "ACCESSORIES";
+                    list.GradeLevel = item?.GradeLevel;
+                    list.Partition = item?.Partition;
+                    list.Aditional = item?.Aditional;
+                    list.Name = "Transition (T)";
+                    list.Count = item.TransitionT;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+                }
+
+                if (item.TransitionOther != 0m)
+                {
+                    list.GeneratedId = select.Id;
+                    list.Groupe = "ACCESSORIES";
+                    list.GradeLevel = item?.GradeLevel;
+                    list.Partition = item?.Partition;
+                    list.Aditional = item?.Aditional;
+                    list.Name = item.NoteTransitionOther;
+                    list.Count = item.TransitionOther;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+                }
+
+                if (item.QtyTrim != 0m)
+                {
+                    list.GeneratedId = select.Id;
+                    list.Groupe = "ACCESSORIES";
+                    list.GradeLevel = item?.GradeLevel;
+                    list.Partition = item?.Partition;
+                    list.Aditional = item?.Aditional;
+                    list.Name = item.TypeTrim;
+                    list.Count = item.QtyTrim;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+
+                    list.GeneratedId = select.Id;
+                    list.Groupe = "INSTALLATION";
+                    list.GradeLevel = item?.GradeLevel;
+                    list.Partition = item?.Partition;
+                    list.Aditional = item?.Aditional;
+                    list.Name = item.TypeTrim;
+                    list.Count = item.QtyTrim;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+                }
+            }
+
+            decimal r = material.Select(m => m.TransitionR).Sum();
+            decimal t = material.Select(m => m.TransitionT).Sum();
+            decimal o = material.Select(m => m.TransitionOther).Sum();
+
+            if ((r + t + o) != 0m)
+            {
+                list.GeneratedId = select.Id;
+                list.Groupe = "INSTALLATION";
+                list.Name = "Total transition";
+                list.Count = r + t + o;
+
+                result.Add(list);
+                list = null;
+                list = new GeneratedList();
+            }
+
+            foreach (var item in accessories)
+            {
+                if (item.AccessoriesFloor != null)
+                {
+                    list.GeneratedId = select.Id;
+                    list.Groupe = "ACCESSORIES";                    
+                    list.Name = item.AccessoriesFloor + "  " + item.NewFloor + "-" + item.TypeAccessoriesFloor;
+                    list.Count = item.TotalAccessoriesFloor;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+                }
+            }
+
+            foreach (var item in stairs)
+            {
+                if (item.TypeStairs != null)
+                {                    
+                    list.GeneratedId = select.Id;
+                    list.GradeLevel = item.GradeLevel;
+                    list.Groupe = "ACCESSORIES";
+                    list.Name = item.TypeStairs + "  LENGHT - " + item.LenghtStairs.ToString();
+                    list.Count = item.QtyStairsLenght;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+
+                    list.GeneratedId = select.Id;
+                    list.GradeLevel = item.GradeLevel;
+                    list.Groupe = "INSTALLATION";
+                    list.Name = item.TypeStairs + "  LENGHT - " + item.LenghtStairs.ToString();
+                    list.Count = item.QtyStairs;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+                }
+
+                if (item.TypeLeveling != null)
+                {
+                    list.GeneratedId = select.Id;
+                    list.GradeLevel = item.GradeLevel;
+                    list.Groupe = "ACCESSORIES";
+                    list.Name = item.NameLeveling;
+                    list.Count = item.QtyLeveling;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+                }
+            }
+
+            decimal sumQtyStair = stairs.Where(s=>s.Demolition == "Yes").ToList()?.Select(s => s.QtyStairs)?.Sum() ?? 0m;
+            if (sumQtyStair != 0m)
+            {
+                list.GeneratedId = select.Id;
+                list.Groupe = "DEMOLITION";
+                list.Name = "Stairs";
+                list.Count = sumQtyStair;
+
+                result.Add(list);
+                list = null;
+                list = new GeneratedList();
+            }
+
+            foreach (var item in molding)
+            {
+                if (item.MoldingName != null)
+                {
+                    list.GeneratedId = select.Id;
+                    list.Groupe = "ACCESSORIES";
+                    list.Name = item.MoldingName + "  -  " + item.TypeMolding;
+                    list.Count = item.BaseboardMaterial;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+
+                    list.GeneratedId = select.Id;
+                    list.Groupe = "INSTALLATION";
+                    list.Name = item.MoldingName + "  -  " + item.TypeMolding;
+                    list.Count = item.BaseboardLabour;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+                }
+                if (item.Painting != null)
+                {
+                    list.GeneratedId = select.Id;
+                    list.Groupe = "OPTIONAL SERVICES";
+                    list.Name = item.Painting;
+                    list.Count = 0m;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+                }
+            }
+
+            foreach (var item in suplementary)
+            {
+                if (item.FurnitureHandelingRoom != 0m)
+                {
+                    list.GeneratedId = select.Id;
+                    list.Groupe = "OPTIONAL SERVICES";
+                    list.Name = "Furniture Moving";
+                    list.Count = item.FurnitureHandelingRoom;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+                }
+                if (item.RateDisposal != 0m)
+                {
+                    list.GeneratedId = select.Id;
+                    list.Groupe = "DEMOLITION";
+                    list.Name = "Disposal";
+                    list.Count = item.RateDisposal;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+                }
+                if (item.DeliveryName != null)
+                {
+                    list.GeneratedId = select.Id;
+                    list.Groupe = "FLOORING DELIVERY";
+                    list.Name = item.DeliveryName;
+                    list.Count = item.DeliveryQty;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+                }
+            }
+
+            foreach (var item in flood)
+            {
+                if (item.Depth != null)
+                {
+                    list.GeneratedId = select.Id;
+                    list.Groupe = "FLOORING";                    
+                    list.Name = item.Concatenar;
+                    list.Count = item.QtyNovoplan;
+
+                    result.Add(list);
+                    list = null;
+                    list = new GeneratedList();
+                }
+            }
+
+            db.GeneratedLists.AddRange(SortedListGenerated(result));
+            db.SaveChanges();
+
+            return db.GeneratedLists.Where(g => g.GeneratedId == select.Id).ToList();
+        }
+        private List<GeneratedList> SortedListGenerated(List<GeneratedList> list)
+        {
+            var flooring = list.Where(l => l.Groupe == "FLOORING").ToList();
+            var accessories = list.Where(l => l.Groupe == "ACCESSORIES").ToList();
+            var installation = list.Where(l => l.Groupe == "INSTALLATION").ToList();
+            var demolition = list.Where(l => l.Groupe == "DEMOLITION").ToList();
+            var services = list.Where(l => l.Groupe == "OPTIONAL SERVICES").ToList();
+            var delivery = list.Where(l => l.Groupe == "FLOORING DELIVERY").ToList();
+
+            List<GeneratedList> sorted = new List<GeneratedList>();
+
+            foreach (var item in flooring)
+            {
+                sorted.Add(item);                 
+            }
+            foreach (var item in accessories)
+            {
+                sorted.Add(item);
+            }
+            foreach (var item in installation)
+            {
+                sorted.Add(item);
+            }
+            foreach (var item in demolition)
+            {
+                sorted.Add(item);
+            }
+            foreach (var item in services)
+            {
+                sorted.Add(item);
+            }
+            foreach (var item in delivery)
+            {
+                sorted.Add(item);
+            }
+            return sorted;
+        }
     }
 }

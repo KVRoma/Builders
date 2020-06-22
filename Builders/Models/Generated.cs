@@ -10,6 +10,7 @@ namespace Builders.Models
     {
         public int Id { get; set; }
         public int ClientId { get; set; }
+        public int? QuotaId { get; set; }
 
         public string Color { get; set; } = "Black";
         public bool IsEnable { get; set; } = true;

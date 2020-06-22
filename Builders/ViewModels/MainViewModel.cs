@@ -1128,6 +1128,7 @@ namespace Builders.ViewModels
 
                 foreach (var item in quota)
                 {
+                    DeleteGenerated(item.Id);
                     var invoice = Invoices.Where(i => i.QuotaId == item.Id);
                     var material = db.MaterialQuotations.Where(m => m.QuotationId == item.Id);
                     var order = WorkOrders.Where(o => o.QuotaId == item.Id);
@@ -1384,6 +1385,7 @@ namespace Builders.ViewModels
         {
             if (QuotationSelect != null)
             {
+                DeleteGenerated(QuotationSelect.Id);
                 var material = db.MaterialQuotations.Where(m => m.QuotationId == QuotationSelect.Id);
                 var invoice = Invoices.Where(i => i.QuotaId == QuotationSelect.Id);
                 var order = WorkOrders.Where(o => o.QuotaId == QuotationSelect.Id);
@@ -5671,6 +5673,55 @@ namespace Builders.ViewModels
                 ExcelApp.Calculate();
 
             }
+        }
+        /// <summary>
+        /// Видаляє Generated по заданому Id Quota 
+        /// </summary>
+        /// <param name="quotaId"></param>
+        private void DeleteGenerated(int? quotaId)
+        {
+            var generated = db.Generateds.FirstOrDefault(g => g.QuotaId == quotaId);
+            if (generated != null)
+            {
+                var material = db.GeneratedMaterials.Where(g => g.GeneratedId == generated.Id);
+                var accessories = db.GeneratedAccessories.Where(g => g.GeneratedId == generated.Id);
+                var stairs = db.GeneratedStairs.Where(g => g.GeneratedId == generated.Id);
+                var molding = db.GeneratedMoldings.Where(g => g.GeneratedId == generated.Id);
+                var suplementary = db.GeneratedSuplementaries.Where(g => g.GeneratedId == generated.Id);
+                var flood = db.GeneratedFloods.Where(g => g.GeneratedId == generated.Id);
+                var list = db.GeneratedLists.Where(g => g.GeneratedId == generated.Id);
+
+                if (material != null)
+                {
+                    db.GeneratedMaterials.RemoveRange(material);
+                }
+                if (accessories != null)
+                {
+                    db.GeneratedAccessories.RemoveRange(accessories);
+                }
+                if (stairs != null)
+                {
+                    db.GeneratedStairs.RemoveRange(stairs);
+                }
+                if (molding != null)
+                {
+                    db.GeneratedMoldings.RemoveRange(molding);
+                }
+                if (suplementary != null)
+                {
+                    db.GeneratedSuplementaries.RemoveRange(suplementary);
+                }
+                if (flood != null)
+                {
+                    db.GeneratedFloods.RemoveRange(flood);
+                }
+                if (list != null)
+                {
+                    db.GeneratedLists.RemoveRange(list);
+                }
+            }
+            db.Generateds.Remove(generated);
+            db.SaveChanges();
         }
     }
 }

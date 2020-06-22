@@ -300,7 +300,7 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
-                <ScrollViewer Grid.Row="1" 
+                <!--<ScrollViewer Grid.Row="1" 
                               VerticalScrollBarVisibility="Auto"
                               HorizontalScrollBarVisibility="Auto"
                               Margin="5">
@@ -327,7 +327,20 @@
                         <Run Text="{Binding CalcServices}" Foreground="Blue"/>
 
                     </TextBlock>
-                </ScrollViewer>
+                </ScrollViewer> -->
+                <DataGrid Grid.Row="1" 
+                          AutoGenerateColumns="False"                          
+                          IsReadOnly="True" 
+                          ItemsSource="{Binding GeneratedLists, UpdateSourceTrigger=PropertyChanged}"
+                          SelectedItem="{Binding GeneratedListSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Room" FontSize="8" Width="auto" Binding="{Binding Path=FullRoom}" />
+                        <DataGridTextColumn Header="Groupe" FontSize="10" Width="auto"  Binding="{Binding Path=Groupe}" />
+                        <DataGridTextColumn Header="Name" FontSize="10" Width="*" Binding="{Binding Path=Name}" />
+                        <DataGridTextColumn Header="Qty" FontSize="10" Width="auto" Binding="{Binding Path=Count, StringFormat='0.00'}" />
+                        
+                    </DataGrid.Columns>
+                </DataGrid>
 
                 <StackPanel Grid.Row="2" 
                             Orientation="Horizontal" 
