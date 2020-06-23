@@ -139,7 +139,7 @@
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="Foreground" Value="Blue"/>
-        <Setter Property="Margin" Value="0,2,2,2"/>
+        <Setter Property="Margin" Value="0,2,2,2"/>         
     </Style>
     <!--**********************************************************-->
     <!-- стиль для TextBox HEDER Text Wrap and Press Enter -->

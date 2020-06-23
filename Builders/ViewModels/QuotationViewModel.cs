@@ -131,10 +131,10 @@ namespace Builders.ViewModels
                         IsVisibleRoomDescription = Visibility.Visible;
 
 
-                        DIC_GroupeSelect = (MaterialQuotationSelect?.Groupe != null) ? DIC_Groupes.FirstOrDefault(g => g.NameGroupe == MaterialQuotationSelect.Groupe) : null;
+                        DIC_GroupeSelect = (MaterialQuotationSelect?.Groupe != null) ? DIC_Groupes?.FirstOrDefault(g => g?.NameGroupe == MaterialQuotationSelect?.Groupe) : null;
                         RoomDescription = MaterialQuotationSelect?.Description;
-                        DepthSelect = (MaterialQuotationSelect?.Depth != null) ? Depths.FirstOrDefault(g => g.Name == MaterialQuotationSelect.Depth) : null;
-                        Quantity = MaterialQuotationSelect.QuantityNL;
+                        DepthSelect = (MaterialQuotationSelect?.Depth != null) ? Depths?.FirstOrDefault(g => g?.Name == MaterialQuotationSelect?.Depth) : null;
+                        Quantity = MaterialQuotationSelect?.QuantityNL ?? 0m;
                         Rate = MaterialQuotationSelect?.Rate ?? 0m;
                     }
                     else
@@ -142,11 +142,11 @@ namespace Builders.ViewModels
                         IsVisibleStandart = Visibility.Visible;
                         IsVisibleRoomDescription = Visibility.Collapsed;
                         //LoadGroup();
-                        DIC_GroupeSelect = (MaterialQuotationSelect?.Groupe != null) ? DIC_Groupes.FirstOrDefault(g => g.NameGroupe == MaterialQuotationSelect?.Groupe) : null;
-                        DIC_ItemSelect = (MaterialQuotationSelect?.Item != null) ? DIC_Items.FirstOrDefault(i => i.Name == MaterialQuotationSelect?.Item) : null;
-                        DIC_DescriptionSelect = (MaterialQuotationSelect?.Description != null) ? DIC_Descriptions.FirstOrDefault(d => d.Name == MaterialQuotationSelect?.Description) : null;
-                        Quantity = MaterialQuotationSelect.Quantity;
-                        Rate = MaterialQuotationSelect.Rate;
+                        DIC_GroupeSelect = (MaterialQuotationSelect?.Groupe != null) ? DIC_Groupes?.FirstOrDefault(g => g?.NameGroupe == MaterialQuotationSelect?.Groupe) : null;
+                        DIC_ItemSelect = (MaterialQuotationSelect?.Item != null) ? DIC_Items?.FirstOrDefault(i => i?.Name == MaterialQuotationSelect?.Item) : null;
+                        DIC_DescriptionSelect = (MaterialQuotationSelect?.Description != null) ? DIC_Descriptions?.FirstOrDefault(d => d?.Name == MaterialQuotationSelect?.Description) : null;
+                        Quantity = MaterialQuotationSelect?.Quantity ?? 0m;
+                        Rate = MaterialQuotationSelect?.Rate ?? 0m;
                     }
                 }
             }
@@ -966,6 +966,7 @@ namespace Builders.ViewModels
             var generator = new GeneratedViewModel(ref db, QuotaSelect.Id);
             await displayRootRegistry.ShowModalPresentation(generator);
             GeneratedLists = CalculateGenerated(generator.generatedSelect);
+            QuotaSelect = AddMaterialQuotaToGenerated(GeneratedLists, quotaSelect);
         }));
                
 
@@ -1462,6 +1463,32 @@ namespace Builders.ViewModels
                 sorted.Add(item);
             }
             return sorted;
+        }
+        private Quotation AddMaterialQuotaToGenerated(List<GeneratedList> generated, Quotation select)
+        {
+            Quotation quota = select;
+            var oldMaterial = db.MaterialQuotations.Where(m => m.QuotationId == quota.Id);
+            db.MaterialQuotations.RemoveRange(oldMaterial);
+            db.SaveChanges();
+
+            List<MaterialQuotation> materials = new List<MaterialQuotation>();
+            foreach (var item in generated)
+            {
+                materials.Add(new MaterialQuotation() 
+                {
+                    GradeLevel = item.GradeLevel,
+                    Aditional = item.Aditional,
+                    Partition = item.Partition,
+                    Groupe = item.Groupe,                    
+                    QuotationId = quota.Id,
+                    Quantity = item.Count,
+                    Description = item.Name,
+                    GeneratedId = item.GeneratedId                    
+                });
+            }
+            db.MaterialQuotations.AddRange(materials);
+            db.SaveChanges();
+            return quota;
         }
     }
 }

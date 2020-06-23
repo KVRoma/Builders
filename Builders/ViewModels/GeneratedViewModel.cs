@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity;
+using System.Windows;
 
 namespace Builders.ViewModels
 {
@@ -15,6 +16,27 @@ namespace Builders.ViewModels
         public string WindowName { get; set; } = "Generator";
         private BuilderContext db;
         public Generated generatedSelect;
+
+        private Visibility isVisibleCMO;
+        private Visibility isVisibleNL;
+        public Visibility IsVisibleCMO
+        {
+            get { return isVisibleCMO; }
+            set
+            {
+                isVisibleCMO = value;
+                OnPropertyChanged(nameof(IsVisibleCMO));
+            }
+        }
+        public Visibility IsVisibleNL
+        {
+            get { return isVisibleNL; }
+            set
+            {
+                isVisibleNL = value;
+                OnPropertyChanged(nameof(IsVisibleNL));
+            }
+        }
 
         #region Material Detail Property
         private DIC_G_GradeLevel levelDetailSelect;
@@ -1115,6 +1137,7 @@ namespace Builders.ViewModels
             SizeFlood = 0m;
             DepthFloodSelect = null;
         }));
+                
         #endregion
 
         public GeneratedViewModel(ref BuilderContext context, int? id)
@@ -1122,6 +1145,7 @@ namespace Builders.ViewModels
             db = context;
 
             LoadGenerator(id);
+            GetVisibleTabItems(id);
             LoadComboBox();
             LoadDetail();
             LoadAccessoriess();
@@ -1147,6 +1171,24 @@ namespace Builders.ViewModels
                 db.SaveChanges();
                 generatedSelect = null;
                 generatedSelect = db.Generateds.FirstOrDefault(g => g.QuotaId == id);
+            }
+        }
+        /// <summary>
+        /// Метод приховує, або показує вкладки відповідних компаній по QuotaId
+        /// </summary>
+        /// <param name="id"></param>
+        private void GetVisibleTabItems(int? id)
+        {
+            var quota = db.Quotations.Find(id);
+            if (quota.CompanyName == "CMO")
+            {
+                IsVisibleCMO = Visibility.Visible;
+                IsVisibleNL = Visibility.Collapsed;
+            }
+            else if (quota.CompanyName == "Leveling")
+            {
+                IsVisibleCMO = Visibility.Collapsed;
+                IsVisibleNL = Visibility.Visible;
             }
         }
         /// <summary>

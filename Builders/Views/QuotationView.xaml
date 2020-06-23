@@ -17,7 +17,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="0.5*"/>
+            <!--<ColumnDefinition Width="0.5*"/> -->
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -249,13 +249,13 @@
             <TextBox Margin="5" 
                      Width="100"
                      HorizontalContentAlignment="Center"
-                     Text="{Binding Quantity}"
+                     Text="{Binding Quantity, StringFormat={}{0:#.##}}"
                      UI:FocusAdvancement.AdvancesByEnterKey="True"
                      IsEnabled="{Binding IsEnableGenerator}"/>
             <TextBox Margin="10,5,5,5" 
                      Width="100" 
                      HorizontalContentAlignment="Center"
-                     Text="{Binding Rate, StringFormat=\{0:F2\}}"
+                     Text="{Binding Rate, StringFormat={}{0:#.##}}"
                      UI:FocusAdvancement.AdvancesByEnterKey="True"
                      IsEnabled="{Binding IsEnableGenerator}"/>
         </StackPanel>
@@ -288,8 +288,15 @@
                     Style="{StaticResource FooterButton}" 
                     Command="{Binding OtherQuotation}"
                     IsEnabled="{Binding IsEnableGenerator}"/>
+            <Button Content="Generator" 
+                    Margin="150,0,0,0"
+                    Style="{StaticResource FooterButton}"
+                    Foreground="Blue"
+                    BorderBrush="Blue"
+                    IsEnabled="{Binding IsEnableGenerator}"
+                    Command="{Binding Generated}"/>
         </StackPanel>
-
+        <!--  Generated View
         <Border Grid.Column="1" 
                 Grid.RowSpan="11" 
                 Style="{StaticResource BorderRadiusBlack}">
@@ -299,35 +306,7 @@
                     <RowDefinition/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-
-                <!--<ScrollViewer Grid.Row="1" 
-                              VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Auto"
-                              Margin="5">
-                    <TextBlock TextWrapping="Wrap" 
-                               Margin="5">
-                        <Run Text=" FLOORING" Foreground="Red"/>
-                        <LineBreak/>                    
-                        <Run Text="{Binding CalcFlooring}" Foreground="Blue"/>
-                    
-                        <Run Text="ACCESSORIES" Foreground="Red"/>
-                        <LineBreak/>
-                        <Run Text="{Binding CalcAccessories}" Foreground="Blue"/>
-                    
-                        <Run Text="INSTALLATION" Foreground="Red"/>
-                        <LineBreak/>
-                        <Run Text="{Binding CalcInstallation}" Foreground="Blue"/>
-                    
-                        <Run Text="DEMOLITION" Foreground="Red"/>
-                        <LineBreak/>
-                        <Run Text="{Binding CalcDemolition}" Foreground="Blue"/>
-                    
-                        <Run Text="OPTIONAL SERVICES" Foreground="Red"/> 
-                        <LineBreak/>
-                        <Run Text="{Binding CalcServices}" Foreground="Blue"/>
-
-                    </TextBlock>
-                </ScrollViewer> -->
+                
                 <DataGrid Grid.Row="1" 
                           AutoGenerateColumns="False"                          
                           IsReadOnly="True" 
@@ -354,6 +333,8 @@
                 </StackPanel>
             </Grid>            
         </Border>
+         -->
+
     </Grid>
     
 </Window>
