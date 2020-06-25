@@ -812,5 +812,32 @@
                 </Grid>
             </TabItem.Content>
         </TabItem>
-    </TabControl>
+
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="15,0,0,0" Text="Import" FontWeight="Bold"/>
+                </StackPanel>
+            </TabItem.Header>
+            <TabItem.Content>
+                <Grid>                   
+                    
+                    <StackPanel Orientation="Vertical"
+                                Style="{StaticResource FooterMenu}" >
+                        <Button Content="Clients" 
+                                Style="{StaticResource FooterButton}"
+                                Command="{Binding ImportClient}"/>
+                        <Button Content="Quota" 
+                                Style="{StaticResource FooterButton}"
+                                Command="{Binding ImportQuota}"/>
+                        <Button Content="Material Quota" 
+                                Style="{StaticResource FooterButton}"
+                                Command="{Binding ImportMaterialQuota}"/>
+
+                    </StackPanel>
+                </Grid>
+            </TabItem.Content>
+        </TabItem>
+
+    </TabControl>    
 </UserControl>

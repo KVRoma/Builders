@@ -15,6 +15,8 @@ using System.ComponentModel;
 using System.Threading;
 using Builders.Views;
 using System.Windows.Threading;
+using System.Drawing.Printing;
+using System.Runtime.InteropServices;
 
 namespace Builders.ViewModels
 {
@@ -1026,6 +1028,10 @@ namespace Builders.ViewModels
         private Command _dicSupplier;
         private Command _dicDepth;
         //*************************************
+        private Command _importClient;
+        private Command _importQuota;
+        private Command _importMaterialQuota;
+        //*************************************
         #endregion
         #region Public Command
         public Command ExitApp => _exitApp ?? (_exitApp = new Command(obj =>
@@ -1326,14 +1332,14 @@ namespace Builders.ViewModels
 
                     ExcelApp.Visible = true;           // Робим книгу видимою
                     ExcelApp.UserControl = true;       // Передаємо керування користувачу  
-                                                        //************************
+                                                       //************************
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error message: " + Environment.NewLine +
                                            ex.Message + Environment.NewLine + Environment.NewLine +
                                            "StackTrace message: " + Environment.NewLine +
-                                           ex.StackTrace, "Warning !!!");                    
+                                           ex.StackTrace, "Warning !!!");
                 }
                 ProgressStop();
             }
@@ -2276,8 +2282,8 @@ namespace Builders.ViewModels
 
                 WorkOrderSelect.Parking = work.Parking;
                 WorkOrderSelect.DateServices = work.ServiceDate;
-                WorkOrderSelect.DateCompletion = work.CompletionDate;                
-                WorkOrderSelect.Notes = work.Notes;      
+                WorkOrderSelect.DateCompletion = work.CompletionDate;
+                WorkOrderSelect.Notes = work.Notes;
 
                 db.Entry(WorkOrderSelect).State = EntityState.Modified;
                 db.SaveChanges();
@@ -3159,6 +3165,19 @@ namespace Builders.ViewModels
             var displayRootRegistry = (Application.Current as App).displayRootRegistry;
             var depthViewModel = new DIC_DepthViewModel(ref db);
             await displayRootRegistry.ShowModalPresentation(depthViewModel);
+        }));
+        //************************************
+        public Command ImportClient => _importClient ?? (_importClient = new Command(obj=> 
+        {
+            ImportClientsTableToExcel();
+        }));
+        public Command ImportQuota => _importQuota ?? (_importQuota = new Command(obj=> 
+        {
+            ImportQuotaTableToExcel();
+        }));
+        public Command ImportMaterialQuota => _importMaterialQuota ?? (_importMaterialQuota = new Command(obj=> 
+        {
+            ImportMaterialQuotaTableToExcel();
         }));
 
         #endregion
@@ -4617,7 +4636,7 @@ namespace Builders.ViewModels
                 var clientData = Clients.Where(c => c.Id == QuotationSelect.ClientId).FirstOrDefault();
                 //var materialData = db.MaterialQuotations.Where(q => q.QuotationId == QuotationSelect.Id);
 
-                List<MaterialQuotation> materialData = new List<MaterialQuotation>(); 
+                List<MaterialQuotation> materialData = new List<MaterialQuotation>();
                 var mat = db.MaterialQuotations.Where(q => q.QuotationId == QuotationSelect.Id).ToList();
                 List<string> singleton = mat.Select(m => m.MaterialDetail)?.Distinct().ToList();
                 foreach (var item in singleton)
@@ -4625,15 +4644,15 @@ namespace Builders.ViewModels
                     var temp = mat.Where(m => m.MaterialDetail == item).ToList();
                     if (temp != null)
                     {
-                       
-                        materialData.Add(new MaterialQuotation() 
-                        {   
+
+                        materialData.Add(new MaterialQuotation()
+                        {
                             Id = temp.Select(t => t.Id).FirstOrDefault(),
-                            Depth = temp.Select(t=>t.Depth).FirstOrDefault(),
+                            Depth = temp.Select(t => t.Depth).FirstOrDefault(),
                             Groupe = temp.Select(t => t.Groupe).FirstOrDefault(),
                             Item = temp.Select(t => t.Item).FirstOrDefault(),
                             Description = temp.Select(t => t.Description).FirstOrDefault(),
-                            Price = temp.Select(t=>t.Price)?.Sum() ?? 0m,
+                            Price = temp.Select(t => t.Price)?.Sum() ?? 0m,
                             Quantity = temp.Select(t => t.Quantity)?.Sum() ?? 0m,
                             QuantityNL = temp.Select(t => t.QuantityNL)?.Sum() ?? 0m,
                             Rate = temp.Select(t => t.Rate).FirstOrDefault(),
@@ -4641,7 +4660,7 @@ namespace Builders.ViewModels
                             SupplierId = temp.Select(t => t.SupplierId).FirstOrDefault(),
                         });
                     }
-                    
+
                 }
 
                 Excel.Application ExcelApp = new Excel.Application();
@@ -4670,7 +4689,7 @@ namespace Builders.ViewModels
 
                 i = 19; // "FLOORING"
                 foreach (var item in materialData)
-                { 
+                {
                     if (item.Groupe == "FLOORING")
                     {
                         //ExcelApp.Cells[i, 1] = item.Item;
@@ -5723,5 +5742,231 @@ namespace Builders.ViewModels
             db.Generateds.Remove(generated);
             db.SaveChanges();
         }
+        /// <summary>
+        /// Імпортує дані в БД з вказаного файлу Excel
+        /// </summary>
+        private async void ImportClientsTableToExcel()
+        {
+            string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
+
+            if (path == null) // Перевіряємо шлях до файлу на null
+            {
+                return;
+            }
+            List<Client> client = new List<Client>();
+            ProgressStart();
+            await Start(path);
+
+            db.Clients.AddRange(client);
+            db.SaveChanges();
+            Clients = null;
+            LoadClientsDB();
+
+            ProgressStop();
+            
+
+            async Task Start(string pathFile)
+            {
+                await Task.Run(() =>
+                {
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                          // Створюємо лист Excel                        
+
+                    try
+                    {
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(pathFile);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+                        int count = int.Parse(ExcelApp.Cells[1, 1].Value2?.ToString()) + 2;
+
+                        for (int i = 3; i <= count; i++)
+                        {
+                            client.Add(new Client()
+                            {
+                                DateRegistration = (DateTime.TryParse(ExcelApp.Cells[i, 2].Value?.ToString(), out DateTime res)) ? (res) : (DateTime.Today), // Для поля з датою треба просто "Value"
+                                TypeOfClient = ExcelApp.Cells[i, 3].Value2?.ToString(),
+                                CompanyName = ExcelApp.Cells[i, 4].Value2?.ToString(),
+
+                                PrimaryFirstName = ExcelApp.Cells[i, 5].Value2?.ToString(),
+                                PrimaryLastName = ExcelApp.Cells[i, 6].Value2?.ToString(),
+                                PrimaryPhoneNumber = ExcelApp.Cells[i, 7].Value2?.ToString(),
+                                PrimaryEmail = ExcelApp.Cells[i, 8].Value2?.ToString(),
+
+                                SecondaryFirstName = ExcelApp.Cells[i, 9].Value2?.ToString(),
+                                SecondaryLastName = ExcelApp.Cells[i, 10].Value2?.ToString(),
+                                SecondaryPhoneNumber = ExcelApp.Cells[i, 11].Value2?.ToString(),
+                                SecondaryEmail = ExcelApp.Cells[i, 12].Value2?.ToString(),
+
+                                AddressBillStreet = ExcelApp.Cells[i, 13].Value2?.ToString(),
+                                AddressBillCity = ExcelApp.Cells[i, 14].Value2?.ToString(),
+                                AddressBillProvince = ExcelApp.Cells[i, 15].Value2?.ToString(),
+                                AddressBillPostalCode = ExcelApp.Cells[i, 16].Value2?.ToString(),
+                                AddressBillCountry = ExcelApp.Cells[i, 7].Value2?.ToString(),
+
+                                AddressSiteStreet = ExcelApp.Cells[i, 18].Value2?.ToString(),
+                                AddressSiteCity = ExcelApp.Cells[i, 19].Value2?.ToString(),
+                                AddressSiteProvince = ExcelApp.Cells[i, 20].Value2?.ToString(),
+                                AddressSitePostalCode = ExcelApp.Cells[i, 21].Value2?.ToString(),
+                                AddressSiteCountry = ExcelApp.Cells[i, 22].Value2?.ToString(),
+
+                                HearAboutUs = ExcelApp.Cells[i, 23].Value2?.ToString(),
+                                Specify = ExcelApp.Cells[i, 24].Value2?.ToString(),
+                                Notes = ExcelApp.Cells[i, 25].Value2?.ToString()
+                            });
+                        }
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                });
+            }
+        }
+        /// <summary>
+        /// Імпортує дані в БД з вказаного файлу Excel
+        /// </summary>
+        private async void ImportQuotaTableToExcel()
+        {
+            string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
+
+            if (path == null) // Перевіряємо шлях до файлу на null
+            {
+                return;
+            }
+            List<Quotation> quota = new List<Quotation>();
+            ProgressStart();
+            await Start(path);
+
+            db.Quotations.AddRange(quota);
+            db.SaveChanges();
+            Quotations = null;
+            LoadQuotationsDB(CompanyName);
+
+            ProgressStop();
+
+
+            async Task Start(string pathFile)
+            {
+                await Task.Run(() =>
+                {
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                          // Створюємо лист Excel                        
+
+                    try
+                    {
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(pathFile);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+                        int count = int.Parse(ExcelApp.Cells[1, 1].Value2?.ToString()) + 2;
+
+                        for (int i = 3; i <= count; i++)
+                        {
+                            quota.Add(new Quotation()
+                            {
+                               PrefixNumberQuota = ExcelApp.Cells[i, 2].Value2?.ToString(), 
+                               NumberClient = ExcelApp.Cells[i, 3].Value2?.ToString(),
+                               QuotaDate = (DateTime.TryParse(ExcelApp.Cells[i, 4].Value?.ToString(), out DateTime res)) ? (res) : (DateTime.Today),
+                               ClientId = int.Parse(ExcelApp.Cells[i, 5].Value2?.ToString()),
+                               FirstName = ExcelApp.Cells[i, 6].Value2?.ToString(),
+                               LastName = ExcelApp.Cells[i, 7].Value2?.ToString(),
+                               PhoneNumber = ExcelApp.Cells[i, 8].Value2?.ToString(),
+                               Email = ExcelApp.Cells[i, 9].Value2?.ToString(),
+                               JobDescription = ExcelApp.Cells[i, 10].Value2?.ToString(),
+                               JobNote = ExcelApp.Cells[i, 11].Value2?.ToString(),
+                               MaterialSubtotal = decimal.Parse(ExcelApp.Cells[i, 12].Value2?.ToString()),
+                               MaterialDiscountYN = decimal.Parse(ExcelApp.Cells[i, 13].Value2?.ToString()),
+                               MaterialDiscountAmount = decimal.Parse(ExcelApp.Cells[i, 14].Value2?.ToString()),
+                               LabourSubtotal = decimal.Parse(ExcelApp.Cells[i, 15].Value2?.ToString()),
+                               LabourDiscountYN = decimal.Parse(ExcelApp.Cells[i, 16].Value2?.ToString()),
+                               LabourDiscountAmount = decimal.Parse(ExcelApp.Cells[i, 17].Value2?.ToString()),
+                               FinancingYesNo = (ExcelApp.Cells[i, 18].Value2.ToString() == "1") ? (true) : (false),
+                               AmountPaidByCreditCard = decimal.Parse(ExcelApp.Cells[i, 19].Value2?.ToString()),
+                               ActivQuota = (ExcelApp.Cells[i, 20].Value2.ToString() == "1") ? (true) : (false),
+                               PaidQuota = (ExcelApp.Cells[i, 21].Value2.ToString() == "1") ? (true) : (false),
+                               SortingQuota = int.Parse(ExcelApp.Cells[i, 22].Value2?.ToString()),
+                               Color = ExcelApp.Cells[i, 23].Value2?.ToString(),
+                               CompanyName = ExcelApp.Cells[i, 24].Value2?.ToString()
+
+                            });
+                        }
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                });
+            }
+        }
+        /// <summary>
+        /// Імпортує дані в БД з вказаного файлу Excel
+        /// </summary>
+        private async void ImportMaterialQuotaTableToExcel()
+        {
+            string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
+
+            if (path == null) // Перевіряємо шлях до файлу на null
+            {
+                return;
+            }
+            List<MaterialQuotation> material = new List<MaterialQuotation>();
+            ProgressStart();
+            await Start(path);
+
+            db.MaterialQuotations.AddRange(material);
+            db.SaveChanges();
+            
+
+            ProgressStop();
+
+
+            async Task Start(string pathFile)
+            {
+                await Task.Run(() =>
+                {
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                          // Створюємо лист Excel                        
+
+                    try
+                    {
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(pathFile);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+                        int count = int.Parse(ExcelApp.Cells[1, 1].Value2?.ToString()) + 2;
+
+                        for (int i = 3; i <= count; i++)
+                        {
+                            material.Add(new MaterialQuotation()
+                            {
+                                Groupe = ExcelApp.Cells[i, 2].Value2?.ToString(),
+                                Item = ExcelApp.Cells[i, 3].Value2?.ToString(),
+                                Description = ExcelApp.Cells[i, 4].Value2?.ToString(),
+                                Quantity = decimal.Parse(ExcelApp.Cells[i, 5].Value2?.ToString()),
+                                Rate = decimal.Parse(ExcelApp.Cells[i, 6].Value2?.ToString()),
+                                Price = decimal.Parse(ExcelApp.Cells[i, 7].Value2?.ToString()),
+                                SupplierId = (ExcelApp.Cells[i, 8].Value2?.ToString() == null) ? (0) : (int.Parse(ExcelApp.Cells[i, 8].Value2.ToString())),
+                                QuotationId = int.Parse(ExcelApp.Cells[i, 9].Value2?.ToString())
+                            });
+                        }
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                });
+            }
+        }
+
     }
 }
