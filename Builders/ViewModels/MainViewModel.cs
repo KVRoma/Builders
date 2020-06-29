@@ -1031,6 +1031,20 @@ namespace Builders.ViewModels
         private Command _importClient;
         private Command _importQuota;
         private Command _importMaterialQuota;
+        private Command _importPayment;
+        private Command _importReciept;
+        private Command _importWorkOrder;
+        private Command _importWorkOrder_Accessories;
+        private Command _importWorkOrder_Installation;
+        private Command _importWorkOrder_Contractor;
+        private Command _importWorkOrder_Work;
+        private Command _importInvoices;
+        private Command _importLabourProfits;
+        private Command _importLabourContractor;
+        private Command _importLabour;
+        private Command _importMaterialProfits;
+        private Command _importMaterial;
+        private Command _importDebts;
         //*************************************
         #endregion
         #region Public Command
@@ -3178,6 +3192,62 @@ namespace Builders.ViewModels
         public Command ImportMaterialQuota => _importMaterialQuota ?? (_importMaterialQuota = new Command(obj=> 
         {
             ImportMaterialQuotaTableToExcel();
+        }));
+        public Command ImportPayment => _importPayment ?? (_importPayment = new Command(obj=> 
+        {
+            ImportPaymentTableToExcel();
+        }));
+        public Command ImportReciept => _importReciept ?? (_importReciept = new Command(obj=> 
+        {
+            ImportRecieptTableToExcel();
+        }));
+        public Command ImportWorkOrder => _importWorkOrder ?? (_importWorkOrder = new Command(obj=> 
+        {
+            ImportWorkOrderTableToExcel();
+        }));
+        public Command ImportWorkOrderAccessories => _importWorkOrder_Accessories ?? (_importWorkOrder_Accessories = new Command(obj=> 
+        {
+            ImportWorkOrderAccessoriesTableToExcel();
+        }));
+        public Command ImportWorkOrderContractor => _importWorkOrder_Contractor ?? (_importWorkOrder_Contractor = new Command(obj=> 
+        {
+            ImportWorkOrderContractorTableToExcel();
+        }));
+        public Command ImportWorkOrderInstallation => _importWorkOrder_Installation ?? (_importWorkOrder_Installation = new Command(obj=> 
+        {
+            ImportWorkOrderInstallationTableToExcel();
+        }));
+        public Command ImportWorkOrderWork => _importWorkOrder_Work ?? (_importWorkOrder_Work = new Command(obj=> 
+        {
+            ImportWorkOrderWorkTableToExcel();
+        }));
+        public Command ImportInvoices => _importInvoices ?? (_importInvoices = new Command(obj=> 
+        {
+            ImportInvoicesTableToExcel();
+        }));
+        public Command ImportLabourProfits => _importLabourProfits ?? (_importLabourProfits = new Command(obj=> 
+        {
+            ImportLabourProfitsTableToExcel();
+        }));
+        public Command ImportLabourContractor => _importLabourContractor ?? (_importLabourContractor = new Command(obj=> 
+        {
+            ImportLabourContractorTableToExcel();
+        }));
+        public Command ImportLabour => _importLabour ?? (_importLabour = new Command(obj=> 
+        {
+            ImportLabourTableToExcel();
+        }));
+        public Command ImportMaterialProfits => _importMaterialProfits ?? (_importMaterialProfits = new Command(obj=> 
+        {
+            ImportMaterialProfitsTableToExcel();
+        }));
+        public Command ImportMaterial => _importMaterial ?? (_importMaterial = new Command(obj=> 
+        {
+            ImportMaterialTableToExcel();
+        }));
+        public Command ImportDebts => _importDebts ?? (_importDebts = new Command(obj=> 
+        {
+            ImportDebtsTableToExcel();
         }));
 
         #endregion
@@ -5738,9 +5808,10 @@ namespace Builders.ViewModels
                 {
                     db.GeneratedLists.RemoveRange(list);
                 }
+                db.Generateds.Remove(generated);
+                db.SaveChanges();
             }
-            db.Generateds.Remove(generated);
-            db.SaveChanges();
+           
         }
         /// <summary>
         /// Імпортує дані в БД з вказаного файлу Excel
@@ -5967,6 +6038,883 @@ namespace Builders.ViewModels
                 });
             }
         }
+        private async void ImportPaymentTableToExcel()
+        {
+            string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
 
+            if (path == null) // Перевіряємо шлях до файлу на null
+            {
+                return;
+            }
+            List<Payment> payments = new List<Payment>();
+            ProgressStart();
+            await Start(path);
+
+            db.Payments.AddRange(payments);
+            db.SaveChanges();
+
+
+            ProgressStop();
+
+
+            async Task Start(string pathFile)
+            {
+                await Task.Run(() =>
+                {
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                          // Створюємо лист Excel                        
+
+                    try
+                    {
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(pathFile);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+                        int count = int.Parse(ExcelApp.Cells[1, 1].Value2?.ToString()) + 2;
+
+                        for (int i = 3; i <= count; i++)
+                        {
+                            payments.Add(new Payment()
+                            {
+                                NumberPayment = ExcelApp.Cells[i, 2].Value2?.ToString(),
+                                PaymentDatePaid = DateTime.Parse(ExcelApp.Cells[i, 3].Value?.ToString()),
+                                PaymentAmountPaid = decimal.Parse(ExcelApp.Cells[i, 4].Value2?.ToString()),
+                                PaymentPrincipalPaid = decimal.Parse(ExcelApp.Cells[i, 5].Value2?.ToString()),
+                                PaymentMethod = ExcelApp.Cells[i, 6].Value2?.ToString(),
+                                ProcessingFee = decimal.Parse(ExcelApp.Cells[i, 7].Value2?.ToString()),
+                                Balance = decimal.Parse(ExcelApp.Cells[i, 8].Value2?.ToString()),
+                                QuotationId = int.Parse(ExcelApp.Cells[i, 9].Value2?.ToString())
+                            });
+                        }
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                });
+            }
+        }
+        private async void ImportRecieptTableToExcel()
+        {
+            string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
+
+            if (path == null) // Перевіряємо шлях до файлу на null
+            {
+                return;
+            }
+            List<Reciept> reciepts = new List<Reciept>();
+            ProgressStart();
+            await Start(path);
+
+            db.Reciepts.AddRange(reciepts);
+            db.SaveChanges();
+
+
+            ProgressStop();
+
+
+            async Task Start(string pathFile)
+            {
+                await Task.Run(() =>
+                {
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                          // Створюємо лист Excel                        
+
+                    try
+                    {
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(pathFile);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+                        int count = int.Parse(ExcelApp.Cells[1, 1].Value2?.ToString()) + 2;
+
+                        for (int i = 3; i <= count; i++)
+                        {
+                            reciepts.Add(new Reciept()
+                            {
+                                QuotaId = int.Parse(ExcelApp.Cells[i, 2].Value2?.ToString()),
+                                NumberQuota = ExcelApp.Cells[i, 3].Value2?.ToString(),
+                                PayNumber = int.Parse(ExcelApp.Cells[i, 4].Value2?.ToString())                                
+                            });
+                        }
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                });
+            }
+        }
+        private async void ImportWorkOrderTableToExcel()
+        {
+            string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
+
+            if (path == null) // Перевіряємо шлях до файлу на null
+            {
+                return;
+            }
+            List<WorkOrder> workOrders = new List<WorkOrder>();
+            ProgressStart();
+            await Start(path);
+
+            db.WorkOrders.AddRange(workOrders);
+            db.SaveChanges();
+
+
+            ProgressStop();
+
+
+            async Task Start(string pathFile)
+            {
+                await Task.Run(() =>
+                {
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                          // Створюємо лист Excel                        
+
+                    try
+                    {
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(pathFile);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+                        int count = int.Parse(ExcelApp.Cells[1, 1].Value2?.ToString()) + 2;
+
+                        for (int i = 3; i <= count; i++)
+                        {
+                            workOrders.Add(new WorkOrder()
+                            {
+                                QuotaId = int.Parse(ExcelApp.Cells[i, 2].Value2?.ToString()),
+                                NumberQuota = ExcelApp.Cells[i, 3].Value2?.ToString(),
+                                FirstName = ExcelApp.Cells[i, 4].Value2?.ToString(),
+                                LastName = ExcelApp.Cells[i, 5].Value2?.ToString(),
+                                PhoneNumber = ExcelApp.Cells[i, 6].Value2?.ToString(),
+                                Email = ExcelApp.Cells[i, 7].Value2?.ToString(),
+                                DateWork = DateTime.Parse(ExcelApp.Cells[i, 8].Value2?.ToString()),
+                                DateServices = DateTime.Parse(ExcelApp.Cells[i, 9].Value2?.ToString()),
+                                DateCompletion = DateTime.Parse(ExcelApp.Cells[i, 10].Value2?.ToString()),
+                                Parking = ExcelApp.Cells[i, 11].Value2?.ToString(),
+                                Notes = ExcelApp.Cells[i, 12].Value2?.ToString(),
+                                CompanyName = ExcelApp.Cells[i, 13].Value2?.ToString()
+                            });
+                        }
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                });
+            }
+        }
+        private async void ImportWorkOrderAccessoriesTableToExcel()
+        {
+            string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
+
+            if (path == null) // Перевіряємо шлях до файлу на null
+            {
+                return;
+            }
+            List<WorkOrder_Accessories> workOrdersAccessories = new List<WorkOrder_Accessories>();
+            ProgressStart();
+            await Start(path);
+
+            db.WorkOrder_Accessories.AddRange(workOrdersAccessories);
+            db.SaveChanges();
+
+
+            ProgressStop();
+
+
+            async Task Start(string pathFile)
+            {
+                await Task.Run(() =>
+                {
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                          // Створюємо лист Excel                        
+
+                    try
+                    {
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(pathFile);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+                        int count = int.Parse(ExcelApp.Cells[1, 1].Value2?.ToString()) + 2;
+
+                        for (int i = 3; i <= count; i++)
+                        {
+                            workOrdersAccessories.Add(new WorkOrder_Accessories()
+                            {
+                                Area = ExcelApp.Cells[i, 2].Value2?.ToString(),
+                                Room = ExcelApp.Cells[i, 3].Value2?.ToString(),
+                                OldAccessories = ExcelApp.Cells[i, 4].Value2?.ToString(),
+                                NewAccessories = ExcelApp.Cells[i, 5].Value2?.ToString(),
+                                Contractor = ExcelApp.Cells[i, 6].Value2?.ToString(),
+                                Notes = ExcelApp.Cells[i, 7].Value2?.ToString(),
+                                Color = ExcelApp.Cells[i, 8].Value2?.ToString(),
+                                WorkOrderId = int.Parse(ExcelApp.Cells[i, 9].Value2?.ToString())                               
+                            });
+                        }
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                });
+            }
+        }
+        private async void ImportWorkOrderContractorTableToExcel()
+        {
+            string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
+
+            if (path == null) // Перевіряємо шлях до файлу на null
+            {
+                return;
+            }
+            List<WorkOrder_Contractor> workOrderContractors = new List<WorkOrder_Contractor>();
+            ProgressStart();
+            await Start(path);
+
+            db.WorkOrder_Contractors.AddRange(workOrderContractors);
+            db.SaveChanges();
+
+
+            ProgressStop();
+
+
+            async Task Start(string pathFile)
+            {
+                await Task.Run(() =>
+                {
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                          // Створюємо лист Excel                        
+
+                    try
+                    {
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(pathFile);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+                        int count = int.Parse(ExcelApp.Cells[1, 1].Value2?.ToString()) + 2;
+
+                        for (int i = 3; i <= count; i++)
+                        {
+                            workOrderContractors.Add(new WorkOrder_Contractor()
+                            {
+                                Contractor = ExcelApp.Cells[i, 2].Value2?.ToString(),
+                                Payout = decimal.Parse(ExcelApp.Cells[i, 3].Value2?.ToString()),
+                                Adjust = decimal.Parse(ExcelApp.Cells[i, 4].Value2?.ToString()),
+                                Total = decimal.Parse(ExcelApp.Cells[i, 5].Value2?.ToString()),
+                                TAX = ExcelApp.Cells[i, 6].Value2?.ToString(),
+                                GST = decimal.Parse(ExcelApp.Cells[i, 7].Value2?.ToString()),
+                                TotalContractor = decimal.Parse(ExcelApp.Cells[i, 8].Value2?.ToString()),
+                                Color = ExcelApp.Cells[i, 9].Value2?.ToString(),
+                                WorkOrderId = int.Parse(ExcelApp.Cells[i, 10].Value2?.ToString())
+                            });
+                        }
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                });
+            }
+        }
+        private async void ImportWorkOrderInstallationTableToExcel()
+        {
+            string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
+
+            if (path == null) // Перевіряємо шлях до файлу на null
+            {
+                return;
+            }
+            List<WorkOrder_Installation> workOrderInstallations = new List<WorkOrder_Installation>();
+            ProgressStart();
+            await Start(path);
+
+            db.WorkOrder_Installations.AddRange(workOrderInstallations);
+            db.SaveChanges();
+
+
+            ProgressStop();
+
+
+            async Task Start(string pathFile)
+            {
+                await Task.Run(() =>
+                {
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                          // Створюємо лист Excel                        
+
+                    try
+                    {
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(pathFile);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+                        int count = int.Parse(ExcelApp.Cells[1, 1].Value2?.ToString()) + 2;
+
+                        for (int i = 3; i <= count; i++)
+                        {
+                            workOrderInstallations.Add(new WorkOrder_Installation()
+                            {
+                                Groupe = ExcelApp.Cells[i, 2].Value2?.ToString(),
+                                Item = ExcelApp.Cells[i, 3].Value2?.ToString(),
+                                Description = ExcelApp.Cells[i, 4].Value2?.ToString(),
+                                Quantity = decimal.Parse(ExcelApp.Cells[i, 5].Value2?.ToString()),
+                                Rate = decimal.Parse(ExcelApp.Cells[i, 6].Value2?.ToString()),
+                                Price = decimal.Parse(ExcelApp.Cells[i, 7].Value2?.ToString()),
+                                Procent = decimal.Parse(ExcelApp.Cells[i, 8].Value2?.ToString()),
+                                Payout = decimal.Parse(ExcelApp.Cells[i, 9].Value2?.ToString()),
+                                Contractor = ExcelApp.Cells[i, 10].Value2?.ToString(),
+                                Color = ExcelApp.Cells[i, 11].Value2?.ToString(),
+                                WorkOrderId = int.Parse(ExcelApp.Cells[i, 12].Value2?.ToString())
+                            });
+                        }
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                });
+            }
+        }
+        private async void ImportWorkOrderWorkTableToExcel()
+        {
+            string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
+
+            if (path == null) // Перевіряємо шлях до файлу на null
+            {
+                return;
+            }
+            List<WorkOrder_Work> workOrderWorks = new List<WorkOrder_Work>();
+            ProgressStart();
+            await Start(path);
+
+            db.WorkOrder_Works.AddRange(workOrderWorks);
+            db.SaveChanges();
+
+
+            ProgressStop();
+
+
+            async Task Start(string pathFile)
+            {
+                await Task.Run(() =>
+                {
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                          // Створюємо лист Excel                        
+
+                    try
+                    {
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(pathFile);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+                        int count = int.Parse(ExcelApp.Cells[1, 1].Value2?.ToString()) + 2;
+
+                        for (int i = 3; i <= count; i++)
+                        {
+                            workOrderWorks.Add(new WorkOrder_Work()
+                            {
+                                Area = ExcelApp.Cells[i, 2].Value2?.ToString(),
+                                Room = ExcelApp.Cells[i, 3].Value2?.ToString(),
+                                Existing = ExcelApp.Cells[i, 4].Value2?.ToString(),
+                                NewFloor = ExcelApp.Cells[i, 5].Value2?.ToString(),
+                                Furniture = ExcelApp.Cells[i, 6].Value2?.ToString(),
+                                Misc = ExcelApp.Cells[i, 7].Value2?.ToString(),                                
+                                Contractor = ExcelApp.Cells[i, 8].Value2?.ToString(),
+                                Color = ExcelApp.Cells[i, 9].Value2?.ToString(),
+                                WorkOrderId = int.Parse(ExcelApp.Cells[i, 10].Value2?.ToString())
+                            });
+                        }
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                });
+            }
+        }
+        private async void ImportInvoicesTableToExcel()
+        {
+            string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
+
+            if (path == null) // Перевіряємо шлях до файлу на null
+            {
+                return;
+            }
+            List<Invoice> invoices = new List<Invoice>();
+            ProgressStart();
+            await Start(path);
+
+            db.Invoices.AddRange(invoices);
+            db.SaveChanges();
+
+
+            ProgressStop();
+
+
+            async Task Start(string pathFile)
+            {
+                await Task.Run(() =>
+                {
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                          // Створюємо лист Excel                        
+
+                    try
+                    {
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(pathFile);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+                        int count = int.Parse(ExcelApp.Cells[1, 1].Value2?.ToString()) + 2;
+
+                        for (int i = 3; i <= count; i++)
+                        {
+                            invoices.Add(new Invoice()
+                            {
+                                FirstName = ExcelApp.Cells[i, 2].Value2?.ToString(),
+                                LastName = ExcelApp.Cells[i, 3].Value2?.ToString(),
+                                PhoneNumber = ExcelApp.Cells[i, 4].Value2?.ToString(),
+                                Email = ExcelApp.Cells[i, 5].Value2?.ToString(),
+                                DateInvoice = DateTime.Parse(ExcelApp.Cells[i, 6].Value?.ToString()),
+                                QuotaId = int.Parse(ExcelApp.Cells[i, 7].Value2?.ToString()),
+                                NumberQuota = ExcelApp.Cells[i, 8].Value2?.ToString(),
+                                UpNumber = ExcelApp.Cells[i, 9].Value2?.ToString(),
+                                OrderNumber = ExcelApp.Cells[i, 10].Value2?.ToString(),
+                                MaterialProfit = decimal.Parse(ExcelApp.Cells[i, 11].Value2?.ToString()),
+                                LabourProfit = decimal.Parse(ExcelApp.Cells[i, 12].Value2?.ToString()),
+                                TotalProfit = decimal.Parse(ExcelApp.Cells[i, 13].Value2?.ToString()),
+                                CompanyName = ExcelApp.Cells[i, 14].Value2?.ToString()
+                            });
+                        }
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                });
+            }
+        }
+        private async void ImportLabourProfitsTableToExcel()
+        {
+            string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
+
+            if (path == null) // Перевіряємо шлях до файлу на null
+            {
+                return;
+            }
+            List<LabourProfit> labourProfits = new List<LabourProfit>();
+            ProgressStart();
+            await Start(path);
+
+            db.LabourProfits.AddRange(labourProfits);
+            db.SaveChanges();
+
+
+            ProgressStop();
+
+
+            async Task Start(string pathFile)
+            {
+                await Task.Run(() =>
+                {
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                          // Створюємо лист Excel                        
+
+                    try
+                    {
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(pathFile);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+                        int count = int.Parse(ExcelApp.Cells[1, 1].Value2?.ToString()) + 2;
+
+                        for (int i = 3; i <= count; i++)
+                        {
+                            labourProfits.Add(new LabourProfit()
+                            {
+                                InvoiceId = int.Parse(ExcelApp.Cells[i, 2].Value2?.ToString()),
+                                InvoiceDate = DateTime.Parse(ExcelApp.Cells[i, 3].Value?.ToString()),
+                                InvoiceNumber = ExcelApp.Cells[i, 4].Value2?.ToString(),
+                                FirstName = ExcelApp.Cells[i, 5].Value2?.ToString(),
+                                LastName = ExcelApp.Cells[i, 6].Value2?.ToString(),
+                                PhoneNumber = ExcelApp.Cells[i, 7].Value2?.ToString(),
+                                Email = ExcelApp.Cells[i, 8].Value2?.ToString(),
+                                CollectedSubtotal = decimal.Parse(ExcelApp.Cells[i, 9].Value2?.ToString()),
+                                CollectedGST = decimal.Parse(ExcelApp.Cells[i, 10].Value2?.ToString()),
+                                CollectedTotal = decimal.Parse(ExcelApp.Cells[i, 11].Value2?.ToString()),
+                                PayoutSubtotal = decimal.Parse(ExcelApp.Cells[i, 12].Value2?.ToString()),
+                                PayoutGST = decimal.Parse(ExcelApp.Cells[i, 13].Value2?.ToString()),
+                                PayoutTotal = decimal.Parse(ExcelApp.Cells[i, 14].Value2?.ToString()),
+                                StoreSubtotal = decimal.Parse(ExcelApp.Cells[i, 15].Value2?.ToString()),
+                                StoreGST = decimal.Parse(ExcelApp.Cells[i, 16].Value2?.ToString()),
+                                StoreTotal = decimal.Parse(ExcelApp.Cells[i, 17].Value2?.ToString()),
+                                Discount = decimal.Parse(ExcelApp.Cells[i, 18].Value2?.ToString()),
+                                ProfitTotal = decimal.Parse(ExcelApp.Cells[i, 19].Value2?.ToString()),
+                                Companion = (ExcelApp.Cells[i, 20].Value2.ToString() == "1") ? (true) : (false),
+                                CompanyName = ExcelApp.Cells[i, 21].Value2?.ToString()
+                            });
+                        }
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                });
+            }
+        }
+        private async void ImportLabourContractorTableToExcel()
+        {
+            string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
+
+            if (path == null) // Перевіряємо шлях до файлу на null
+            {
+                return;
+            }
+            List<LabourContractor> labourContractors = new List<LabourContractor>();
+            ProgressStart();
+            await Start(path);
+
+            db.LabourContractors.AddRange(labourContractors);
+            db.SaveChanges();
+
+
+            ProgressStop();
+
+
+            async Task Start(string pathFile)
+            {
+                await Task.Run(() =>
+                {
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                          // Створюємо лист Excel                        
+
+                    try
+                    {
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(pathFile);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+                        int count = int.Parse(ExcelApp.Cells[1, 1].Value2?.ToString()) + 2;
+
+                        for (int i = 3; i <= count; i++)
+                        {
+                            labourContractors.Add(new LabourContractor()
+                            {
+                                Contractor = ExcelApp.Cells[i, 2].Value2?.ToString(),                               
+                                Payout = decimal.Parse(ExcelApp.Cells[i, 3].Value2?.ToString()),
+                                Adjust = decimal.Parse(ExcelApp.Cells[i, 4].Value2?.ToString()),
+                                Total = decimal.Parse(ExcelApp.Cells[i, 5].Value2?.ToString()),
+                                TAX = ExcelApp.Cells[i, 6].Value2?.ToString(),
+                                GST = decimal.Parse(ExcelApp.Cells[i, 7].Value2?.ToString()),
+                                TotalContractor = decimal.Parse(ExcelApp.Cells[i, 8].Value2?.ToString()),
+                                LabourProfitId = int.Parse(ExcelApp.Cells[i, 9].Value2?.ToString())
+                            });
+                        }
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                });
+            }
+        }
+        private async void ImportLabourTableToExcel()
+        {
+            string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
+
+            if (path == null) // Перевіряємо шлях до файлу на null
+            {
+                return;
+            }
+            List<Labour> labours = new List<Labour>();
+            ProgressStart();
+            await Start(path);
+
+            db.Labours.AddRange(labours);
+            db.SaveChanges();
+
+
+            ProgressStop();
+
+
+            async Task Start(string pathFile)
+            {
+                await Task.Run(() =>
+                {
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                          // Створюємо лист Excel                        
+
+                    try
+                    {
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(pathFile);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+                        int count = int.Parse(ExcelApp.Cells[1, 1].Value2?.ToString()) + 2;
+
+                        for (int i = 3; i <= count; i++)
+                        {
+                            labours.Add(new Labour()
+                            {
+                                Groupe = ExcelApp.Cells[i, 2].Value2?.ToString(),
+                                Item = ExcelApp.Cells[i, 3].Value2?.ToString(),
+                                Description = ExcelApp.Cells[i, 4].Value2?.ToString(),
+                                Contractor = ExcelApp.Cells[i, 5].Value?.ToString(),
+                                Quantity = decimal.Parse(ExcelApp.Cells[i, 6].Value2?.ToString()),
+                                Rate = decimal.Parse(ExcelApp.Cells[i, 7].Value2?.ToString()),
+                                Adjust = decimal.Parse(ExcelApp.Cells[i, 8].Value2?.ToString()),
+                                Price = decimal.Parse(ExcelApp.Cells[i, 9].Value2?.ToString()),
+                                Percent = decimal.Parse(ExcelApp.Cells[i, 10].Value2?.ToString()),
+                                Payout = decimal.Parse(ExcelApp.Cells[i, 11].Value2?.ToString()),
+                                Profit = decimal.Parse(ExcelApp.Cells[i, 12].Value2?.ToString()),                                
+                                LabourProfitId = int.Parse(ExcelApp.Cells[i, 13].Value2?.ToString())
+                            });
+                        }
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                });
+            }
+        }
+        private async void ImportMaterialProfitsTableToExcel()
+        {
+            string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
+
+            if (path == null) // Перевіряємо шлях до файлу на null
+            {
+                return;
+            }
+            List<MaterialProfit> materialProfits = new List<MaterialProfit>();
+            ProgressStart();
+            await Start(path);
+
+            db.MaterialProfits.AddRange(materialProfits);
+            db.SaveChanges();
+
+
+            ProgressStop();
+
+
+            async Task Start(string pathFile)
+            {
+                await Task.Run(() =>
+                {
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                          // Створюємо лист Excel                        
+
+                    try
+                    {
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(pathFile);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+                        int count = int.Parse(ExcelApp.Cells[1, 1].Value2?.ToString()) + 2;
+
+                        for (int i = 3; i <= count; i++)
+                        {
+                            materialProfits.Add(new MaterialProfit()
+                            {
+                                InvoiceId = int.Parse(ExcelApp.Cells[i, 2].Value2?.ToString()),
+                                InvoiceDate = DateTime.Parse(ExcelApp.Cells[i, 3].Value?.ToString()),
+                                InvoiceNumber = ExcelApp.Cells[i, 4].Value2?.ToString(),
+                                FirstName = ExcelApp.Cells[i, 5].Value2?.ToString(),
+                                LastName = ExcelApp.Cells[i, 6].Value2?.ToString(),
+                                PhoneNumber = ExcelApp.Cells[i, 7].Value2?.ToString(),
+                                Email = ExcelApp.Cells[i, 8].Value2?.ToString(),
+                                MaterialSubtotal = decimal.Parse(ExcelApp.Cells[i, 9].Value2?.ToString()),
+                                MaterialTax = decimal.Parse(ExcelApp.Cells[i, 10].Value2?.ToString()),
+                                MaterialTotal = decimal.Parse(ExcelApp.Cells[i, 11].Value2?.ToString()),
+                                CostMaterialSubtotal = decimal.Parse(ExcelApp.Cells[i, 12].Value2?.ToString()),
+                                CostMaterialTax = decimal.Parse(ExcelApp.Cells[i, 13].Value2?.ToString()),
+                                CostMaterialTotal = decimal.Parse(ExcelApp.Cells[i, 14].Value2?.ToString()),
+                                ProfitBeforTax = decimal.Parse(ExcelApp.Cells[i, 15].Value2?.ToString()),
+                                ProfitTax = decimal.Parse(ExcelApp.Cells[i, 16].Value2?.ToString()),
+                                ProfitInclTax = decimal.Parse(ExcelApp.Cells[i, 17].Value2?.ToString()),
+                                ProfitDiscount = decimal.Parse(ExcelApp.Cells[i, 18].Value2?.ToString()),
+                                ProfitTotal = decimal.Parse(ExcelApp.Cells[i, 19].Value2?.ToString()),
+                                Companion = (ExcelApp.Cells[i, 20].Value2.ToString() == "1") ? (true) : (false),
+                                CompanyName = ExcelApp.Cells[i, 21].Value2?.ToString()
+                            });
+                        }
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                });
+            }
+        }
+        private async void ImportMaterialTableToExcel()
+        {
+            string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
+
+            if (path == null) // Перевіряємо шлях до файлу на null
+            {
+                return;
+            }
+            List<Material> materials = new List<Material>();
+            ProgressStart();
+            await Start(path);
+
+            db.Materials.AddRange(materials);
+            db.SaveChanges();
+
+
+            ProgressStop();
+
+
+            async Task Start(string pathFile)
+            {
+                await Task.Run(() =>
+                {
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                          // Створюємо лист Excel                        
+
+                    try
+                    {
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(pathFile);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+                        int count = int.Parse(ExcelApp.Cells[1, 1].Value2?.ToString()) + 2;
+
+                        for (int i = 3; i <= count; i++)
+                        {
+                            materials.Add(new Material()
+                            {
+                                Groupe = ExcelApp.Cells[i, 2].Value2?.ToString(),
+                                Item = ExcelApp.Cells[i, 3].Value2?.ToString(),
+                                Description = ExcelApp.Cells[i, 4].Value2?.ToString(),
+                                Quantity = decimal.Parse(ExcelApp.Cells[i, 5].Value2?.ToString()),
+                                Rate = decimal.Parse(ExcelApp.Cells[i, 6].Value2?.ToString()),
+                                Price = decimal.Parse(ExcelApp.Cells[i, 7].Value2?.ToString()),
+                                CostQuantity = decimal.Parse(ExcelApp.Cells[i, 8].Value2?.ToString()),
+                                CostUnitPrice = decimal.Parse(ExcelApp.Cells[i, 9].Value2?.ToString()),
+                                CostSubtotal = decimal.Parse(ExcelApp.Cells[i, 10].Value2?.ToString()),
+                                CostEPRate = decimal.Parse(ExcelApp.Cells[i, 11].Value2?.ToString()),
+                                CostTax = decimal.Parse(ExcelApp.Cells[i, 12].Value2?.ToString()),
+                                CostTotal = decimal.Parse(ExcelApp.Cells[i, 13].Value2?.ToString()),
+                                SupplierId = (ExcelApp.Cells[i, 14].Value2?.ToString() == null) ? (null) : (int.Parse(ExcelApp.Cells[i, 14].Value2.ToString())),
+                                MaterialProfitId = int.Parse(ExcelApp.Cells[i, 15].Value2?.ToString())                                
+                            }); 
+                        }
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                });
+            }
+        }
+        private async void ImportDebtsTableToExcel()
+        {
+            string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
+
+            if (path == null) // Перевіряємо шлях до файлу на null
+            {
+                return;
+            }
+            List<Debts> debts = new List<Debts>();
+            ProgressStart();
+            await Start(path);
+
+            db.Debts.AddRange(debts);
+            db.SaveChanges();
+
+
+            ProgressStop();
+
+
+            async Task Start(string pathFile)
+            {
+                await Task.Run(() =>
+                {
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                          // Створюємо лист Excel                        
+
+                    try
+                    {
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(pathFile);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+                        int count = int.Parse(ExcelApp.Cells[1, 1].Value2?.ToString()) + 2;
+
+                        for (int i = 3; i <= count; i++)
+                        {
+                            debts.Add(new Debts()
+                            {
+                                InvoiceId = int.Parse(ExcelApp.Cells[i, 2].Value2?.ToString()),
+                                InvoiceDate = DateTime.Parse(ExcelApp.Cells[i, 3].Value?.ToString()),
+                                InvoiceNumber = ExcelApp.Cells[i, 4].Value?.ToString(),
+                                FirstName = ExcelApp.Cells[i, 5].Value2?.ToString(),
+                                LastName = ExcelApp.Cells[i, 6].Value2?.ToString(),
+                                PhoneNumber = ExcelApp.Cells[i, 7].Value2?.ToString(),
+                                Email = ExcelApp.Cells[i, 8].Value2?.ToString(),                               
+                                NameDebts = ExcelApp.Cells[i, 9].Value2?.ToString(),
+                                DescriptionDebts = ExcelApp.Cells[i, 10].Value2?.ToString(),
+                                AmountDebts = decimal.Parse(ExcelApp.Cells[i, 11].Value2?.ToString()),
+                                DatePayment = DateTime.Parse(ExcelApp.Cells[i, 12].Value?.ToString()),                                
+                                AmountPayment = decimal.Parse(ExcelApp.Cells[i, 13].Value2?.ToString()),
+                                DescriptionPayment = ExcelApp.Cells[i, 14].Value2?.ToString(),
+                                Payment = (ExcelApp.Cells[i, 15].Value2.ToString() == "1") ? (true) : (false),
+                                ColorPayment = ExcelApp.Cells[i, 16].Value2?.ToString(),
+                                ReadOnly = (ExcelApp.Cells[i, 17].Value2.ToString() == "1") ? (true) : (false),
+                                CompanyName = ExcelApp.Cells[i, 18].Value2?.ToString()
+                            });
+                        }
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                });
+            }
+        }
     }
 }

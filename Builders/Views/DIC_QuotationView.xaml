@@ -104,6 +104,12 @@
                     BorderBrush="Red" 
                     Style="{StaticResource FooterButton}" 
                     Command="{Binding DelDescriptionCommand}"/>
+            <Button Content="Import" 
+                    Foreground="Blue" 
+                    BorderBrush="Blue"
+                    Margin="150,5,5,5"
+                    Style="{StaticResource FooterButton}" 
+                    Command="{Binding LoadDescriptionExcel}"/>
         </StackPanel>
     </Grid>
 </Window>

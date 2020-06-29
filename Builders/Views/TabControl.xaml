@@ -822,17 +822,83 @@
             <TabItem.Content>
                 <Grid>                   
                     
-                    <StackPanel Orientation="Vertical"
+                    <StackPanel Orientation="Vertical" 
+                                HorizontalAlignment="Left"
                                 Style="{StaticResource FooterMenu}" >
-                        <Button Content="Clients" 
-                                Style="{StaticResource FooterButton}"
-                                Command="{Binding ImportClient}"/>
-                        <Button Content="Quota" 
-                                Style="{StaticResource FooterButton}"
-                                Command="{Binding ImportQuota}"/>
-                        <Button Content="Material Quota" 
-                                Style="{StaticResource FooterButton}"
-                                Command="{Binding ImportMaterialQuota}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Clients" 
+                                    Style="{StaticResource FooterButton}"
+                                    Command="{Binding ImportClient}"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Quota" 
+                                    Style="{StaticResource FooterButton}"
+                                    Command="{Binding ImportQuota}"/>
+                            <Button Content="Material Quota" 
+                                    Style="{StaticResource FooterButton}"
+                                    Command="{Binding ImportMaterialQuota}"/>
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Payments" 
+                                    Style="{StaticResource FooterButton}"
+                                    Command="{Binding ImportPayment}"/>
+                            <Button Content="Reciept" 
+                                    Style="{StaticResource FooterButton}"
+                                    Command="{Binding ImportReciept}"/>
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Work Order" 
+                                    Style="{StaticResource FooterButton}"
+                                    Command="{Binding ImportWorkOrder}"/>
+                            <Button Content="WO Accessories" 
+                                    Style="{StaticResource FooterButton}"
+                                    Command="{Binding ImportWorkOrderAccessories}"/>
+                            <Button Content="WO Contractor" 
+                                    Style="{StaticResource FooterButton}"
+                                    Command="{Binding ImportWorkOrderContractor}"/>
+                            <Button Content="WO Installation" 
+                                    Style="{StaticResource FooterButton}"
+                                    Command="{Binding ImportWorkOrderInstallation}"/>
+                            <Button Content="WO Work" 
+                                    Style="{StaticResource FooterButton}"
+                                    Command="{Binding ImportWorkOrderWork}"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Invoices" 
+                                    Style="{StaticResource FooterButton}"
+                                    Command="{Binding ImportInvoices}"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Labour Profit" 
+                                    Style="{StaticResource FooterButton}"
+                                    Command="{Binding ImportLabourProfits}"/>
+                            <Button Content="Labour Contractor" 
+                                    Style="{StaticResource FooterButton}"
+                                    Command="{Binding ImportLabourContractor}"/>
+                            <Button Content="Labour" 
+                                    Style="{StaticResource FooterButton}"
+                                    Command="{Binding ImportLabour}"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Material Profit" 
+                                    Style="{StaticResource FooterButton}"
+                                    Command="{Binding ImportMaterialProfits}"/>
+                            <Button Content="Material" 
+                                    Style="{StaticResource FooterButton}"
+                                    Command="{Binding ImportMaterial}"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Debts" 
+                                    Style="{StaticResource FooterButton}"
+                                    Command="{Binding ImportDebts}"/>
+                        </StackPanel>
 
                     </StackPanel>
                 </Grid>

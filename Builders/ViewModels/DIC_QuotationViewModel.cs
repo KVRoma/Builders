@@ -1,6 +1,7 @@
 ﻿using Builders.Commands;
 using Builders.Enums;
 using Builders.Models;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Builders.ViewModels
 {
@@ -101,6 +103,7 @@ namespace Builders.ViewModels
         private Command _addDescriptionCommand;
         private Command _insDescriptionCommand;
         private Command _delDescriptionCommand;
+        private Command _loadDescriptionExcel;
 
         public Command AddItemCommand => _addItemCommand ?? (_addItemCommand = new Command(async obj =>
         {
@@ -218,6 +221,10 @@ namespace Builders.ViewModels
             Descriptions = null;
             Descriptions = (ItemSelect != null) ? (db.DIC_DescriptionQuotations.Local.ToBindingList().Where(t => t.ItemId == ItemSelect.Id)) : null;
         }));
+        public Command LoadDescriptionExcel => _loadDescriptionExcel ?? (_loadDescriptionExcel = new Command(obj=> 
+        {
+            ImportDescriptionToExcel();
+        }));
 
         public DIC_QuotationViewModel(ref BuilderContext context, EnumDictionary res)
         {
@@ -227,6 +234,87 @@ namespace Builders.ViewModels
             db.DIC_ItemQuotations.Load();
             db.DIC_DescriptionQuotations.Load();
             Groupes = db.DIC_GroupeQuotations.Local.ToBindingList();
+        }
+
+        /// <summary>
+        /// Відкриває файл по заданій масці (один файл)
+        /// </summary>
+        /// <returns></returns>
+        private string OpenFile(string filter)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = filter;
+            if (dialog.ShowDialog() == true)
+            {
+                return dialog.FileName;
+            }
+            return null;
+        }
+        /// <summary>
+        /// Завантажує назви та ціни з файлу
+        /// </summary>
+        private async void ImportDescriptionToExcel()
+        {
+            string path = OpenFile("Файл Excel|*.XLSX;*.XLS;*.XLSM");   // Вибираємо наш файл (метод OpenFile() описаний нижче)
+
+            if (path == null) // Перевіряємо шлях до файлу на null
+            {
+                return;
+            }
+            List<DIC_DescriptionQuotation> descriptionQuotations = new List<DIC_DescriptionQuotation>();
+            
+            await Start(path);
+
+            db.DIC_DescriptionQuotations.AddRange(descriptionQuotations);
+            db.SaveChanges();
+
+            var temp = ItemSelect;
+            ItemSelect = temp;
+
+
+            async Task Start(string pathFile)
+            {
+                await Task.Run(() =>
+                {
+                    Excel.Application ExcelApp = new Excel.Application();     // Створюємо додаток Excel
+                    Excel.Workbook ExcelWorkBook;                             // Створюємо книгу Excel
+                    Excel.Worksheet ExcelWorkSheet;                          // Створюємо лист Excel                        
+
+                    try
+                    {
+                        ExcelWorkBook = ExcelApp.Workbooks.Open(pathFile);                  // Відкриваємо файл Excel                
+                        ExcelWorkSheet = ExcelWorkBook.ActiveSheet;                     // Відкриваємо активний Лист Excel                
+
+                        var descrip = Descriptions.ToList();
+                        if (descrip != null)
+                        {
+                            db.DIC_DescriptionQuotations.RemoveRange(descrip);
+                            db.SaveChanges();
+                        }
+                        //int count = int.Parse(ExcelApp.Cells[1, 1].Value2?.ToString()) + 2;
+                        int i = 1;
+                        while (ExcelApp.Cells[i, 1].Value?.ToString() != null)
+                        {
+                            descriptionQuotations.Add(new DIC_DescriptionQuotation()
+                            {
+                                ItemId = ItemSelect.Id,
+                                Name = ExcelApp.Cells[i, 1].Value?.ToString(),
+                                Price = decimal.TryParse(ExcelApp.Cells[i, 2].Value?.ToString(), out decimal result) ? (result) : (0m),
+                                Cost = 0m                                
+                            });
+                            i++;
+                        }
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                        ExcelApp.Visible = true;
+                        ExcelApp.UserControl = true;
+                    }
+                });
+            }
         }
     }
 }
