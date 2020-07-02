@@ -105,6 +105,8 @@ namespace Builders.ViewModels
         private Command _delDescriptionCommand;
         private Command _loadDescriptionExcel;
 
+        private Command _search;
+
         public Command AddItemCommand => _addItemCommand ?? (_addItemCommand = new Command(async obj =>
         {
             var displayRootRegistry = (Application.Current as App).displayRootRegistry;
@@ -224,6 +226,21 @@ namespace Builders.ViewModels
         public Command LoadDescriptionExcel => _loadDescriptionExcel ?? (_loadDescriptionExcel = new Command(obj=> 
         {
             ImportDescriptionToExcel();
+        }));
+
+        public Command Search => _search ?? (_search = new Command(obj=> 
+        {
+            string search = obj.ToString();
+            if (search == "")
+            {
+                Items = (GroupeSelect != null) ? (db.DIC_ItemQuotations.Local.ToBindingList().Where(t => t.GroupeId == GroupeSelect.Id).OrderBy(t => t.Name)) : null;
+            }
+            else
+            {                
+                Items = (GroupeSelect != null) ? (Items.Where(t => t.GroupeId == GroupeSelect.Id)
+                                                       .Where(t => t.Name.ToUpper().Contains(search.ToUpper()))
+                                                       .OrderBy(t => t.Name)) : null;
+            }
         }));
 
         public DIC_QuotationViewModel(ref BuilderContext context, EnumDictionary res)

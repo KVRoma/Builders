@@ -162,7 +162,7 @@
                       UI:FocusAdvancement.AdvancesByEnterKey="True"
                       IsEnabled="{Binding IsEnableGenerator}"/>
             <Label Content="QTY" 
-                   Margin="580,0,0,0"                   
+                   Margin="880,0,0,0"                   
                    Style="{StaticResource LabelBold}"
                    Visibility="{Binding IsVisibleStandart}"/> <!-- Visibility="{Binding IsVisibleStandart}" -->
             <Label Content="Price" 
@@ -202,7 +202,26 @@
                       SelectedItem="{Binding DIC_GroupeSelect, Mode=TwoWay}" 
                       DisplayMemberPath="NameGroupe"
                       UI:FocusAdvancement.AdvancesByEnterKey="True"
-                      IsEnabled="{Binding IsEnableGenerator}"/>            
+                      IsEnabled="{Binding IsEnableGenerator}"/>
+            <Label Content="Enter to search..."
+                   VerticalAlignment="Center"
+                   Style="{StaticResource LabelSearch}"
+                   IsEnabled="{Binding IsEnableGenerator}"
+                   Visibility="{Binding IsVisibleStandart}"/>
+            <TextBox HorizontalAlignment="Stretch"
+                     FontWeight="Bold"
+                     Foreground="Blue"
+                     Margin="5"
+                     Width="200"
+                     IsEnabled="{Binding IsEnableGenerator}"
+                     Visibility="{Binding IsVisibleStandart}">
+                <TextBox.InputBindings>
+                    <KeyBinding Command="{Binding Search}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor,
+                                AncestorType={x:Type TextBox}},
+                                Path=Text}" Key="Return"/>
+                </TextBox.InputBindings>
+            </TextBox>
             <ComboBox Margin="5" 
                       HorizontalContentAlignment="Left" 
                       Width="200"

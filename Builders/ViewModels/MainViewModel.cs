@@ -106,8 +106,7 @@ namespace Builders.ViewModels
         private List<int> dateYears;
         private EnumMonths dateMonthSelect;
         private List<EnumMonths> dateMonths;
-
-        private bool isCheckedEditDate;
+                
         private Visibility isVisibleEditDate;
         private DateTime dateQuota;
         private DateTime dateDelivery;
@@ -960,16 +959,7 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(CompanyName));
             }
         }
-
-        public bool IsCheckedEditDate
-        {
-            get { return isCheckedEditDate; }
-            set
-            {
-                isCheckedEditDate = value;
-                OnPropertyChanged(nameof(IsCheckedEditDate));
-            }
-        }
+                
         public Visibility IsVisibleEditDate
         {
             get { return isVisibleEditDate; }

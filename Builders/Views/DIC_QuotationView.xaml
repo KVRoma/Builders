@@ -29,6 +29,19 @@
                       ItemsSource="{Binding Groupes}" 
                       SelectedItem="{Binding GroupeSelect, Mode=TwoWay}" 
                       DisplayMemberPath="NameGroupe" />
+            <Label Content="Enter to search..."
+                   Style="{StaticResource LabelSearch}"/>
+            <TextBox HorizontalAlignment="Stretch"
+                     FontWeight="Bold"
+                     Foreground="Blue"
+                     Width="200">
+                <TextBox.InputBindings>
+                    <KeyBinding Command="{Binding Search}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor,
+                                AncestorType={x:Type TextBox}},
+                                Path=Text}" Key="Return"/>
+                </TextBox.InputBindings>
+            </TextBox>
         </StackPanel>
 
         <Label Grid.Row="1" 

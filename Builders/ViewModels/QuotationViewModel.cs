@@ -59,6 +59,7 @@ namespace Builders.ViewModels
         private Visibility isVisibleStandart;
         private Visibility isVisibleLeveling;
         private Visibility isVisibleRoomDescription;
+       
 
         private DIC_G_GradeLevel gradeLevelSelect;
         private List<DIC_G_GradeLevel> gradeLevels;
@@ -365,6 +366,7 @@ namespace Builders.ViewModels
             {
                 companyName = value;
                 OnPropertyChanged(nameof(CompanyName));
+               
             }
         }
         public int? Mapei
@@ -403,6 +405,7 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(IsVisibleRoomDescription));
             }
         }
+        
 
         public DIC_G_GradeLevel GradeLevelSelect
         {
@@ -567,7 +570,9 @@ namespace Builders.ViewModels
         private Command _otherQuotation;
         private Command _clearRoom;
         private Command _generated;
-        
+        private Command _search;
+
+
 
         public Command AddItem => _addItem ?? (_addItem = new Command(obj =>
         {
@@ -968,8 +973,23 @@ namespace Builders.ViewModels
             GeneratedLists = CalculateGenerated(generator.generatedSelect);
             QuotaSelect = AddMaterialQuotaToGenerated(GeneratedLists, quotaSelect);
         }));
-               
+        public Command Search => _search ?? (_search = new Command(obj=> 
+        {
+            string search = obj.ToString();
+            if (search == "")
+            {
+                DIC_Items = (DIC_GroupeSelect != null) ? db.DIC_ItemQuotations.Local.ToBindingList().Where(i => i.GroupeId == DIC_GroupeSelect.Id).OrderBy(i => i.Name) : null;
+                DIC_ItemSelect = null;
+            }
+            else
+            {
+                DIC_Items = (DIC_GroupeSelect != null) ? (DIC_Items.Where(t => t.GroupeId == DIC_GroupeSelect.Id)
+                                                                   .Where(t => t.Name.ToUpper().Contains(search.ToUpper()))
+                                                                   .OrderBy(t => t.Name)) : null;
+            }
+        }));
 
+       
         public QuotationViewModel(ref BuilderContext context, EnumClient res, Quotation select, string companyName)
         {
             db = context;
@@ -992,10 +1012,8 @@ namespace Builders.ViewModels
 
             IsVisibleStandart = Visibility.Visible;
             IsVisibleRoomDescription = Visibility.Collapsed;
-                        
-
-            //DIC_Groupes = db.DIC_GroupeQuotations.Local.ToBindingList();
-
+                       
+            
             switch (result)
             {
                 case EnumClient.Add:
