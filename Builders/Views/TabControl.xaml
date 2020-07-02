@@ -149,6 +149,7 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <Border Grid.Row="0" Style="{StaticResource BorderRadiusSearch}">
                         <Grid>
@@ -201,7 +202,25 @@
                             <DataGridTextColumn Header="Grand Total" Width="auto" Binding="{Binding Path=InvoiceGrandTotal}"/>
                         </DataGrid.Columns>
                     </DataGrid>
+
                     <StackPanel Grid.Row="2" 
+                                Orientation="Horizontal" 
+                                Style="{StaticResource FooterMenu}"
+                                Visibility="{Binding IsVisibleEditDate}">
+                        <DatePicker HorizontalAlignment="Center" 
+                                    VerticalAlignment="Center"
+                                    Margin="7,0,64,0"
+                                    FontSize="15"
+                                    Width="150"
+                                    SelectedDate="{Binding QuotationSelect.QuotaDate}"/>
+                        <Button Content="Save" 
+                                Foreground="Green"
+                                BorderBrush="Green"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding EditQuotaDate}"/>
+                    </StackPanel>
+                    
+                    <StackPanel Grid.Row="3" 
                                 Style="{StaticResource FooterMenu}" Grid.ColumnSpan="2">
                         <Button Content="Add" 
                                 Foreground="Green"
@@ -268,6 +287,7 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <Border Grid.Row="0" Style="{StaticResource BorderRadiusSearch}">
                         <Grid>
@@ -316,7 +336,25 @@
                             <DataGridCheckBoxColumn Header="Sent mail" Binding="{Binding Path=IsEnabled}"/>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <StackPanel Grid.Row="2" Grid.ColumnSpan="2"
+
+                    <StackPanel Grid.Row="2" 
+                                Orientation="Horizontal" 
+                                Style="{StaticResource FooterMenu}"
+                                Visibility="{Binding IsVisibleEditDate}">
+                        <DatePicker HorizontalAlignment="Center" 
+                                    VerticalAlignment="Center"
+                                    Margin="7,0,64,0"
+                                    FontSize="15"
+                                    Width="150"
+                                    SelectedDate="{Binding DeliverySelect.DateCreating}"/>
+                        <Button Content="Save" 
+                                Foreground="Green"
+                                BorderBrush="Green"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding EditDeliveryDate}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="3" Grid.ColumnSpan="2"
                                 Style="{StaticResource FooterMenu}" >
                         <Button Content="Print PO" 
                                 Foreground="Blue" 
@@ -360,6 +398,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <Border Grid.Row="0" Style="{StaticResource BorderRadiusSearch}">
@@ -405,7 +444,25 @@
                             <DataGridTextColumn Header="Completion Date" Width="auto" Binding="{Binding Path=DateCompletion, StringFormat=\{0:dd.MM.yyyy\}}"/>
                         </DataGrid.Columns>
                     </DataGrid>
+
                     <StackPanel Grid.Row="2" 
+                                Orientation="Horizontal" 
+                                Style="{StaticResource FooterMenu}"
+                                Visibility="{Binding IsVisibleEditDate}">
+                        <DatePicker HorizontalAlignment="Center" 
+                                    VerticalAlignment="Center"
+                                    Margin="7,0,64,0"
+                                    FontSize="15"
+                                    Width="150"
+                                    SelectedDate="{Binding WorkOrderSelect.DateWork}"/>
+                        <Button Content="Save" 
+                                Foreground="Green"
+                                BorderBrush="Green"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding EditWorkOrderDate}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="3" 
                                 Style="{StaticResource FooterMenu}">
                         <Button Content="Add" 
                                 Foreground="Green"
@@ -452,6 +509,7 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <Border Grid.Row="0" Style="{StaticResource BorderRadiusSearch}">
                         <Grid>
@@ -495,7 +553,25 @@
                             <DataGridTextColumn Header="Material + Labour" Width="auto" Binding="{Binding Path=TotalProfit, StringFormat='0.00'}"/>
                         </DataGrid.Columns>
                     </DataGrid>
+
                     <StackPanel Grid.Row="2" 
+                                Orientation="Horizontal" 
+                                Style="{StaticResource FooterMenu}"
+                                Visibility="{Binding IsVisibleEditDate}">
+                        <DatePicker HorizontalAlignment="Center" 
+                                    VerticalAlignment="Center"
+                                    Margin="7,0,64,0"
+                                    FontSize="15"
+                                    Width="150"
+                                    SelectedDate="{Binding InvoiceSelect.DateInvoice}"/>
+                        <Button Content="Save" 
+                                Foreground="Green"
+                                BorderBrush="Green"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding EditInvoiceDate}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="3" 
                                 Style="{StaticResource FooterMenu}">
                         <Button Content="Add" 
                                 Foreground="Green"
@@ -813,7 +889,8 @@
             </TabItem.Content>
         </TabItem>
 
-        <TabItem>
+        <!-- Вкладка для імпорту БД з файлів Excel -->
+        <TabItem Visibility="Collapsed">
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="15,0,0,0" Text="Import" FontWeight="Bold"/>

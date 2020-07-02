@@ -106,6 +106,13 @@ namespace Builders.ViewModels
         private List<int> dateYears;
         private EnumMonths dateMonthSelect;
         private List<EnumMonths> dateMonths;
+
+        private bool isCheckedEditDate;
+        private Visibility isVisibleEditDate;
+        private DateTime dateQuota;
+        private DateTime dateDelivery;
+        private DateTime dateWorkOrder;
+        private DateTime dateInvoice;
         #endregion
         #region Public Property
         public Visibility Progress
@@ -954,6 +961,60 @@ namespace Builders.ViewModels
             }
         }
 
+        public bool IsCheckedEditDate
+        {
+            get { return isCheckedEditDate; }
+            set
+            {
+                isCheckedEditDate = value;
+                OnPropertyChanged(nameof(IsCheckedEditDate));
+            }
+        }
+        public Visibility IsVisibleEditDate
+        {
+            get { return isVisibleEditDate; }
+            set
+            {
+                isVisibleEditDate = value;
+                OnPropertyChanged(nameof(IsVisibleEditDate));
+            }
+        }
+        public DateTime DateQuota
+        {
+            get { return dateQuota; }
+            set
+            {
+                dateQuota = value;
+                OnPropertyChanged(nameof(DateQuota));
+            }
+        }
+        public DateTime DateDelivery
+        {
+            get { return dateDelivery; }
+            set
+            {
+                dateDelivery = value;
+                OnPropertyChanged(nameof(DateDelivery));
+            }
+        }
+        public DateTime DateWorkOrder
+        {
+            get { return dateWorkOrder; }
+            set
+            {
+                dateWorkOrder = value;
+                OnPropertyChanged(nameof(DateWorkOrder));
+            }
+        }
+        public DateTime DateInvoice
+        {
+            get { return dateInvoice; }
+            set
+            {
+                dateInvoice = value;
+                OnPropertyChanged(nameof(DateInvoice));
+            }
+        }
         #endregion
         #region Private Command
         private Command _exitApp;
@@ -1046,6 +1107,11 @@ namespace Builders.ViewModels
         private Command _importMaterial;
         private Command _importDebts;
         //*************************************
+        private Command _editDate;
+        private Command _editQuotaDate;
+        private Command _editDeliveryDate;
+        private Command _editWorkOrderDate;
+        private Command _editInvoiceDate;
         #endregion
         #region Public Command
         public Command ExitApp => _exitApp ?? (_exitApp = new Command(obj =>
@@ -3250,6 +3316,59 @@ namespace Builders.ViewModels
             ImportDebtsTableToExcel();
         }));
 
+        public Command EditDate => _editDate ?? (_editDate = new Command(obj=> 
+        {
+            if (IsVisibleEditDate == Visibility.Collapsed)
+            {
+                IsVisibleEditDate = Visibility.Visible;
+            }
+            else
+            {
+                IsVisibleEditDate = Visibility.Collapsed;
+            }
+        }));
+        public Command EditQuotaDate => _editQuotaDate ?? (_editQuotaDate = new Command(obj=> 
+        {
+            db.Entry(QuotationSelect).State = EntityState.Modified;
+            db.SaveChanges();
+        }));
+        public Command EditDeliveryDate => _editDeliveryDate ?? (_editDeliveryDate = new Command(obj=> 
+        {
+            db.Entry(DeliverySelect).State = EntityState.Modified;
+            db.SaveChanges();
+        }));
+        public Command EditWorkOrderDate => _editWorkOrderDate ?? (_editWorkOrderDate = new Command(obj=> 
+        {
+            db.Entry(WorkOrderSelect).State = EntityState.Modified;
+            db.SaveChanges();
+        }));
+        public Command EditInvoiceDate => _editInvoiceDate ?? (_editInvoiceDate = new Command(obj=> 
+        {
+            db.Entry(InvoiceSelect).State = EntityState.Modified;
+            
+            var labour = LabourProfits.FirstOrDefault(l=>l.InvoiceId == InvoiceSelect.Id);
+            labour.InvoiceDate = InvoiceSelect.DateInvoice;
+            db.Entry(labour).State = EntityState.Modified;
+
+            var material = MaterialProfits.FirstOrDefault(m => m.InvoiceId == InvoiceSelect.Id);
+            material.InvoiceDate = InvoiceSelect.DateInvoice;
+            db.Entry(material).State = EntityState.Modified;
+
+            var deb = Debts.Where(d => d.InvoiceId == InvoiceSelect.Id);
+            foreach (var item in deb)
+            {
+                item.InvoiceDate = InvoiceSelect.DateInvoice;
+                db.Entry(item).State = EntityState.Modified;
+            }
+
+            db.SaveChanges();
+
+            LoadDebtsDB(CompanyName);
+            LoadLabourProfitsDB(CompanyName);
+            LoadMaterialProfitsDB(CompanyName);
+        }));
+
+
         #endregion
         public MainViewModel()
         {
@@ -3299,6 +3418,8 @@ namespace Builders.ViewModels
             IsVisibleAmountReport = Visibility.Collapsed;
             IsVisibleDebtsReport = Visibility.Collapsed;
             IsVisibleExpensesReport = Visibility.Collapsed;
+
+            IsVisibleEditDate = Visibility.Collapsed;
 
             ReportDateFrom = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             ReportDateTo = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.DaysInMonth(DateTime.Today.Year, DateTime.Today.Month));

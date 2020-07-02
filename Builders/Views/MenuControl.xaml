@@ -20,6 +20,8 @@
                 <MenuItem Header="Creat Template Client" Command="{Binding TemplateClient }" Foreground="Blue"/>
                 <MenuItem Header="Creat Template Expenses" Command="{Binding TemplateExpenses }" Foreground="Blue"/>
                 <MenuItem Header=""/>
+                <MenuItem Header="Edit Date     (On/Off)" Command="{Binding EditDate}" Foreground="Green"/>
+                <MenuItem Header=""/>
                 <Separator/>
                 <MenuItem Header="Exit" Command="{Binding ExitApp}" Foreground="Red"/>
             </MenuItem>
