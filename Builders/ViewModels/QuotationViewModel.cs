@@ -1353,6 +1353,7 @@ namespace Builders.ViewModels
                 list = new GeneratedList();
             }
 
+            GeneratedList listPainting = new GeneratedList();
             foreach (var item in molding)
             {
                 if (item.MoldingName != null)
@@ -1377,14 +1378,30 @@ namespace Builders.ViewModels
                 }
                 if (item.Painting != null)
                 {
-                    list.GeneratedId = select.Id;
-                    list.Groupe = "OPTIONAL SERVICES";
-                    list.Name = item.Painting;
-                    list.Count = 0m;
+                    var name = result.FirstOrDefault(l => l.Groupe == "OPTIONAL SERVICES" && l.Name == item.Painting);
+                    if (name == null)
+                    {
+                        listPainting.GeneratedId = select.Id;
+                        listPainting.Groupe = "OPTIONAL SERVICES";
+                        listPainting.Name = item.Painting;
+                        listPainting.Count = item.BaseboardMaterial;
 
-                    result.Add(list);
-                    list = null;
-                    list = new GeneratedList();
+                        result.Add(listPainting);
+                        listPainting = null;
+                        listPainting = new GeneratedList();
+                    }
+                    else
+                    {
+                        listPainting.GeneratedId = select.Id;
+                        listPainting.Groupe = "OPTIONAL SERVICES";
+                        listPainting.Name = name.Name;
+                        listPainting.Count = item.BaseboardMaterial + name.Count;
+
+                        result.RemoveAt(result.IndexOf(name));
+                        result.Add(listPainting);
+                        listPainting = null;
+                        listPainting = new GeneratedList();
+                    }                    
                 }
             }
 
@@ -1424,7 +1441,8 @@ namespace Builders.ViewModels
                     list = new GeneratedList();
                 }
             }
-
+            
+            int countFlood = 0;
             foreach (var item in flood)
             {
                 if (item.Depth != null)
@@ -1437,7 +1455,20 @@ namespace Builders.ViewModels
                     result.Add(list);
                     list = null;
                     list = new GeneratedList();
+
+                    countFlood++;
                 }
+            }
+            if (countFlood > 0)
+            {
+                list.GeneratedId = select.Id;
+                list.Groupe = "OPTIONAL SERVICES";
+                list.Name = "Leveling Services Fee";
+                list.Count = countFlood;
+
+                result.Add(list);
+                list = null;
+                list = new GeneratedList();
             }
 
             db.GeneratedLists.AddRange(SortedListGenerated(result));

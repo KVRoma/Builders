@@ -22,6 +22,15 @@ namespace Builders.Models
        
         public string Color { get; set; }
 
+        // Привязка до поверху, типу кімнати та ще якоїсь херні
+        public string GradeLevel { get; set; }
+        public string Partition { get; set; }
+        public string Aditional { get; set; }
+        public string RoomDetail
+        {
+            get { return GradeLevel + " " + Partition + " " + Aditional; }
+        }
+
         public int? WorkOrderId { get; set; }
         public virtual WorkOrder WorkOrder { get; set; }
     }

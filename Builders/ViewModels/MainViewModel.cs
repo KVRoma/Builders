@@ -4603,7 +4603,7 @@ namespace Builders.ViewModels
             {
                 if (item.Groupe == "DEMOLITION")
                 {
-                    ExcelApp.Cells[i, 1] = item.Item;
+                    ExcelApp.Cells[i, 1] = item.RoomDetail + " - " + item.Item;
                     ExcelApp.Cells[i, 2] = item.Description;
                     ExcelApp.Cells[i, 5] = item.Contractor;
                     ExcelApp.Cells[i, 6] = item.Quantity;
@@ -4618,7 +4618,7 @@ namespace Builders.ViewModels
             {
                 if (item.Groupe == "INSTALLATION")
                 {
-                    ExcelApp.Cells[i, 1] = item.Item;
+                    ExcelApp.Cells[i, 1] = item.RoomDetail + " - " + item.Item;
                     ExcelApp.Cells[i, 2] = item.Description;
                     ExcelApp.Cells[i, 5] = item.Contractor;
                     ExcelApp.Cells[i, 6] = item.Quantity;
@@ -4633,7 +4633,7 @@ namespace Builders.ViewModels
             {
                 if (item.Groupe == "OPTIONAL SERVICES")
                 {
-                    ExcelApp.Cells[i, 1] = item.Item;
+                    ExcelApp.Cells[i, 1] = item.RoomDetail + " - " + item.Item;
                     ExcelApp.Cells[i, 2] = item.Description;
                     ExcelApp.Cells[i, 5] = item.Contractor;
                     ExcelApp.Cells[i, 6] = item.Quantity;
@@ -6309,8 +6309,8 @@ namespace Builders.ViewModels
                                 DateServices = DateTime.Parse(ExcelApp.Cells[i, 9].Value2?.ToString()),
                                 DateCompletion = DateTime.Parse(ExcelApp.Cells[i, 10].Value2?.ToString()),
                                 Parking = ExcelApp.Cells[i, 11].Value2?.ToString(),
-                                Notes = ExcelApp.Cells[i, 12].Value2?.ToString(),
-                                CompanyName = ExcelApp.Cells[i, 13].Value2?.ToString()
+                                Notes = ExcelApp.Cells[i, 14].Value2?.ToString(),
+                                CompanyName = ExcelApp.Cells[i, 18].Value2?.ToString()
                             });
                         }
                         ExcelApp.Visible = true;
@@ -6549,9 +6549,9 @@ namespace Builders.ViewModels
                                 NewFloor = ExcelApp.Cells[i, 5].Value2?.ToString(),
                                 Furniture = ExcelApp.Cells[i, 6].Value2?.ToString(),
                                 Misc = ExcelApp.Cells[i, 7].Value2?.ToString(),                                
-                                Contractor = ExcelApp.Cells[i, 8].Value2?.ToString(),
-                                Color = ExcelApp.Cells[i, 9].Value2?.ToString(),
-                                WorkOrderId = int.Parse(ExcelApp.Cells[i, 10].Value2?.ToString())
+                                Contractor = ExcelApp.Cells[i, 9].Value2?.ToString(),
+                                Color = ExcelApp.Cells[i, 10].Value2?.ToString(),
+                                WorkOrderId = int.Parse(ExcelApp.Cells[i, 8].Value2?.ToString())
                             });
                         }
                         ExcelApp.Visible = true;

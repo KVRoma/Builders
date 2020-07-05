@@ -370,6 +370,7 @@
                                     </Style>
                                 </DataGrid.CellStyle>
                                 <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Room" Width="*" MinWidth="100" Binding="{Binding Path=RoomDetail}"/>
                                     <DataGridTextColumn Header="Groupe" Width="auto" Binding="{Binding Path=Groupe}"/>
                                     <DataGridTextColumn Header="Item" Width="200" Binding="{Binding Path=Item}"/>
                                     <DataGridTextColumn Header="Description" Width="200" Binding="{Binding Path=Description}"/>
@@ -378,7 +379,7 @@
                                     <DataGridTextColumn Header="Price" Width="auto" Binding="{Binding Path=Price, StringFormat='0.00'}"/>
                                     <DataGridTextColumn Header="Percent" Width="auto" Binding="{Binding Path=Procent}"/>
                                     <DataGridTextColumn Header="Payout" Width="auto" Binding="{Binding Path=Payout, StringFormat='0.00'}"/>
-                                    <DataGridTextColumn Header="Contractor" Width="*" Binding="{Binding Path=Contractor}"/>
+                                    <DataGridTextColumn Header="Contractor" Width="auto" Binding="{Binding Path=Contractor}"/>
                                 </DataGrid.Columns>
                             </DataGrid>
                             <Grid Grid.Row="1">

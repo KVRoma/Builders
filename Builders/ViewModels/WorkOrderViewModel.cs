@@ -204,7 +204,9 @@ namespace Builders.ViewModels
             {
                 quotationSelect = value;
                 OnPropertyChanged(nameof(QuotationSelect));
+
                 LoadInstallation(QuotationSelect);
+                LoadWork(QuotationSelect);
             }
         }
         public IEnumerable<Quotation> Quotations
@@ -568,11 +570,18 @@ namespace Builders.ViewModels
                 foreach (var item in Installations)
                 {
                     item.WorkOrderId = OrderSelect.Id;
-                    db.WorkOrder_Installations.Add(item);
-                    db.SaveChanges();
+                    db.WorkOrder_Installations.Add(item);                    
                 }
 
+                foreach (var item in Works)
+                {
+                    item.WorkOrderId = OrderSelect.Id;
+                    db.WorkOrder_Works.Add(item);
+                }
+                db.SaveChanges();
+
                 Installations = db.WorkOrder_Installations.Local.ToBindingList().Where(i => i.WorkOrderId == OrderSelect.Id).OrderBy(i => i.Groupe).ThenBy(c => c.Contractor);
+                Works = db.WorkOrder_Works.Local.ToBindingList().Where(i => i.WorkOrderId == OrderSelect.Id).OrderBy(i => i.Area).ThenBy(c => c.Room);
                 NewAccessories = db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == OrderSelect?.QuotaId).Where(m => m.Groupe == "FLOORING" || m.Groupe == "ACCESSORIES");
                 EnableWork = true;
                 EnableButtonCreat = false;
@@ -600,9 +609,9 @@ namespace Builders.ViewModels
         {
             if (WorkSelect != null)
             {
-                WorkSelect.Area = AreaSelect?.Name;
-                WorkSelect.Room = RoomSelect?.Name;
-                WorkSelect.Existing = FloorSelect?.Name;
+                WorkSelect.Area = (AreaSelect?.Name == null) ? (WorkSelect.Area) :(AreaSelect?.Name);
+                WorkSelect.Room = (RoomSelect?.Name == null) ? (WorkSelect.Room) : (RoomSelect?.Name);
+                WorkSelect.Existing = (FloorSelect?.Name == null) ? (WorkSelect.Existing) : (FloorSelect?.Name);
                 WorkSelect.NewFloor = NewFloor;
                 WorkSelect.Furniture = FurnitureSelect;
                 WorkSelect.Misc = Misc;
@@ -758,9 +767,9 @@ namespace Builders.ViewModels
                         CompletionDate = DateTime.Today;
                         EnableWork = false;
                         EnableButtonCreat = true;
-                        Works = db.WorkOrder_Works.Local.ToBindingList().Where(w => w.WorkOrderId == OrderSelect?.Id);
-                        Accessories = db.WorkOrder_Accessories.Local.ToBindingList().Where(a => a.WorkOrderId == OrderSelect?.Id);
-                        Contractors = db.WorkOrder_Contractors.Local.ToBindingList().Where(c => c.WorkOrderId == OrderSelect?.Id); 
+                        //Works = db.WorkOrder_Works.Local.ToBindingList().Where(w => w.WorkOrderId == OrderSelect?.Id);
+                        //Accessories = db.WorkOrder_Accessories.Local.ToBindingList().Where(a => a.WorkOrderId == OrderSelect?.Id);
+                        //Contractors = db.WorkOrder_Contractors.Local.ToBindingList().Where(c => c.WorkOrderId == OrderSelect?.Id); 
                     }
                     break;
                 case EnumClient.Ins:
@@ -813,6 +822,9 @@ namespace Builders.ViewModels
                         {
                             ins.Add(new WorkOrder_Installation()
                             {
+                                GradeLevel = item.GradeLevel,
+                                Partition = item.Partition,
+                                Aditional = item.Aditional,
                                 Groupe = item.Groupe,
                                 Item = item.Item,
                                 Description = item.Description,
@@ -828,6 +840,28 @@ namespace Builders.ViewModels
                     Installations = null;
                     Installations = ins.OrderBy(i => i.Groupe); //.ThenBy(c => c.Contractor);                    
                 }
+            }
+        }
+        private void LoadWork(Quotation quota)
+        {
+            var generated = db.Generateds.FirstOrDefault(g => g.QuotaId == quota.Id);
+            if (generated != null)
+            {
+                var material = db.GeneratedMaterials.Where(m => m.GeneratedId == generated.Id);
+                List<WorkOrder_Work> floor = new List<WorkOrder_Work>();
+                foreach (var item in material)
+                {
+                    floor.Add(new WorkOrder_Work() 
+                    {
+                        Area = item.GradeLevel,
+                        Room = item.Partition,
+                        Existing = item.ExistingFloor,
+                        NewFloor = item.NewFloor,
+                        Color = "Black"
+                    });
+                }
+                Works = null;
+                Works = floor.OrderBy(f => f.Area).ThenBy(f => f.Room);
             }
         }
         private void LoadComboBoxWorkSelect(WorkOrder_Work select)
@@ -855,8 +889,11 @@ namespace Builders.ViewModels
         private void LoadContractor()
         {
             var contract = Installations.Select(i=>i.Contractor)?.Distinct()?.OrderBy(x=>1);
-            db.WorkOrder_Contractors.RemoveRange(Contractors);
-            db.SaveChanges();
+            if (Contractors != null)
+            {
+                db.WorkOrder_Contractors.RemoveRange(Contractors);
+                db.SaveChanges();
+            }
             Contractors = null;
             Contractors = db.WorkOrder_Contractors.Local.ToBindingList().Where(c => c.WorkOrderId == OrderSelect.Id).OrderBy(c => c.Contractor);
             if (contract != null)
