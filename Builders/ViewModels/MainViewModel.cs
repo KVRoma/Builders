@@ -3416,35 +3416,35 @@ namespace Builders.ViewModels
         }
         private void LoadClientsDB()
         {
-            Clients = db.Clients.Local.ToBindingList();
+            Clients = db.Clients.Local.ToBindingList().OrderByDescending(c=>c.Id);
         }
         private void LoadQuotationsDB(string companyName)
         {
-            Quotations = db.Quotations.Local.ToBindingList().Where(q => q.CompanyName == companyName).OrderBy(q => q.SortingQuota).ThenBy(q => q.Id);
+            Quotations = db.Quotations.Local.ToBindingList().Where(q => q.CompanyName == companyName).OrderBy(q => q.SortingQuota).ThenByDescending(q => q.Id);
         }
         private void LoadInvoicesDB(string companyName)
         {
-            Invoices = db.Invoices.Local.ToBindingList().Where(i => i.CompanyName == companyName);
+            Invoices = db.Invoices.Local.ToBindingList().Where(i => i.CompanyName == companyName).OrderByDescending(i => i.Id);
         }
         private void LoadWorkOrdersDB(string companyName)
         {
-            WorkOrders = db.WorkOrders.Local.ToBindingList().Where(w => w.CompanyName == companyName);
+            WorkOrders = db.WorkOrders.Local.ToBindingList().Where(w => w.CompanyName == companyName).OrderByDescending(w => w.Id);
         }
         private void LoadMaterialProfitsDB(string companyName)
         {
-            MaterialProfits = db.MaterialProfits.Local.ToBindingList().Where(m => m.CompanyName == companyName);
+            MaterialProfits = db.MaterialProfits.Local.ToBindingList().Where(m => m.CompanyName == companyName).OrderByDescending(m => m.Id);
         }
         private void LoadLabourProfitsDB(string companyName)
         {
-            LabourProfits = db.LabourProfits.Local.ToBindingList().Where(l => l.CompanyName == companyName);
+            LabourProfits = db.LabourProfits.Local.ToBindingList().Where(l => l.CompanyName == companyName).OrderByDescending(l => l.Id);
         }
         private void LoadDebtsDB(string companyName)
         {
-            Debts = db.Debts.Local.ToBindingList().Where(d => d.CompanyName == companyName);
+            Debts = db.Debts.Local.ToBindingList().Where(d => d.CompanyName == companyName).OrderByDescending(d => d.Id);
         }
         private void LoadDeliveriesDB(string companyName, bool isArchive)
         {
-            Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == isArchive && d.CompanyName == companyName);
+            Deliveries = db.Deliveries.Local.ToBindingList().Where(d => d.IsArchive == isArchive && d.CompanyName == companyName).OrderByDescending(d => d.Id);
         }
         private async void StartLoadDB()
         {
