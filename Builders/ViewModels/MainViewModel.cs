@@ -1196,82 +1196,89 @@ namespace Builders.ViewModels
             }
 
         }));
-        public Command DelClient => _delClient ?? (_delClient = new Command(obj =>
+        public Command DelClient => _delClient ?? (_delClient = new Command(async obj =>
         {
             if (ClientSelect != null)
             {
-                var quota = Quotations.Where(q => q.ClientId == ClientSelect.Id);
-
-                foreach (var item in quota)
+                var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                var message = new MessageViewModel(200, 410, "The selected Client" + Environment.NewLine + "  will be deleted !!!", System.Windows.Media.Brushes.Red);
+                await displayRootRegistry.ShowModalPresentation(message);
+                if (message.PressOk)
                 {
-                    DeleteGenerated(item.Id);
-                    var invoice = Invoices.Where(i => i.QuotaId == item.Id);
-                    var material = db.MaterialQuotations.Where(m => m.QuotationId == item.Id);
-                    var order = WorkOrders.Where(o => o.QuotaId == item.Id);
-                    var receipt = db.Reciepts.Where(r => r.QuotaId == item.Id);
-                    var payment = db.Payments.Where(p => p.QuotationId == item.Id);
-                    var delivery = db.Deliveries.Where(d => d.QuotaId == item.Id);
+                    var quota = Quotations.Where(q => q.ClientId == ClientSelect.Id);
 
-                    foreach (var itemIn in invoice)         // Цю херню треба буде викинути і замутити обмеження при створенні Інвойса (один інвойс на одну квоту !!!)
+                    foreach (var item in quota)
                     {
-                        var debts = Debts.Where(d => d.InvoiceId == itemIn.Id);
-                        var matprof = MaterialProfits.FirstOrDefault(m => m.InvoiceId == itemIn.Id);
-                        var mat = db.Materials.Where(m => m.MaterialProfitId == matprof.Id);
+                        DeleteGenerated(item.Id);
+                        var invoice = Invoices.Where(i => i.QuotaId == item.Id);
+                        var material = db.MaterialQuotations.Where(m => m.QuotationId == item.Id);
+                        var order = WorkOrders.Where(o => o.QuotaId == item.Id);
+                        var receipt = db.Reciepts.Where(r => r.QuotaId == item.Id);
+                        var payment = db.Payments.Where(p => p.QuotationId == item.Id);
+                        var delivery = db.Deliveries.Where(d => d.QuotaId == item.Id);
 
-                        var labprof = LabourProfits.FirstOrDefault(l => l.InvoiceId == itemIn.Id);
-                        var lab = db.Labours.Where(la => la.LabourProfitId == labprof.Id);
-                        var labcontr = db.LabourContractors.Where(la => la.LabourProfitId == labprof.Id);
+                        foreach (var itemIn in invoice)         // Цю херню треба буде викинути і замутити обмеження при створенні Інвойса (один інвойс на одну квоту !!!)
+                        {
+                            var debts = Debts.Where(d => d.InvoiceId == itemIn.Id);
+                            var matprof = MaterialProfits.FirstOrDefault(m => m.InvoiceId == itemIn.Id);
+                            var mat = db.Materials.Where(m => m.MaterialProfitId == matprof.Id);
 
-                        db.Debts.RemoveRange(debts);
+                            var labprof = LabourProfits.FirstOrDefault(l => l.InvoiceId == itemIn.Id);
+                            var lab = db.Labours.Where(la => la.LabourProfitId == labprof.Id);
+                            var labcontr = db.LabourContractors.Where(la => la.LabourProfitId == labprof.Id);
 
-                        db.Materials.RemoveRange(mat);
-                        db.MaterialProfits.Remove(matprof);
+                            db.Debts.RemoveRange(debts);
 
-                        db.Labours.RemoveRange(lab);
-                        db.LabourContractors.RemoveRange(labcontr);
-                        db.LabourProfits.Remove(labprof);
+                            db.Materials.RemoveRange(mat);
+                            db.MaterialProfits.Remove(matprof);
+
+                            db.Labours.RemoveRange(lab);
+                            db.LabourContractors.RemoveRange(labcontr);
+                            db.LabourProfits.Remove(labprof);
+                        }
+
+                        foreach (var ord in order)
+                        {
+                            var work = db.WorkOrder_Works.Where(w => w.WorkOrderId == ord.Id);
+                            var accessories = db.WorkOrder_Accessories.Where(a => a.WorkOrderId == ord.Id);
+                            var inst = db.WorkOrder_Installations.Where(i => i.WorkOrderId == ord.Id);
+                            var con = db.WorkOrder_Contractors.Where(c => c.WorkOrderId == ord.Id);
+
+                            db.WorkOrder_Contractors.RemoveRange(con);
+                            db.WorkOrder_Installations.RemoveRange(inst);
+                            db.WorkOrder_Accessories.RemoveRange(accessories);
+                            db.WorkOrder_Works.RemoveRange(work);
+                        }
+
+                        foreach (var del in delivery)
+                        {
+                            var mat = db.DeliveryMaterials.Where(m => m.DeliveryId == del.Id);
+                            db.DeliveryMaterials.RemoveRange(mat);
+                        }
+
+                        db.Payments.RemoveRange(payment);
+                        db.Reciepts.RemoveRange(receipt);
+                        db.WorkOrders.RemoveRange(order);
+                        db.MaterialQuotations.RemoveRange(material);
+                        db.Invoices.RemoveRange(invoice);
+                        db.Deliveries.RemoveRange(delivery);
+
+                        db.SaveChanges();
                     }
 
-                    foreach (var ord in order)
-                    {
-                        var work = db.WorkOrder_Works.Where(w => w.WorkOrderId == ord.Id);
-                        var accessories = db.WorkOrder_Accessories.Where(a => a.WorkOrderId == ord.Id);
-                        var inst = db.WorkOrder_Installations.Where(i => i.WorkOrderId == ord.Id);
-                        var con = db.WorkOrder_Contractors.Where(c => c.WorkOrderId == ord.Id);
-
-                        db.WorkOrder_Contractors.RemoveRange(con);
-                        db.WorkOrder_Installations.RemoveRange(inst);
-                        db.WorkOrder_Accessories.RemoveRange(accessories);
-                        db.WorkOrder_Works.RemoveRange(work);
-                    }
-
-                    foreach (var del in delivery)
-                    {
-                        var mat = db.DeliveryMaterials.Where(m => m.DeliveryId == del.Id);
-                        db.DeliveryMaterials.RemoveRange(mat);
-                    }
-
-                    db.Payments.RemoveRange(payment);
-                    db.Reciepts.RemoveRange(receipt);
-                    db.WorkOrders.RemoveRange(order);
-                    db.MaterialQuotations.RemoveRange(material);
-                    db.Invoices.RemoveRange(invoice);
-                    db.Deliveries.RemoveRange(delivery);
-
+                    db.Quotations.RemoveRange(quota);
                     db.SaveChanges();
+                    LoadQuotationsDB(CompanyName);
+
+                    db.Clients.Remove(ClientSelect);
+                    db.SaveChanges();
+                    LoadClientsDB();
+
+                    Deliveries = null;
+                    LoadDeliveriesDB(CompanyName, false);
+                    IsCheckedArchiveDelivery = false;
                 }
-
-                db.Quotations.RemoveRange(quota);
-                db.SaveChanges();
-                LoadQuotationsDB(CompanyName);
-
-                db.Clients.Remove(ClientSelect);
-                db.SaveChanges();
-                LoadClientsDB();
-
-                Deliveries = null;
-                LoadDeliveriesDB(CompanyName, false);
-                IsCheckedArchiveDelivery = false;
             }
         }));
         public Command LoadClient => _loadClient ?? (_loadClient = new Command(async obj =>
@@ -1457,86 +1464,93 @@ namespace Builders.ViewModels
                 }
             }
         }));
-        public Command DelQuotation => _delQuotation ?? (_delQuotation = new Command(obj =>
+        public Command DelQuotation => _delQuotation ?? (_delQuotation = new Command(async obj =>
         {
             if (QuotationSelect != null)
             {
-                DeleteGenerated(QuotationSelect.Id);
-                var material = db.MaterialQuotations.Where(m => m.QuotationId == QuotationSelect.Id);
-                var invoice = Invoices.Where(i => i.QuotaId == QuotationSelect.Id);
-                var order = WorkOrders.Where(o => o.QuotaId == QuotationSelect.Id);
-                var receipt = db.Reciepts.Where(r => r.QuotaId == QuotationSelect.Id);
-                var pay = db.Payments.Where(p => p.QuotationId == QuotationSelect.Id);
-                var delivery = db.Deliveries.Where(d => d.QuotaId == QuotationSelect.Id);
-
-                foreach (var item in delivery)
+                var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                var message = new MessageViewModel(200, 410, "The selected Quote" + Environment.NewLine + "  will be deleted !!!", System.Windows.Media.Brushes.Red);
+                await displayRootRegistry.ShowModalPresentation(message);
+                if (message.PressOk)
                 {
-                    var mat = db.DeliveryMaterials.Where(m => m.DeliveryId == item.Id);
-                    db.DeliveryMaterials.RemoveRange(mat);
+                    DeleteGenerated(QuotationSelect.Id);
+                    var material = db.MaterialQuotations.Where(m => m.QuotationId == QuotationSelect.Id);
+                    var invoice = Invoices.Where(i => i.QuotaId == QuotationSelect.Id);
+                    var order = WorkOrders.Where(o => o.QuotaId == QuotationSelect.Id);
+                    var receipt = db.Reciepts.Where(r => r.QuotaId == QuotationSelect.Id);
+                    var pay = db.Payments.Where(p => p.QuotationId == QuotationSelect.Id);
+                    var delivery = db.Deliveries.Where(d => d.QuotaId == QuotationSelect.Id);
+
+                    foreach (var item in delivery)
+                    {
+                        var mat = db.DeliveryMaterials.Where(m => m.DeliveryId == item.Id);
+                        db.DeliveryMaterials.RemoveRange(mat);
+                    }
+
+                    foreach (var item in invoice)         // Цю херню треба буде викинути і замутити обмеження при створенні Інвойса (один інвойс на одну квоту !!!)
+                    {
+                        var matprof = MaterialProfits.FirstOrDefault(m => m.InvoiceId == item.Id);
+                        var mat = db.Materials.Where(m => m.MaterialProfitId == matprof.Id);
+
+                        var labprof = LabourProfits.FirstOrDefault(l => l.InvoiceId == item.Id);
+                        var lab = db.Labours.Where(la => la.LabourProfitId == labprof.Id);
+                        var labcontr = db.LabourContractors.Where(la => la.LabourProfitId == labprof.Id);
+
+                        var debts = Debts.Where(d => d.InvoiceId == item.Id);
+
+                        db.Materials.RemoveRange(mat);
+                        db.MaterialProfits.Remove(matprof);
+
+                        db.Labours.RemoveRange(lab);
+                        db.LabourContractors.RemoveRange(labcontr);
+                        db.LabourProfits.Remove(labprof);
+
+                        db.Debts.RemoveRange(debts);
+                    }
+
+                    foreach (var item in order)
+                    {
+                        var work = db.WorkOrder_Works.Where(w => w.WorkOrderId == item.Id);
+                        var accessories = db.WorkOrder_Accessories.Where(a => a.WorkOrderId == item.Id);
+                        var inst = db.WorkOrder_Installations.Where(ins => ins.WorkOrderId == item.Id);
+                        var con = db.WorkOrder_Contractors.Where(c => c.WorkOrderId == item.Id);
+                        db.WorkOrder_Contractors.RemoveRange(con);
+                        db.WorkOrder_Installations.RemoveRange(inst);
+                        db.WorkOrder_Accessories.RemoveRange(accessories);
+                        db.WorkOrder_Works.RemoveRange(work);
+                    }
+                    db.Deliveries.RemoveRange(delivery);
+                    db.WorkOrders.RemoveRange(order);
+                    db.Reciepts.RemoveRange(receipt);
+                    db.Payments.RemoveRange(pay);
+                    db.Invoices.RemoveRange(invoice);
+                    db.MaterialQuotations.RemoveRange(material);
+                    db.Quotations.Remove(QuotationSelect);
+                    db.SaveChanges();
+
+                    Quotations = null;
+                    LoadQuotationsDB(CompanyName);
+
+                    Deliveries = null;
+                    LoadDeliveriesDB(CompanyName, false);
+                    IsCheckedArchiveDelivery = false;
+
+                    WorkOrders = null;
+                    LoadWorkOrdersDB(CompanyName);
+
+                    Invoices = null;
+                    LoadInvoicesDB(CompanyName);
+
+                    MaterialProfits = null;
+                    LoadMaterialProfitsDB(CompanyName);
+
+                    LabourProfits = null;
+                    LoadLabourProfitsDB(CompanyName);
+
+                    Debts = null;
+                    LoadDebtsDB(CompanyName);
                 }
-
-                foreach (var item in invoice)         // Цю херню треба буде викинути і замутити обмеження при створенні Інвойса (один інвойс на одну квоту !!!)
-                {
-                    var matprof = MaterialProfits.FirstOrDefault(m => m.InvoiceId == item.Id);
-                    var mat = db.Materials.Where(m => m.MaterialProfitId == matprof.Id);
-
-                    var labprof = LabourProfits.FirstOrDefault(l => l.InvoiceId == item.Id);
-                    var lab = db.Labours.Where(la => la.LabourProfitId == labprof.Id);
-                    var labcontr = db.LabourContractors.Where(la => la.LabourProfitId == labprof.Id);
-
-                    var debts = Debts.Where(d => d.InvoiceId == item.Id);
-
-                    db.Materials.RemoveRange(mat);
-                    db.MaterialProfits.Remove(matprof);
-
-                    db.Labours.RemoveRange(lab);
-                    db.LabourContractors.RemoveRange(labcontr);
-                    db.LabourProfits.Remove(labprof);
-
-                    db.Debts.RemoveRange(debts);
-                }
-
-                foreach (var item in order)
-                {
-                    var work = db.WorkOrder_Works.Where(w => w.WorkOrderId == item.Id);
-                    var accessories = db.WorkOrder_Accessories.Where(a => a.WorkOrderId == item.Id);
-                    var inst = db.WorkOrder_Installations.Where(ins => ins.WorkOrderId == item.Id);
-                    var con = db.WorkOrder_Contractors.Where(c => c.WorkOrderId == item.Id);
-                    db.WorkOrder_Contractors.RemoveRange(con);
-                    db.WorkOrder_Installations.RemoveRange(inst);
-                    db.WorkOrder_Accessories.RemoveRange(accessories);
-                    db.WorkOrder_Works.RemoveRange(work);
-                }
-                db.Deliveries.RemoveRange(delivery);
-                db.WorkOrders.RemoveRange(order);
-                db.Reciepts.RemoveRange(receipt);
-                db.Payments.RemoveRange(pay);
-                db.Invoices.RemoveRange(invoice);
-                db.MaterialQuotations.RemoveRange(material);
-                db.Quotations.Remove(QuotationSelect);
-                db.SaveChanges();
-
-                Quotations = null;
-                LoadQuotationsDB(CompanyName);
-
-                Deliveries = null;
-                LoadDeliveriesDB(CompanyName, false);
-                IsCheckedArchiveDelivery = false;
-
-                WorkOrders = null;
-                LoadWorkOrdersDB(CompanyName);
-
-                Invoices = null;
-                LoadInvoicesDB(CompanyName);
-
-                MaterialProfits = null;
-                LoadMaterialProfitsDB(CompanyName);
-
-                LabourProfits = null;
-                LoadLabourProfitsDB(CompanyName);
-
-                Debts = null;
-                LoadDebtsDB(CompanyName);
             }
         }));
         public Command CopyQuotation => _copyQuotation ?? (_copyQuotation = new Command(async obj =>
@@ -1684,7 +1698,7 @@ namespace Builders.ViewModels
                     if (quotaItem.ActivQuota && delivery == null)
                     {
                         displayRootRegistry = (Application.Current as App).displayRootRegistry;
-                        var message = new MessageViewModel(200, 410, "   Quote status changed to Active !!!" + Environment.NewLine + "Do you want to create a 'Delivery' ? ");
+                        var message = new MessageViewModel(200, 410, "   Quote status changed to Active !!!" + Environment.NewLine + "Do you want to create a 'Delivery' ? ",null);
                         await displayRootRegistry.ShowModalPresentation(message);
                         if (message.PressOk)
                         {
@@ -1696,7 +1710,7 @@ namespace Builders.ViewModels
                     if (quotaItem.ActivQuota && order == null)
                     {
                         displayRootRegistry = (Application.Current as App).displayRootRegistry;
-                        var message = new MessageViewModel(200, 410, "   Quote status changed to Active !!!" + Environment.NewLine + "Do you want to create a 'Work Order' ? ");
+                        var message = new MessageViewModel(200, 410, "   Quote status changed to Active !!!" + Environment.NewLine + "Do you want to create a 'Work Order' ? ", null);
                         await displayRootRegistry.ShowModalPresentation(message);
                         if (message.PressOk)
                         {
@@ -1711,7 +1725,7 @@ namespace Builders.ViewModels
                     if (quotaItem.PaidQuota && invoice == null && order != null)
                     {
                         displayRootRegistry = (Application.Current as App).displayRootRegistry;
-                        var message = new MessageViewModel(200, 410, "   The Quote is fully paid !!!" + Environment.NewLine + "Do you want to move her to the 'Completed Jobs' ?");
+                        var message = new MessageViewModel(200, 410, "   The Quote is fully paid !!!" + Environment.NewLine + "Do you want to move her to the 'Completed Jobs' ?", null);
                         await displayRootRegistry.ShowModalPresentation(message);
                         if (message.PressOk)
                         {
@@ -2269,32 +2283,39 @@ namespace Builders.ViewModels
                 }
             }
         }));
-        public Command DelInvoice => _delInvoice ?? (_delInvoice = new Command(obj =>
+        public Command DelInvoice => _delInvoice ?? (_delInvoice = new Command(async obj =>
         {
             if (InvoiceSelect != null)
             {
-                var materialProfit = MaterialProfits.FirstOrDefault(m => m.InvoiceId == InvoiceSelect.Id); //db.MaterialProfits.FirstOrDefault(m => m.InvoiceId == InvoiceSelect.Id);
-                var material = db.Materials.Where(mat => mat.MaterialProfitId == materialProfit.Id);
-                var labourPrifit = LabourProfits.FirstOrDefault(l => l.InvoiceId == InvoiceSelect.Id); //db.LabourProfits.FirstOrDefault(l => l.InvoiceId == InvoiceSelect.Id);
-                var labour = db.Labours.Where(l => l.LabourProfitId == labourPrifit.Id);
-                var labourCon = db.LabourContractors.Where(c => c.LabourProfitId == labourPrifit.Id);
-                var debts = Debts.Where(d => d.InvoiceId == InvoiceSelect.Id); //db.Debts.Where(d => d.InvoiceId == InvoiceSelect.Id);
-                db.LabourContractors.RemoveRange(labourCon);
-                db.Labours.RemoveRange(labour);
-                db.LabourProfits.Remove(labourPrifit);
-                db.Materials.RemoveRange(material);
-                db.MaterialProfits.Remove(materialProfit);
-                db.Debts.RemoveRange(debts);
-                db.Invoices.Remove(InvoiceSelect);     // Обовязково треба звертати увагу на залежність !!! ЧЕРГА !!!                
-                db.SaveChanges();
-                Invoices = null;
-                LoadInvoicesDB(CompanyName);
-                MaterialProfits = null;
-                LoadMaterialProfitsDB(CompanyName);
-                LabourProfits = null;
-                LoadLabourProfitsDB(CompanyName);
-                Debts = null;
-                LoadDebtsDB(CompanyName);
+                var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                var message = new MessageViewModel(200, 410, "The selected Invoice" + Environment.NewLine + "  will be deleted !!!", System.Windows.Media.Brushes.Red);
+                await displayRootRegistry.ShowModalPresentation(message);
+                if (message.PressOk)
+                {
+                    var materialProfit = MaterialProfits.FirstOrDefault(m => m.InvoiceId == InvoiceSelect.Id); //db.MaterialProfits.FirstOrDefault(m => m.InvoiceId == InvoiceSelect.Id);
+                    var material = db.Materials.Where(mat => mat.MaterialProfitId == materialProfit.Id);
+                    var labourPrifit = LabourProfits.FirstOrDefault(l => l.InvoiceId == InvoiceSelect.Id); //db.LabourProfits.FirstOrDefault(l => l.InvoiceId == InvoiceSelect.Id);
+                    var labour = db.Labours.Where(l => l.LabourProfitId == labourPrifit.Id);
+                    var labourCon = db.LabourContractors.Where(c => c.LabourProfitId == labourPrifit.Id);
+                    var debts = Debts.Where(d => d.InvoiceId == InvoiceSelect.Id); //db.Debts.Where(d => d.InvoiceId == InvoiceSelect.Id);
+                    db.LabourContractors.RemoveRange(labourCon);
+                    db.Labours.RemoveRange(labour);
+                    db.LabourProfits.Remove(labourPrifit);
+                    db.Materials.RemoveRange(material);
+                    db.MaterialProfits.Remove(materialProfit);
+                    db.Debts.RemoveRange(debts);
+                    db.Invoices.Remove(InvoiceSelect);     // Обовязково треба звертати увагу на залежність !!! ЧЕРГА !!!                
+                    db.SaveChanges();
+                    Invoices = null;
+                    LoadInvoicesDB(CompanyName);
+                    MaterialProfits = null;
+                    LoadMaterialProfitsDB(CompanyName);
+                    LabourProfits = null;
+                    LoadLabourProfitsDB(CompanyName);
+                    Debts = null;
+                    LoadDebtsDB(CompanyName);
+                }
             }
         }));
         public Command PrintInvoice => _printInvoice ?? (_printInvoice = new Command(obj =>
@@ -2362,22 +2383,29 @@ namespace Builders.ViewModels
                 LoadWorkOrdersDB(CompanyName);
             }
         }));
-        public Command DelWorkOrder => _delWorkOrder ?? (_delWorkOrder = new Command(obj =>
+        public Command DelWorkOrder => _delWorkOrder ?? (_delWorkOrder = new Command(async obj =>
         {
             if (WorkOrderSelect != null)
             {
-                var work = db.WorkOrder_Works.Where(w => w.WorkOrderId == WorkOrderSelect.Id);
-                var accessories = db.WorkOrder_Accessories.Where(a => a.WorkOrderId == WorkOrderSelect.Id);
-                var install = db.WorkOrder_Installations.Where(i => i.WorkOrderId == WorkOrderSelect.Id);
-                var contract = db.WorkOrder_Contractors.Where(c => c.WorkOrderId == WorkOrderSelect.Id);
-                db.WorkOrder_Contractors.RemoveRange(contract);
-                db.WorkOrder_Installations.RemoveRange(install);
-                db.WorkOrder_Accessories.RemoveRange(accessories);
-                db.WorkOrder_Works.RemoveRange(work);
-                db.WorkOrders.Remove(WorkOrderSelect);
-                db.SaveChanges();
-                WorkOrders = null;
-                LoadWorkOrdersDB(CompanyName);
+                var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                var message = new MessageViewModel(200, 410, "The selected WorkOrder" + Environment.NewLine + "  will be deleted !!!", System.Windows.Media.Brushes.Red);
+                await displayRootRegistry.ShowModalPresentation(message);
+                if (message.PressOk)
+                {
+                    var work = db.WorkOrder_Works.Where(w => w.WorkOrderId == WorkOrderSelect.Id);
+                    var accessories = db.WorkOrder_Accessories.Where(a => a.WorkOrderId == WorkOrderSelect.Id);
+                    var install = db.WorkOrder_Installations.Where(i => i.WorkOrderId == WorkOrderSelect.Id);
+                    var contract = db.WorkOrder_Contractors.Where(c => c.WorkOrderId == WorkOrderSelect.Id);
+                    db.WorkOrder_Contractors.RemoveRange(contract);
+                    db.WorkOrder_Installations.RemoveRange(install);
+                    db.WorkOrder_Accessories.RemoveRange(accessories);
+                    db.WorkOrder_Works.RemoveRange(work);
+                    db.WorkOrders.Remove(WorkOrderSelect);
+                    db.SaveChanges();
+                    WorkOrders = null;
+                    LoadWorkOrdersDB(CompanyName);
+                }
             }
         }));
         public Command PrintWorkOrder => _printWorkOrder ?? (_printWorkOrder = new Command(obj =>
@@ -2861,14 +2889,21 @@ namespace Builders.ViewModels
                 }
             }
         }));
-        public Command DelDebts => _delDebts ?? (_delDebts = new Command(obj =>
+        public Command DelDebts => _delDebts ?? (_delDebts = new Command(async obj =>
         {
             if (DebtSelect != null && DebtSelect.ReadOnly == false)
             {
-                db.Debts.Remove(DebtSelect);
-                db.SaveChanges();
-                Debts = null;
-                LoadDebtsDB(CompanyName);
+                var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                displayRootRegistry = (Application.Current as App).displayRootRegistry;
+                var message = new MessageViewModel(200, 410, "The selected Debts" + Environment.NewLine + "  will be deleted !!!", System.Windows.Media.Brushes.Red);
+                await displayRootRegistry.ShowModalPresentation(message);
+                if (message.PressOk)
+                {
+                    db.Debts.Remove(DebtSelect);
+                    db.SaveChanges();
+                    Debts = null;
+                    LoadDebtsDB(CompanyName);
+                }
             }
         }));
         public Command PaymentDebts => _paymentDebts ?? (_paymentDebts = new Command(async obj =>

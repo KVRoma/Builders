@@ -27,8 +27,8 @@
                    HorizontalAlignment="Center"
                    FontSize="20"
                    FontWeight="Bold"
-                   FontStyle="Italic"
-                   Foreground="Blue"
+                   FontStyle="Italic"                   
+                   Foreground="{Binding Brush}"
                    TextWrapping="Wrap"/>
         <StackPanel Grid.Row="1" 
                     Orientation="Horizontal" 
