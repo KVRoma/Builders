@@ -1157,114 +1157,254 @@ namespace Builders.ViewModels
             {
                 if (item.NewFloor != null)
                 {
-                    list.GeneratedId = select.Id;
-                    list.Groupe = "FLOORING";
-                    list.GradeLevel = item?.GradeLevel;
-                    list.Partition = item?.Partition;
-                    list.Aditional = item?.Aditional;
-                    list.Name = item?.NewFloor;
-                    list.Count = item.TotalFlooringMaterial;
+                    // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
+                    var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
+                                                                   res.Groupe == "FLOORING" &&
+                                                                   res.GradeLevel == item?.GradeLevel &&
+                                                                   res.Partition == item?.Partition &&
+                                                                   res.Aditional == item?.Aditional &&
+                                                                   res.Name == item?.NewFloor);
+                    if (totalResult != null)
+                    {
+                        int index = result.IndexOf(totalResult);                        
+                        if (index != -1)
+                        {
+                            result[index].Count += item.TotalFlooringMaterial;
+                        }
+                        
+                    }
+                    else
+                    {
+                        list.GeneratedId = select.Id;
+                        list.Groupe = "FLOORING";
+                        list.GradeLevel = item?.GradeLevel;
+                        list.Partition = item?.Partition;
+                        list.Aditional = item?.Aditional;
+                        list.Name = item?.NewFloor;
+                        list.Count = item.TotalFlooringMaterial;
 
-                    result.Add(list);
+                        result.Add(list);
+                    }
                     list = null;
                     list = new GeneratedList();
 
-                    list.GeneratedId = select.Id;
-                    list.Groupe = "INSTALLATION";
-                    list.GradeLevel = item?.GradeLevel;
-                    list.Partition = item?.Partition;
-                    list.Aditional = item?.Aditional;
-                    list.Name = item?.NewFloor;
-                    list.Count = item.TotalFloor;
+                    // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
+                    totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
+                                                                   res.Groupe == "INSTALLATION" &&
+                                                                   res.GradeLevel == item?.GradeLevel &&
+                                                                   res.Partition == item?.Partition &&
+                                                                   res.Aditional == item?.Aditional &&
+                                                                   res.Name == item?.NewFloor);
+                    if (totalResult != null)
+                    {
+                        totalResult.Count += item.TotalFloor;
+                        result.RemoveAt(result.IndexOf(totalResult));
+                    }
+                    else
+                    {
 
-                    result.Add(list);
+                        list.GeneratedId = select.Id;
+                        list.Groupe = "INSTALLATION";
+                        list.GradeLevel = item?.GradeLevel;
+                        list.Partition = item?.Partition;
+                        list.Aditional = item?.Aditional;
+                        list.Name = item?.NewFloor;
+                        list.Count = item.TotalFloor;
+
+                        result.Add(list);
+                    }
                     list = null;
                     list = new GeneratedList();
                 }
 
                 if (item.NeedDemolition == "Yes")
                 {
-                    list.GeneratedId = select.Id;
-                    list.Groupe = "DEMOLITION";
-                    list.GradeLevel = item?.GradeLevel;
-                    list.Partition = item?.Partition;
-                    list.Aditional = item?.Aditional;
-                    list.Name = item?.ExistingFloor;
-                    list.Count = item.TotalFloor;
+                    // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
+                    var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
+                                                                   res.Groupe == "DEMOLITION" &&
+                                                                   res.GradeLevel == item?.GradeLevel &&
+                                                                   res.Partition == item?.Partition &&
+                                                                   res.Aditional == item?.Aditional &&
+                                                                   res.Name == item?.ExistingFloor);
+                    if (totalResult != null)
+                    {
+                        int index = result.IndexOf(totalResult);
+                        if (index != -1)
+                        {
+                            result[index].Count += item.TotalFloor;
+                        }
+                    }
+                    else
+                    {
+                        list.GeneratedId = select.Id;
+                        list.Groupe = "DEMOLITION";
+                        list.GradeLevel = item?.GradeLevel;
+                        list.Partition = item?.Partition;
+                        list.Aditional = item?.Aditional;
+                        list.Name = item?.ExistingFloor;
+                        list.Count = item.TotalFloor;
 
-                    result.Add(list);
+                        result.Add(list);
+                    }
                     list = null;
                     list = new GeneratedList();
                 }
 
                 if (item.TransitionR != 0m)
                 {
-                    list.GeneratedId = select.Id;
-                    list.Groupe = "ACCESSORIES";
-                    list.GradeLevel = item?.GradeLevel;
-                    list.Partition = item?.Partition;
-                    list.Aditional = item?.Aditional;
-                    list.Name = "Transition (R)";
-                    list.Count = item.TransitionR;
+                    // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
+                    var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
+                                                                   res.Groupe == "ACCESSORIES" &&
+                                                                   res.GradeLevel == item?.GradeLevel &&
+                                                                   res.Partition == item?.Partition &&
+                                                                   res.Aditional == item?.Aditional &&
+                                                                   res.Name == "Transition (R)");
+                    if (totalResult != null)
+                    {
+                        int index = result.IndexOf(totalResult);
+                        if (index != -1)
+                        {
+                            result[index].Count += item.TransitionR;
+                        }
+                    }
+                    else
+                    {
+                        list.GeneratedId = select.Id;
+                        list.Groupe = "ACCESSORIES";
+                        list.GradeLevel = item?.GradeLevel;
+                        list.Partition = item?.Partition;
+                        list.Aditional = item?.Aditional;
+                        list.Name = "Transition (R)";
+                        list.Count = item.TransitionR;
 
-                    result.Add(list);
+                        result.Add(list);
+                    }
                     list = null;
                     list = new GeneratedList();
                 }
 
                 if (item.TransitionT != 0m)
                 {
-                    list.GeneratedId = select.Id;
-                    list.Groupe = "ACCESSORIES";
-                    list.GradeLevel = item?.GradeLevel;
-                    list.Partition = item?.Partition;
-                    list.Aditional = item?.Aditional;
-                    list.Name = "Transition (T)";
-                    list.Count = item.TransitionT;
+                    // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
+                    var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
+                                                                   res.Groupe == "ACCESSORIES" &&
+                                                                   res.GradeLevel == item?.GradeLevel &&
+                                                                   res.Partition == item?.Partition &&
+                                                                   res.Aditional == item?.Aditional &&
+                                                                   res.Name == "Transition (T)");
+                    if (totalResult != null)
+                    {
+                        int index = result.IndexOf(totalResult);
+                        if (index != -1)
+                        {
+                            result[index].Count += item.TransitionT;
+                        }
+                    }
+                    else
+                    {
+                        list.GeneratedId = select.Id;
+                        list.Groupe = "ACCESSORIES";
+                        list.GradeLevel = item?.GradeLevel;
+                        list.Partition = item?.Partition;
+                        list.Aditional = item?.Aditional;
+                        list.Name = "Transition (T)";
+                        list.Count = item.TransitionT;
 
-                    result.Add(list);
+                        result.Add(list);
+                    }
                     list = null;
                     list = new GeneratedList();
                 }
 
                 if (item.TransitionOther != 0m)
                 {
-                    list.GeneratedId = select.Id;
-                    list.Groupe = "ACCESSORIES";
-                    list.GradeLevel = item?.GradeLevel;
-                    list.Partition = item?.Partition;
-                    list.Aditional = item?.Aditional;
-                    list.Name = item.NoteTransitionOther;
-                    list.Count = item.TransitionOther;
+                    // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
+                    var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
+                                                                   res.Groupe == "ACCESSORIES" &&
+                                                                   res.GradeLevel == item?.GradeLevel &&
+                                                                   res.Partition == item?.Partition &&
+                                                                   res.Aditional == item?.Aditional &&
+                                                                   res.Name == item.NoteTransitionOther);
+                    if (totalResult != null)
+                    {
+                        int index = result.IndexOf(totalResult);
+                        if (index != -1)
+                        {
+                            result[index].Count += item.TransitionOther;
+                        }
+                    }
+                    else
+                    {
+                        list.GeneratedId = select.Id;
+                        list.Groupe = "ACCESSORIES";
+                        list.GradeLevel = item?.GradeLevel;
+                        list.Partition = item?.Partition;
+                        list.Aditional = item?.Aditional;
+                        list.Name = item.NoteTransitionOther;
+                        list.Count = item.TransitionOther;
 
-                    result.Add(list);
+                        result.Add(list);
+                    }
                     list = null;
                     list = new GeneratedList();
                 }
 
                 if (item.QtyTrim != 0m)
                 {
-                    list.GeneratedId = select.Id;
-                    list.Groupe = "ACCESSORIES";
-                    list.GradeLevel = item?.GradeLevel;
-                    list.Partition = item?.Partition;
-                    list.Aditional = item?.Aditional;
-                    list.Name = item.TypeTrim;
-                    list.Count = item.QtyTrim;
+                    // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
+                    var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
+                                                                   res.Groupe == "ACCESSORIES" &&
+                                                                   res.GradeLevel == item?.GradeLevel &&
+                                                                   res.Partition == item?.Partition &&
+                                                                   res.Aditional == item?.Aditional &&
+                                                                   res.Name == item.TypeTrim);
+                    if (totalResult != null)
+                    {
+                        int index = result.IndexOf(totalResult);
+                        if (index != -1)
+                        {
+                            result[index].Count += item.QtyTrim;
+                        }
+                    }
+                    else
+                    {
+                        list.GeneratedId = select.Id;
+                        list.Groupe = "ACCESSORIES";
+                        list.GradeLevel = item?.GradeLevel;
+                        list.Partition = item?.Partition;
+                        list.Aditional = item?.Aditional;
+                        list.Name = item.TypeTrim;
+                        list.Count = item.QtyTrim;
 
-                    result.Add(list);
+                        result.Add(list);
+                    }
                     list = null;
                     list = new GeneratedList();
 
-                    list.GeneratedId = select.Id;
-                    list.Groupe = "INSTALLATION";
-                    list.GradeLevel = item?.GradeLevel;
-                    list.Partition = item?.Partition;
-                    list.Aditional = item?.Aditional;
-                    list.Name = item.TypeTrim;
-                    list.Count = item.QtyTrim;
+                    // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
+                    totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
+                                                                res.Groupe == "INSTALLATION" &&
+                                                                res.GradeLevel == item?.GradeLevel &&
+                                                                res.Partition == item?.Partition &&
+                                                                res.Aditional == item?.Aditional &&
+                                                                res.Name == item.TypeTrim);
+                    if (totalResult != null)
+                    {
+                        totalResult.Count += item.QtyTrim;
+                        result.RemoveAt(result.IndexOf(totalResult));
+                    }
+                    else
+                    {
+                        list.GeneratedId = select.Id;
+                        list.Groupe = "INSTALLATION";
+                        list.GradeLevel = item?.GradeLevel;
+                        list.Partition = item?.Partition;
+                        list.Aditional = item?.Aditional;
+                        list.Name = item.TypeTrim;
+                        list.Count = item.QtyTrim;
 
-                    result.Add(list);
+                        result.Add(list);
+                    }
                     list = null;
                     list = new GeneratedList();
                 }
@@ -1290,12 +1430,27 @@ namespace Builders.ViewModels
             {
                 if (item.AccessoriesFloor != null)
                 {
-                    list.GeneratedId = select.Id;
-                    list.Groupe = "ACCESSORIES";                    
-                    list.Name = item.AccessoriesFloor + "  " + item.NewFloor + "-" + item.TypeAccessoriesFloor;
-                    list.Count = item.TotalAccessoriesFloor;
+                    // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
+                    var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
+                                                                   res.Groupe == "ACCESSORIES" &&                                                                   
+                                                                   res.Name == item.AccessoriesFloor + "  " + item.NewFloor + "-" + item.TypeAccessoriesFloor);
+                    if (totalResult != null)
+                    {
+                        int index = result.IndexOf(totalResult);
+                        if (index != -1)
+                        {
+                            result[index].Count += item.TotalAccessoriesFloor;
+                        }
+                    }
+                    else
+                    {
+                        list.GeneratedId = select.Id;
+                        list.Groupe = "ACCESSORIES";
+                        list.Name = item.AccessoriesFloor + "  " + item.NewFloor + "-" + item.TypeAccessoriesFloor;
+                        list.Count = item.TotalAccessoriesFloor;
 
-                    result.Add(list);
+                        result.Add(list);
+                    }
                     list = null;
                     list = new GeneratedList();
                 }
@@ -1304,37 +1459,85 @@ namespace Builders.ViewModels
             foreach (var item in stairs)
             {
                 if (item.TypeStairs != null)
-                {                    
-                    list.GeneratedId = select.Id;
-                    list.GradeLevel = item.GradeLevel;
-                    list.Groupe = "ACCESSORIES";
-                    list.Name = item.TypeStairs + "  LENGHT - " + item.LenghtStairs.ToString();
-                    list.Count = item.QtyStairsLenght;
+                {
+                    // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
+                    var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
+                                                                   res.Groupe == "ACCESSORIES" &&
+                                                                   res.GradeLevel == item?.GradeLevel &&                                                                   
+                                                                   res.Name == item.TypeStairs + "  LENGHT - " + item.LenghtStairs.ToString());
+                    if (totalResult != null)
+                    {
+                        int index = result.IndexOf(totalResult);
+                        if (index != -1)
+                        {
+                            result[index].Count += item.QtyStairsLenght;
+                        }
+                    }
+                    else
+                    {
+                        list.GeneratedId = select.Id;
+                        list.GradeLevel = item.GradeLevel;
+                        list.Groupe = "ACCESSORIES";
+                        list.Name = item.TypeStairs + "  LENGHT - " + item.LenghtStairs.ToString();
+                        list.Count = item.QtyStairsLenght;
 
-                    result.Add(list);
+                        result.Add(list);
+                    }
                     list = null;
                     list = new GeneratedList();
 
-                    list.GeneratedId = select.Id;
-                    list.GradeLevel = item.GradeLevel;
-                    list.Groupe = "INSTALLATION";
-                    list.Name = item.TypeStairs + "  LENGHT - " + item.LenghtStairs.ToString();
-                    list.Count = item.QtyStairs;
+                    // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
+                    totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
+                                                                   res.Groupe == "INSTALLATION" &&
+                                                                   res.GradeLevel == item?.GradeLevel &&
+                                                                   res.Name == item.TypeStairs + "  LENGHT - " + item.LenghtStairs.ToString());
+                    if (totalResult != null)
+                    {
+                        int index = result.IndexOf(totalResult);
+                        if (index != -1)
+                        {
+                            result[index].Count += item.QtyStairs;
+                        }
+                    }
+                    else
+                    {
+                        list.GeneratedId = select.Id;
+                        list.GradeLevel = item.GradeLevel;
+                        list.Groupe = "INSTALLATION";
+                        list.Name = item.TypeStairs + "  LENGHT - " + item.LenghtStairs.ToString();
+                        list.Count = item.QtyStairs;
 
-                    result.Add(list);
+                        result.Add(list);
+                    }
                     list = null;
                     list = new GeneratedList();
                 }
 
                 if (item.TypeLeveling != null)
                 {
-                    list.GeneratedId = select.Id;
-                    list.GradeLevel = item.GradeLevel;
-                    list.Groupe = "ACCESSORIES";
-                    list.Name = item.NameLeveling;
-                    list.Count = item.QtyLeveling;
+                    // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
+                    var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
+                                                                   res.Groupe == "ACCESSORIES" &&
+                                                                   res.GradeLevel == item?.GradeLevel &&
+                                                                   res.Name == item.NameLeveling);
+                    if (totalResult != null)
+                    {
+                        int index = result.IndexOf(totalResult);
+                        if (index != -1)
+                        {
+                            result[index].Count += item.QtyLeveling;
+                        }
+                    }
+                    else
+                    {
+                        list.GeneratedId = select.Id;
+                        list.GradeLevel = item.GradeLevel;
+                        list.Groupe = "ACCESSORIES";
+                        list.Name = item.NameLeveling;
+                        list.Count = item.QtyLeveling;
 
-                    result.Add(list);
+                        result.Add(list);
+                    }
                     list = null;
                     list = new GeneratedList();
                 }
@@ -1358,21 +1561,51 @@ namespace Builders.ViewModels
             {
                 if (item.MoldingName != null)
                 {
-                    list.GeneratedId = select.Id;
-                    list.Groupe = "ACCESSORIES";
-                    list.Name = item.MoldingName + "  -  " + item.TypeMolding;
-                    list.Count = item.BaseboardMaterial;
+                    // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
+                    var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
+                                                                   res.Groupe == "ACCESSORIES" &&                                                                   
+                                                                   res.Name == item.MoldingName + "  -  " + item.TypeMolding);
+                    if (totalResult != null)
+                    {
+                        int index = result.IndexOf(totalResult);
+                        if (index != -1)
+                        {
+                            result[index].Count += item.BaseboardMaterial;
+                        }
+                    }
+                    else
+                    {
+                        list.GeneratedId = select.Id;
+                        list.Groupe = "ACCESSORIES";
+                        list.Name = item.MoldingName + "  -  " + item.TypeMolding;
+                        list.Count = item.BaseboardMaterial;
 
-                    result.Add(list);
+                        result.Add(list);
+                    }
                     list = null;
                     list = new GeneratedList();
 
-                    list.GeneratedId = select.Id;
-                    list.Groupe = "INSTALLATION";
-                    list.Name = item.MoldingName + "  -  " + item.TypeMolding;
-                    list.Count = item.BaseboardLabour;
+                    // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
+                    totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
+                                                                   res.Groupe == "INSTALLATION" &&
+                                                                   res.Name == item.MoldingName + "  -  " + item.TypeMolding);
+                    if (totalResult != null)
+                    {
+                        int index = result.IndexOf(totalResult);
+                        if (index != -1)
+                        {
+                            result[index].Count += item.BaseboardLabour;
+                        }
+                    }
+                    else
+                    {
+                        list.GeneratedId = select.Id;
+                        list.Groupe = "INSTALLATION";
+                        list.Name = item.MoldingName + "  -  " + item.TypeMolding;
+                        list.Count = item.BaseboardLabour;
 
-                    result.Add(list);
+                        result.Add(list);
+                    }
                     list = null;
                     list = new GeneratedList();
                 }
@@ -1397,7 +1630,7 @@ namespace Builders.ViewModels
                         listPainting.Name = name.Name;
                         listPainting.Count = item.BaseboardMaterial + name.Count;
 
-                        result.RemoveAt(result.IndexOf(name));
+                        result.RemoveAt(result.IndexOf(name));     // Видаляє елемент з колекції
                         result.Add(listPainting);
                         listPainting = null;
                         listPainting = new GeneratedList();
@@ -1409,34 +1642,79 @@ namespace Builders.ViewModels
             {
                 if (item.FurnitureHandelingRoom != 0m)
                 {
-                    list.GeneratedId = select.Id;
-                    list.Groupe = "OPTIONAL SERVICES";
-                    list.Name = "Furniture Moving";
-                    list.Count = item.FurnitureHandelingRoom;
+                    // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
+                    var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
+                                                                   res.Groupe == "OPTIONAL SERVICES" &&
+                                                                   res.Name == "Furniture Moving");
+                    if (totalResult != null)
+                    {
+                        int index = result.IndexOf(totalResult);
+                        if (index != -1)
+                        {
+                            result[index].Count += item.FurnitureHandelingRoom;
+                        }
+                    }
+                    else
+                    {
+                        list.GeneratedId = select.Id;
+                        list.Groupe = "OPTIONAL SERVICES";
+                        list.Name = "Furniture Moving";
+                        list.Count = item.FurnitureHandelingRoom;
 
-                    result.Add(list);
+                        result.Add(list);
+                    }
                     list = null;
                     list = new GeneratedList();
                 }
                 if (item.RateDisposal != 0m)
                 {
-                    list.GeneratedId = select.Id;
-                    list.Groupe = "DEMOLITION";
-                    list.Name = "Disposal";
-                    list.Count = item.RateDisposal;
+                    // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
+                    var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
+                                                                   res.Groupe == "DEMOLITION" &&
+                                                                   res.Name == "Disposal");
+                    if (totalResult != null)
+                    {
+                        int index = result.IndexOf(totalResult);
+                        if (index != -1)
+                        {
+                            result[index].Count += item.RateDisposal;
+                        }
+                    }
+                    else
+                    {
+                        list.GeneratedId = select.Id;
+                        list.Groupe = "DEMOLITION";
+                        list.Name = "Disposal";
+                        list.Count = item.RateDisposal;
 
-                    result.Add(list);
+                        result.Add(list);
+                    }
                     list = null;
                     list = new GeneratedList();
                 }
                 if (item.DeliveryName != null)
                 {
-                    list.GeneratedId = select.Id;
-                    list.Groupe = "FLOORING DELIVERY";
-                    list.Name = item.DeliveryName;
-                    list.Count = item.DeliveryQty;
+                    // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
+                    var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
+                                                                   res.Groupe == "FLOORING DELIVERY" &&
+                                                                   res.Name == item.DeliveryName);
+                    if (totalResult != null)
+                    {
+                        int index = result.IndexOf(totalResult);
+                        if (index != -1)
+                        {
+                            result[index].Count += item.DeliveryQty;
+                        }
+                    }
+                    else
+                    {
+                        list.GeneratedId = select.Id;
+                        list.Groupe = "FLOORING DELIVERY";
+                        list.Name = item.DeliveryName;
+                        list.Count = item.DeliveryQty;
 
-                    result.Add(list);
+                        result.Add(list);
+                    }
                     list = null;
                     list = new GeneratedList();
                 }
@@ -1447,12 +1725,27 @@ namespace Builders.ViewModels
             {
                 if (item.Depth != null)
                 {
-                    list.GeneratedId = select.Id;
-                    list.Groupe = "FLOORING";                    
-                    list.Name = item.Concatenar;
-                    list.Count = item.QtyNovoplan;
+                    // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
+                    var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
+                                                                   res.Groupe == "FLOORING" &&
+                                                                   res.Name == item.Concatenar);
+                    if (totalResult != null)
+                    {
+                        int index = result.IndexOf(totalResult);
+                        if (index != -1)
+                        {
+                            result[index].Count += item.QtyNovoplan;
+                        }
+                    }
+                    else
+                    {
+                        list.GeneratedId = select.Id;
+                        list.Groupe = "FLOORING";
+                        list.Name = item.Concatenar;
+                        list.Count = item.QtyNovoplan;
 
-                    result.Add(list);
+                        result.Add(list);
+                    }
                     list = null;
                     list = new GeneratedList();
 
@@ -1461,12 +1754,14 @@ namespace Builders.ViewModels
             }
             if (countFlood > 0)
             {
+                
                 list.GeneratedId = select.Id;
                 list.Groupe = "OPTIONAL SERVICES";
                 list.Name = "Leveling Services Fee";
                 list.Count = countFlood;
 
                 result.Add(list);
+               
                 list = null;
                 list = new GeneratedList();
             }

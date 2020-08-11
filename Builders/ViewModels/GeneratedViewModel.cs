@@ -741,7 +741,7 @@ namespace Builders.ViewModels
 
         #region Material Detail Command
         private Command _addDetailCommand;
-        //private Command _insDetailCommand;
+        private Command _insDetailCommand;
         private Command _delDetailCommand;
         private Command _clearDetailCommand;
 
@@ -772,33 +772,34 @@ namespace Builders.ViewModels
             CalculateAccessories(material, true);
             LoadDetail();            
         }));
-        //public Command InsDetailCommand => _insDetailCommand ?? (_insDetailCommand = new Command(obj =>
-        //{
-        //    if (GeneratedMaterialSelect != null)
-        //    {
-        //        GeneratedMaterialSelect.Aditional = AdditionalDetailSelect?.Name;
-        //        GeneratedMaterialSelect.ExistingFloor = ExistingDetailSelect?.Name;
-        //        GeneratedMaterialSelect.GeneratedId = generatedSelect.Id;
-        //        GeneratedMaterialSelect.GradeLevel = LevelDetailSelect?.Name;
-        //        GeneratedMaterialSelect.LenghtFloor = LenghtDetail;
-        //        GeneratedMaterialSelect.NeedDemolition = DemolitionDetailSelect;
-        //        GeneratedMaterialSelect.NewFloor = NewFloorDetailSelect?.Name;
-        //        GeneratedMaterialSelect.NoteTransitionOther = TransitionOtherNameDetail;
-        //        GeneratedMaterialSelect.Partition = PartitionDetailSelect?.Name;
-        //        GeneratedMaterialSelect.QtyTrim = TrimQtyDetail;
-        //        GeneratedMaterialSelect.TotalFloor = decimal.Round(WidthDetail * LenghtDetail, 2);
-        //        GeneratedMaterialSelect.TotalFlooringMaterial = decimal.Round((WidthDetail * LenghtDetail) * 1.1m, 2);
-        //        GeneratedMaterialSelect.TransitionOther = TransitionOtherDetail;
-        //        GeneratedMaterialSelect.TransitionR = TransitionRDetail;
-        //        GeneratedMaterialSelect.TransitionT = TransitionTDetail;
-        //        GeneratedMaterialSelect.TypeTrim = TrimDetailSelect?.Name;
-        //        GeneratedMaterialSelect.WidthFloor = WidthDetail;
-        //    }
-        //    db.Entry(GeneratedMaterialSelect).State = EntityState.Modified;
-        //    db.SaveChanges();
-        //    CalculateAccessories(GeneratedMaterialSelect, true);
-        //    LoadDetail();            
-        //}));
+        public Command InsDetailCommand => _insDetailCommand ?? (_insDetailCommand = new Command(obj =>
+        {
+            if (GeneratedMaterialSelect != null)
+            {
+                CalculateAccessories(GeneratedMaterialSelect, false);
+                GeneratedMaterialSelect.Aditional = AdditionalDetailSelect?.Name;
+                GeneratedMaterialSelect.ExistingFloor = ExistingDetailSelect?.Name;
+                GeneratedMaterialSelect.GeneratedId = generatedSelect.Id;
+                GeneratedMaterialSelect.GradeLevel = LevelDetailSelect?.Name;
+                GeneratedMaterialSelect.LenghtFloor = LenghtDetail;
+                GeneratedMaterialSelect.NeedDemolition = DemolitionDetailSelect;
+                GeneratedMaterialSelect.NewFloor = NewFloorDetailSelect?.Name;
+                GeneratedMaterialSelect.NoteTransitionOther = TransitionOtherNameDetail;
+                GeneratedMaterialSelect.Partition = PartitionDetailSelect?.Name;
+                GeneratedMaterialSelect.QtyTrim = TrimQtyDetail;
+                GeneratedMaterialSelect.TotalFloor = decimal.Round(WidthDetail * LenghtDetail, 2);
+                GeneratedMaterialSelect.TotalFlooringMaterial = decimal.Round((WidthDetail * LenghtDetail) * 1.1m, 2);
+                GeneratedMaterialSelect.TransitionOther = TransitionOtherDetail;
+                GeneratedMaterialSelect.TransitionR = TransitionRDetail;
+                GeneratedMaterialSelect.TransitionT = TransitionTDetail;
+                GeneratedMaterialSelect.TypeTrim = TrimDetailSelect?.Name;
+                GeneratedMaterialSelect.WidthFloor = WidthDetail;
+            }
+            db.Entry(GeneratedMaterialSelect).State = EntityState.Modified;
+            db.SaveChanges();
+            CalculateAccessories(GeneratedMaterialSelect, true);
+            LoadDetail();            
+        }));
         public Command DelDetailCommand => _delDetailCommand ?? (_delDetailCommand = new Command(obj =>
         {
             if (GeneratedMaterialSelect != null)
@@ -811,9 +812,9 @@ namespace Builders.ViewModels
         }));
         public Command ClearDetailCommand => _clearDetailCommand ?? (_clearDetailCommand = new Command(obj =>
         {
-            LevelDetailSelect = null;
-            PartitionDetailSelect = null;
-            AdditionalDetailSelect = null;
+            //LevelDetailSelect = null;
+            //PartitionDetailSelect = null;
+            //AdditionalDetailSelect = null;
             TransitionRDetail = 0m;
             TransitionTDetail = 0m;
             TransitionOtherDetail = 0m;

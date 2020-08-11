@@ -286,11 +286,11 @@
                                         Foreground="Green"
                                         BorderBrush="Green"
                                         Command="{Binding AddDetailCommand}"/>
-                                <!--<Button Content="Edit"
+                                <Button Content="Edit"
                                         Style="{StaticResource FooterButton}"
                                         Foreground="Brown"
                                         BorderBrush="Brown"
-                                        Command="{Binding InsDetailCommand}"/>-->
+                                        Command="{Binding InsDetailCommand}"/>
                                 <Button Content="Del"
                                         Style="{StaticResource FooterButton}"
                                         Foreground="Red"
