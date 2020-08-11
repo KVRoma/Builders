@@ -971,7 +971,7 @@ namespace Builders.ViewModels
             var generator = new GeneratedViewModel(ref db, QuotaSelect.Id);
             await displayRootRegistry.ShowModalPresentation(generator);
             GeneratedLists = CalculateGenerated(generator.generatedSelect);
-            QuotaSelect = AddMaterialQuotaToGenerated(GeneratedLists, quotaSelect);
+            QuotaSelect = AddMaterialQuotaToGenerated(GeneratedLists, quotaSelect, generator.OptionQuota);
         }));
         public Command Search => _search ?? (_search = new Command(obj=> 
         {
@@ -1808,7 +1808,7 @@ namespace Builders.ViewModels
             }
             return sorted;
         }
-        private Quotation AddMaterialQuotaToGenerated(List<GeneratedList> generated, Quotation select)
+        private Quotation AddMaterialQuotaToGenerated(List<GeneratedList> generated, Quotation select, string optionQuota)
         {
             Quotation quota = select;
             var oldMaterial = db.MaterialQuotations.Where(m => m.QuotationId == quota.Id);
@@ -1816,7 +1816,26 @@ namespace Builders.ViewModels
             db.SaveChanges();
 
             List<MaterialQuotation> materials = new List<MaterialQuotation>();
-            foreach (var item in generated)
+            List<GeneratedList> result = new List<GeneratedList>();
+
+            if (optionQuota == "Material")
+            {
+                result = generated.Where(r=>r.Groupe == "FLOORING" || r.Groupe == "ACCESSORIES").ToList();
+            }
+            if (optionQuota == "Labour")
+            {
+                //result = generated.Where(r => r.Groupe != "FLOORING" || r.Groupe != "ACCESSORIES").ToList();
+                result = generated.Where(r => r.Groupe == "INSTALLATION" ||
+                                              r.Groupe == "DEMOLITION" ||
+                                              r.Groupe == "OPTIONAL SERVICES" ||
+                                              r.Groupe == "FLOORING DELIVERY").ToList();
+            }
+            if(optionQuota == "All")
+            {
+                result = generated;
+            }
+
+            foreach (var item in result)
             {
                 materials.Add(new MaterialQuotation() 
                 {

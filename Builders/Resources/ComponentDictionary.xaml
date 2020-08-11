@@ -246,6 +246,24 @@
         </Style.Triggers>
     </Style>
     <!--**********************************************************-->
+    <!--Cтиль для RadioButton -->
+    <Style TargetType="RadioButton" x:Key="Generated">
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize" Value="30"/>
+        <Setter Property="Margin" Value="10"/>
+        <Setter Property="GroupName" Value="Generated"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="Blue"/>
+                <Setter Property="FontSize" Value="30"/>
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="Red"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <!--**********************************************************-->
     <!--Cтиль для CheckBox -->
     <Style TargetType="CheckBox" x:Key="Archive">
         <Setter Property="VerticalAlignment" Value="Center"/>

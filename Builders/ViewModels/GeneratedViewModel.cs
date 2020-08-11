@@ -19,6 +19,12 @@ namespace Builders.ViewModels
 
         private Visibility isVisibleCMO;
         private Visibility isVisibleNL;
+        private bool isCheckedMaterial;
+        private bool isCheckedLabour;
+        private bool isCheckedAll;
+        private string optionQuota;
+
+
         public Visibility IsVisibleCMO
         {
             get { return isVisibleCMO; }
@@ -35,6 +41,55 @@ namespace Builders.ViewModels
             {
                 isVisibleNL = value;
                 OnPropertyChanged(nameof(IsVisibleNL));
+            }
+        }
+        public bool IsCheckedMaterial
+        {
+            get { return isCheckedMaterial; }
+
+            set
+            {
+                isCheckedMaterial = value;
+                OnPropertyChanged(nameof(IsCheckedMaterial));
+                if (IsCheckedMaterial)
+                {
+                    OptionQuota = "Material";
+                }
+            }
+        }
+        public bool IsCheckedLabour
+        {
+            get { return isCheckedLabour; }
+            set
+            {
+                isCheckedLabour = value;
+                OnPropertyChanged(nameof(IsCheckedLabour));
+                if (IsCheckedLabour)
+                {
+                    OptionQuota = "Labour";
+                }
+            }
+        }
+        public bool IsCheckedAll
+        {
+            get { return isCheckedAll; }
+            set
+            {
+                isCheckedAll = value;
+                OnPropertyChanged(nameof(IsCheckedAll));
+                if (IsCheckedAll)
+                {
+                    OptionQuota = "All";
+                }
+            }
+        }
+        public string OptionQuota
+        {
+            get { return optionQuota; }
+            set
+            {
+                optionQuota = value;
+                OnPropertyChanged(nameof(OptionQuota));                
             }
         }
 
@@ -1138,12 +1193,16 @@ namespace Builders.ViewModels
             SizeFlood = 0m;
             DepthFloodSelect = null;
         }));
-                
+
+        
         #endregion
 
         public GeneratedViewModel(ref BuilderContext context, int? id)
         {
             db = context;
+            IsCheckedAll = true;
+            IsCheckedLabour = false;
+            IsCheckedMaterial = false;
 
             LoadGenerator(id);
             GetVisibleTabItems(id);

@@ -17,6 +17,37 @@
         <TabControl Grid.Row="1" 
                     TabStripPlacement="Left" 
                     ItemContainerStyle="{StaticResource TabItemStyle1}">
+            <!-- "Option to fill in Quotes" -->
+            <TabItem >
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="15" 
+                                   Text="Option to fill in Quotes"                                   
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Border Style="{StaticResource BorderRadiusBlack}">
+                        <Grid>
+                            <StackPanel HorizontalAlignment="Center" 
+                                        VerticalAlignment="Center">
+                                <RadioButton Content="Material and Labour"
+                                     Style="{StaticResource Generated}"
+                                     IsChecked="{Binding IsCheckedAll}"/>
+
+                                <RadioButton Content="Only Material"
+                                     Style="{StaticResource Generated}"
+                                     IsChecked="{Binding IsCheckedMaterial}"/>
+
+                                <RadioButton Content="Only Labour"
+                                     Style="{StaticResource Generated}"
+                                     IsChecked="{Binding IsCheckedLabour}"/>
+                            </StackPanel>
+                        </Grid>
+
+                    </Border>
+                </TabItem.Content>
+            </TabItem>
             <!-- "Materials Details" -->
             <TabItem Visibility="{Binding IsVisibleCMO}">
                 <TabItem.Header>
