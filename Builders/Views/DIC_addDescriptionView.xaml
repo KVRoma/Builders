@@ -4,16 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Builders.Views"
+        xmlns:UI="clr-namespace:Builders.Commands"
         mc:Ignorable="d"
         Title="{Binding WindowName}" 
-        MinHeight="160"
-        MinWidth="500"
-        Height="160" 
-        Width="500" 
+        MinHeight="200"
+        MinWidth="800"
+        Height="200" 
+        Width="800" 
         Style="{StaticResource WindowStyle}">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -28,7 +29,10 @@
             <Label Content="Name" 
                    HorizontalContentAlignment="Center" 
                    Style="{StaticResource LabelHeder2}"/>
-            <TextBox Text="{Binding NameDescription}"/>
+            <TextBox Text="{Binding NameDescription}" 
+                     TextWrapping="NoWrap" 
+                     AcceptsReturn="False"
+                     UI:FocusAdvancement.AdvancesByEnterKey="True"/>
         </StackPanel>
         <StackPanel Grid.Row="0" 
                     Grid.Column="1" 
@@ -38,7 +42,8 @@
                    Style="{StaticResource LabelHeder2}"/>
             <TextBox Text="{Binding Price}" 
                      TextWrapping="NoWrap" 
-                     AcceptsReturn="False" />
+                     AcceptsReturn="False"
+                     UI:FocusAdvancement.AdvancesByEnterKey="True"/>
         </StackPanel>
         <StackPanel Grid.Row="0" 
                     Grid.Column="2" 
@@ -48,7 +53,8 @@
                    Style="{StaticResource LabelHeder2}"/>
             <TextBox Text="{Binding Cost}" 
                      TextWrapping="NoWrap" 
-                     AcceptsReturn="False" />
+                     AcceptsReturn="False"
+                     UI:FocusAdvancement.AdvancesByEnterKey="True"/>
         </StackPanel>
         <Button Grid.Row="1" 
                 Grid.ColumnSpan="3"

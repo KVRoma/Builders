@@ -106,6 +106,7 @@ namespace Builders.ViewModels
         private Command _loadDescriptionExcel;
 
         private Command _search;
+        private Command _searchDescription;
 
         public Command AddItemCommand => _addItemCommand ?? (_addItemCommand = new Command(async obj =>
         {
@@ -238,6 +239,20 @@ namespace Builders.ViewModels
             else
             {                
                 Items = (GroupeSelect != null) ? (Items.Where(t => t.GroupeId == GroupeSelect.Id)
+                                                       .Where(t => t.Name.ToUpper().Contains(search.ToUpper()))
+                                                       .OrderBy(t => t.Name)) : null;
+            }
+        }));
+        public Command SearchDescription => _searchDescription ?? (_searchDescription = new Command(obj=> 
+        {
+            string search = obj.ToString();
+            if (search == "")
+            {
+                Descriptions = (ItemSelect != null) ? (db.DIC_DescriptionQuotations.Local.ToBindingList().Where(t => t.ItemId == ItemSelect.Id).OrderBy(t => t.Name)) : null;
+            }
+            else
+            {
+                Descriptions = (ItemSelect != null) ? (Descriptions.Where(t => t.ItemId == ItemSelect.Id)
                                                        .Where(t => t.Name.ToUpper().Contains(search.ToUpper()))
                                                        .OrderBy(t => t.Name)) : null;
             }

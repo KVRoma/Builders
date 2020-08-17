@@ -87,12 +87,32 @@
         <Label Grid.Row="4" 
                Content="Selected Description" 
                HorizontalAlignment="Left"
-               Style="{StaticResource LabelHeder2}"/>        
+               Style="{StaticResource LabelHeder2}"/>
+        <Label Grid.Row="4" 
+               Style="{StaticResource LabelSearch}" 
+               Content="Enter to search..." 
+               HorizontalAlignment="Left"
+               Margin="200,0,0,0"/>
+        <TextBox Grid.Row="4" 
+                 Margin="350,2,2,2"
+                 HorizontalAlignment="Left"
+                 FontWeight="Bold"
+                 Foreground="Blue"
+                 Width="400">
+            <TextBox.InputBindings>
+                <KeyBinding Command="{Binding SearchDescription}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor,
+                            AncestorType={x:Type TextBox}},
+                            Path=Text}" Key="Return"/>
+            </TextBox.InputBindings>
+        </TextBox>
         <DataGrid Grid.Row="5" IsReadOnly="True"
-                    AutoGenerateColumns="False" 
-                    
+                    AutoGenerateColumns="False"                     
                     ItemsSource="{Binding Descriptions, UpdateSourceTrigger=PropertyChanged}" 
                     SelectedItem="{Binding DescriptionSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <DataGrid.InputBindings>
+                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding InsDescriptionCommand}"/>
+            </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Descriptions Name" Width="*" Binding="{Binding Path=Name}"/>
                 <DataGridTextColumn Header="Price" Width="auto" Binding="{Binding Path=Price}"/>
