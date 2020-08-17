@@ -425,6 +425,8 @@ namespace Builders.ViewModels
         private decimal qtyLevelingStairs;
         private GeneratedStairs generatedStairSelect;
         private List<GeneratedStairs> generatedStairs;
+        private string typeMaterialStairSelect;
+        private List<string> typeMaterialStairs;
 
         public DIC_G_GradeLevel LevelStairSelect
         {
@@ -541,6 +543,24 @@ namespace Builders.ViewModels
             {
                 generatedStairs = value;
                 OnPropertyChanged(nameof(GeneratedStairs));
+            }
+        }
+        public string TypeMaterialStairSelect
+        {
+            get { return typeMaterialStairSelect; }
+            set
+            {
+                typeMaterialStairSelect = value;
+                OnPropertyChanged(nameof(TypeMaterialStairSelect));
+            }
+        }
+        public List<string> TypeMaterialStairs
+        {
+            get { return typeMaterialStairs; }
+            set
+            {
+                typeMaterialStairs = value;
+                OnPropertyChanged(nameof(TypeMaterialStairs));
             }
         }
         #endregion
@@ -904,17 +924,27 @@ namespace Builders.ViewModels
         public Command AddStairsCommand => _addStairsCommand ?? (_addStairsCommand = new Command(obj =>
         {
             decimal qty = 0m;
-            if (TypeStairSelect?.Name == "Overlap Nosing" ||
-                TypeStairSelect?.Name == "Regular Nosing" ||
-                TypeStairSelect?.Name == "Overlap Nosing - over size" ||
-                TypeStairSelect?.Name == "Regular Nosing - over size" ||
-                TypeStairSelect?.Name == "Pie Step")
-            {
-                qty = decimal.Round(QtyStairs * LenghtStairs, 2);
-            }
-            else 
+            string material = "";
+            if (TypeMaterialStairSelect == TypeMaterialStairs[1]) // "Laminate and Vinyl")
             {
                 qty = QtyStairs;
+                material = "Laminate and Vinyl";
+            }
+            else if(TypeMaterialStairSelect == TypeMaterialStairs[0]) // "Wood stairs")
+            {
+                material = "Wood stairs";
+                if (TypeStairSelect?.Name == "Overlap Nosing" ||
+                    TypeStairSelect?.Name == "Regular Nosing" ||
+                    TypeStairSelect?.Name == "Overlap Nosing - over size" ||
+                    TypeStairSelect?.Name == "Regular Nosing - over size" ||
+                    TypeStairSelect?.Name == "Pie Step")
+                {
+                    qty = decimal.Round(QtyStairs * LenghtStairs, 2);
+                }
+                else
+                {
+                    qty = QtyStairs;
+                }
             }
 
             GeneratedStairs stairs = new GeneratedStairs()
@@ -927,7 +957,7 @@ namespace Builders.ViewModels
                 QtyStairs = QtyStairs,
                 QtyStairsLenght = qty,
                 TypeLeveling = TypeLevelingStairSelect?.Name,
-                TypeStairs = TypeStairSelect?.Name,
+                TypeStairs = TypeStairSelect?.Name + " (material " + material + " )",
                 Description = "",
                 NameLeveling = (TypeLevelingStairSelect?.Name == "Leveling Bags") ? ("Patch Leveling") : (TypeLevelingStairSelect?.Name)
             };
@@ -940,19 +970,28 @@ namespace Builders.ViewModels
             if (GeneratedStairSelect != null)
             {
                 decimal qty = 0m;
-                if (TypeStairSelect.Name == "Overlap Nosing" ||
+                string material = "";
+                if (TypeMaterialStairSelect == TypeMaterialStairs[1]) // "Laminate and Vinyl")
+                {
+                    qty = QtyStairs;
+                    material = "Laminate and Vinyl";
+                }
+                else if (TypeMaterialStairSelect == TypeMaterialStairs[0]) // "Wood stairs")
+                {
+                    material = "Wood stairs";
+                    if (TypeStairSelect.Name == "Overlap Nosing" ||
                     TypeStairSelect.Name == "Regular Nosing" ||
                     TypeStairSelect.Name == "Overlap Nosing - over size" ||
                     TypeStairSelect.Name == "Regular Nosing - over size" ||
                     TypeStairSelect?.Name == "Pie Step")
-                {
-                    qty = decimal.Round(QtyStairs * LenghtStairs, 2);
+                    {
+                        qty = decimal.Round(QtyStairs * LenghtStairs, 2);
+                    }
+                    else
+                    {
+                        qty = QtyStairs;
+                    }
                 }
-                else
-                {
-                    qty = QtyStairs;
-                }
-
                 GeneratedStairSelect.Demolition = DemolitionStairSelect;
                 GeneratedStairSelect.GeneratedId = generatedSelect.Id;
                 GeneratedStairSelect.GradeLevel = LevelStairSelect?.Name;
@@ -961,7 +1000,7 @@ namespace Builders.ViewModels
                 GeneratedStairSelect.QtyStairs = QtyStairs;
                 GeneratedStairSelect.QtyStairsLenght = qty;
                 GeneratedStairSelect.TypeLeveling = TypeLevelingStairSelect?.Name;
-                GeneratedStairSelect.TypeStairs = TypeStairSelect?.Name;
+                GeneratedStairSelect.TypeStairs = TypeStairSelect?.Name + " (material " + material + " )";
                 GeneratedStairSelect.Description = "";
                 GeneratedStairSelect.NameLeveling = (TypeLevelingStairSelect?.Name == "Leveling Bags") ? ("Patch Leveling") : (TypeLevelingStairSelect?.Name);
                 db.Entry(GeneratedStairSelect).State = EntityState.Modified;
@@ -1193,8 +1232,9 @@ namespace Builders.ViewModels
             SizeFlood = 0m;
             DepthFloodSelect = null;
         }));
+              
 
-        
+
         #endregion
 
         public GeneratedViewModel(ref BuilderContext context, int? id)
@@ -1213,6 +1253,7 @@ namespace Builders.ViewModels
             LoadMolding();
             LoadSuplementary();
             LoadFlood();
+            LoadTypeMaterialStairs();
         }
         /// <summary>
         /// Завантажує якщо є, або створює Generator для заданої Quota
@@ -1343,6 +1384,16 @@ namespace Builders.ViewModels
         {
             GeneratedFloods = null;
             GeneratedFloods = db.GeneratedFloods.Where(g => g.GeneratedId == generatedSelect.Id).ToList();
+        }
+        /// <summary>
+        /// Завантажує тип матеріалу сходів
+        /// </summary>
+        private void LoadTypeMaterialStairs()
+        {
+            TypeMaterialStairs = new List<string>();
+            TypeMaterialStairs.Add("Wood stairs");
+            TypeMaterialStairs.Add("Laminate and Vinyl");
+            TypeMaterialStairSelect = TypeMaterialStairs[0];
         }
         /// <summary>
         /// Округляє до верхньої ближньої сотні (264 -> 300)

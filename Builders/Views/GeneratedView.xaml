@@ -456,6 +456,12 @@
                                           ItemsSource="{Binding LevelStairs }" 
                                           SelectedItem="{Binding LevelStairSelect, Mode=TwoWay}"
                                           DisplayMemberPath="Name"/>
+                                <Label Content="Material Stairs" 
+                                       Margin="5"/>
+                                <ComboBox Width="200" 
+                                          Margin="5"
+                                          ItemsSource="{Binding TypeMaterialStairs }" 
+                                          SelectedItem="{Binding TypeMaterialStairSelect, Mode=TwoWay}"/>
                             </StackPanel>
 
                             <GroupBox Grid.Row="1" 
