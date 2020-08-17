@@ -73,6 +73,9 @@
                   IsReadOnly="True" 
                   ItemsSource="{Binding QuotationsMaterial, UpdateSourceTrigger=PropertyChanged}"
                   SelectedItem="{Binding MaterialQuotationSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <DataGrid.InputBindings>
+                <KeyBinding Key="Delete" Command="{Binding DelItem}"/>
+            </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Room" Width="150"  Binding="{Binding Path=RoomDetail}" />
                 <DataGridTextColumn Header="Groupe" Width="150"  Binding="{Binding Path=Groupe}" />
@@ -99,6 +102,9 @@
                   IsReadOnly="True" 
                   ItemsSource="{Binding QuotationsLabour, UpdateSourceTrigger=PropertyChanged}"
                   SelectedItem="{Binding MaterialQuotationSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <DataGrid.InputBindings>
+                <KeyBinding Key="Delete" Command="{Binding DelItem}"/>
+            </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Room" Width="150"  Binding="{Binding Path=RoomDetail}" />
                 <DataGridTextColumn Header="Groupe" Width="150"  Binding="{Binding Path=Groupe}" />

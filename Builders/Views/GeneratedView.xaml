@@ -589,7 +589,7 @@
                                       SelectedItem="{Binding GeneratedStairSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Level" Width="*" Binding="{Binding Path=GradeLevel}"/>
-                                    <DataGridTextColumn Header="Type Stair" Width="*" Binding="{Binding Path=TypeStairs}" />
+                                    <DataGridTextColumn Header="Type Stair" Width="auto" Binding="{Binding Path=TypeStairs}" />
                                     <DataGridTextColumn Header="Demolition" Width="*" Binding="{Binding Path=Demolition}" />
                                     <DataGridTextColumn Header="QTY" Binding="{Binding Path=QtyStairs}"/>
                                     <DataGridTextColumn Header="L(ft)" Binding="{Binding Path=LenghtStairs}"/>

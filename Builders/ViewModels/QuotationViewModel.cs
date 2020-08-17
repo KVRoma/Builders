@@ -142,12 +142,12 @@ namespace Builders.ViewModels
                     {
                         IsVisibleStandart = Visibility.Visible;
                         IsVisibleRoomDescription = Visibility.Collapsed;
-                        //LoadGroup();
+                        
                         DIC_GroupeSelect = (MaterialQuotationSelect?.Groupe != null) ? DIC_Groupes?.FirstOrDefault(g => g?.NameGroupe == MaterialQuotationSelect?.Groupe) : null;
                         DIC_ItemSelect = (MaterialQuotationSelect?.Item != null) ? DIC_Items?.FirstOrDefault(i => i?.Name == MaterialQuotationSelect?.Item) : null;
                         DIC_DescriptionSelect = (MaterialQuotationSelect?.Description != null) ? DIC_Descriptions?.FirstOrDefault(d => d?.Name == MaterialQuotationSelect?.Description) : null;
-                        Quantity = MaterialQuotationSelect?.Quantity ?? 0m;
-                        Rate = MaterialQuotationSelect?.Rate ?? 0m;
+                        //Quantity = MaterialQuotationSelect?.Quantity ?? 0m;
+                        //Rate = MaterialQuotationSelect?.Rate ?? 0m;
                     }
                 }
             }
@@ -612,6 +612,9 @@ namespace Builders.ViewModels
                 QuotaSelect = db.Quotations.Local.ToBindingList().OrderByDescending(q => q.Id).FirstOrDefault();
                 QuotaId = QuotaSelect.Id;
                 IsEnableGenerator = true;
+
+                Rate = 0m;
+                Quantity = 0m;
             }
             if (flagCreatQuota && QuotaSelect != null)
             {
@@ -766,6 +769,8 @@ namespace Builders.ViewModels
                         MaterialQuotations = null;
                         MaterialQuotations = db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == QuotaSelect.Id);
                         MaterialQuotationSelect = material;
+                        Rate = 0m;
+                        Quantity = 0m;
                     }
                 }
             }
@@ -915,6 +920,8 @@ namespace Builders.ViewModels
                         db.SaveChanges();
                         MaterialQuotationSelect = null;
                         MaterialQuotations = (QuotaSelect != null) ? (db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == QuotaSelect.Id)) : null;
+                        Rate = 0m;
+                        Quantity = 0m;
                     }
                 }
             }
@@ -1464,7 +1471,7 @@ namespace Builders.ViewModels
                     var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
                                                                    res.Groupe == "ACCESSORIES" &&
                                                                    res.GradeLevel == item?.GradeLevel &&                                                                   
-                                                                   res.Name == item.TypeStairs + "  LENGHT - " + item.LenghtStairs.ToString());
+                                                                   res.Name == item.TypeStairs + "  LENGHT (FT) - " + item.LenghtStairs.ToString());
                     if (totalResult != null)
                     {
                         int index = result.IndexOf(totalResult);
@@ -1478,7 +1485,7 @@ namespace Builders.ViewModels
                         list.GeneratedId = select.Id;
                         list.GradeLevel = item.GradeLevel;
                         list.Groupe = "ACCESSORIES";
-                        list.Name = item.TypeStairs + "  LENGHT - " + item.LenghtStairs.ToString();
+                        list.Name = item.TypeStairs + "  LENGHT (FT) - " + item.LenghtStairs.ToString();
                         list.Count = item.QtyStairsLenght;
 
                         result.Add(list);
@@ -1490,7 +1497,7 @@ namespace Builders.ViewModels
                     totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
                                                                    res.Groupe == "INSTALLATION" &&
                                                                    res.GradeLevel == item?.GradeLevel &&
-                                                                   res.Name == item.TypeStairs + "  LENGHT - " + item.LenghtStairs.ToString());
+                                                                   res.Name == item.TypeStairs + "  LENGHT (FT) - " + item.LenghtStairs.ToString());
                     if (totalResult != null)
                     {
                         int index = result.IndexOf(totalResult);
@@ -1504,7 +1511,7 @@ namespace Builders.ViewModels
                         list.GeneratedId = select.Id;
                         list.GradeLevel = item.GradeLevel;
                         list.Groupe = "INSTALLATION";
-                        list.Name = item.TypeStairs + "  LENGHT - " + item.LenghtStairs.ToString();
+                        list.Name = item.TypeStairs + "  LENGHT (FT) - " + item.LenghtStairs.ToString();
                         list.Count = item.QtyStairs;
 
                         result.Add(list);
