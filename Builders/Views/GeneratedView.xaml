@@ -217,6 +217,7 @@
                                         <RowDefinition/>
                                         <RowDefinition/>
                                         <RowDefinition/>
+                                        <RowDefinition/>
                                     </Grid.RowDefinitions>
                                     <Label Grid.Column="0" 
                                            Grid.Row="0" 
@@ -275,7 +276,17 @@
                                     <TextBox Grid.Column="1" 
                                              Grid.Row="5"
                                              Margin="5"
-                                             Text="{Binding WidthDetail, StringFormat={}{0:#.##}}"/>
+                                             Text="{Binding WidthDetail, StringFormat={}{0:#.##}}"
+                                             UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+                                    <Label Grid.Column="0" 
+                                           Grid.Row="6" 
+                                           Content="Square (ft)"
+                                           VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"/>
+                                    <TextBox Grid.Column="1" 
+                                             Grid.Row="6"
+                                             Margin="5"
+                                             Text="{Binding SquareDetail, StringFormat={}{0:#.##}}"/>
                                 </Grid>                             
                             </GroupBox>
 
@@ -302,6 +313,7 @@
                                     <DataGridTextColumn Header="New" Width="*" Binding="{Binding Path=NewFloor}"/>
                                     <DataGridTextColumn Header="L(ft)" Width="auto" Binding="{Binding Path=LenghtFloor}"/>
                                     <DataGridTextColumn Header="W(ft)" Width="auto" Binding="{Binding Path=WidthFloor}"/>
+                                    <DataGridTextColumn Header="Square(ft)" Width="auto" Binding="{Binding Path=TotalFloor}"/>
                                     <DataGridTextColumn Header="R" Width="auto" Binding="{Binding Path=TransitionR}"/>
                                     <DataGridTextColumn Header="T" Width="auto" Binding="{Binding Path=TransitionT}"/>
                                     <DataGridTextColumn Header="Trim" Width="*" Binding="{Binding Path=TypeTrim}"/>

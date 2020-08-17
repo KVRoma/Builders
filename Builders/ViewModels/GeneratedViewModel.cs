@@ -115,6 +115,7 @@ namespace Builders.ViewModels
         private List<string> demolitionDetails;
         private decimal lenghtDetail;
         private decimal widthDetail;
+        private decimal squareDetail;
         private GeneratedMaterial generatedMaterialSelect;
         private List<GeneratedMaterial> generatedMaterials;
 
@@ -296,6 +297,10 @@ namespace Builders.ViewModels
             {
                 lenghtDetail = value;
                 OnPropertyChanged(nameof(LenghtDetail));
+                if (LenghtDetail != 0m)
+                {
+                    SquareDetail = 0m;
+                }
             }
         }
         public decimal WidthDetail
@@ -305,6 +310,24 @@ namespace Builders.ViewModels
             {
                 widthDetail = value;
                 OnPropertyChanged(nameof(WidthDetail));
+                if (WidthDetail != 0m)
+                {
+                    SquareDetail = 0m;
+                }
+            }
+        }
+        public decimal SquareDetail
+        {
+            get { return squareDetail; }
+            set
+            {
+                squareDetail = value;
+                OnPropertyChanged(nameof(SquareDetail));
+                if (SquareDetail != 0m)
+                {
+                    LenghtDetail = 0m;
+                    WidthDetail = 0m;
+                }
             }
         }
         public GeneratedMaterial GeneratedMaterialSelect
@@ -822,6 +845,15 @@ namespace Builders.ViewModels
 
         public Command AddDetailCommand => _addDetailCommand ?? (_addDetailCommand = new Command(obj =>
         {
+            decimal square = 0m;
+            if (SquareDetail == 0m)
+            {
+                square = decimal.Round(WidthDetail * LenghtDetail, 2);
+            }
+            else
+            {
+                square = decimal.Round(SquareDetail, 2);
+            }
             GeneratedMaterial material = new GeneratedMaterial()
             {
                 Aditional = AdditionalDetailSelect?.Name,
@@ -834,8 +866,8 @@ namespace Builders.ViewModels
                 NoteTransitionOther = TransitionOtherNameDetail,
                 Partition = PartitionDetailSelect?.Name,
                 QtyTrim = TrimQtyDetail,
-                TotalFloor = decimal.Round(WidthDetail * LenghtDetail, 2),
-                TotalFlooringMaterial = decimal.Round((WidthDetail * LenghtDetail) * 1.1m, 2),
+                TotalFloor = square,
+                TotalFlooringMaterial = decimal.Round(square * 1.1m, 2),
                 TransitionOther = TransitionOtherDetail,
                 TransitionR = TransitionRDetail,
                 TransitionT = TransitionTDetail,
@@ -849,6 +881,15 @@ namespace Builders.ViewModels
         }));
         public Command InsDetailCommand => _insDetailCommand ?? (_insDetailCommand = new Command(obj =>
         {
+            decimal square = 0m;
+            if (SquareDetail == 0m)
+            {
+                square = decimal.Round(WidthDetail * LenghtDetail, 2);
+            }
+            else
+            {
+                square = decimal.Round(SquareDetail, 2);
+            }
             if (GeneratedMaterialSelect != null)
             {
                 CalculateAccessories(GeneratedMaterialSelect, false);
@@ -862,8 +903,8 @@ namespace Builders.ViewModels
                 GeneratedMaterialSelect.NoteTransitionOther = TransitionOtherNameDetail;
                 GeneratedMaterialSelect.Partition = PartitionDetailSelect?.Name;
                 GeneratedMaterialSelect.QtyTrim = TrimQtyDetail;
-                GeneratedMaterialSelect.TotalFloor = decimal.Round(WidthDetail * LenghtDetail, 2);
-                GeneratedMaterialSelect.TotalFlooringMaterial = decimal.Round((WidthDetail * LenghtDetail) * 1.1m, 2);
+                GeneratedMaterialSelect.TotalFloor = square;
+                GeneratedMaterialSelect.TotalFlooringMaterial = decimal.Round(square * 1.1m, 2);
                 GeneratedMaterialSelect.TransitionOther = TransitionOtherDetail;
                 GeneratedMaterialSelect.TransitionR = TransitionRDetail;
                 GeneratedMaterialSelect.TransitionT = TransitionTDetail;
@@ -901,6 +942,7 @@ namespace Builders.ViewModels
             DemolitionDetailSelect = DemolitionDetails[1];
             LenghtDetail = 0m;
             WidthDetail = 0m;
+            SquareDetail = 0m;
         }));
         #endregion
         #region Accessories Command
@@ -1232,8 +1274,8 @@ namespace Builders.ViewModels
             SizeFlood = 0m;
             DepthFloodSelect = null;
         }));
-              
 
+        
 
         #endregion
 
