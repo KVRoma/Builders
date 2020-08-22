@@ -1,0 +1,64 @@
+﻿<Window x:Class="Builders.Views.QuotaItemEditView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Builders.Views"
+        xmlns:UI="clr-namespace:Builders.Commands"
+        mc:Ignorable="d"         
+        Height="170" 
+        Width="570"         
+        Style="{StaticResource WindowStyle}" 
+        Title="{Binding WindowName}">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>            
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="0" 
+               Grid.Column="0" 
+               Content="QTY" 
+               Style="{StaticResource LabelHeder2}"/>
+        <TextBox Grid.Row="0" 
+                 Grid.Column="1" 
+                 Text="{Binding Quantity, StringFormat={}{0:#.##}}"
+                 HorizontalContentAlignment="Center"
+                 UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+        
+        <Label Grid.Row="0" 
+               Grid.Column="2" 
+               Content="Price" 
+               Style="{StaticResource LabelHeder2}"/>
+        <TextBox Grid.Row="0" 
+                 Grid.Column="3" 
+                 Text="{Binding Price, StringFormat={}{0:#.##}}"
+                 HorizontalContentAlignment="Center"
+                 UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+
+        <StackPanel Orientation="Horizontal" 
+                    Grid.Row="1" 
+                    Grid.Column="3" 
+                    HorizontalAlignment="Right"
+                    Margin="0,10,0,0">
+            <Button Content="Ok" 
+                    Style="{StaticResource FooterButton}"
+                    Foreground="Green"
+                    BorderBrush="Green"
+                    Command="{Binding OkCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"/>
+            <Button Content="Cancel" 
+                    Style="{StaticResource FooterButton}"
+                    Foreground="Red"
+                    BorderBrush="Red"
+                    Command="{Binding CancelCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"/>
+        </StackPanel>
+    </Grid>
+</Window>

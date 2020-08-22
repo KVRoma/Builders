@@ -197,6 +197,7 @@
     <Compile Include="ViewModels\MaterialProfitViewModel.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\PaymentViewModel.cs" />
+    <Compile Include="ViewModels\QuotaItemEditViewModel.cs" />
     <Compile Include="ViewModels\QuotaOtherViewModel.cs" />
     <Compile Include="ViewModels\QuotationViewModel.cs" />
     <Compile Include="ViewModels\SelectClientViewModel.cs" />
@@ -276,6 +277,9 @@
     </Compile>
     <Compile Include="Views\ProgressBarControl.xaml.cs">
       <DependentUpon>ProgressBarControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\QuotaItemEditView.xaml.cs">
+      <DependentUpon>QuotaItemEditView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\QuotaOtherView.xaml.cs">
       <DependentUpon>QuotaOtherView.xaml</DependentUpon>
@@ -408,6 +412,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ProgressBarControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\QuotaItemEditView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

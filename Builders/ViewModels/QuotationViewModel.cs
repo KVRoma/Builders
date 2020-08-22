@@ -566,6 +566,7 @@ namespace Builders.ViewModels
         //**************************************************************************************************
         private Command _addItem;
         private Command _insItem;
+        private Command _insItemUser;
         private Command _delItem;
         private Command _otherQuotation;
         private Command _clearRoom;
@@ -925,6 +926,24 @@ namespace Builders.ViewModels
                     }
                 }
             }
+        }));
+        public Command InsItemUser => _insItemUser ?? (_insItemUser = new Command(async obj=> 
+        {            
+            var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+            var material = new QuotaItemEditViewModel();
+            await displayRootRegistry.ShowModalPresentation(material);
+            if (material.PressOk)
+            {
+                var temp = db.MaterialQuotations.FirstOrDefault(m => m.Id == MaterialQuotationSelect.Id);
+                temp.Quantity = material.Quantity;
+                temp.Rate = material.Price;
+                temp.Price = decimal.Round(material.Price * material.Quantity, 2);
+
+                db.Entry(temp).State = EntityState.Modified;
+                db.SaveChanges();
+                MaterialQuotations = (QuotaSelect != null) ? (db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == QuotaSelect.Id)) : null;
+            }            
+            
         }));
         public Command DelItem => _delItem ?? (_delItem = new Command(obj =>
         {

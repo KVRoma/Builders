@@ -75,7 +75,9 @@
                   SelectedItem="{Binding MaterialQuotationSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <DataGrid.InputBindings>
                 <KeyBinding Key="Delete" Command="{Binding DelItem}"/>
+                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding InsItemUser}"/>
             </DataGrid.InputBindings>
+            
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Room" Width="150"  Binding="{Binding Path=RoomDetail}" />
                 <DataGridTextColumn Header="Groupe" Width="150"  Binding="{Binding Path=Groupe}" />
@@ -104,6 +106,7 @@
                   SelectedItem="{Binding MaterialQuotationSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <DataGrid.InputBindings>
                 <KeyBinding Key="Delete" Command="{Binding DelItem}"/>
+                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding InsItemUser}"/>
             </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Room" Width="150"  Binding="{Binding Path=RoomDetail}" />

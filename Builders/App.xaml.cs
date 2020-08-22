@@ -43,6 +43,7 @@ namespace Builders
             displayRootRegistry.RegisterWindowType<MessageViewModel, MessageView>();
             displayRootRegistry.RegisterWindowType<DeliveryViewModel, DeliveryView>();
             displayRootRegistry.RegisterWindowType<GeneratedViewModel, GeneratedView>();
+            displayRootRegistry.RegisterWindowType<QuotaItemEditViewModel, QuotaItemEditView>();
            
         }
 
@@ -81,6 +82,7 @@ namespace Builders
             displayRootRegistry.UnregisterWindowType<MessageViewModel>();
             displayRootRegistry.UnregisterWindowType<DeliveryViewModel>();
             displayRootRegistry.UnregisterWindowType<GeneratedViewModel>();
+            displayRootRegistry.UnregisterWindowType<QuotaItemEditViewModel>();
             
             base.OnExit(e);
         }

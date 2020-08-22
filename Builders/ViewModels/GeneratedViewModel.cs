@@ -930,7 +930,7 @@ namespace Builders.ViewModels
         {
             //LevelDetailSelect = null;
             //PartitionDetailSelect = null;
-            //AdditionalDetailSelect = null;
+            AdditionalDetailSelect = null;
             TransitionRDetail = 0m;
             TransitionTDetail = 0m;
             TransitionOtherDetail = 0m;
