@@ -1029,6 +1029,7 @@ namespace Builders.ViewModels
         private Command _searchQuotation;
         private Command _templateQuotation;
         //*********************************
+        private Command _addDelivery;
         private Command _printDelivery;
         private Command _printDriverDelivery;
         private Command _searchDelivery;
@@ -1562,7 +1563,7 @@ namespace Builders.ViewModels
                 var select = new SelectClientViewModel();
                 select.LastId = QuotationSelect.ClientId;
                 select.Clients = Clients;
-                select.ClientSelect = Clients.FirstOrDefault(c => c.Id == QuotationSelect.ClientId); //db.Clients.FirstOrDefault(c => c.Id == QuotationSelect.ClientId);
+                select.ClientSelect = Clients.FirstOrDefault(c => c.Id == QuotationSelect.ClientId); //db.Quota.FirstOrDefault(c => c.Id == QuotationSelect.ClientId);
 
                 await displayRootRegistry.ShowModalPresentation(select);
 
@@ -2107,6 +2108,23 @@ namespace Builders.ViewModels
         }));
 
         //**********************************
+        public Command AddDeliveryCommand => _addDelivery ?? (_addDelivery = new Command(async obj=> 
+        {
+            // Creating Delivery
+            
+            var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+            var select = new SelectQuotaViewModel() { Quota = Quotations};
+            await displayRootRegistry.ShowModalPresentation(select);
+            if (select.PressButton)
+            {
+                var dublicat = Deliveries.FirstOrDefault(d => d.QuotaId == select.QuotaSelect.Id);
+                if (dublicat == null)
+                {
+                    AddDelivery(select.QuotaSelect);
+                }
+            }
+            
+        }));
         public Command PrintDelivery => _printDelivery ?? (_printDelivery = new Command(obj =>
         {
             try
@@ -2206,7 +2224,7 @@ namespace Builders.ViewModels
             await displayRootRegistry.ShowModalPresentation(invoiceViewModel);
             if (invoiceViewModel.PressOk)
             {
-                var temp = Clients.FirstOrDefault(q => q.Id == invoiceViewModel.QuotaSelect.ClientId); //db.Clients.FirstOrDefault(q => q.Id == invoiceViewModel.QuotaSelect.ClientId);
+                var temp = Clients.FirstOrDefault(q => q.Id == invoiceViewModel.QuotaSelect.ClientId); //db.Quota.FirstOrDefault(q => q.Id == invoiceViewModel.QuotaSelect.ClientId);
 
                 Invoice inv = new Invoice()
                 {
@@ -2268,7 +2286,7 @@ namespace Builders.ViewModels
                 await displayRootRegistry.ShowModalPresentation(invoiceViewModel);
                 if (invoiceViewModel.PressOk)
                 {
-                    //var temp = db.Clients.FirstOrDefault(q => q.Id == invoiceViewModel.QuotaSelect.ClientId);   // Нахрена змінювати Квоту ???
+                    //var temp = db.Quota.FirstOrDefault(q => q.Id == invoiceViewModel.QuotaSelect.ClientId);   // Нахрена змінювати Квоту ???
 
                     //InvoiceSelect.QuotaId = invoiceViewModel.QuotaSelect.Id;
                     InvoiceSelect.OrderNumber = invoiceViewModel.OrderNumber;
@@ -4579,7 +4597,7 @@ namespace Builders.ViewModels
 
 
             var quota = Quotations.FirstOrDefault(q => q.Id == WorkOrderSelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == WorkOrderSelect.QuotaId);
-            var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+            var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Quota.FirstOrDefault(c => c.Id == quota.ClientId);
             var work = db.WorkOrder_Works.Where(w => w.WorkOrderId == WorkOrderSelect.Id && w.Contractor == contractor.Contractor);
             var accessories = db.WorkOrder_Accessories.Where(a => a.WorkOrderId == WorkOrderSelect.Id && a.Contractor == contractor.Contractor);
             var inst = db.WorkOrder_Installations.Where(ins => ins.WorkOrderId == WorkOrderSelect.Id && ins.Contractor == contractor.Contractor);
@@ -4711,7 +4729,7 @@ namespace Builders.ViewModels
 
 
             var quota = Quotations.FirstOrDefault(q => q.Id == WorkOrderSelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == WorkOrderSelect.QuotaId);
-            var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+            var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Quota.FirstOrDefault(c => c.Id == quota.ClientId);
             var work = db.WorkOrder_Works.Where(w => w.WorkOrderId == WorkOrderSelect.Id && w.Contractor == contractor.Contractor);
             var accessories = db.WorkOrder_Accessories.Where(a => a.WorkOrderId == WorkOrderSelect.Id && a.Contractor == contractor.Contractor);
             var inst = db.WorkOrder_Installations.Where(ins => ins.WorkOrderId == WorkOrderSelect.Id && ins.Contractor == contractor.Contractor);
@@ -5321,7 +5339,7 @@ namespace Builders.ViewModels
                 var material = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id).Select(m => m.Description).ToList().Distinct();
                 var dic = db.DIC_Suppliers.FirstOrDefault(s => s.Id == DeliverySelect.SupplierId);
                 var quota = Quotations.FirstOrDefault(q => q.Id == DeliverySelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == DeliverySelect.QuotaId);
-                var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+                var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Quota.FirstOrDefault(c => c.Id == quota.ClientId);
                 Excel.Application ExcelApp = new Excel.Application();
                 Excel.Workbook ExcelWorkBook;
                 ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
@@ -5367,7 +5385,7 @@ namespace Builders.ViewModels
                 var material = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id).Select(m => m.Description).ToList().Distinct();
                 var dic = db.DIC_Suppliers.FirstOrDefault(s => s.Id == DeliverySelect.SupplierId);
                 var quota = Quotations.FirstOrDefault(q => q.Id == DeliverySelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == DeliverySelect.QuotaId);
-                var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+                var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Quota.FirstOrDefault(c => c.Id == quota.ClientId);
                 Excel.Application ExcelApp = new Excel.Application();
                 Excel.Workbook ExcelWorkBook;
                 ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
@@ -5418,7 +5436,7 @@ namespace Builders.ViewModels
                 var supplier = db.Deliveries.Where(d => d.NumberQuota == word);
                 int? quotaId = supplier.FirstOrDefault(s => s.QuotaId > 0)?.QuotaId;
                 var quota = Quotations.FirstOrDefault(q => q.Id == quotaId); //db.Quotations.FirstOrDefault(q => q.Id == quotaId);
-                var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+                var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Quota.FirstOrDefault(c => c.Id == quota.ClientId);
                 if (supplier != null && quota != null && client != null)
                 {
                     ExcelApp.Cells[3, 5] = DateTime.Today;
@@ -5465,7 +5483,7 @@ namespace Builders.ViewModels
                 var supplier = db.Deliveries.Where(d => d.NumberQuota == word);
                 int? quotaId = supplier.FirstOrDefault(s => s.QuotaId > 0)?.QuotaId;
                 var quota = Quotations.FirstOrDefault(q => q.Id == quotaId); //db.Quotations.FirstOrDefault(q => q.Id == quotaId);
-                var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+                var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Quota.FirstOrDefault(c => c.Id == quota.ClientId);
                 if (supplier != null && quota != null && client != null)
                 {
                     ExcelApp.Cells[3, 5] = DateTime.Today;
@@ -5505,7 +5523,7 @@ namespace Builders.ViewModels
             {
                 int i = 0;
                 var quota = Quotations.FirstOrDefault(q => q.Id == InvoiceSelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == InvoiceSelect.QuotaId);
-                var clientData = Clients.Where(c => c.Id == quota.ClientId).FirstOrDefault(); //db.Clients.Where(c => c.Id == quota.ClientId).FirstOrDefault();
+                var clientData = Clients.Where(c => c.Id == quota.ClientId).FirstOrDefault(); //db.Quota.Where(c => c.Id == quota.ClientId).FirstOrDefault();
                 //var materialData = db.MaterialQuotations.Where(q => q.QuotationId == quota.Id);
 
                 List<MaterialQuotation> materialData = new List<MaterialQuotation>();

@@ -30,6 +30,7 @@ namespace Builders
             displayRootRegistry.RegisterWindowType<DIC_DepthViewModel, DIC_DepthView>();
             displayRootRegistry.RegisterWindowType<QuotationViewModel, QuotationView>();
             displayRootRegistry.RegisterWindowType<SelectClientViewModel, SelectClientView>();
+            displayRootRegistry.RegisterWindowType<SelectQuotaViewModel, SelectQuotaView>();
             displayRootRegistry.RegisterWindowType<QuotaOtherViewModel, QuotaOtherView>();
             displayRootRegistry.RegisterWindowType<PaymentViewModel, PaymentView>();
             displayRootRegistry.RegisterWindowType<InvoiceViewModel, InvoiceView>();
@@ -69,6 +70,7 @@ namespace Builders
             displayRootRegistry.UnregisterWindowType<DIC_DepthViewModel>();
             displayRootRegistry.UnregisterWindowType<QuotationViewModel>();
             displayRootRegistry.UnregisterWindowType<SelectClientViewModel>();
+            displayRootRegistry.UnregisterWindowType<SelectQuotaViewModel>();
             displayRootRegistry.UnregisterWindowType<QuotaOtherViewModel>();
             displayRootRegistry.UnregisterWindowType<PaymentViewModel>();
             displayRootRegistry.UnregisterWindowType<InvoiceViewModel>();

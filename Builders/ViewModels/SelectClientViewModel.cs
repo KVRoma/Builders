@@ -26,15 +26,7 @@ namespace Builders.ViewModels
             set
             {
                 clientSelect = value;
-                OnPropertyChanged(nameof(ClientSelect));
-                //if (LastId == ClientSelect.Id)
-                //{
-                //    EnabledButton = false;
-                //}
-                //else
-                //{
-                //    EnabledButton = true;
-                //}
+                OnPropertyChanged(nameof(ClientSelect));                
             }
         }
         public IEnumerable<Client> Clients

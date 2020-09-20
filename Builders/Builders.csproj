@@ -201,6 +201,7 @@
     <Compile Include="ViewModels\QuotaOtherViewModel.cs" />
     <Compile Include="ViewModels\QuotationViewModel.cs" />
     <Compile Include="ViewModels\SelectClientViewModel.cs" />
+    <Compile Include="ViewModels\SelectQuotaViewModel.cs" />
     <Compile Include="ViewModels\ViewModel.cs" />
     <Compile Include="ViewModels\WorkOrderViewModel.cs" />
     <Compile Include="Views\ClientView.xaml.cs">
@@ -292,6 +293,9 @@
     </Compile>
     <Compile Include="Views\SelectClientView.xaml.cs">
       <DependentUpon>SelectClientView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SelectQuotaView.xaml.cs">
+      <DependentUpon>SelectQuotaView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TabControl.xaml.cs">
       <DependentUpon>TabControl.xaml</DependentUpon>
@@ -432,6 +436,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SelectClientView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SelectQuotaView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

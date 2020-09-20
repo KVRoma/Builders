@@ -372,7 +372,7 @@ namespace Builders.ViewModels
 
         //            Worksheet sheet = ExcelWorkBook.Worksheets[0];
 
-        //            //var client = db.Clients.FirstOrDefault(c => c.Id == quota.ClientId);
+        //            //var client = db.Quota.FirstOrDefault(c => c.Id == quota.ClientId);
         //            //var payDo = Payments.Where(p => p.Id <= PaymentSelect.Id).OrderBy(i => i.Id);
 
         //            //int count = 45;

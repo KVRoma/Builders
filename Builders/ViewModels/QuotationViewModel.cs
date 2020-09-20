@@ -1223,8 +1223,11 @@ namespace Builders.ViewModels
                                                                    res.Name == item?.NewFloor);
                     if (totalResult != null)
                     {
-                        totalResult.Count += item.TotalFloor;
-                        result.RemoveAt(result.IndexOf(totalResult));
+                        int index = result.IndexOf(totalResult);
+                        if (index != -1)
+                        {
+                            result[index].Count += item.TotalFloor;
+                        }                        
                     }
                     else
                     {
@@ -1416,8 +1419,13 @@ namespace Builders.ViewModels
                                                                 res.Name == item.TypeTrim);
                     if (totalResult != null)
                     {
-                        totalResult.Count += item.QtyTrim;
-                        result.RemoveAt(result.IndexOf(totalResult));
+                        int index = result.IndexOf(totalResult);
+                        if (index != -1)
+                        {
+                            result[index].Count += item.QtyTrim;
+                        }
+                        //totalResult.Count += item.QtyTrim;
+                        //result.RemoveAt(result.IndexOf(totalResult));
                     }
                     else
                     {

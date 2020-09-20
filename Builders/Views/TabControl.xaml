@@ -356,6 +356,11 @@
 
                     <StackPanel Grid.Row="3" Grid.ColumnSpan="2"
                                 Style="{StaticResource FooterMenu}" >
+                        <Button Content="Add" 
+                                Foreground="Green" 
+                                BorderBrush="Green"
+                                Style="{StaticResource FooterButton}" 
+                                Command="{Binding AddDeliveryCommand}"/>
                         <Button Content="Print PO" 
                                 Foreground="Blue" 
                                 BorderBrush="Blue"
