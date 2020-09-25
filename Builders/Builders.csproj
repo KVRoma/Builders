@@ -72,6 +72,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -92,6 +95,9 @@
       <HintPath>..\packages\System.Data.SQLite.Linq.1.0.113.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -497,6 +503,20 @@
     <Content Include="Fonts\LEMONMILK-RegularItalic.otf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Fonts\AlegreyaSansSC-Black.ttf" />
+    <Resource Include="Fonts\AlegreyaSansSC-BlackItalic.ttf" />
+    <Resource Include="Fonts\AlegreyaSansSC-Bold.ttf" />
+    <Resource Include="Fonts\AlegreyaSansSC-BoldItalic.ttf" />
+    <Resource Include="Fonts\AlegreyaSansSC-ExtraBold.ttf" />
+    <Resource Include="Fonts\AlegreyaSansSC-ExtraBoldItalic.ttf" />
+    <Resource Include="Fonts\AlegreyaSansSC-Italic.ttf" />
+    <Resource Include="Fonts\AlegreyaSansSC-Light.ttf" />
+    <Resource Include="Fonts\AlegreyaSansSC-LightItalic.ttf" />
+    <Resource Include="Fonts\AlegreyaSansSC-Medium.ttf" />
+    <Resource Include="Fonts\AlegreyaSansSC-MediumItalic.ttf" />
+    <Resource Include="Fonts\AlegreyaSansSC-Regular.ttf" />
+    <Resource Include="Fonts\AlegreyaSansSC-Thin.ttf" />
+    <Resource Include="Fonts\AlegreyaSansSC-ThinItalic.ttf" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

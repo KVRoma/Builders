@@ -103,12 +103,13 @@ namespace Builders.ViewModels
                 OnPropertyChanged(nameof(Quotas));
             }
         }
-
+       
         public MaterialQuotation MaterialQuotationSelect
         {
             get { return materialQuotationSelect; }
             set
-            {
+            {             
+                
                 materialQuotationSelect = value;
                 OnPropertyChanged(nameof(MaterialQuotationSelect));
 
@@ -142,7 +143,7 @@ namespace Builders.ViewModels
                     {
                         IsVisibleStandart = Visibility.Visible;
                         IsVisibleRoomDescription = Visibility.Collapsed;
-                        
+
                         DIC_GroupeSelect = (MaterialQuotationSelect?.Groupe != null) ? DIC_Groupes?.FirstOrDefault(g => g?.NameGroupe == MaterialQuotationSelect?.Groupe) : null;
                         DIC_ItemSelect = (MaterialQuotationSelect?.Item != null) ? DIC_Items?.FirstOrDefault(i => i?.Name == MaterialQuotationSelect?.Item) : null;
                         DIC_DescriptionSelect = (MaterialQuotationSelect?.Description != null) ? DIC_Descriptions?.FirstOrDefault(d => d?.Name == MaterialQuotationSelect?.Description) : null;
@@ -572,7 +573,7 @@ namespace Builders.ViewModels
         private Command _clearRoom;
         private Command _generated;
         private Command _search;
-
+        private Command _updateSelect;
 
 
         public Command AddItem => _addItem ?? (_addItem = new Command(obj =>
@@ -1014,8 +1015,15 @@ namespace Builders.ViewModels
                                                                    .OrderBy(t => t.Name)) : null;
             }
         }));
+        public Command UpdateSelect => _updateSelect ?? (_updateSelect = new Command(obj=> 
+        {
+            var temp = MaterialQuotationSelect;
+            MaterialQuotationSelect = null;
+            MaterialQuotationSelect = temp;
+        }));
 
-       
+        
+
         public QuotationViewModel(ref BuilderContext context, EnumClient res, Quotation select, string companyName)
         {
             db = context;
@@ -1186,9 +1194,9 @@ namespace Builders.ViewModels
                     // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
                     var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
                                                                    res.Groupe == "FLOORING" &&
-                                                                   res.GradeLevel == item?.GradeLevel &&
-                                                                   res.Partition == item?.Partition &&
-                                                                   res.Aditional == item?.Aditional &&
+                                                                   //res.GradeLevel == item?.GradeLevel &&   ці поля можуть бути різні (все одно додаємо)
+                                                                   //res.Partition == item?.Partition &&
+                                                                   //res.Aditional == item?.Aditional &&
                                                                    res.Name == item?.NewFloor);
                     if (totalResult != null)
                     {
@@ -1203,9 +1211,9 @@ namespace Builders.ViewModels
                     {
                         list.GeneratedId = select.Id;
                         list.Groupe = "FLOORING";
-                        list.GradeLevel = item?.GradeLevel;
-                        list.Partition = item?.Partition;
-                        list.Aditional = item?.Aditional;
+                        //list.GradeLevel = item?.GradeLevel;       ці поля закоментовані в фільтрі
+                        //list.Partition = item?.Partition;
+                        //list.Aditional = item?.Aditional;
                         list.Name = item?.NewFloor;
                         list.Count = item.TotalFlooringMaterial;
 
@@ -1217,9 +1225,9 @@ namespace Builders.ViewModels
                     // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
                     totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
                                                                    res.Groupe == "INSTALLATION" &&
-                                                                   res.GradeLevel == item?.GradeLevel &&
-                                                                   res.Partition == item?.Partition &&
-                                                                   res.Aditional == item?.Aditional &&
+                                                                   //res.GradeLevel == item?.GradeLevel &&    ці поля можуть бути різні (все одно додаємо)
+                                                                   //res.Partition == item?.Partition &&
+                                                                   //res.Aditional == item?.Aditional &&
                                                                    res.Name == item?.NewFloor);
                     if (totalResult != null)
                     {
@@ -1234,9 +1242,9 @@ namespace Builders.ViewModels
 
                         list.GeneratedId = select.Id;
                         list.Groupe = "INSTALLATION";
-                        list.GradeLevel = item?.GradeLevel;
-                        list.Partition = item?.Partition;
-                        list.Aditional = item?.Aditional;
+                        //list.GradeLevel = item?.GradeLevel;    ці поля закоментовані в фільтрі
+                        //list.Partition = item?.Partition;
+                        //list.Aditional = item?.Aditional;
                         list.Name = item?.NewFloor;
                         list.Count = item.TotalFloor;
 
@@ -1251,9 +1259,9 @@ namespace Builders.ViewModels
                     // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
                     var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
                                                                    res.Groupe == "DEMOLITION" &&
-                                                                   res.GradeLevel == item?.GradeLevel &&
-                                                                   res.Partition == item?.Partition &&
-                                                                   res.Aditional == item?.Aditional &&
+                                                                   // res.GradeLevel == item?.GradeLevel &&   ці поля можуть бути різні (все одно додаємо)
+                                                                   // res.Partition == item?.Partition &&
+                                                                   // res.Aditional == item?.Aditional &&
                                                                    res.Name == item?.ExistingFloor);
                     if (totalResult != null)
                     {
@@ -1267,9 +1275,9 @@ namespace Builders.ViewModels
                     {
                         list.GeneratedId = select.Id;
                         list.Groupe = "DEMOLITION";
-                        list.GradeLevel = item?.GradeLevel;
-                        list.Partition = item?.Partition;
-                        list.Aditional = item?.Aditional;
+                        //list.GradeLevel = item?.GradeLevel;   ці поля закоментовані в фільтрі
+                        //list.Partition = item?.Partition;
+                        //list.Aditional = item?.Aditional;
                         list.Name = item?.ExistingFloor;
                         list.Count = item.TotalFloor;
 
@@ -1284,9 +1292,9 @@ namespace Builders.ViewModels
                     // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
                     var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
                                                                    res.Groupe == "ACCESSORIES" &&
-                                                                   res.GradeLevel == item?.GradeLevel &&
-                                                                   res.Partition == item?.Partition &&
-                                                                   res.Aditional == item?.Aditional &&
+                                                                   //res.GradeLevel == item?.GradeLevel &&      ці поля можуть бути різні (все одно додаємо)
+                                                                   //res.Partition == item?.Partition &&
+                                                                   //res.Aditional == item?.Aditional &&
                                                                    res.Name == "Transition (R)");
                     if (totalResult != null)
                     {
@@ -1300,9 +1308,9 @@ namespace Builders.ViewModels
                     {
                         list.GeneratedId = select.Id;
                         list.Groupe = "ACCESSORIES";
-                        list.GradeLevel = item?.GradeLevel;
-                        list.Partition = item?.Partition;
-                        list.Aditional = item?.Aditional;
+                        //list.GradeLevel = item?.GradeLevel;   ці поля закоментовані в фільтрі
+                        //list.Partition = item?.Partition;
+                        //list.Aditional = item?.Aditional;
                         list.Name = "Transition (R)";
                         list.Count = item.TransitionR;
 
@@ -1317,9 +1325,9 @@ namespace Builders.ViewModels
                     // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
                     var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
                                                                    res.Groupe == "ACCESSORIES" &&
-                                                                   res.GradeLevel == item?.GradeLevel &&
-                                                                   res.Partition == item?.Partition &&
-                                                                   res.Aditional == item?.Aditional &&
+                                                                   //res.GradeLevel == item?.GradeLevel &&      ці поля можуть бути різні (все одно додаємо)
+                                                                   //res.Partition == item?.Partition &&
+                                                                   //res.Aditional == item?.Aditional &&
                                                                    res.Name == "Transition (T)");
                     if (totalResult != null)
                     {
@@ -1333,9 +1341,9 @@ namespace Builders.ViewModels
                     {
                         list.GeneratedId = select.Id;
                         list.Groupe = "ACCESSORIES";
-                        list.GradeLevel = item?.GradeLevel;
-                        list.Partition = item?.Partition;
-                        list.Aditional = item?.Aditional;
+                        //list.GradeLevel = item?.GradeLevel;   ці поля закоментовані в фільтрі
+                        //list.Partition = item?.Partition;
+                        //list.Aditional = item?.Aditional;
                         list.Name = "Transition (T)";
                         list.Count = item.TransitionT;
 
@@ -1350,9 +1358,9 @@ namespace Builders.ViewModels
                     // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
                     var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
                                                                    res.Groupe == "ACCESSORIES" &&
-                                                                   res.GradeLevel == item?.GradeLevel &&
-                                                                   res.Partition == item?.Partition &&
-                                                                   res.Aditional == item?.Aditional &&
+                                                                   //res.GradeLevel == item?.GradeLevel &&     ці поля можуть бути різні (все одно додаємо)
+                                                                   //res.Partition == item?.Partition &&
+                                                                   //res.Aditional == item?.Aditional &&
                                                                    res.Name == item.NoteTransitionOther);
                     if (totalResult != null)
                     {
@@ -1366,9 +1374,9 @@ namespace Builders.ViewModels
                     {
                         list.GeneratedId = select.Id;
                         list.Groupe = "ACCESSORIES";
-                        list.GradeLevel = item?.GradeLevel;
-                        list.Partition = item?.Partition;
-                        list.Aditional = item?.Aditional;
+                        //list.GradeLevel = item?.GradeLevel;           ці поля закоментовані в фільтрі
+                        //list.Partition = item?.Partition;
+                        //list.Aditional = item?.Aditional;
                         list.Name = item.NoteTransitionOther;
                         list.Count = item.TransitionOther;
 
@@ -1383,9 +1391,9 @@ namespace Builders.ViewModels
                     // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
                     var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
                                                                    res.Groupe == "ACCESSORIES" &&
-                                                                   res.GradeLevel == item?.GradeLevel &&
-                                                                   res.Partition == item?.Partition &&
-                                                                   res.Aditional == item?.Aditional &&
+                                                                   //res.GradeLevel == item?.GradeLevel &&          ці поля можуть бути різні (все одно додаємо)
+                                                                   //res.Partition == item?.Partition &&
+                                                                   //res.Aditional == item?.Aditional &&
                                                                    res.Name == item.TypeTrim);
                     if (totalResult != null)
                     {
@@ -1399,9 +1407,9 @@ namespace Builders.ViewModels
                     {
                         list.GeneratedId = select.Id;
                         list.Groupe = "ACCESSORIES";
-                        list.GradeLevel = item?.GradeLevel;
-                        list.Partition = item?.Partition;
-                        list.Aditional = item?.Aditional;
+                        //list.GradeLevel = item?.GradeLevel;           ці поля закоментовані в фільтрі
+                        //list.Partition = item?.Partition;
+                        //list.Aditional = item?.Aditional;
                         list.Name = item.TypeTrim;
                         list.Count = item.QtyTrim;
 
@@ -1413,9 +1421,9 @@ namespace Builders.ViewModels
                     // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
                     totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
                                                                 res.Groupe == "INSTALLATION" &&
-                                                                res.GradeLevel == item?.GradeLevel &&
-                                                                res.Partition == item?.Partition &&
-                                                                res.Aditional == item?.Aditional &&
+                                                                //res.GradeLevel == item?.GradeLevel &&     ці поля можуть бути різні (все одно додаємо)
+                                                                //res.Partition == item?.Partition &&
+                                                                //res.Aditional == item?.Aditional &&
                                                                 res.Name == item.TypeTrim);
                     if (totalResult != null)
                     {
@@ -1431,9 +1439,9 @@ namespace Builders.ViewModels
                     {
                         list.GeneratedId = select.Id;
                         list.Groupe = "INSTALLATION";
-                        list.GradeLevel = item?.GradeLevel;
-                        list.Partition = item?.Partition;
-                        list.Aditional = item?.Aditional;
+                        //list.GradeLevel = item?.GradeLevel;           ці поля закоментовані в фільтрі
+                        //list.Partition = item?.Partition;
+                        //list.Aditional = item?.Aditional;
                         list.Name = item.TypeTrim;
                         list.Count = item.QtyTrim;
 
@@ -1497,7 +1505,7 @@ namespace Builders.ViewModels
                     // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
                     var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
                                                                    res.Groupe == "ACCESSORIES" &&
-                                                                   res.GradeLevel == item?.GradeLevel &&                                                                   
+                                                                   //res.GradeLevel == item?.GradeLevel &&    ці поля можуть бути різні (все одно додаємо)                                                               
                                                                    res.Name == item.TypeStairs + "  LENGHT (FT) - " + item.LenghtStairs.ToString());
                     if (totalResult != null)
                     {
@@ -1510,7 +1518,7 @@ namespace Builders.ViewModels
                     else
                     {
                         list.GeneratedId = select.Id;
-                        list.GradeLevel = item.GradeLevel;
+                        //list.GradeLevel = item.GradeLevel;  ці поля закоментовані в фільтрі
                         list.Groupe = "ACCESSORIES";
                         list.Name = item.TypeStairs + "  LENGHT (FT) - " + item.LenghtStairs.ToString();
                         list.Count = item.QtyStairsLenght;
@@ -1523,7 +1531,7 @@ namespace Builders.ViewModels
                     // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
                     totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
                                                                    res.Groupe == "INSTALLATION" &&
-                                                                   res.GradeLevel == item?.GradeLevel &&
+                                                                   //res.GradeLevel == item?.GradeLevel &&   ці поля можуть бути різні (все одно додаємо)
                                                                    res.Name == item.TypeStairs + "  LENGHT (FT) - " + item.LenghtStairs.ToString());
                     if (totalResult != null)
                     {
@@ -1536,7 +1544,7 @@ namespace Builders.ViewModels
                     else
                     {
                         list.GeneratedId = select.Id;
-                        list.GradeLevel = item.GradeLevel;
+                        //list.GradeLevel = item.GradeLevel;    ці поля закоментовані в фільтрі
                         list.Groupe = "INSTALLATION";
                         list.Name = item.TypeStairs + "  LENGHT (FT) - " + item.LenghtStairs.ToString();
                         list.Count = item.QtyStairs;
@@ -1552,7 +1560,7 @@ namespace Builders.ViewModels
                     // Перевіряєм чи вже є такий запис, якщо є то додаєм тільки кількість. Не робим дублів. 
                     var totalResult = result.FirstOrDefault(res => res.GeneratedId == select.Id &&
                                                                    res.Groupe == "ACCESSORIES" &&
-                                                                   res.GradeLevel == item?.GradeLevel &&
+                                                                   //res.GradeLevel == item?.GradeLevel &&   ці поля можуть бути різні (все одно додаємо)
                                                                    res.Name == item.NameLeveling);
                     if (totalResult != null)
                     {
@@ -1565,7 +1573,7 @@ namespace Builders.ViewModels
                     else
                     {
                         list.GeneratedId = select.Id;
-                        list.GradeLevel = item.GradeLevel;
+                        //list.GradeLevel = item.GradeLevel;  ці поля закоментовані в фільтрі
                         list.Groupe = "ACCESSORIES";
                         list.Name = item.NameLeveling;
                         list.Count = item.QtyLeveling;

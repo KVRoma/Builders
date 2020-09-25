@@ -965,6 +965,10 @@ namespace Builders.ViewModels
 
         public Command AddStairsCommand => _addStairsCommand ?? (_addStairsCommand = new Command(obj =>
         {
+            if (TypeStairSelect == null)
+            {
+                return;
+            }
             decimal qty = 0m;
             string material = "";
             if (TypeMaterialStairSelect == TypeMaterialStairs[1]) // "Laminate and Vinyl")

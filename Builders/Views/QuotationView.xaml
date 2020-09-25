@@ -3,8 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:Builders.Views"   
-        xmlns:UI="clr-namespace:Builders.Commands"
+        xmlns:UI="clr-namespace:Builders.Commands"        
         mc:Ignorable="d"
         Title="{Binding WindowName}" 
         MinHeight="700"
@@ -13,6 +14,7 @@
         Width="1400" 
         WindowState="Maximized"
         Style="{StaticResource WindowStyle}">
+    
     
     <Grid>
         <Grid.ColumnDefinitions>
@@ -68,16 +70,20 @@
                    FontWeight="Bold"/>
 
 
-        <DataGrid Grid.Row="2"  
+        <DataGrid Grid.Row="2" 
                   AutoGenerateColumns="False"                          
                   IsReadOnly="True" 
                   ItemsSource="{Binding QuotationsMaterial, UpdateSourceTrigger=PropertyChanged}"
                   SelectedItem="{Binding MaterialQuotationSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <DataGrid.InputBindings>
                 <KeyBinding Key="Delete" Command="{Binding DelItem}"/>
-                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding InsItemUser}"/>
+                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding InsItemUser}"/>                
             </DataGrid.InputBindings>
-            
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="LostFocus">
+                    <i:InvokeCommandAction Command="{Binding UpdateSelect}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Room" Width="150"  Binding="{Binding Path=RoomDetail}" />
                 <DataGridTextColumn Header="Groupe" Width="150"  Binding="{Binding Path=Groupe}" />
@@ -108,6 +114,11 @@
                 <KeyBinding Key="Delete" Command="{Binding DelItem}"/>
                 <MouseBinding Gesture="LeftDoubleClick" Command="{Binding InsItemUser}"/>
             </DataGrid.InputBindings>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="LostFocus">
+                    <i:InvokeCommandAction Command="{Binding UpdateSelect}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Room" Width="150"  Binding="{Binding Path=RoomDetail}" />
                 <DataGridTextColumn Header="Groupe" Width="150"  Binding="{Binding Path=Groupe}" />

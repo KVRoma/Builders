@@ -31,7 +31,9 @@
     <!-- Стиль для Window -->
     <Style TargetType="Window" x:Key="WindowStyle">
         <Setter Property="Background" Value="{StaticResource Gradient_LightBlue_White_LightBlue}"/>
-        <Setter Property="FontFamily" Value="/Fonts/LEMONMILK-Regular.otf#LEMON MILK Regular"/>        <!-- Добавив шрифт замовника /Fonts/QualyBold.ttf#Qualy Bold" -->
+        <!--<Setter Property="FontFamily" Value="/Fonts/LEMONMILK-Regular.otf#LEMON MILK Regular"/>        Добавив шрифт замовника /Fonts/QualyBold.ttf#Qualy Bold" -->
+        <Setter Property="FontFamily" Value="/Fonts/AlegreyaSansSC-Regular.ttf#Alegreya Sans SC Regular"/>   <!--  Добавив шрифт замовника" -->
+        <Setter Property="FontSize" Value="15"/>        <!--  Добавив розмір до шрифта замовника (в оригіналі дуже дрібний)" -->
     </Style>
     <!--************************************** -->
     <!-- Авто стиль для Menu -->
@@ -173,6 +175,7 @@
     <Style TargetType="Button" x:Key="FooterButton">
         <Setter Property="Width" Value="100"/>
         <Setter Property="Height" Value="60"/>
+        <Setter Property="FontFamily" Value="/Fonts/LEMONMILK-Regular.otf#LEMON MILK Regular"/>        <!--Добавив шрифт замовника-->
         <Setter Property="FontWeight" Value="Medium"/>
         <Setter Property="Margin" Value="5"/>
         <Setter Property="Template">
@@ -347,13 +350,13 @@
         <Setter Property="Margin" Value="0"/>
         <Setter Property="Padding" Value="6,2,6,2"/>
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>        
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TabItem}">
-                    <Grid x:Name="templateRoot" SnapsToDevicePixels="true">
+                    <Grid x:Name="templateRoot" SnapsToDevicePixels="true">                        
                         <Border x:Name="mainBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1,1,1,0" Background="{TemplateBinding Background}" Margin="0">
-
+                            
 
                             <Border x:Name="innerBorder"  Background="LightCyan"  Margin="-1" Opacity="0" >                        
                                 <Ellipse HorizontalAlignment="Left" Margin="2" Width="15" Height="15" Fill="{StaticResource TabItem.Selected.Background}"/>                               
