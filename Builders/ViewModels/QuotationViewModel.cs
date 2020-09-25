@@ -618,98 +618,123 @@ namespace Builders.ViewModels
                 Rate = 0m;
                 Quantity = 0m;
             }
-            if (flagCreatQuota && QuotaSelect != null)
+            if (flagCreatQuota && QuotaSelect != null && DIC_GroupeSelect?.NameGroupe != null)
             {
 
                 var temp = MaterialQuotations; //db.MaterialQuotations.Where(f => f.QuotationId == QuotaSelect.Id);
 
                 int flooring = (temp != null) ? (temp.Where(t => t.Groupe == "FLOORING").ToList().Select(t=>t.MaterialDetail).Distinct().Count()) : 0;
                 int accessories = (temp != null) ? (temp.Where(t => t.Groupe == "ACCESSORIES").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
+                int mat = flooring + accessories;
+
                 int installation = (temp != null) ? (temp.Where(t => t.Groupe == "INSTALLATION").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
                 int demolition = (temp != null) ? (temp.Where(t => t.Groupe == "DEMOLITION").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
                 int services = (temp != null) ? (temp.Where(t => t.Groupe == "OPTIONAL SERVICES").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
                 int delivery = (temp != null) ? (temp.Where(t => t.Groupe == "FLOORING DELIVERY").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
+                int lab = installation + demolition + services + delivery;
 
                 bool flagSaveItem = false;
-
-                switch (DIC_GroupeSelect?.NameGroupe)
+                if (DIC_GroupeSelect.NameGroupe == "FLOORING" || DIC_GroupeSelect.NameGroupe == "ACCESSORIES")
                 {
-                    case "FLOORING":
-                        {
-                            if (flooring > 7)
-                            {
-                                MessageBox.Show("The limit is reached...\n FLOORING (8 pcs.) !!!", "Warning !!!");
-                            }
-                            else
-                            {
-                                flagSaveItem = true;
-                            }
-                        }
-                        break;
-                    case "ACCESSORIES":
-                        {
-                            if (accessories > 15)
-                            {
-                                MessageBox.Show("The limit is reached...\n ACCESSORIES (16 pcs.) !!!", "Warning !!!");
-                            }
-                            else
-                            {
-                                flagSaveItem = true;
-                            }
-                        }
-                        break;
-                    case "INSTALLATION":
-                        {
-                            if (installation > 7)
-                            {
-                                MessageBox.Show("The limit is reached...\n INSTALLATION (8 pcs.) !!!", "Warning !!!");
-                            }
-                            else
-                            {
-                                flagSaveItem = true;
-                            }
-                        }
-                        break;
-                    case "DEMOLITION":
-                        {
-                            if (demolition > 4)
-                            {
-                                MessageBox.Show("The limit is reached...\n DEMOLITION (5 pcs.) !!!", "Warning !!!");
-                            }
-                            else
-                            {
-                                flagSaveItem = true;
-                            }
-                        }
-                        break;
-                    case "OPTIONAL SERVICES":
-                        {
-                            if (services > 6)
-                            {
-                                MessageBox.Show("The limit is reached...\n OPTIONAL SERVICES (7 pcs.) !!!", "Warning !!!");
-                            }
-                            else
-                            {
-                                flagSaveItem = true;
-                            }
-                        }
-                        break;
-                    case "FLOORING DELIVERY":
-                        {
-                            if (delivery > 3)
-                            {
-                                MessageBox.Show("The limit is reached...\n FLOORING DELIVERY (4 pcs.) !!!", "Warning !!!");
-                            }
-                            else
-                            {
-                                flagSaveItem = true;
-                            }
-                        }
-                        break;
-                    default:
-                        { }
-                        break;
+                    if (mat > 39)
+                    {
+                        MessageBox.Show("The limit is reached...\n MATERIAL (40 pcs.) !!!", "Warning !!!");
+                    }
+                    else
+                    {
+                        flagSaveItem = true;
+                    }
                 }
+                else
+                {
+                    if (lab > 39)
+                    {
+                        MessageBox.Show("The limit is reached...\n LABOUR (40 pcs.) !!!", "Warning !!!");
+                    }
+                    else
+                    {
+                        flagSaveItem = true;
+                    }
+                }
+
+                //switch (DIC_GroupeSelect?.NameGroupe)
+                //{
+                //    case "FLOORING":
+                //        {
+                //            if (flooring > 7)
+                //            {
+                //                MessageBox.Show("The limit is reached...\n FLOORING (8 pcs.) !!!", "Warning !!!");
+                //            }
+                //            else
+                //            {
+                //                flagSaveItem = true;
+                //            }
+                //        }
+                //        break;
+                //    case "ACCESSORIES":
+                //        {
+                //            if (accessories > 15)
+                //            {
+                //                MessageBox.Show("The limit is reached...\n ACCESSORIES (16 pcs.) !!!", "Warning !!!");
+                //            }
+                //            else
+                //            {
+                //                flagSaveItem = true;
+                //            }
+                //        }
+                //        break;
+                //    case "INSTALLATION":
+                //        {
+                //            if (installation > 7)
+                //            {
+                //                MessageBox.Show("The limit is reached...\n INSTALLATION (8 pcs.) !!!", "Warning !!!");
+                //            }
+                //            else
+                //            {
+                //                flagSaveItem = true;
+                //            }
+                //        }
+                //        break;
+                //    case "DEMOLITION":
+                //        {
+                //            if (demolition > 4)
+                //            {
+                //                MessageBox.Show("The limit is reached...\n DEMOLITION (5 pcs.) !!!", "Warning !!!");
+                //            }
+                //            else
+                //            {
+                //                flagSaveItem = true;
+                //            }
+                //        }
+                //        break;
+                //    case "OPTIONAL SERVICES":
+                //        {
+                //            if (services > 6)
+                //            {
+                //                MessageBox.Show("The limit is reached...\n OPTIONAL SERVICES (7 pcs.) !!!", "Warning !!!");
+                //            }
+                //            else
+                //            {
+                //                flagSaveItem = true;
+                //            }
+                //        }
+                //        break;
+                //    case "FLOORING DELIVERY":
+                //        {
+                //            if (delivery > 3)
+                //            {
+                //                MessageBox.Show("The limit is reached...\n FLOORING DELIVERY (4 pcs.) !!!", "Warning !!!");
+                //            }
+                //            else
+                //            {
+                //                flagSaveItem = true;
+                //            }
+                //        }
+                //        break;
+                //    default:
+                //        { }
+                //        break;
+                //}
 
                 if (flagSaveItem)
                 {
@@ -784,93 +809,93 @@ namespace Builders.ViewModels
                 var temp = MaterialQuotations; //db.MaterialQuotations.Where(f => f.QuotationId == QuotaSelect.Id);
                 var tempMaterialSelect = db.MaterialQuotations.FirstOrDefault(m => m.Id == MaterialQuotationSelect.Id);
 
-                int flooring = (temp != null) ? (temp.Where(t => t.Groupe == "FLOORING").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
-                int accessories = (temp != null) ? (temp.Where(t => t.Groupe == "ACCESSORIES").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
-                int installation = (temp != null) ? (temp.Where(t => t.Groupe == "INSTALLATION").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
-                int demolition = (temp != null) ? (temp.Where(t => t.Groupe == "DEMOLITION").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
-                int services = (temp != null) ? (temp.Where(t => t.Groupe == "OPTIONAL SERVICES").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
-                int delivery = (temp != null) ? (temp.Where(t => t.Groupe == "FLOORING DELIVERY").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
+                //int flooring = (temp != null) ? (temp.Where(t => t.Groupe == "FLOORING").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
+                //int accessories = (temp != null) ? (temp.Where(t => t.Groupe == "ACCESSORIES").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
+                //int installation = (temp != null) ? (temp.Where(t => t.Groupe == "INSTALLATION").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
+                //int demolition = (temp != null) ? (temp.Where(t => t.Groupe == "DEMOLITION").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
+                //int services = (temp != null) ? (temp.Where(t => t.Groupe == "OPTIONAL SERVICES").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
+                //int delivery = (temp != null) ? (temp.Where(t => t.Groupe == "FLOORING DELIVERY").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
 
-                bool flagSaveItem = false;
+                bool flagSaveItem = true;
 
-                switch (DIC_GroupeSelect?.NameGroupe)
-                {
-                    case "FLOORING":
-                        {
-                            if (flooring > 7)
-                            {
-                                MessageBox.Show("The limit is reached...\n FLOORING (8 pcs.) !!!", "Warning !!!");
-                            }
-                            else
-                            {
-                                flagSaveItem = true;
-                            }
-                        }
-                        break;
-                    case "ACCESSORIES":
-                        {
-                            if (accessories > 15)
-                            {
-                                MessageBox.Show("The limit is reached...\n ACCESSORIES (16 pcs.) !!!", "Warning !!!");
-                            }
-                            else
-                            {
-                                flagSaveItem = true;
-                            }
-                        }
-                        break;
-                    case "INSTALLATION":
-                        {
-                            if (installation > 7)
-                            {
-                                MessageBox.Show("The limit is reached...\n INSTALLATION (8 pcs.) !!!", "Warning !!!");
-                            }
-                            else
-                            {
-                                flagSaveItem = true;
-                            }
-                        }
-                        break;
-                    case "DEMOLITION":
-                        {
-                            if (demolition > 4)
-                            {
-                                MessageBox.Show("The limit is reached...\n DEMOLITION (5 pcs.) !!!", "Warning !!!");
-                            }
-                            else
-                            {
-                                flagSaveItem = true;
-                            }
-                        }
-                        break;
-                    case "OPTIONAL SERVICES":
-                        {
-                            if (services > 6)
-                            {
-                                MessageBox.Show("The limit is reached...\n OPTIONAL SERVICES (7 pcs.) !!!", "Warning !!!");
-                            }
-                            else
-                            {
-                                flagSaveItem = true;
-                            }
-                        }
-                        break;
-                    case "FLOORING DELIVERY":
-                        {
-                            if (delivery > 3)
-                            {
-                                MessageBox.Show("The limit is reached...\n FLOORING DELIVERY (4 pcs.) !!!", "Warning !!!");
-                            }
-                            else
-                            {
-                                flagSaveItem = true;
-                            }
-                        }
-                        break;
-                    default:
-                        { }
-                        break;
-                }
+                //switch (DIC_GroupeSelect?.NameGroupe)
+                //{
+                //    case "FLOORING":
+                //        {
+                //            if (flooring > 7)
+                //            {
+                //                MessageBox.Show("The limit is reached...\n FLOORING (8 pcs.) !!!", "Warning !!!");
+                //            }
+                //            else
+                //            {
+                //                flagSaveItem = true;
+                //            }
+                //        }
+                //        break;
+                //    case "ACCESSORIES":
+                //        {
+                //            if (accessories > 15)
+                //            {
+                //                MessageBox.Show("The limit is reached...\n ACCESSORIES (16 pcs.) !!!", "Warning !!!");
+                //            }
+                //            else
+                //            {
+                //                flagSaveItem = true;
+                //            }
+                //        }
+                //        break;
+                //    case "INSTALLATION":
+                //        {
+                //            if (installation > 7)
+                //            {
+                //                MessageBox.Show("The limit is reached...\n INSTALLATION (8 pcs.) !!!", "Warning !!!");
+                //            }
+                //            else
+                //            {
+                //                flagSaveItem = true;
+                //            }
+                //        }
+                //        break;
+                //    case "DEMOLITION":
+                //        {
+                //            if (demolition > 4)
+                //            {
+                //                MessageBox.Show("The limit is reached...\n DEMOLITION (5 pcs.) !!!", "Warning !!!");
+                //            }
+                //            else
+                //            {
+                //                flagSaveItem = true;
+                //            }
+                //        }
+                //        break;
+                //    case "OPTIONAL SERVICES":
+                //        {
+                //            if (services > 6)
+                //            {
+                //                MessageBox.Show("The limit is reached...\n OPTIONAL SERVICES (7 pcs.) !!!", "Warning !!!");
+                //            }
+                //            else
+                //            {
+                //                flagSaveItem = true;
+                //            }
+                //        }
+                //        break;
+                //    case "FLOORING DELIVERY":
+                //        {
+                //            if (delivery > 3)
+                //            {
+                //                MessageBox.Show("The limit is reached...\n FLOORING DELIVERY (4 pcs.) !!!", "Warning !!!");
+                //            }
+                //            else
+                //            {
+                //                flagSaveItem = true;
+                //            }
+                //        }
+                //        break;
+                //    default:
+                //        { }
+                //        break;
+                //}
                 if (flagSaveItem)
                 {
                     if (CompanyName != "CMO" && DIC_GroupeSelect.NameGroupe == "FLOORING")

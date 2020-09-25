@@ -566,17 +566,21 @@ namespace Builders.ViewModels
 
                 db.WorkOrders.Load();
                 OrderSelect = db.WorkOrders.Local.ToBindingList().OrderByDescending(q => q.Id).FirstOrDefault();
-
-                foreach (var item in Installations)
+                if (Installations != null)
                 {
-                    item.WorkOrderId = OrderSelect.Id;
-                    db.WorkOrder_Installations.Add(item);                    
+                    foreach (var item in Installations)
+                    {
+                        item.WorkOrderId = OrderSelect.Id;
+                        db.WorkOrder_Installations.Add(item);
+                    }
                 }
-
-                foreach (var item in Works)
+                if (Works != null)
                 {
-                    item.WorkOrderId = OrderSelect.Id;
-                    db.WorkOrder_Works.Add(item);
+                    foreach (var item in Works)
+                    {
+                        item.WorkOrderId = OrderSelect.Id;
+                        db.WorkOrder_Works.Add(item);
+                    }
                 }
                 db.SaveChanges();
 
