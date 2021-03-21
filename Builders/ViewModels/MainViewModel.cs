@@ -1696,7 +1696,7 @@ namespace Builders.ViewModels
 
                 int? quotaId = QuotationSelect.Id;
                 var displayRootRegistry = (Application.Current as App).displayRootRegistry;
-                var payment = new PaymentViewModel(ref db, QuotationSelect);
+                var payment = new PaymentViewModel(ref db, QuotationSelect, User);
                 await displayRootRegistry.ShowModalPresentation(payment);
                 Quotations = null;
                 LoadQuotationsDB(CompanyName);

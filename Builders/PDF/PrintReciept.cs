@@ -156,7 +156,7 @@ namespace Builders.PDF
             frame.Top = "1.0cm";
             frame.RelativeVertical = RelativeVertical.Page;
 
-            Image image = frame.AddImage(@"User\Logo.jpg");
+            Image image = frame.AddImage(@"User\Logo" + (user?.Id.ToString() ?? "") + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;
@@ -661,7 +661,7 @@ namespace Builders.PDF
                 row.Cells[1].AddParagraph("$ " + item.PaymentAmountPaid.ToString(format));
                 row.Cells[2].AddParagraph("$ " + item.PaymentPrincipalPaid.ToString(format));
                 row.Cells[3].AddParagraph("$ " + item.ProcessingFee.ToString(format));
-                row.Cells[4].AddParagraph("$ " + ((string.IsNullOrEmpty(item.NumberPayment.ToString())) ? (item.PaymentMethod) : (item.PaymentMethod + Environment.NewLine + "TID:" + item.NumberPayment))).Format.Alignment = ParagraphAlignment.Center;
+                row.Cells[4].AddParagraph("$ " + ((string.IsNullOrEmpty(item.NumberPayment?.ToString())) ? (item.PaymentMethod) : (item.PaymentMethod + Environment.NewLine + "TID:" + item.NumberPayment))).Format.Alignment = ParagraphAlignment.Center;
                 if (item.Balance > 0)
                 {
                     row.Cells[5].AddParagraph("$ " + item.Balance.ToString(format));
