@@ -2363,7 +2363,8 @@ namespace Builders.ViewModels
                 }
                 else
                 {
-                    InvoicePrintToExcelNL("\\Blanks\\NLInvoicePDF");   //  "\\Blanks\\NLInvoicePDF.xltm"
+                    //InvoicePrintToExcelNL("\\Blanks\\NLInvoicePDF");   //  "\\Blanks\\NLInvoicePDF.xltm"
+                    InvoicesPrintToExcelCMO("\\Blanks\\InvoicePDF");
                 }
             }
             catch (Exception ex)
@@ -5447,8 +5448,7 @@ namespace Builders.ViewModels
             {
                 int i = 0;
                 var quota = Quotations.FirstOrDefault(q => q.Id == InvoiceSelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == InvoiceSelect.QuotaId);
-                var clientData = Clients.Where(c => c.Id == quota.ClientId).FirstOrDefault(); //db.Quota.Where(c => c.Id == quota.ClientId).FirstOrDefault();
-                //var materialData = db.MaterialQuotations.Where(q => q.QuotationId == quota.Id);
+                var clientData = Clients.Where(c => c.Id == quota.ClientId).FirstOrDefault(); //db.Quota.Where(c => c.Id == quota.ClientId).FirstOrDefault();                
 
                 List<MaterialQuotation> materialData = new List<MaterialQuotation>();
                 var mat = db.MaterialQuotations.Where(q => q.QuotationId == quota.Id).ToList();
@@ -5467,6 +5467,7 @@ namespace Builders.ViewModels
                             Item = temp.Select(t => t.Item).FirstOrDefault(),
                             Description = temp.Select(t => t.Description).FirstOrDefault(),
                             Price = temp.Select(t => t.Price)?.Sum() ?? 0m,
+                            Mapei = temp.Select(t => t.Mapei)?.Sum() ?? 0,
                             Quantity = temp.Select(t => t.Quantity)?.Sum() ?? 0m,
                             QuantityNL = temp.Select(t => t.QuantityNL)?.Sum() ?? 0m,
                             Rate = temp.Select(t => t.Rate).FirstOrDefault(),
@@ -5477,173 +5478,57 @@ namespace Builders.ViewModels
 
                 }
 
-                Excel.Application ExcelApp = new Excel.Application();
-                Excel.Workbook ExcelWorkBook;
-                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
+                var pay = db.Payments.Where(p => p.QuotationId == quota.Id).OrderBy(p => p.Id);
 
-                //ExcelApp.Cells[1, 3] = NameQuotaSelect;
-                ExcelApp.Cells[2, 4] = clientData.NumberClient;
-                ExcelApp.Cells[3, 4] = InvoiceSelect.UpNumber;
-                ExcelApp.Cells[4, 4] = InvoiceSelect.OrderNumber;
+                PrintInvoice pdf = new PrintInvoice(User);
+                pdf.Invoice = InvoiceSelect;
+                pdf.Client = clientData;
+                pdf.Quota = quota;
 
-                ExcelApp.Cells[2, 6] = InvoiceSelect.DateInvoice;
-                ExcelApp.Cells[3, 6] = InvoiceSelect.NumberInvoice;
-                ExcelApp.Cells[4, 6] = quota.NumberQuota;
-
-                ExcelApp.Cells[6, 2] = quota.JobDescription;
-
-                ExcelApp.Cells[7, 2] = clientData.CompanyName;
-
-                ExcelApp.Cells[8, 2] = clientData.PrimaryFirstName + " " + clientData.PrimaryLastName;
-                ExcelApp.Cells[9, 2] = clientData.PrimaryPhoneNumber;
-                ExcelApp.Cells[10, 2] = clientData.PrimaryEmail;
-                ExcelApp.Cells[11, 2] = clientData.AddressBillStreet + ", " + clientData.AddressBillCity + ", " + clientData.AddressBillProvince + ", " + clientData.AddressBillPostalCode + ", " + clientData.AddressBillCountry;
-
-                ExcelApp.Cells[8, 5] = clientData.SecondaryFirstName + " " + clientData.SecondaryLastName;
-                ExcelApp.Cells[9, 5] = clientData.SecondaryPhoneNumber;
-                ExcelApp.Cells[10, 5] = clientData.SecondaryEmail;
-                ExcelApp.Cells[11, 5] = clientData.AddressSiteStreet + ", " + clientData.AddressSiteCity + ", " + clientData.AddressSiteProvince + ", " + clientData.AddressSitePostalCode + ", " + clientData.AddressSiteCountry;
-
-                ExcelApp.Cells[14, 2] = quota.JobNote;
-
-                i = 18;  // MATERIAL
                 foreach (var item in materialData)
                 {
                     if (item.Groupe == "FLOORING")
-                    {                        
-                        ExcelApp.Cells[i, 1] = item.Groupe;
-                        ExcelApp.Cells[i, 2] = item.Description;
-                        ExcelApp.Cells[i, 4] = item.Quantity;
-                        ExcelApp.Cells[i, 5] = item.Rate;
-                        ExcelApp.Cells[i, 6] = item.Price;
-                        i++;
+                    {
+                        pdf.MaterialQuotations.Add(item);
                     }
-                }                
+                }
                 foreach (var item in materialData)
                 {
                     if (item.Groupe == "ACCESSORIES")
                     {
-                        ExcelApp.Cells[i, 1] = item.Groupe;
-                        ExcelApp.Cells[i, 2] = item.Description;
-                        ExcelApp.Cells[i, 4] = item.Quantity;
-                        ExcelApp.Cells[i, 5] = item.Rate;
-                        ExcelApp.Cells[i, 6] = item.Price;
-                        i++;
+                        pdf.MaterialQuotations.Add(item);
                     }
                 }
-
-                ExcelApp.Cells[59, 6] = quota.MaterialSubtotal;
-                ExcelApp.Cells[60, 6] = quota.MaterialTax;
-                ExcelApp.Cells[61, 6] = quota.MaterialDiscountAmount;
-                ExcelApp.Cells[61, 5] = (quota.MaterialDiscountAmount != 0) ? "Discount" : "";
-                ExcelApp.Cells[62, 6] = quota.MaterialTotal;
-
-
-
-                i = 70; // LABOUR
                 foreach (var item in materialData)
                 {
                     if (item.Groupe == "INSTALLATION")
                     {
-                        ExcelApp.Cells[i, 1] = item.Groupe;
-                        ExcelApp.Cells[i, 2] = item.Item;
-                        ExcelApp.Cells[i, 3] = item.Description;
-                        ExcelApp.Cells[i, 4] = item.Quantity;
-                        ExcelApp.Cells[i, 5] = item.Rate;
-                        ExcelApp.Cells[i, 6] = item.Price;
-                        i++;
+                        pdf.MaterialQuotations.Add(item);
                     }
-                }                
+                }
                 foreach (var item in materialData)
                 {
                     if (item.Groupe == "DEMOLITION")
                     {
-                        ExcelApp.Cells[i, 1] = item.Groupe;
-                        ExcelApp.Cells[i, 2] = item.Item;
-                        ExcelApp.Cells[i, 3] = item.Description;
-                        ExcelApp.Cells[i, 4] = item.Quantity;
-                        ExcelApp.Cells[i, 5] = item.Rate;
-                        ExcelApp.Cells[i, 6] = item.Price;
-                        i++;
+                        pdf.MaterialQuotations.Add(item);
                     }
-                }                
+                }
                 foreach (var item in materialData)
                 {
                     if (item.Groupe == "OPTIONAL SERVICES")
                     {
-                        ExcelApp.Cells[i, 1] = "SERVICES";
-                        ExcelApp.Cells[i, 2] = item.Item;
-                        ExcelApp.Cells[i, 3] = item.Description;
-                        ExcelApp.Cells[i, 4] = item.Quantity;
-                        ExcelApp.Cells[i, 5] = item.Rate;
-                        ExcelApp.Cells[i, 6] = item.Price;
-                        i++;
+                        pdf.MaterialQuotations.Add(item);
                     }
-                }                
+                }
                 foreach (var item in materialData)
                 {
                     if (item.Groupe == "FLOORING DELIVERY")
                     {
-                        ExcelApp.Cells[i, 1] = "DELIVERY";
-                        ExcelApp.Cells[i, 2] = item.Item;
-                        ExcelApp.Cells[i, 3] = item.Description;
-                        ExcelApp.Cells[i, 4] = item.Quantity;
-                        ExcelApp.Cells[i, 5] = item.Rate;
-                        ExcelApp.Cells[i, 6] = item.Price;
-                        i++;
+                        pdf.MaterialQuotations.Add(item);
                     }
-                }          
-
-                ExcelApp.Cells[110, 6] = quota.LabourSubtotal;
-                ExcelApp.Cells[111, 6] = quota.LabourTax;
-                ExcelApp.Cells[112, 6] = quota.LabourDiscountAmount;
-                ExcelApp.Cells[112, 5] = (quota.LabourDiscountAmount != 0) ? "Discount" : "";
-                ExcelApp.Cells[113, 6] = quota.LabourTotal;
-
-
-
-
-                ExcelApp.Cells[116, 3] = (quota.FinancingYesNo) ? "Yes" : "No";
-                ExcelApp.Cells[117, 3] = quota.FinancingAmount;
-                ExcelApp.Cells[118, 3] = quota.AmountPaidByCreditCard;
-
-                ExcelApp.Cells[116, 6] = quota.ProjectTotal;
-                ExcelApp.Cells[117, 6] = quota.FinancingFee;
-                ExcelApp.Cells[118, 6] = quota.ProcessingFee;
-                ExcelApp.Cells[119, 6] = quota.InvoiceGrandTotal;
-
-                var pay = db.Payments.Where(p => p.QuotationId == quota.Id).OrderBy(p => p.Id);
-
-                int payCounter = 124;
-                foreach (var item in pay)
-                {
-                    if (item.PaymentDatePaid == DateTime.MinValue)
-                    {
-                        ExcelApp.Cells[payCounter, 3] = "";
-                    }
-                    else
-                    {
-                        ExcelApp.Cells[payCounter, 3] = item.PaymentDatePaid;
-                    }
-                    ExcelApp.Cells[payCounter, 4] = item.PaymentAmountPaid;
-                    ExcelApp.Cells[payCounter, 5] = item.PaymentMethod;
-
-                    if (item.Balance > 0)
-                    {
-                        ExcelApp.Cells[payCounter, 6] = item.Balance;
-                    }
-                    else
-                    {
-                        ExcelApp.Cells[payCounter, 6] = "Paid in full";
-                    }
-
-                    payCounter++;
                 }
-
-                ExcelApp.Calculate();
-                ExcelApp.Cells[1, 10] = "1";   // Записуємо дані в .pdf    
-                ExcelApp.Calculate();
-
+                pdf.Payments = pay;
+                pdf.Print();
             }
 
         }
@@ -5859,7 +5744,7 @@ namespace Builders.ViewModels
                 ExcelApp.Calculate();
 
             }
-        }
+        }        // в даний час невикористовується
         /// <summary>
         /// Видаляє Generated по заданому Id Quota 
         /// </summary>

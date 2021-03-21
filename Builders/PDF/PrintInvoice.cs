@@ -100,7 +100,7 @@ namespace Builders.PDF
                                                          "-" + Invoice.DateInvoice.Day.ToString("00") +
                                                          "." + Invoice.DateInvoice.Month.ToString("00") +
                                                          "." + Invoice.DateInvoice.Year.ToString("0000") + ".pdf";
-            string filenameAgreement = @"User\Agreement.pdf";
+            string filenameAgreement = @"User\Agreement" + (user?.Id.ToString() ?? "") + ".pdf";
             pdfRenderer.PdfDocument.Save(filename);// сохраняем 
 
             PrintSignaturePage signature = new PrintSignaturePage();
@@ -190,7 +190,7 @@ namespace Builders.PDF
             frame.Top = "1.0cm";
             frame.RelativeVertical = RelativeVertical.Page;
 
-            Image image = frame.AddImage(@"User\Logo.jpg");
+            Image image = frame.AddImage(@"User\Logo" + (user?.Id.ToString() ?? "") + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;
@@ -302,7 +302,7 @@ namespace Builders.PDF
             frame.Top = "1.0cm";
             frame.RelativeVertical = RelativeVertical.Page;
 
-            image = frame.AddImage(@"User\Logo.jpg");
+            image = frame.AddImage(@"User\Logo" + (user?.Id.ToString() ?? "") + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;
@@ -510,8 +510,17 @@ namespace Builders.PDF
                 row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
                 row.Format.Font.Bold = true;
                 row.Cells[0].AddParagraph((item.Groupe) ?? "").Format.Alignment = ParagraphAlignment.Left;
-                row.Cells[1].AddParagraph((item.Description) ?? "").Format.Alignment = ParagraphAlignment.Left;
-                row.Cells[2].AddParagraph(item.Quantity.ToString(format));
+                if (item.Groupe == "FLOORING" && user?.Id == 2)
+                {
+                    row.Cells[1].AddParagraph(item.Description + "    ( MAPEI:" + item.Mapei + " x DEPTH:" + item.Depth + " )").Format.Alignment = ParagraphAlignment.Left;
+                    row.Cells[2].AddParagraph(item.QuantityNL.ToString(format));
+                }
+                else
+                {
+                    row.Cells[1].AddParagraph((item.Description) ?? "").Format.Alignment = ParagraphAlignment.Left;
+                    row.Cells[2].AddParagraph(item.Quantity.ToString(format));
+                }                
+
                 row.Cells[3].AddParagraph("$ " + item.Rate.ToString(format));
                 row.Cells[4].AddParagraph("$ " + item.Price.ToString(format));
                 countMaterialRow++;
@@ -520,12 +529,7 @@ namespace Builders.PDF
             row = table.AddRow();
             row.Shading.Color = MigraDoc.DocumentObjectModel.Colors.Silver;
             row[0].MergeRight = 4;
-            countMaterialRow++;
-            //for (int i = 60; i > material.Count() + 1; i--)
-            //{
-            //    row = table.AddRow();
-            //    countMaterialRow++;
-            //}
+            countMaterialRow++;            
 
             table.SetEdge(0, 0, 5, countMaterialRow, Edge.Box, BorderStyle.Single, 0.75, MigraDoc.DocumentObjectModel.Color.Empty);
 
@@ -837,7 +841,7 @@ namespace Builders.PDF
                 row.Cells[0].AddParagraph(countPayment.ToString()).Format.Alignment = ParagraphAlignment.Center;
                 row.Cells[1].AddParagraph(item.PaymentDatePaid.ToShortDateString()).Format.Alignment = ParagraphAlignment.Center;
                 row.Cells[2].AddParagraph("$ " + item.PaymentAmountPaid.ToString(format));
-                row.Cells[3].AddParagraph(((string.IsNullOrEmpty(item.NumberPayment.ToString())) ? (item.PaymentMethod) : (item.PaymentMethod + Environment.NewLine + "TID:" + item.NumberPayment))).Format.Alignment = ParagraphAlignment.Center;
+                row.Cells[3].AddParagraph(((string.IsNullOrEmpty(item.NumberPayment)) ? (item.PaymentMethod) : (item.PaymentMethod + Environment.NewLine + "TID:" + item.NumberPayment))).Format.Alignment = ParagraphAlignment.Center;
                 //row.Cells[4].AddParagraph("$ " + item.Balance.ToString(format));
                 if (item.Balance > 0)
                 {
