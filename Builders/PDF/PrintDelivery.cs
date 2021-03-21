@@ -175,7 +175,7 @@ namespace Builders.PDF
             frame.Top = "1.0cm";
             frame.RelativeVertical = RelativeVertical.Page;
 
-            Image image = frame.AddImage(@"User\Logo.jpg");
+            Image image = frame.AddImage(@"User\Logo" + (user?.Id.ToString() ?? "") + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;
@@ -275,7 +275,7 @@ namespace Builders.PDF
             frame.Top = "1.0cm";
             frame.RelativeVertical = RelativeVertical.Page;
 
-            image = frame.AddImage(@"User\Logo.jpg");
+            image = frame.AddImage(@"User\Logo" + (user?.Id.ToString() ?? "") + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;
@@ -312,13 +312,23 @@ namespace Builders.PDF
             column = table.AddColumn("17cm");
             column.Format.Alignment = ParagraphAlignment.Center;
 
+            string abreviatura = "";
+            if (user.Id == 1)
+            {
+                abreviatura = "CMO";
+            }
+            if (user.Id == 2)
+            {
+                abreviatura = "NL";
+            }
+
             // Додаємо рядок
             Row row = table.AddRow();
             row.HeadingFormat = true;
             row.Format.Alignment = ParagraphAlignment.Left;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
             row.Format.Font.Bold = true;
-            row.Cells[0].AddParagraph("ST PO # ");
+            row.Cells[0].AddParagraph(abreviatura + " PO # ");
             row.Cells[1].AddParagraph(("\"" + Client?.NumberClient + " - " + Quota?.NumberQuota + "\"") ?? "").Format.Font.Bold = false;
             // Додаємо рядок
             row = table.AddRow();
@@ -326,8 +336,8 @@ namespace Builders.PDF
             row.Format.Alignment = ParagraphAlignment.Left;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
             row.Format.Font.Bold = true;
-            row.Cells[0].AddParagraph("ST TAG  ");
-            row.Cells[1].AddParagraph(("\"ST" + " - " + Client?.PrimaryFullName?.ToUpper() + "\"") ?? "").Format.Font.Bold = false;
+            row.Cells[0].AddParagraph(abreviatura + " TAG  ");
+            row.Cells[1].AddParagraph(("\"" + abreviatura + " - " + Client?.PrimaryFullName?.ToUpper() + "\"") ?? "").Format.Font.Bold = false;
             // Додаємо рядок
             row = table.AddRow();
             row.HeadingFormat = true;

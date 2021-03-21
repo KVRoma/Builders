@@ -27,11 +27,12 @@ namespace Builders.PDF
 {
     public class PrintDeliveryDriver
     {
-        public PrintDeliveryDriver()
+        public PrintDeliveryDriver(User _user)
         {
             Deliveries = new List<Delivery>();
             DeliveryMaterials = new List<DeliveryMaterial>();
             Suppliers = new List<DIC_Supplier>();
+            user = _user;
         }
 
         private Quotation quota;
@@ -41,6 +42,7 @@ namespace Builders.PDF
         private List<DIC_Supplier> suppliers;
         private readonly string format = "0.00";       
         private Document document;
+        private User user;
         
         public Quotation Quota
         {
@@ -167,7 +169,7 @@ namespace Builders.PDF
             frame.Top = "1.0cm";
             frame.RelativeVertical = RelativeVertical.Page;
 
-            Image image = frame.AddImage(@"User\Logo.jpg");
+            Image image = frame.AddImage(@"User\Logo" + (user?.Id.ToString() ?? "") + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;
@@ -223,7 +225,7 @@ namespace Builders.PDF
             frame.Top = "1.0cm";
             frame.RelativeVertical = RelativeVertical.Page;
 
-            image = frame.AddImage(@"User\Logo.jpg");
+            image = frame.AddImage(@"User\Logo" + (user?.Id.ToString() ?? "") + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;

@@ -2149,7 +2149,8 @@ namespace Builders.ViewModels
                 }
                 else
                 {
-                    DeliveryPrintToExcelNL("\\Blanks\\NLListOfSuppliesPDF");   //  "\\Blanks\\NLListOfSuppliesPDF.xltm"
+                    //DeliveryPrintToExcelNL("\\Blanks\\NLListOfSuppliesPDF");   //  "\\Blanks\\NLListOfSuppliesPDF.xltm"
+                    DeliveryPrintToExcelCMO("\\Blanks\\ListOfSuppliesPDF");
                 }
             }
             catch (Exception ex)
@@ -2171,7 +2172,8 @@ namespace Builders.ViewModels
                 }
                 else
                 {
-                    DeliveryDriverPrintYoExcelNL("\\Blanks\\NLDeliveryPDF");   //  "\\Blanks\\NLDeliveryPDF.xltm"
+                    //DeliveryDriverPrintYoExcelNL("\\Blanks\\NLDeliveryPDF");   //  "\\Blanks\\NLDeliveryPDF.xltm"
+                    DeliveryDriverPrintYoExcelCMO("\\Blanks\\DeliveryPDF");
                 }
             }
             catch (Exception ex)
@@ -5273,34 +5275,23 @@ namespace Builders.ViewModels
         {
             if (DeliverySelect != null)
             {
-                //var material = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id);
+
                 var material = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id).Select(m => m.Description).ToList().Distinct();
                 var dic = db.DIC_Suppliers.FirstOrDefault(s => s.Id == DeliverySelect.SupplierId);
                 var quota = Quotations.FirstOrDefault(q => q.Id == DeliverySelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == DeliverySelect.QuotaId);
                 var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Quota.FirstOrDefault(c => c.Id == quota.ClientId);
-                Excel.Application ExcelApp = new Excel.Application();
-                Excel.Workbook ExcelWorkBook;
-                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
 
-                ExcelApp.Cells[3, 6] = DeliverySelect.DateCreating;
-                ExcelApp.Cells[6, 2] = "\"" + client?.NumberClient + " - " + quota?.NumberQuota + "\"";
-                ExcelApp.Cells[7, 2] = "\"CMO" + " - " + client?.PrimaryFullName + "\"";
-                ExcelApp.Cells[9, 2] = dic?.Supplier;
-                ExcelApp.Cells[10, 2] = dic?.Address;
+                var temp = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id);
 
-                int i = 14;
-                foreach (var item in material)
-                {
-                    //ExcelApp.Cells[i, 1] = item.Description;
-                    //ExcelApp.Cells[i, 6] = item.Quantity;
-                    decimal quantity = db.DeliveryMaterials.Where(m => m.DeliveryId == DeliverySelect.Id && m.Description == item)?.Select(m => m.Quantity)?.Sum() ?? 0m;
-                    ExcelApp.Cells[i, 1] = item;
-                    ExcelApp.Cells[i, 6] = quantity;
-                    i++;
-                }
+                PrintDelivery pdf = new PrintDelivery(User);
+                pdf.Client = client;
+                pdf.Quota = quota;
+                pdf.Supplier = dic;
+                pdf.Material = material.ToList();
+                pdf.DeliverySelect = DeliverySelect;
+                pdf.DeliveryMaterials = temp.ToList();
+                pdf.Print();
 
-                ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
-                ExcelApp.Calculate();
 
                 DeliverySelect.Color = "Black";
                 DeliverySelect.IsEnabled = true;
@@ -5356,7 +5347,7 @@ namespace Builders.ViewModels
                 Deliveries = null;
                 LoadDeliveriesDB(CompanyName, false);
             }
-        }
+        }     // в даний час невикористовується
         /// <summary>
         /// /// Формує файл Excel з шаблону CMO
         /// </summary>
@@ -5365,9 +5356,6 @@ namespace Builders.ViewModels
         {
             if (DeliveryComboBoxSelect != null)
             {
-                Excel.Application ExcelApp = new Excel.Application();
-                Excel.Workbook ExcelWorkBook;
-                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
 
                 string[] comboBox = DeliveryComboBoxSelect.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 string word = comboBox[0];
@@ -5375,33 +5363,31 @@ namespace Builders.ViewModels
                 int? quotaId = supplier.FirstOrDefault(s => s.QuotaId > 0)?.QuotaId;
                 var quota = Quotations.FirstOrDefault(q => q.Id == quotaId); //db.Quotations.FirstOrDefault(q => q.Id == quotaId);
                 var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Quota.FirstOrDefault(c => c.Id == quota.ClientId);
+
                 if (supplier != null && quota != null && client != null)
                 {
-                    ExcelApp.Cells[3, 5] = DateTime.Today;
-                    ExcelApp.Cells[4, 5] = quota.NumberQuota;
-                    ExcelApp.Cells[9, 2] = client.PrimaryFullName;
-                    ExcelApp.Cells[10, 2] = client?.CompanyName;
-                    ExcelApp.Cells[11, 2] = client?.AddressBillStreet + client?.AddressBillCity + client?.AddressBillProvince + client?.AddressBillPostalCode + client?.AddressBillCountry;
-                    ExcelApp.Cells[12, 2] = client?.PrimaryPhoneNumber;
-                    ExcelApp.Cells[11, 4] = client?.AddressSiteStreet + client?.AddressSiteCity + client?.AddressSiteProvince + client?.AddressSitePostalCode + client?.AddressSiteCountry;
-                    ExcelApp.Cells[12, 4] = client?.PrimaryEmail;
-                    int i = 24;
+                    PrintDeliveryDriver pdf = new PrintDeliveryDriver(User);
+                    pdf.Client = client;
+                    pdf.Quota = quota;
+
                     foreach (var item in supplier)
                     {
-                        var temp = db.DeliveryMaterials.Where(m => m.DeliveryId == item.Id)?.Select(m => m.Quantity);
-                        decimal quantity = temp?.Sum() ?? (0m);
-                        var dictionary = db.DIC_Suppliers.FirstOrDefault(s => s.Id == item.SupplierId);
+                        var materialAll = db.DeliveryMaterials.Where(m => m.DeliveryId == item.Id);
 
-                        ExcelApp.Cells[i, 1] = dictionary.Supplier;
-                        ExcelApp.Cells[i, 2] = dictionary.Address;
-                        ExcelApp.Cells[i, 3] = dictionary.Hours;
-                        ExcelApp.Cells[i, 4] = quantity;
-                        ExcelApp.Cells[i, 5] = item.OrderNumber;
-                        i++;
+                        var dictionary = db.DIC_Suppliers.FirstOrDefault(s => s.Id == item.SupplierId);
+                        pdf.Deliveries.Add(item);
+                        pdf.Suppliers.Add(dictionary);
+
+                        foreach (var material in materialAll)
+                        {
+                            pdf.DeliveryMaterials.Add(material);
+
+                        }
+
                     }
+                    pdf.Print();
                 }
-                ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
-                ExcelApp.Calculate();
+
             }
         }
         /// <summary>
@@ -5450,7 +5436,7 @@ namespace Builders.ViewModels
                 ExcelApp.Cells[1, 9] = "1";   // Записуємо дані в .pdf    
                 ExcelApp.Calculate();
             }
-        }
+        }   // в даний час невикористовується
         /// <summary>
         /// /// Формує файл Excel з шаблону CMO
         /// </summary>
