@@ -41,11 +41,33 @@ namespace Builders.Models
         public string AddressBillProvince { get; set; }
         public string AddressBillPostalCode { get; set; }
         public string AddressBillCountry { get; set; }
+        public string AddressBillFull
+        {
+            get
+            {
+                return AddressBillStreet + ", " +
+                       AddressBillCity + ", " +
+                       AddressBillProvince + ", " +
+                       AddressBillPostalCode + ", " +
+                       AddressBillCountry;
+            }
+        }
         public string AddressSiteStreet { get; set; }
         public string AddressSiteCity { get; set; }
         public string AddressSiteProvince { get; set; }
         public string AddressSitePostalCode { get; set; }
         public string AddressSiteCountry { get; set; }
+        public string AddressSiteFull
+        {
+            get
+            {
+                return AddressSiteStreet + ", " +
+                       AddressSiteCity + ", " +
+                       AddressSiteProvince + ", " +
+                       AddressSitePostalCode + ", " +
+                       AddressSiteCountry;
+            }
+        }
         public string HearAboutUs { get; set; }
         public string Specify { get; set; }
         public string Notes { get; set; }

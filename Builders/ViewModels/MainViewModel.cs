@@ -3428,7 +3428,7 @@ namespace Builders.ViewModels
             db.LabourProfits.Load();
             db.Debts.Load();
             db.Deliveries.Load();
-
+            db.Users.Load();
             LoadClientsDB();
 
             IsCheckedCMO = true;    // в проперті завантажуємо решту таблиць, крім Клієнтів

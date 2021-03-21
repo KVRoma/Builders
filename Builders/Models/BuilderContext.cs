@@ -68,6 +68,8 @@ namespace Builders.Models
         public DbSet<DIC_G_TypeStairs> DIC_G_TypeStairs { get; set; }
         public DbSet<DIC_G_TypeTrim> DIC_G_TypeTrims { get; set; }
 
+        public DbSet<User> Users { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             var sqliteConnectionInitializer = new SqliteCreateDatabaseIfNotExists<BuilderContext>(modelBuilder);
