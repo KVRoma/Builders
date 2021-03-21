@@ -1,26 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Section = MigraDoc.DocumentObjectModel.Section;
-using Orientation = MigraDoc.DocumentObjectModel.Orientation;
 using Paragraph = MigraDoc.DocumentObjectModel.Paragraph;
 using Table = MigraDoc.DocumentObjectModel.Tables.Table;
-using Image = MigraDoc.DocumentObjectModel.Shapes.Image;
 using Style = MigraDoc.DocumentObjectModel.Style;
-using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Tables;
-using System.Xml.XPath;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.Rendering;
 using PdfSharp.Pdf;
-using System.Diagnostics;
-using System.Windows.Documents;
-using PdfSharp.Pdf.IO;
-using PdfSharp.Drawing;
-using Microsoft.Win32;
 using Builders.Models;
 
 namespace Builders.PDF
@@ -127,7 +114,7 @@ namespace Builders.PDF
             paragraph.Format.LineSpacingRule = LineSpacingRule.AtLeast;
             paragraph.Format.LineSpacing = "0.5cm";
             paragraph.Format.Alignment = ParagraphAlignment.Left;
-            paragraph.AddFormattedText("This liability waiver is an agreement is between the Client and " + User.CompanyName);
+            paragraph.AddFormattedText("This liability waiver is an agreement is between the Client and " + User?.CompanyName);
             paragraph.AddLineBreak();
             paragraph.AddFormattedText("I, the client, acknowledge that the circumstances of my sub-floor " +
                                        "have been discussed with me, and it is not congruent to the flooring " +
@@ -138,7 +125,7 @@ namespace Builders.PDF
                                        "can attribute to premature deterioration of the integrity of the floor.");
             paragraph.AddLineBreak();
             paragraph.AddFormattedText("The condition of the sub-floor must be documented in writing and with supporting photos. " +
-                                       "Both parties (Client and " + User.CompanyName + ") must compile this with your sales receipt " +
+                                       "Both parties (Client and " + User?.CompanyName + ") must compile this with your sales receipt " +
                                        "in order to claim your installation and/or material warranty.");
             paragraph.AddLineBreak();
             paragraph.AddFormattedText("By proceeding with the flooring installation, without the required leveling to acquire the proper " +
@@ -253,7 +240,7 @@ namespace Builders.PDF
             paragraph.Format.LineSpacingRule = LineSpacingRule.AtLeast;
             paragraph.Format.LineSpacing = "0.5cm";
             paragraph.Format.Alignment = ParagraphAlignment.Left;
-            paragraph.AddFormattedText(User.CompanyName + "Representative:", TextFormat.Bold).Font.Size = 11;
+            paragraph.AddFormattedText(User?.CompanyName + "Representative:", TextFormat.Bold).Font.Size = 11;
 
             // Створюємо таблицю з інформацією про клієнта
             table = section.AddTable();
@@ -273,28 +260,28 @@ namespace Builders.PDF
             row.Format.Alignment = ParagraphAlignment.Left;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Bottom;
             row.Cells[0].AddParagraph("Name:");
-            row.Cells[1].AddParagraph((User.Name) ?? "");
+            row.Cells[1].AddParagraph((User?.Name) ?? "");
             // Додаємо рядок
             row = table.AddRow();
             row.Height = "0.8cm";
             row.Format.Alignment = ParagraphAlignment.Left;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Bottom;
             row.Cells[0].AddParagraph("Designation:");
-            row.Cells[1].AddParagraph((User.Post) ?? "");
+            row.Cells[1].AddParagraph((User?.Post) ?? "");
             // Додаємо рядок
             row = table.AddRow();
             row.Height = "0.8cm";
             row.Format.Alignment = ParagraphAlignment.Left;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Bottom;
             row.Cells[0].AddParagraph("Phone number:");
-            row.Cells[1].AddParagraph((User.Phone) ?? "");
+            row.Cells[1].AddParagraph((User?.Phone) ?? "");
             // Додаємо рядок
             row = table.AddRow();
             row.Height = "0.8cm";
             row.Format.Alignment = ParagraphAlignment.Left;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Bottom;
             row.Cells[0].AddParagraph("E-mail:");
-            row.Cells[1].AddParagraph((User.Mail) ?? "");
+            row.Cells[1].AddParagraph((User?.Mail) ?? "");
 
             // Додаємо рядок
             row = table.AddRow();

@@ -9,7 +9,7 @@ namespace Builders.Models
     public class Payment
     {
         public int? Id { get; set; }
-        public int? NumberPayment { get; set; } 
+        public string NumberPayment { get; set; } 
         public DateTime PaymentDatePaid { get; set; }
         public decimal PaymentAmountPaid { get; set; }
         public decimal PaymentPrincipalPaid { get; set; }

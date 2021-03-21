@@ -134,13 +134,13 @@ namespace Builders.PDF
             paragraph.AddLineBreak();
             paragraph.AddFormattedText("");
             paragraph.AddLineBreak();
-            paragraph.AddFormattedText("By signing below, I authorize " + User.CompanyName + " to process my credit card for the " + 
+            paragraph.AddFormattedText("By signing below, I authorize " + User?.CompanyName + " to process my credit card for the " + 
                                        "above transactions.  I understand that when job is complete all sensitive credit card " + 
                                        "information will be deleted.", TextFormat.Bold).Font.Size = 11;
             paragraph.AddLineBreak();
             paragraph.AddFormattedText("");
             paragraph.AddLineBreak();
-            paragraph.AddFormattedText("I ACCEPT THE TERMS AND SPECIFICATIONS STATED HEREIN AND AUTHORIZE " + User.CompanyName + 
+            paragraph.AddFormattedText("I ACCEPT THE TERMS AND SPECIFICATIONS STATED HEREIN AND AUTHORIZE " + User?.CompanyName + 
                                        " TO PROCEED WITH THE PROJECT.", TextFormat.Bold).Font.Size = 11;
             paragraph.AddLineBreak();
 
@@ -220,7 +220,7 @@ namespace Builders.PDF
             paragraph.Format.LineSpacingRule = LineSpacingRule.AtLeast;
             paragraph.Format.LineSpacing = "0.5cm";
             paragraph.Format.Alignment = ParagraphAlignment.Left;
-            paragraph.AddFormattedText(User.CompanyName + "Representative:", TextFormat.Bold).Font.Size = 11;
+            paragraph.AddFormattedText(User?.CompanyName + "Representative:", TextFormat.Bold).Font.Size = 11;
 
             // Створюємо таблицю з інформацією про клієнта
             table = section.AddTable();
@@ -240,28 +240,28 @@ namespace Builders.PDF
             row.Format.Alignment = ParagraphAlignment.Left;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Bottom;           
             row.Cells[0].AddParagraph("Name:");
-            row.Cells[1].AddParagraph((User.Name) ?? "");
+            row.Cells[1].AddParagraph((User?.Name + "") ?? "");
             // Додаємо рядок
             row = table.AddRow();
             row.Height = "0.8cm";
             row.Format.Alignment = ParagraphAlignment.Left;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Bottom;            
             row.Cells[0].AddParagraph("Designation:");
-            row.Cells[1].AddParagraph((User.Post) ?? "");
+            row.Cells[1].AddParagraph((User?.Post + "") ?? "");
             // Додаємо рядок
             row = table.AddRow();
             row.Height = "0.8cm";
             row.Format.Alignment = ParagraphAlignment.Left;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Bottom;            
             row.Cells[0].AddParagraph("Phone number:");
-            row.Cells[1].AddParagraph((User.Phone) ?? "");
+            row.Cells[1].AddParagraph((User?.Phone + "") ?? "");
             // Додаємо рядок
             row = table.AddRow();
             row.Height = "0.8cm";
             row.Format.Alignment = ParagraphAlignment.Left;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Bottom;            
             row.Cells[0].AddParagraph("E-mail:");
-            row.Cells[1].AddParagraph((User.Mail) ?? "");
+            row.Cells[1].AddParagraph((User?.Mail + "") ?? "");
             
             // Додаємо рядок
             row = table.AddRow();

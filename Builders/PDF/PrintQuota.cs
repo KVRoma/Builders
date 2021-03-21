@@ -98,7 +98,7 @@ namespace Builders.PDF
                                                          "-" + Quota.QuotaDate.Day.ToString("00") + 
                                                          "." + Quota.QuotaDate.Month.ToString("00") + 
                                                          "." + Quota.QuotaDate.Year.ToString("0000") + ".pdf";
-            string filenameAgreement = @"User\Agreement.pdf";
+            string filenameAgreement = @"User\Agreement" + user?.Id.ToString() ?? "" + ".pdf";
             pdfRenderer.PdfDocument.Save(filename);// сохраняем 
 
             PrintSignaturePage signature = new PrintSignaturePage();
@@ -188,7 +188,7 @@ namespace Builders.PDF
             frame.Top = "1.0cm";
             frame.RelativeVertical = RelativeVertical.Page;
 
-            Image image = frame.AddImage(@"User\Logo.jpg");
+            Image image = frame.AddImage(@"User\Logo" + (user?.Id.ToString() ?? "") + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;
@@ -198,13 +198,13 @@ namespace Builders.PDF
             image.WrapFormat.Style = WrapStyle.TopBottom;
 
             
-            Paragraph paragraph = frame.AddParagraph(user.Name + ", " + Environment.NewLine +
-                                          user.Post + Environment.NewLine +
-                                          user.Address + Environment.NewLine +
-                                          user.Additional + Environment.NewLine +
-                                          user.Phone + Environment.NewLine + 
-                                          user.Mail + Environment.NewLine + 
-                                          user.WebSite);
+            Paragraph paragraph = frame.AddParagraph(user?.Name + ", " + Environment.NewLine +
+                                          user?.Post + Environment.NewLine +
+                                          user?.Address + Environment.NewLine +
+                                          user?.Additional + Environment.NewLine +
+                                          user?.Phone + Environment.NewLine + 
+                                          user?.Mail + Environment.NewLine + 
+                                          user?.WebSite);
             //paragraph.Format.Font.Name = "Times New Roman";
             paragraph.Format.Alignment = ParagraphAlignment.Center;
             paragraph.Format.Font.Size = 7;
@@ -245,40 +245,40 @@ namespace Builders.PDF
 
             paragraph = frame.AddParagraph();
             paragraph.Format.Font.Size = 7;
-            if (!string.IsNullOrWhiteSpace(user.GST))
+            if (!string.IsNullOrWhiteSpace(user?.GST))
             {
                 paragraph.AddText("GST # ");
-                paragraph.AddFormattedText(user.GST, TextFormat.Bold);
+                paragraph.AddFormattedText(user?.GST + "", TextFormat.Bold);
                 paragraph.AddLineBreak();                
             }
-            if (!string.IsNullOrWhiteSpace(user.PST))
+            if (!string.IsNullOrWhiteSpace(user?.PST))
             {
                 paragraph.AddText("PST # ");
-                paragraph.AddFormattedText(user.PST, TextFormat.Bold);
+                paragraph.AddFormattedText(user?.PST + "", TextFormat.Bold);
                 paragraph.AddLineBreak();                
             }
-            if (!string.IsNullOrWhiteSpace(user.WCB))
+            if (!string.IsNullOrWhiteSpace(user?.WCB))
             {
                 paragraph.AddText("WCB # ");
-                paragraph.AddFormattedText(user.WCB, TextFormat.Bold);
+                paragraph.AddFormattedText(user?.WCB + "", TextFormat.Bold);
                 paragraph.AddLineBreak();                
             }
-            if (!string.IsNullOrWhiteSpace(user.Liability))
+            if (!string.IsNullOrWhiteSpace(user?.Liability))
             {
                 paragraph.AddText("GENERAL LIABILITY # ");
-                paragraph.AddFormattedText(user.Liability, TextFormat.Bold);
+                paragraph.AddFormattedText(user?.Liability + "", TextFormat.Bold);
                 paragraph.AddLineBreak();                
             }
-            if (!string.IsNullOrWhiteSpace(user.Licence))
+            if (!string.IsNullOrWhiteSpace(user?.Licence))
             {
                 paragraph.AddText("BUSINESS LICENSE # ");
-                paragraph.AddFormattedText(user.Licence, TextFormat.Bold);
+                paragraph.AddFormattedText(user?.Licence + "", TextFormat.Bold);
                 paragraph.AddLineBreak();                
             }
-            if (!string.IsNullOrWhiteSpace(user.Incorporation))
+            if (!string.IsNullOrWhiteSpace(user?.Incorporation))
             {
                 paragraph.AddText("INCORPORATION # ");
-                paragraph.AddFormattedText(user.Incorporation, TextFormat.Bold);
+                paragraph.AddFormattedText(user?.Incorporation + "", TextFormat.Bold);
                 paragraph.AddLineBreak();                
             }
             #endregion
@@ -292,7 +292,7 @@ namespace Builders.PDF
             frame.Top = "1.0cm";
             frame.RelativeVertical = RelativeVertical.Page;
 
-            image = frame.AddImage(@"User\Logo.jpg");
+            image = frame.AddImage(@"User\Logo" + (user?.Id.ToString() ?? "") + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;
@@ -500,8 +500,16 @@ namespace Builders.PDF
                 row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
                 row.Format.Font.Bold = true;
                 row.Cells[0].AddParagraph((item.Groupe) ?? "").Format.Alignment = ParagraphAlignment.Left;
-                row.Cells[1].AddParagraph((item.Description) ?? "").Format.Alignment = ParagraphAlignment.Left;
-                row.Cells[2].AddParagraph(item.Quantity.ToString(format));
+                if (item.Groupe == "FLOORING" && user?.Id == 2)
+                {
+                    row.Cells[1].AddParagraph(item.Description + "    ( MAPEI:" + item.Mapei + " x DEPTH:" + item.Depth + " )").Format.Alignment = ParagraphAlignment.Left;
+                    row.Cells[2].AddParagraph(item.QuantityNL.ToString(format));
+                }
+                else
+                {
+                    row.Cells[1].AddParagraph((item.Description) ?? "").Format.Alignment = ParagraphAlignment.Left;
+                    row.Cells[2].AddParagraph(item.Quantity.ToString(format));
+                }
                 row.Cells[3].AddParagraph("$ " + item.Rate.ToString(format));
                 row.Cells[4].AddParagraph("$ " + item.Price.ToString(format));
                 countMaterialRow++;
@@ -827,7 +835,7 @@ namespace Builders.PDF
                 row.Cells[0].AddParagraph(countPayment.ToString()).Format.Alignment = ParagraphAlignment.Center; 
                 row.Cells[1].AddParagraph(item.PaymentDatePaid.ToShortDateString()).Format.Alignment = ParagraphAlignment.Center; 
                 row.Cells[2].AddParagraph("$ " + item.PaymentAmountPaid.ToString(format));
-                row.Cells[3].AddParagraph(((string.IsNullOrEmpty(item.NumberPayment.ToString())) ? (item.PaymentMethod) : (item.PaymentMethod + Environment.NewLine + "TID:" + item.NumberPayment))).Format.Alignment = ParagraphAlignment.Center;
+                row.Cells[3].AddParagraph(((string.IsNullOrEmpty(item.NumberPayment)) ? (item.PaymentMethod) : (item.PaymentMethod + Environment.NewLine + "TID:" + item.NumberPayment))).Format.Alignment = ParagraphAlignment.Center;
                 //row.Cells[4].AddParagraph("$ " + item.Balance.ToString(format));
                 if (item.Balance > 0)
                 {

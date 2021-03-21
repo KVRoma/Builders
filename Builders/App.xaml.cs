@@ -16,6 +16,8 @@ namespace Builders
     public partial class App : Application
     {
         public DisplayRootRegistry displayRootRegistry = new DisplayRootRegistry();
+        public decimal constGST { get; set; }
+        public decimal constTAX { get; set; }
 
         public App()
         {

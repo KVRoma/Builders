@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Builders.Models
 {
@@ -42,7 +43,7 @@ namespace Builders.Models
         public decimal MaterialSubtotal { get; set; }
         public decimal MaterialTax 
         {
-            get { return decimal.Round(MaterialSubtotal * 0.12m, 2); }            
+            get { return decimal.Round(MaterialSubtotal * (Application.Current as App).constTAX, 2); }      // 0.12m      
         }        
         public decimal MaterialDiscountYN { get; set; }
         public decimal MaterialDiscountAmount { get; set; }
@@ -54,7 +55,7 @@ namespace Builders.Models
         public decimal LabourSubtotal { get; set; }
         public decimal LabourTax 
         {
-            get {return decimal.Round(LabourSubtotal * 0.05m, 2); } 
+            get {return decimal.Round(LabourSubtotal * (Application.Current as App).constGST, 2); }     //0.05m 
         }
         public decimal LabourDiscountYN { get; set; }
         public decimal LabourDiscountAmount { get; set; }
