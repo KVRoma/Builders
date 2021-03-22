@@ -1904,16 +1904,17 @@ namespace Builders.ViewModels
 
             foreach (var item in result)
             {
-                materials.Add(new MaterialQuotation() 
+                
+                materials.Add(new MaterialQuotation()
                 {
                     GradeLevel = item.GradeLevel,
                     Aditional = item.Aditional,
                     Partition = item.Partition,
-                    Groupe = item.Groupe,                    
+                    Groupe = item.Groupe,
                     QuotationId = quota.Id,
-                    Quantity = item.Count,
-                    Description = item.Name,
-                    GeneratedId = item.GeneratedId                    
+                    Quantity = item.Count,                    
+                    Description = item.Name,                    
+                    GeneratedId = item.GeneratedId
                 });
             }
             db.MaterialQuotations.AddRange(materials);

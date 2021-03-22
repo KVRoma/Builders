@@ -502,12 +502,46 @@ namespace Builders.PDF
                 row.Cells[0].AddParagraph((item.Groupe) ?? "").Format.Alignment = ParagraphAlignment.Left;
                 if (item.Groupe == "FLOORING" && user?.Id == 2)
                 {
-                    row.Cells[1].AddParagraph(item.Description + "    ( MAPEI:" + item.Mapei + " x DEPTH:" + item.Depth + " )").Format.Alignment = ParagraphAlignment.Left;
-                    row.Cells[2].AddParagraph(item.QuantityNL.ToString(format));
+                    if (!string.IsNullOrWhiteSpace(item.Depth))   // NL Quota - work user
+                    {
+                        row.Cells[1].AddParagraph(item.Description + " - Size: " + item.QuantityNL + " - Depth: " + item.Depth ).Format.Alignment = ParagraphAlignment.Left;
+                        row.Cells[2].AddParagraph(item.Mapei?.ToString(format));
+                    }
+                    else
+                    {
+                        string[] words = item.Description.Split(' ');
+                        int count = 0;
+                        int size = 0;
+                        string depth = "";
+                        decimal qty = 0m;
+                        string decript = "";
+                        foreach (string word in words)
+                        {
+                            if (word == "Size:")
+                            {
+                                size = int.TryParse(words[count + 1], out int res) ? res : 0;
+                            }
+                            if (word == "Depth:")
+                            {
+                                depth = words[count + 1];
+                            }
+                            if (word == "QTY:")
+                            {
+                                qty = decimal.TryParse(words[count + 1], out decimal res1) ? res1 : 0m;
+                                break;
+                            }
+
+                            decript += word + " ";
+                            count++;
+                        }
+                        
+                        row.Cells[1].AddParagraph(decript ?? "").Format.Alignment = ParagraphAlignment.Left;   // NL Quota - work Generator
+                        row.Cells[2].AddParagraph(qty.ToString(format) ?? "");
+                    }
                 }
                 else
                 {
-                    row.Cells[1].AddParagraph((item.Description) ?? "").Format.Alignment = ParagraphAlignment.Left;
+                    row.Cells[1].AddParagraph((item.Description) ?? "").Format.Alignment = ParagraphAlignment.Left;    // CMO Quota
                     row.Cells[2].AddParagraph(item.Quantity.ToString(format));
                 }
                 row.Cells[3].AddParagraph("$ " + item.Rate.ToString(format));

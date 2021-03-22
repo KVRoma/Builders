@@ -1240,7 +1240,7 @@ namespace Builders.ViewModels
                     QtyNovoplan = decimal.Ceiling(SizeFlood / DepthFloodSelect.Price),
                     RoomDescription = RoomFlood,
                     Size = SizeFlood,
-                    Concatenar = RoomFlood + " - Size " + SizeFlood + " - Depth " + DepthFloodSelect.Name
+                    Concatenar = RoomFlood + " - Size: " + SizeFlood + " - Depth: " + DepthFloodSelect.Name + " QTY: " + decimal.Ceiling(SizeFlood / DepthFloodSelect.Price).ToString()
                 };
                 db.GeneratedFloods.Add(flood);
                 db.SaveChanges();
