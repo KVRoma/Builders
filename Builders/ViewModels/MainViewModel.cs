@@ -2456,7 +2456,8 @@ namespace Builders.ViewModels
                         int? accessories = db.WorkOrder_Accessories.Where(a => a.Contractor == contractor.Contractor)?.Count();
                         if (room > 4 || accessories > 7)
                         {
-                            WorkOrderPrintMaxToExcel(contractor, "\\Blanks\\WorkOrderPDFmax");   //   "\\Blanks\\WorkOrderPDFmax.xltm"
+                            WorkOrderPrintMinToExcel(contractor, "\\Blanks\\WorkOrderPDFmin");
+                            //WorkOrderPrintMaxToExcel(contractor, "\\Blanks\\WorkOrderPDFmax");   //   "\\Blanks\\WorkOrderPDFmax.xltm"
                         }
                         else
                         {
@@ -4628,11 +4629,6 @@ namespace Builders.ViewModels
         private void WorkOrderPrintMinToExcel(WorkOrder_Contractor contractor, string path)
         {
 
-            Excel.Application ExcelApp = new Excel.Application();
-            Excel.Workbook ExcelWorkBook;
-            ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону
-
-
             var quota = Quotations.FirstOrDefault(q => q.Id == WorkOrderSelect.QuotaId); //db.Quotations.FirstOrDefault(q => q.Id == WorkOrderSelect.QuotaId);
             var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Quota.FirstOrDefault(c => c.Id == quota.ClientId);
             var work = db.WorkOrder_Works.Where(w => w.WorkOrderId == WorkOrderSelect.Id && w.Contractor == contractor.Contractor);
@@ -4640,116 +4636,16 @@ namespace Builders.ViewModels
             var inst = db.WorkOrder_Installations.Where(ins => ins.WorkOrderId == WorkOrderSelect.Id && ins.Contractor == contractor.Contractor);
             var cont = db.WorkOrder_Contractors.Where(c => c.WorkOrderId == WorkOrderSelect.Id && c.Contractor == contractor.Contractor).OrderBy(c => c.Contractor);
 
-            ExcelApp.Cells[3, 2] = quota.JobDescription;
-            ExcelApp.Cells[4, 2] = quota.NumberQuota;
-            ExcelApp.Cells[5, 2] = client.CompanyName;
-            ExcelApp.Cells[6, 2] = client.PrimaryFirstName + " " + client.PrimaryLastName;
-            ExcelApp.Cells[7, 2] = client.PrimaryPhoneNumber;
-            ExcelApp.Cells[8, 2] = client.SecondaryFirstName + " " + client.SecondaryLastName;
-            ExcelApp.Cells[9, 2] = client.SecondaryPhoneNumber;
-            ExcelApp.Cells[4, 6] = client.NumberClient;
-            ExcelApp.Cells[5, 6] = client.AddressSiteStreet + ", " + client.AddressSiteCity + ", " + client.AddressSiteProvince + ", " + client.AddressSitePostalCode + ", " + client.AddressSiteCountry;
-            ExcelApp.Cells[7, 6] = WorkOrderSelect.Parking;
-            ExcelApp.Cells[8, 6] = WorkOrderSelect.DateServices;
-            ExcelApp.Cells[9, 6] = WorkOrderSelect.DateCompletion;
-            ExcelApp.Cells[11, 2] = WorkOrderSelect.Notes; //quota.JobNote;
+            PrintWorkOrder pdf = new PrintWorkOrder();
+            pdf.Client = client;
+            pdf.Quota = quota;
+            pdf.WorkOrder = WorkOrderSelect;
+            pdf.works = work.ToList();
+            pdf.accessories = accessories.ToList();
+            pdf.installations = inst.ToList();
+            pdf.contractors = cont.ToList();
 
-            //ExcelApp.Cells[17, 3] = WorkOrderSelect.Trim;
-            //ExcelApp.Cells[17, 6] = WorkOrderSelect.Colour;
-            //ExcelApp.Cells[17, 8] = WorkOrderSelect.Notes;
-            //ExcelApp.Cells[18, 3] = WorkOrderSelect.Baseboard;
-            //ExcelApp.Cells[18, 7] = WorkOrderSelect.ReplacingYesNo;
-            //ExcelApp.Cells[18, 8] = WorkOrderSelect.ReplacingQuantity;
-
-            int i = 21;
-            foreach (var item in work)
-            {
-                ExcelApp.Cells[i, 1] = item.Area;
-                ExcelApp.Cells[i, 2] = item.Room;
-                ExcelApp.Cells[i, 3] = item.Existing;
-                ExcelApp.Cells[i, 5] = item.NewFloor;
-                ExcelApp.Cells[i, 8] = item.Furniture;
-                i++;
-                ExcelApp.Cells[i, 1] = "Caution / Notes: ";
-                ExcelApp.Cells[i, 2] = item.Misc;
-                i++;
-            }
-
-            i = 31;
-            foreach (var item in accessories)
-            {
-                ExcelApp.Cells[i, 1] = item.Area;
-                ExcelApp.Cells[i, 2] = item.Room;
-                ExcelApp.Cells[i, 3] = item.OldAccessories;
-                ExcelApp.Cells[i, 5] = item.NewAccessories;
-                i++;
-                ExcelApp.Cells[i, 1] = "Notes: ";
-                ExcelApp.Cells[i, 2] = item.Notes;
-                i++;
-            }
-
-            i = 48;
-            foreach (var item in inst)
-            {
-                if (item.Groupe == "DEMOLITION")
-                {
-                    ExcelApp.Cells[i, 1] = item.RoomDetail + " - " + item.Item;
-                    ExcelApp.Cells[i, 2] = item.Description;
-                    ExcelApp.Cells[i, 5] = item.Contractor;
-                    ExcelApp.Cells[i, 6] = item.Quantity;
-                    ExcelApp.Cells[i, 7] = item.Procent;
-                    ExcelApp.Cells[i, 8] = item.Payout;
-                    i++;
-                }
-            }
-
-            i = 54;
-            foreach (var item in inst)
-            {
-                if (item.Groupe == "INSTALLATION")
-                {
-                    ExcelApp.Cells[i, 1] = item.RoomDetail + " - " + item.Item;
-                    ExcelApp.Cells[i, 2] = item.Description;
-                    ExcelApp.Cells[i, 5] = item.Contractor;
-                    ExcelApp.Cells[i, 6] = item.Quantity;
-                    ExcelApp.Cells[i, 7] = item.Procent;
-                    ExcelApp.Cells[i, 8] = item.Payout;
-                    i++;
-                }
-            }
-
-            i = 63;
-            foreach (var item in inst)
-            {
-                if (item.Groupe == "OPTIONAL SERVICES")
-                {
-                    ExcelApp.Cells[i, 1] = item.RoomDetail + " - " + item.Item;
-                    ExcelApp.Cells[i, 2] = item.Description;
-                    ExcelApp.Cells[i, 5] = item.Contractor;
-                    ExcelApp.Cells[i, 6] = item.Quantity;
-                    ExcelApp.Cells[i, 7] = item.Procent;
-                    ExcelApp.Cells[i, 8] = item.Payout;
-                    i++;
-                }
-            }
-
-            i = 72;
-            foreach (var item in cont)
-            {
-                ExcelApp.Cells[i, 1] = item.Contractor;
-                ExcelApp.Cells[i, 2] = item.Payout;
-                ExcelApp.Cells[i, 3] = item.Adjust;
-                ExcelApp.Cells[i, 4] = item.Total;
-                ExcelApp.Cells[i, 5] = item.TAX;
-                ExcelApp.Cells[i, 6] = item.GST;
-                ExcelApp.Cells[i, 7] = item.TotalContractor;
-                i++;
-            }
-
-            ExcelApp.Calculate();
-            ExcelApp.Cells[3, 12] = cont.FirstOrDefault().Contractor;
-            ExcelApp.Cells[1, 12] = "1";   // Записуємо дані в .pdf                       
-            ExcelApp.Calculate();
+            pdf.Print();
 
         }
         /// <summary>
