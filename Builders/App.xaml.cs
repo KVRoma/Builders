@@ -22,6 +22,7 @@ namespace Builders
         public App()
         {
             displayRootRegistry.RegisterWindowType<MainViewModel, MainView>();
+            displayRootRegistry.RegisterWindowType<DetailsViewModel, DetailsView>();
             displayRootRegistry.RegisterWindowType<ClientViewModel, ClientView>();
             displayRootRegistry.RegisterWindowType<DIC_ClientViewModel, DIC_ClientView>();
             displayRootRegistry.RegisterWindowType<DIC_QuotationViewModel, DIC_QuotationView>();
@@ -62,6 +63,7 @@ namespace Builders
         protected override void OnExit(ExitEventArgs e)
         {            
             displayRootRegistry.UnregisterWindowType<MainViewModel>();
+            displayRootRegistry.UnregisterWindowType<DetailsViewModel>();
             displayRootRegistry.UnregisterWindowType<ClientViewModel>();
             displayRootRegistry.UnregisterWindowType<DIC_ClientViewModel>();
             displayRootRegistry.UnregisterWindowType<DIC_QuotationViewModel>();
