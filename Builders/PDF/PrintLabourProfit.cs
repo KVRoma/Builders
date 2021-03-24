@@ -22,6 +22,7 @@ using PdfSharp.Pdf.IO;
 using PdfSharp.Drawing;
 using Microsoft.Win32;
 using Builders.Models;
+using System.IO;
 
 namespace Builders.PDF
 {
@@ -56,11 +57,18 @@ namespace Builders.PDF
             PdfDocumentRenderer pdfRenderer = new PdfDocumentRenderer(true, PdfFontEmbedding.Always);
             pdfRenderer.Document = document;
             pdfRenderer.RenderDocument();
-            string filename = @"Output Files\Labour Profits" + "-" + Invoice.NumberInvoice +
-                                                                 "-" + Client.PrimaryFullName +
-                                                                 "-" + LabourProfitSelect.InvoiceDate.Day.ToString("00") +
-                                                                 "." + LabourProfitSelect.InvoiceDate.Month.ToString("00") +
-                                                                 "." + LabourProfitSelect.InvoiceDate.Year.ToString("0000") + ".pdf";
+
+            string company = (Quota?.CompanyName == "CMO") ? "CMO" : "NL";
+            string folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (Directory.Exists(folder + "\\Builders File") == false)
+            {
+                Directory.CreateDirectory(folder + "\\Builders File");
+            }
+            string filename = folder + @"\\Builders File\" + company + "_Labour Profits" + "-" + Invoice.NumberInvoice +
+                                                                                           "-" + Client.PrimaryFullName +
+                                                                                           "-" + LabourProfitSelect.InvoiceDate.Day.ToString("00") +
+                                                                                           "." + LabourProfitSelect.InvoiceDate.Month.ToString("00") +
+                                                                                           "." + LabourProfitSelect.InvoiceDate.Year.ToString("0000") + ".pdf";
 
             pdfRenderer.PdfDocument.Save(filename);// сохраняем            
 

@@ -22,6 +22,7 @@ using PdfSharp.Pdf.IO;
 using PdfSharp.Drawing;
 using Microsoft.Win32;
 using Builders.Models;
+using System.IO;
 
 namespace Builders.PDF
 {
@@ -60,12 +61,19 @@ namespace Builders.PDF
             pdfRenderer.Document = document;
             pdfRenderer.RenderDocument();
             DateTime date = new DateTime(2020, 12, 15);
-            string filename = @"Output Files\Work Order" + "-" + Quota.NumberQuota +
-                                                         "-" + Client.PrimaryFullName + 
-                                                         "-" + WorkOrder.DateServices.Day.ToString("00") +
-                                                         "." + WorkOrder.DateServices.Month.ToString("00") +
-                                                         "." + WorkOrder.DateServices.Year.ToString("0000") + 
-                                                         "-" + contractors.FirstOrDefault().Contractor + ".pdf";
+
+            string company = (Quota?.CompanyName == "CMO") ? "CMO" : "NL";
+            string folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (Directory.Exists(folder + "\\Builders File") == false)
+            {
+                Directory.CreateDirectory(folder + "\\Builders File");
+            }
+            string filename = folder + @"\\Builders File\" + company + "_Work Order" + "-" + Quota.NumberQuota +
+                                                                                       "-" + Client.PrimaryFullName + 
+                                                                                       "-" + WorkOrder.DateServices.Day.ToString("00") +
+                                                                                       "." + WorkOrder.DateServices.Month.ToString("00") +
+                                                                                       "." + WorkOrder.DateServices.Year.ToString("0000") + 
+                                                                                       "-" + contractors.FirstOrDefault().Contractor + ".pdf";
             
             pdfRenderer.PdfDocument.Save(filename);// сохраняем            
 

@@ -22,6 +22,7 @@ using PdfSharp.Pdf.IO;
 using PdfSharp.Drawing;
 using Microsoft.Win32;
 using Builders.Models;
+using System.IO;
 
 namespace Builders.PDF
 {
@@ -96,10 +97,17 @@ namespace Builders.PDF
             pdfRenderer.Document = document;
             pdfRenderer.RenderDocument();
             DateTime date = new DateTime(2020, 12, 15);
-            string filename = @"Output Files\Invoice" + "-" + Invoice.NumberInvoice +                                                         
-                                                         "-" + Invoice.DateInvoice.Day.ToString("00") +
-                                                         "." + Invoice.DateInvoice.Month.ToString("00") +
-                                                         "." + Invoice.DateInvoice.Year.ToString("0000") + ".pdf";
+
+            string company = (user?.Id == 1) ? "CMO" : "NL";
+            string folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (Directory.Exists(folder + "\\Builders File") == false)
+            {
+                Directory.CreateDirectory(folder + "\\Builders File");
+            }
+            string filename = folder + @"\\Builders File\" + company +"_Invoice" + "-" + Invoice.NumberInvoice +                                                         
+                                                                                   "-" + Invoice.DateInvoice.Day.ToString("00") +
+                                                                                   "." + Invoice.DateInvoice.Month.ToString("00") +
+                                                                                   "." + Invoice.DateInvoice.Year.ToString("0000") + ".pdf";
             string filenameAgreement = @"User\Agreement" + (user?.Id.ToString() ?? "") + ".pdf";
             pdfRenderer.PdfDocument.Save(filename);// сохраняем 
 

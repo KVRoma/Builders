@@ -19,6 +19,7 @@ using MigraDoc.Rendering;
 using PdfSharp.Pdf;
 using System.Diagnostics;
 using System.Windows.Documents;
+using System.IO;
 
 namespace Builders.PDF
 {
@@ -87,10 +88,17 @@ namespace Builders.PDF
             PdfDocumentRenderer pdfRenderer = new PdfDocumentRenderer(true, PdfFontEmbedding.Always);
             pdfRenderer.Document = document;
             pdfRenderer.RenderDocument();
-            string filename = @"Output Files\Reciept" + "-" + Reciept.Number +                                                         
-                                                         "-" + PaymentSelect.PaymentDatePaid.Day.ToString("00") +
-                                                         "." + PaymentSelect.PaymentDatePaid.Month.ToString("00") +
-                                                         "." + PaymentSelect.PaymentDatePaid.Year.ToString("0000") + ".pdf";            
+
+            string company = (user?.Id == 1) ? "CMO" : "NL";
+            string folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (Directory.Exists(folder + "\\Builders File") == false)
+            {
+                Directory.CreateDirectory(folder + "\\Builders File");
+            }
+            string filename = folder + @"\\Builders File\" + company + "_Reciept" + "-" + Reciept.Number +                                                         
+                                                                                   "-" + PaymentSelect.PaymentDatePaid.Day.ToString("00") +
+                                                                                   "." + PaymentSelect.PaymentDatePaid.Month.ToString("00") +
+                                                                                   "." + PaymentSelect.PaymentDatePaid.Year.ToString("0000") + ".pdf";            
             pdfRenderer.PdfDocument.Save(filename);// сохраняем            
             Process.Start(filename);
         }

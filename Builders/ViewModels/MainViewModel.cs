@@ -5082,7 +5082,7 @@ namespace Builders.ViewModels
                 var supplier = db.Deliveries.Where(d => d.NumberQuota == word);
                 int? quotaId = supplier.FirstOrDefault(s => s.QuotaId > 0)?.QuotaId;
                 var quota = Quotations.FirstOrDefault(q => q.Id == quotaId); //db.Quotations.FirstOrDefault(q => q.Id == quotaId);
-                var client = Clients.FirstOrDefault(c => c.Id == quota.ClientId); //db.Quota.FirstOrDefault(c => c.Id == quota.ClientId);
+                var client = Clients.FirstOrDefault(c => c.Id == quota?.ClientId); //db.Quota.FirstOrDefault(c => c.Id == quota.ClientId);
 
                 if (supplier != null && quota != null && client != null)
                 {

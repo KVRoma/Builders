@@ -22,6 +22,7 @@ using System.Windows.Documents;
 using PdfSharp.Pdf.IO;
 using PdfSharp.Drawing;
 using Microsoft.Win32;
+using System.IO;
 
 namespace Builders.PDF
 {
@@ -93,12 +94,20 @@ namespace Builders.PDF
             pdfRenderer.Document = document;
             pdfRenderer.RenderDocument();
             DateTime date = new DateTime(2020, 12, 15);
-            string filename = @"Output Files\" + NameQuota + "-" + Client.NumberClient + 
-                                                         "-" + Quota.NumberQuota + 
-                                                         "-" + Quota.QuotaDate.Day.ToString("00") + 
-                                                         "." + Quota.QuotaDate.Month.ToString("00") + 
-                                                         "." + Quota.QuotaDate.Year.ToString("0000") + ".pdf";
-            string filenameAgreement = @"User\Agreement" + user?.Id.ToString() ?? "" + ".pdf";
+
+            string company = (user?.Id == 1) ? "CMO" : "NL";
+            string folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (Directory.Exists(folder + "\\Builders File") == false)
+            {
+                Directory.CreateDirectory(folder + "\\Builders File");
+            }
+            string filename = folder + @"\\Builders File\"+ company + "_" + NameQuota + "-" + Client.NumberClient +
+                                                                      "-" + Quota.NumberQuota +
+                                                                      "-" + Quota.QuotaDate.Day.ToString("00") +
+                                                                      "." + Quota.QuotaDate.Month.ToString("00") +
+                                                                      "." + Quota.QuotaDate.Year.ToString("0000") + ".pdf";
+
+            string filenameAgreement = @"User\Agreement" + (user?.Id.ToString() ?? "") + ".pdf";
             pdfRenderer.PdfDocument.Save(filename);// сохраняем 
 
             PrintSignaturePage signature = new PrintSignaturePage();
