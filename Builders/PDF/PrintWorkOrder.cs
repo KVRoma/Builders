@@ -34,6 +34,19 @@ namespace Builders.PDF
             accessories = new List<WorkOrder_Accessories>();
             installations = new List<WorkOrder_Installation>();
             contractors = new List<WorkOrder_Contractor>();
+
+            if (Quota?.CompanyName == "CMO")
+            {
+                company = "CMO";
+            }
+            else if (Quota?.CompanyName == "Leveling")
+            {
+                company = "NL";
+            }
+            else
+            {
+                company = "";
+            }
         }
 
 
@@ -43,6 +56,7 @@ namespace Builders.PDF
         private readonly string format = "0.00";
         private int countRows;
         private Document document;
+        private string company;
 
         public Quotation Quota { get; set; }        
         public Client Client { get; set; }
@@ -61,8 +75,7 @@ namespace Builders.PDF
             pdfRenderer.Document = document;
             pdfRenderer.RenderDocument();
             DateTime date = new DateTime(2020, 12, 15);
-
-            string company = (Quota?.CompanyName == "CMO") ? "CMO" : "NL";
+                        
             string folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             if (Directory.Exists(folder + "\\Builders File") == false)
             {

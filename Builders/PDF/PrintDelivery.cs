@@ -33,6 +33,20 @@ namespace Builders.PDF
             user = _user;
             Material = new List<string>();
             DeliveryMaterials = new List<DeliveryMaterial>();
+
+            if (user?.Id == 1)
+            {
+                company = "CMO";
+            }
+            else if (user?.Id == 2)
+            {
+                company = "NL";
+            }
+            else 
+            {
+                company = "";
+            }
+            
         }
         private User user;
         private Quotation quota;
@@ -93,6 +107,7 @@ namespace Builders.PDF
                 deliveryMaterials = value;
             }
         }
+        private string company; 
 
         public void Print()
         {
@@ -102,7 +117,7 @@ namespace Builders.PDF
             pdfRenderer.Document = document;
             pdfRenderer.RenderDocument();
 
-            string company = (user?.Id == 1) ? "CMO" : "NL";
+            
             string folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             if (Directory.Exists(folder + "\\Builders File") == false)
             {
@@ -184,7 +199,7 @@ namespace Builders.PDF
             frame.Top = "1.0cm";
             frame.RelativeVertical = RelativeVertical.Page;
 
-            Image image = frame.AddImage(@"User\Logo" + (user?.Id.ToString() ?? "") + ".jpg");
+            Image image = frame.AddImage(@"User\Logo" + company + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;
@@ -284,7 +299,7 @@ namespace Builders.PDF
             frame.Top = "1.0cm";
             frame.RelativeVertical = RelativeVertical.Page;
 
-            image = frame.AddImage(@"User\Logo" + (user?.Id.ToString() ?? "") + ".jpg");
+            image = frame.AddImage(@"User\Logo" + company + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;

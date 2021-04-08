@@ -32,6 +32,19 @@ namespace Builders.PDF
         {
             user = _user;
             MaterialQuotations = new List<MaterialQuotation>();
+
+            if (user?.Id == 1)
+            {
+                company = "CMO";
+            }
+            else if (user?.Id == 2)
+            {
+                company = "NL";
+            }
+            else
+            {
+                company = "";
+            }
         }
 
         private Quotation quota;
@@ -44,6 +57,7 @@ namespace Builders.PDF
         private readonly string format = "0.00";                
         private string[] file = new string[4];
         private Document document;
+        private string company;
 
         public Quotation Quota
         {
@@ -95,7 +109,7 @@ namespace Builders.PDF
             pdfRenderer.RenderDocument();
             DateTime date = new DateTime(2020, 12, 15);
 
-            string company = (user?.Id == 1) ? "CMO" : "NL";
+            
             string folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             if (Directory.Exists(folder + "\\Builders File") == false)
             {
@@ -107,7 +121,7 @@ namespace Builders.PDF
                                                                       "." + Quota.QuotaDate.Month.ToString("00") +
                                                                       "." + Quota.QuotaDate.Year.ToString("0000") + ".pdf";
 
-            string filenameAgreement = @"User\Agreement" + (user?.Id.ToString() ?? "") + ".pdf";
+            string filenameAgreement = @"User\Agreement" + company + ".pdf";
             pdfRenderer.PdfDocument.Save(filename);// сохраняем 
 
             PrintSignaturePage signature = new PrintSignaturePage();
@@ -168,15 +182,12 @@ namespace Builders.PDF
             style.Font.Name = "Times New Roman";
             style.Font.Size = 9;
 
-
-
             // Create a new style called Reference based on style Normal
             style = this.document.Styles.AddStyle("Reference", "Normal");
             style.ParagraphFormat.SpaceBefore = "5mm";
             style.ParagraphFormat.SpaceAfter = "5mm";
-            style.ParagraphFormat.TabStops.AddTabStop("16cm", TabAlignment.Right);                     
-
-
+            style.ParagraphFormat.TabStops.AddTabStop("16cm", TabAlignment.Right);
+                       
         }
         private void CreatePage()
         {
@@ -186,24 +197,25 @@ namespace Builders.PDF
             section.PageSetup.RightMargin = "1cm";
             section.PageSetup.TopMargin = "3.5cm";
             section.PageSetup.DifferentFirstPageHeaderFooter = true;
-
+            
+            //section.Headers.FirstPage.Format.Shading.Color = Colors.Silver;
 
             // Додаємо логотип в заголовок + інформацію про власника та розміщуємо під логотипом *******
             #region Heder logo
-            TextFrame frame = section.Headers.FirstPage.AddTextFrame();
+            TextFrame frame = section.Headers.FirstPage.AddTextFrame();            
             frame.Width = "7.0cm";
             frame.Left = ShapePosition.Left;
             frame.RelativeHorizontal = RelativeHorizontal.Margin;
             frame.Top = "1.0cm";
             frame.RelativeVertical = RelativeVertical.Page;
 
-            Image image = frame.AddImage(@"User\Logo" + (user?.Id.ToString() ?? "") + ".jpg");
+            Image image = frame.AddImage(@"User\Logo" + company + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;
             image.RelativeHorizontal = RelativeHorizontal.Margin;
             image.Top = ShapePosition.Top;
-            image.Left = ShapePosition.Center;
+            image.Left = ShapePosition.Center;            
             image.WrapFormat.Style = WrapStyle.TopBottom;
 
             
@@ -218,6 +230,7 @@ namespace Builders.PDF
             paragraph.Format.Alignment = ParagraphAlignment.Center;
             paragraph.Format.Font.Size = 7;
             paragraph.Format.SpaceAfter = 3;
+                        
             #endregion
             //*******************************************************************************************
 
@@ -231,7 +244,7 @@ namespace Builders.PDF
             frame = section.Headers.FirstPage.AddTextFrame();
             frame.Left = ShapePosition.Right;
             frame.Width = "6.5cm";
-
+            
             paragraph = frame.AddParagraph();
             paragraph.AddFormattedText(NameQuota, TextFormat.Bold);
             paragraph.Format.Font.Size = 15;
@@ -301,7 +314,7 @@ namespace Builders.PDF
             frame.Top = "1.0cm";
             frame.RelativeVertical = RelativeVertical.Page;
 
-            image = frame.AddImage(@"User\Logo" + (user?.Id.ToString() ?? "") + ".jpg");
+            image = frame.AddImage(@"User\Logo" + company + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;

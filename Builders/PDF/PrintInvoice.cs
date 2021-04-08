@@ -32,6 +32,19 @@ namespace Builders.PDF
         {
             user = _user;
             MaterialQuotations = new List<MaterialQuotation>();
+
+            if (user?.Id == 1)
+            {
+                company = "CMO";
+            }
+            else if (user?.Id == 2)
+            {
+                company = "NL";
+            }
+            else
+            {
+                company = "";
+            }
         }
 
         private Quotation quota;
@@ -45,6 +58,7 @@ namespace Builders.PDF
         private readonly string format = "0.00";
         private string[] file = new string[4];
         private Document document;
+        private string company;
 
         public Quotation Quota
         {
@@ -98,7 +112,7 @@ namespace Builders.PDF
             pdfRenderer.RenderDocument();
             DateTime date = new DateTime(2020, 12, 15);
 
-            string company = (user?.Id == 1) ? "CMO" : "NL";
+            
             string folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             if (Directory.Exists(folder + "\\Builders File") == false)
             {
@@ -108,7 +122,7 @@ namespace Builders.PDF
                                                                                    "-" + Invoice.DateInvoice.Day.ToString("00") +
                                                                                    "." + Invoice.DateInvoice.Month.ToString("00") +
                                                                                    "." + Invoice.DateInvoice.Year.ToString("0000") + ".pdf";
-            string filenameAgreement = @"User\Agreement" + (user?.Id.ToString() ?? "") + ".pdf";
+            string filenameAgreement = @"User\Agreement" + company + ".pdf";
             pdfRenderer.PdfDocument.Save(filename);// сохраняем 
 
             PrintSignaturePage signature = new PrintSignaturePage();
@@ -198,7 +212,7 @@ namespace Builders.PDF
             frame.Top = "1.0cm";
             frame.RelativeVertical = RelativeVertical.Page;
 
-            Image image = frame.AddImage(@"User\Logo" + (user?.Id.ToString() ?? "") + ".jpg");
+            Image image = frame.AddImage(@"User\Logo" + company + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;
@@ -310,7 +324,7 @@ namespace Builders.PDF
             frame.Top = "1.0cm";
             frame.RelativeVertical = RelativeVertical.Page;
 
-            image = frame.AddImage(@"User\Logo" + (user?.Id.ToString() ?? "") + ".jpg");
+            image = frame.AddImage(@"User\Logo" + company + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;

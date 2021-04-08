@@ -1139,10 +1139,7 @@ namespace Builders.ViewModels
                 LoadTAX();
             }
         }));
-        public Command NLDetails => _nlDetails ?? (_nlDetails = new Command(obj =>
-        {
-
-        }));
+       
         //****************************************
         public Command LoadFoto => _loadFoto ?? (_loadFoto = new Command(obj =>
         {

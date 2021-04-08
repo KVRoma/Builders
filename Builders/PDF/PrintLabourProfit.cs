@@ -32,6 +32,19 @@ namespace Builders.PDF
         {
             Labours = new List<Labour>();
             Contractors = new List<LabourContractor>();
+
+            if (Quota?.CompanyName == "CMO")
+            {
+                company = "CMO";
+            }
+            else if (Quota?.CompanyName == "Leveling")
+            {
+                company = "NL";
+            }
+            else
+            {
+                company = "";
+            }
         }
 
         private readonly Color colorHeader = Colors.LightBlue;
@@ -40,6 +53,7 @@ namespace Builders.PDF
         private readonly string format = "0.00";
         private int countRows;
         private Document document;
+        private string company;
 
         public Quotation Quota { get; set; }
         public Client Client { get; set; }
@@ -58,7 +72,7 @@ namespace Builders.PDF
             pdfRenderer.Document = document;
             pdfRenderer.RenderDocument();
 
-            string company = (Quota?.CompanyName == "CMO") ? "CMO" : "NL";
+            
             string folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             if (Directory.Exists(folder + "\\Builders File") == false)
             {

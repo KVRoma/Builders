@@ -28,6 +28,19 @@ namespace Builders.PDF
         public PrintReciept(User _user)
         {
             user = _user;
+
+            if (user?.Id == 1)
+            {
+                company = "CMO";
+            }
+            else if (user?.Id == 2)
+            {
+                company = "NL";
+            }
+            else
+            {
+                company = "";
+            }
         }
 
         private Document document;        
@@ -39,6 +52,7 @@ namespace Builders.PDF
         private Client client;
         private string format = "0.00";
         private User user;
+        private string company;
 
         public Reciept Reciept
         {
@@ -89,7 +103,7 @@ namespace Builders.PDF
             pdfRenderer.Document = document;
             pdfRenderer.RenderDocument();
 
-            string company = (user?.Id == 1) ? "CMO" : "NL";
+            
             string folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             if (Directory.Exists(folder + "\\Builders File") == false)
             {
@@ -164,7 +178,7 @@ namespace Builders.PDF
             frame.Top = "1.0cm";
             frame.RelativeVertical = RelativeVertical.Page;
 
-            Image image = frame.AddImage(@"User\Logo" + (user?.Id.ToString() ?? "") + ".jpg");
+            Image image = frame.AddImage(@"User\Logo" + company + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;

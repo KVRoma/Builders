@@ -34,6 +34,19 @@ namespace Builders.PDF
             DeliveryMaterials = new List<DeliveryMaterial>();
             Suppliers = new List<DIC_Supplier>();
             user = _user;
+
+            if (user?.Id == 1)
+            {
+                company = "CMO";
+            }
+            else if (user?.Id == 2)
+            {
+                company = "NL";
+            }
+            else
+            {
+                company = "";
+            }
         }
 
         private Quotation quota;
@@ -44,7 +57,8 @@ namespace Builders.PDF
         private readonly string format = "0.00";       
         private Document document;
         private User user;
-        
+        private string company;
+
         public Quotation Quota
         {
             get { return quota; }
@@ -95,7 +109,7 @@ namespace Builders.PDF
             pdfRenderer.RenderDocument();
             DateTime date = new DateTime(2020, 12, 15);
 
-            string company = (user?.Id == 1) ? "CMO" : "NL";
+            
             string folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             if (Directory.Exists(folder + "\\Builders File") == false)
             {
@@ -177,7 +191,7 @@ namespace Builders.PDF
             frame.Top = "1.0cm";
             frame.RelativeVertical = RelativeVertical.Page;
 
-            Image image = frame.AddImage(@"User\Logo" + (user?.Id.ToString() ?? "") + ".jpg");
+            Image image = frame.AddImage(@"User\Logo" + company + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;
@@ -233,7 +247,7 @@ namespace Builders.PDF
             frame.Top = "1.0cm";
             frame.RelativeVertical = RelativeVertical.Page;
 
-            image = frame.AddImage(@"User\Logo" + (user?.Id.ToString() ?? "") + ".jpg");
+            image = frame.AddImage(@"User\Logo" + company + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;
