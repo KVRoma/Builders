@@ -69,6 +69,10 @@ namespace Builders.Models
             get{return MaterialTotal + LabourTotal; }
         }
         public bool FinancingYesNo { get; set; }
+        /// <summary>
+        /// Для ручного ввода депозиту
+        /// </summary>
+        public decimal FinancingUser { get; set; }
         public decimal FinancingAmount 
         {
             get { return (FinancingYesNo) ? (ProjectTotal) : (0m); }

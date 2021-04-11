@@ -16,6 +16,7 @@ namespace Builders.ViewModels
         private decimal discountLabour;
         private bool financing;
         private decimal creditCard;
+        private decimal financingUser;
         private bool pressOk;
 
         public string Description
@@ -60,7 +61,7 @@ namespace Builders.ViewModels
             set 
             {
                 financing = value;
-                OnPropertyChanged(nameof(Financing));
+                OnPropertyChanged(nameof(Financing));                
             } 
         }
         public decimal CreditCard 
@@ -70,6 +71,15 @@ namespace Builders.ViewModels
             {
                 creditCard = value;
                 OnPropertyChanged(nameof(CreditCard));
+            }
+        }
+        public decimal FinancingUser
+        {
+            get { return financingUser; }
+            set
+            {
+                financingUser = value;
+                OnPropertyChanged(nameof(FinancingUser));
             }
         }
         public bool PressOk
@@ -92,6 +102,8 @@ namespace Builders.ViewModels
                 (obj as System.Windows.Window).Close();
             }            
         }));
+
+        
 
         public QuotaOtherViewModel()
         {

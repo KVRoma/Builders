@@ -993,7 +993,8 @@ namespace Builders.ViewModels
                     DiscountMaterial = QuotaSelect.MaterialDiscountAmount,
                     DiscountLabour = QuotaSelect.LabourDiscountAmount,
                     Financing = QuotaSelect.FinancingYesNo,
-                    CreditCard = QuotaSelect.AmountPaidByCreditCard
+                    FinancingUser = QuotaSelect.FinancingUser,
+                    CreditCard = QuotaSelect.AmountPaidByCreditCard                    
                 };
                 await displayRootRegistry.ShowModalPresentation(other);
                 if (other.PressOk)
@@ -1003,6 +1004,7 @@ namespace Builders.ViewModels
                     QuotaSelect.MaterialDiscountAmount = other.DiscountMaterial;
                     QuotaSelect.LabourDiscountAmount = other.DiscountLabour;
                     QuotaSelect.FinancingYesNo = other.Financing;
+                    QuotaSelect.FinancingUser = (other.Financing) ? (0m) : (other.FinancingUser);
                     QuotaSelect.AmountPaidByCreditCard = other.CreditCard;
                     db.Entry(QuotaSelect).State = EntityState.Modified;
                     db.SaveChanges();

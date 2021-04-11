@@ -842,13 +842,20 @@ namespace Builders.PDF
             row.Format.Font.Bold = true;
             row.Cells[2].AddParagraph("REQUIRED DEPOSIT").Format.Alignment = ParagraphAlignment.Left;
             decimal deposit;
-            if (Quota.FinancingYesNo)
+            if (Quota.FinancingUser != 0m)
             {
-                deposit = decimal.Round((Quota.FinancingAmount * 0.08m) - Quota.ProjectTotal, 2);
+                deposit = Quota.FinancingUser;
             }
             else
             {
-                deposit = decimal.Round((Quota.LabourTotal * 0.25m) + Quota.MaterialTotal, 2);
+                if (Quota.FinancingYesNo)
+                {
+                    deposit = decimal.Round((Quota.FinancingAmount * 0.08m) - Quota.ProjectTotal, 2);
+                }
+                else
+                {
+                    deposit = decimal.Round((Quota.LabourTotal * 0.25m) + Quota.MaterialTotal, 2);
+                }
             }
             row.Cells[3].AddParagraph("$ " + deposit.ToString(format));
 

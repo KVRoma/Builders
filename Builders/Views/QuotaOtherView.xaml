@@ -43,6 +43,10 @@
        <!--<Label Grid.Row="5" Grid.Column="0" 
                Content="Amount Paid by Credit Card" 
                Style="{StaticResource LabelBold}"/> -->
+        <Label Grid.Row="5" Grid.Column="0" 
+               Content="Manual setting of the deposit amount!" 
+               Style="{StaticResource LabelBold}"
+               Foreground="Red"/>
 
         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Description}"/>
         <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Notes}"/>
@@ -55,6 +59,7 @@
                   FontWeight="Bold"
                   IsChecked="{Binding Financing}"/>
         <!--<TextBox Grid.Row="5" Grid.Column="1" HorizontalContentAlignment="Center" Text="{Binding CreditCard}"/>-->
+        <TextBox Grid.Row="5" Grid.Column="1" HorizontalContentAlignment="Center" Text="{Binding FinancingUser}"/>
         <Button Grid.Row="6" 
                 Grid.ColumnSpan="2" 
                 Content="Save" 
