@@ -114,10 +114,7 @@ namespace Builders.PDF
             {
                 Directory.CreateDirectory(folder + "\\Builders File");
             }
-            //string filename = folder + @"\\Builders File\" + company + "_Reciept" + "-" + Reciept.Number +                                                         
-            //                                                                       "-" + PaymentSelect.PaymentDatePaid.Day.ToString("00") +
-            //                                                                       "." + PaymentSelect.PaymentDatePaid.Month.ToString("00") +
-            //                                                                       "." + PaymentSelect.PaymentDatePaid.Year.ToString("0000") + ".pdf";
+            
             string filename = folder + @"\\Builders File\" + "RECEIPT-" + Reciept.Number +
                                                                         "-" + Client.PrimaryFullName +
                                                                         "-" + ((company == "CMO") ? "CMO Flooring" : "Next Level Leveling") +
@@ -184,6 +181,7 @@ namespace Builders.PDF
 
             // Додаємо логотип в заголовок + інформацію про власника та розміщуємо під логотипом *******
             #region Heder logo
+
             Table tableLogo = section.Headers.FirstPage.AddTable();
             tableLogo.Borders.Color = colorLogo;
 
