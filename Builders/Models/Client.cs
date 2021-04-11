@@ -45,11 +45,11 @@ namespace Builders.Models
         {
             get
             {
-                return AddressBillStreet + ", " +
-                       AddressBillCity + ", " +
-                       AddressBillProvince + ", " +
-                       AddressBillPostalCode + ", " +
-                       AddressBillCountry;
+                return (string.IsNullOrWhiteSpace(AddressBillStreet) ? "" : (AddressBillStreet + ", ")) +
+                       (string.IsNullOrWhiteSpace(AddressBillCity) ? "" : (AddressBillCity + ", ")) +
+                       (string.IsNullOrWhiteSpace(AddressBillProvince) ? "" : (AddressBillProvince + ", ")) +
+                       (string.IsNullOrWhiteSpace(AddressBillPostalCode) ? "" : (AddressBillPostalCode + ", ")) +
+                       (string.IsNullOrWhiteSpace(AddressBillCountry) ? "" : (AddressBillCountry));
             }
         }
         public string AddressSiteStreet { get; set; }
@@ -61,11 +61,11 @@ namespace Builders.Models
         {
             get
             {
-                return AddressSiteStreet + ", " +
-                       AddressSiteCity + ", " +
-                       AddressSiteProvince + ", " +
-                       AddressSitePostalCode + ", " +
-                       AddressSiteCountry;
+                return (string.IsNullOrWhiteSpace(AddressSiteStreet) ? "" : (AddressSiteStreet + ", ")) +
+                        (string.IsNullOrWhiteSpace(AddressSiteCity) ? "" : (AddressSiteCity + ", ")) +
+                        (string.IsNullOrWhiteSpace(AddressSiteProvince) ? "" : (AddressSiteProvince + ", ")) +
+                        (string.IsNullOrWhiteSpace(AddressSitePostalCode) ? "" : (AddressSitePostalCode + ", ")) +
+                        (string.IsNullOrWhiteSpace(AddressSiteCountry) ? "" : (AddressSiteCountry));
             }
         }
         public string HearAboutUs { get; set; }
