@@ -53,7 +53,10 @@ namespace Builders.PDF
         private List<MaterialQuotation> materialQuotations;
         private IEnumerable<Payment> payments;
         private User user;
-        
+
+        private readonly Color colorLogo = Colors.Black;
+        private readonly Color colorTextLogo = Colors.White;
+        private readonly Color colorRowHeaderTable = Colors.Yellow;
 
         private readonly string format = "0.00";
         private string[] file = new string[4];
@@ -117,11 +120,12 @@ namespace Builders.PDF
             if (Directory.Exists(folder + "\\Builders File") == false)
             {
                 Directory.CreateDirectory(folder + "\\Builders File");
-            }
-            string filename = folder + @"\\Builders File\" + company +"_Invoice" + "-" + Invoice.NumberInvoice +                                                         
-                                                                                   "-" + Invoice.DateInvoice.Day.ToString("00") +
-                                                                                   "." + Invoice.DateInvoice.Month.ToString("00") +
-                                                                                   "." + Invoice.DateInvoice.Year.ToString("0000") + ".pdf";
+            }                                                                               
+            string filename = folder + @"\\Builders File\"  + "INVOICE-" + Invoice.NumberInvoice +
+                                                                        "-" + Client.PrimaryFullName +
+                                                                        "-" + ((company == "CMO") ? "CMO Flooring" : "Next Level Leveling") +
+                                                                        (string.IsNullOrWhiteSpace(Quota.JobDescription) ? "" : ("-" + Quota.JobDescription)) + ".pdf";
+
             string filenameAgreement = @"User\Agreement" + company + ".pdf";
             pdfRenderer.PdfDocument.Save(filename);// сохраняем 
 
@@ -205,14 +209,24 @@ namespace Builders.PDF
 
             // Додаємо логотип в заголовок + інформацію про власника та розміщуємо під логотипом *******
             #region Heder logo
-            TextFrame frame = section.Headers.FirstPage.AddTextFrame();
-            frame.Width = "7.0cm";
-            frame.Left = ShapePosition.Left;
-            frame.RelativeHorizontal = RelativeHorizontal.Margin;
-            frame.Top = "1.0cm";
-            frame.RelativeVertical = RelativeVertical.Page;
+            Table tableLogo = section.Headers.FirstPage.AddTable();
+            tableLogo.Borders.Color = colorLogo;
 
-            Image image = frame.AddImage(@"User\Logo" + company + ".jpg");
+            Column columnLogo = tableLogo.AddColumn("9.6cm");
+            columnLogo.Format.Alignment = ParagraphAlignment.Center;
+            columnLogo = tableLogo.AddColumn("9.6cm");
+            columnLogo.Format.Alignment = ParagraphAlignment.Center;
+
+            Row rowLogo = tableLogo.AddRow();
+            //rowLogo.HeadingFormat = true;
+            rowLogo.Format.Alignment = ParagraphAlignment.Center;
+            rowLogo.VerticalAlignment = VerticalAlignment.Center;
+            rowLogo.Shading.Color = colorLogo;
+
+            Paragraph paragraphLogo = rowLogo.Cells[0].AddParagraph();
+            paragraphLogo.Format.Alignment = ParagraphAlignment.Center;
+
+            Image image = paragraphLogo.AddImage(@"User\Logo" + company + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;
@@ -220,129 +234,124 @@ namespace Builders.PDF
             image.Top = ShapePosition.Top;
             image.Left = ShapePosition.Center;
             image.WrapFormat.Style = WrapStyle.TopBottom;
-                        
-            Paragraph paragraph = frame.AddParagraph(user.Name + ", " + Environment.NewLine +
-                                                      user.Post + Environment.NewLine +
-                                                      user.Address + Environment.NewLine +
-                                                      user.Additional + Environment.NewLine +
-                                                      user.Phone + Environment.NewLine + 
-                                                      user.Mail + Environment.NewLine + 
-                                                      user.WebSite);
-            //paragraph.Format.Font.Name = "Times New Roman";
-            paragraph.Format.Alignment = ParagraphAlignment.Center;
-            paragraph.Format.Font.Size = 7;
-            paragraph.Format.SpaceAfter = 3;
-            #endregion
-            //*******************************************************************************************
 
-            // Додаємо назву документу та заповнюємо дату, номер та номер квоти *************************
-            #region Heder data
-
-            //frame = section.AddTextFrame();
-            //frame.Left = ShapePosition.Right;            
-            //frame.Top = "1.0cm";
-
-            frame = section.Headers.FirstPage.AddTextFrame();
-            frame.Left = ShapePosition.Right;
-            frame.Width = "6.5cm";
-
-            paragraph = frame.AddParagraph();
+            Paragraph paragraph = rowLogo.Cells[1].AddParagraph();
             paragraph.AddFormattedText("FINAL INVOICE", TextFormat.Bold);
             paragraph.Format.Font.Size = 15;
             paragraph.Format.Font.Color = Colors.Red;
             paragraph.Format.Alignment = ParagraphAlignment.Center;
-            paragraph.AddLineBreak();            
 
-            paragraph = frame.AddParagraph();
+            rowLogo = tableLogo.AddRow();
+            //rowLogo.HeadingFormat = true;
+            rowLogo.Format.Alignment = ParagraphAlignment.Center;
+            rowLogo.VerticalAlignment = VerticalAlignment.Center;
+            rowLogo.Shading.Color = colorLogo;
+
+            paragraph = rowLogo.Cells[0].AddParagraph(user?.Name + ", " + Environment.NewLine +
+                                          user?.Post + Environment.NewLine +
+                                          user?.Address + Environment.NewLine +
+                                          user?.Additional + Environment.NewLine +
+                                          user?.Phone + Environment.NewLine +
+                                          user?.Mail + Environment.NewLine +
+                                          user?.WebSite);
+
+
+            //paragraph.Format.Font.Name = "Times New Roman";
+            paragraph.Format.Alignment = ParagraphAlignment.Center;
+            paragraph.Format.Font.Size = 7;
+            paragraph.Format.SpaceAfter = 3;
+            paragraph.Format.Font.Color = colorTextLogo;
+
+            paragraph = rowLogo.Cells[1].AddParagraph();
             paragraph.Format.Font.Size = 10;
             paragraph.AddText("Date: ");
-            paragraph.AddFormattedText(Invoice.DateInvoice.ToShortDateString(), TextFormat.Bold);
+            paragraph.AddFormattedText(Quota.QuotaDate.ToShortDateString(), TextFormat.Bold);
             paragraph.AddLineBreak();
-            paragraph.AddText("Invoice: ");
-            paragraph.AddFormattedText(Invoice.NumberInvoice, TextFormat.Bold);
-            paragraph.AddLineBreak();
-            //paragraph.AddText("Estimate Number: ");
-            //paragraph.AddFormattedText(Quota.NumberQuota, TextFormat.Bold);
-            //paragraph.AddLineBreak();
             paragraph.AddText("Client Number: ");
             paragraph.AddFormattedText(Client.NumberClient, TextFormat.Bold);
             paragraph.AddLineBreak();
-            paragraph.AddLineBreak();
-            //paragraph.AddText("SO/Pick-Up: ");
-            //paragraph.AddFormattedText((Invoice.UpNumber) ?? "", TextFormat.Bold);
-            //paragraph.AddLineBreak();
-            //paragraph.AddText("PO: ");
-            //paragraph.AddFormattedText((Invoice.OrderNumber) ?? "", TextFormat.Bold);
-            //paragraph.AddLineBreak();
+            paragraph.AddText("Invoice Number: ");
+            paragraph.AddFormattedText(Invoice.NumberInvoice, TextFormat.Bold);
 
-            paragraph = frame.AddParagraph();
+            paragraph.Format.Font.Color = colorTextLogo;
+            paragraph.AddLineBreak();
+            paragraph.AddLineBreak();
+
+            paragraph = rowLogo.Cells[1].AddParagraph();
             paragraph.Format.Font.Size = 7;
-            if (!string.IsNullOrWhiteSpace(user.GST))
+            if (!string.IsNullOrWhiteSpace(user?.GST))
             {
                 paragraph.AddText("GST # ");
-                paragraph.AddFormattedText(user.GST, TextFormat.Bold);
+                paragraph.AddFormattedText(user?.GST + "", TextFormat.Bold);
                 paragraph.AddLineBreak();
             }
-            if (!string.IsNullOrWhiteSpace(user.PST))
+            if (!string.IsNullOrWhiteSpace(user?.PST))
             {
                 paragraph.AddText("PST # ");
-                paragraph.AddFormattedText(user.PST, TextFormat.Bold);
+                paragraph.AddFormattedText(user?.PST + "", TextFormat.Bold);
                 paragraph.AddLineBreak();
             }
-            if (!string.IsNullOrWhiteSpace(user.WCB))
+            if (!string.IsNullOrWhiteSpace(user?.WCB))
             {
                 paragraph.AddText("WCB # ");
-                paragraph.AddFormattedText(user.WCB, TextFormat.Bold);
+                paragraph.AddFormattedText(user?.WCB + "", TextFormat.Bold);
                 paragraph.AddLineBreak();
             }
-            if (!string.IsNullOrWhiteSpace(user.Liability))
+            if (!string.IsNullOrWhiteSpace(user?.Liability))
             {
                 paragraph.AddText("GENERAL LIABILITY # ");
-                paragraph.AddFormattedText(user.Liability, TextFormat.Bold);
+                paragraph.AddFormattedText(user?.Liability + "", TextFormat.Bold);
                 paragraph.AddLineBreak();
             }
-            if (!string.IsNullOrWhiteSpace(user.Licence))
+            if (!string.IsNullOrWhiteSpace(user?.Licence))
             {
                 paragraph.AddText("BUSINESS LICENSE # ");
-                paragraph.AddFormattedText(user.Licence, TextFormat.Bold);
+                paragraph.AddFormattedText(user?.Licence + "", TextFormat.Bold);
                 paragraph.AddLineBreak();
             }
-            if (!string.IsNullOrWhiteSpace(user.Incorporation))
+            if (!string.IsNullOrWhiteSpace(user?.Incorporation))
             {
                 paragraph.AddText("INCORPORATION # ");
-                paragraph.AddFormattedText(user.Incorporation, TextFormat.Bold);
+                paragraph.AddFormattedText(user?.Incorporation + "", TextFormat.Bold);
                 paragraph.AddLineBreak();
             }
+            paragraph.Format.Font.Color = colorTextLogo;
+            rowLogo.Cells[1].AddParagraph().AddLineBreak();
             #endregion
             //*******************************************************************************************
+
+
             // Додаємо логотип в заголовок + інформацію про власника та розміщуємо під логотипом *******
             #region Heder logo page 2            
-            frame = section.Headers.Primary.AddTextFrame();
-            frame.Width = "7.0cm";
-            frame.Left = ShapePosition.Left;
-            frame.RelativeHorizontal = RelativeHorizontal.Margin;
-            frame.Top = "1.0cm";
-            frame.RelativeVertical = RelativeVertical.Page;
+            Table tableLogoSecondary = section.Headers.Primary.AddTable();
+            tableLogoSecondary.Borders.Color = colorLogo;
 
-            image = frame.AddImage(@"User\Logo" + company + ".jpg");
-            image.Height = "2.5cm";
-            image.LockAspectRatio = true;
-            image.RelativeVertical = RelativeVertical.Line;
-            image.RelativeHorizontal = RelativeHorizontal.Margin;
-            image.Top = ShapePosition.Top;
-            image.Left = ShapePosition.Center;
-            image.WrapFormat.Style = WrapStyle.TopBottom;
+            Column columnLogoSecondary = tableLogoSecondary.AddColumn("9.6cm");
+            columnLogoSecondary.Format.Alignment = ParagraphAlignment.Center;
+            columnLogoSecondary = tableLogoSecondary.AddColumn("9.6cm");
+            columnLogoSecondary.Format.Alignment = ParagraphAlignment.Center;
 
+            Row rowLogoSecondary = tableLogoSecondary.AddRow();
+            rowLogoSecondary.Format.Alignment = ParagraphAlignment.Center;
+            rowLogoSecondary.VerticalAlignment = VerticalAlignment.Center;
+            rowLogoSecondary.Shading.Color = colorLogo;
+
+            Paragraph paragraphLogoSecondary = rowLogoSecondary.Cells[0].AddParagraph();
+            paragraphLogoSecondary.Format.Alignment = ParagraphAlignment.Center;
+
+            Image imageSecondary = paragraphLogoSecondary.AddImage(@"User\Logo" + company + ".jpg");
+            imageSecondary.Height = "2.5cm";
+            imageSecondary.LockAspectRatio = true;
+            imageSecondary.RelativeVertical = RelativeVertical.Line;
+            imageSecondary.RelativeHorizontal = RelativeHorizontal.Margin;
+            imageSecondary.Top = ShapePosition.Top;
+            imageSecondary.Left = ShapePosition.Center;
+            imageSecondary.WrapFormat.Style = WrapStyle.TopBottom;
 
             #endregion
             //*******************************************************************************************
 
 
-            //// Create footer
-            //paragraph = section.Footers.Primary.AddParagraph();
-            //paragraph.AddText("PowerBooks Inc · Sample Street 42 · 56789 Cologne · Germany");
-            //paragraph.Format.Font.Size = 9;
-            //paragraph.Format.Alignment = ParagraphAlignment.Center;
 
 
 
@@ -350,7 +359,7 @@ namespace Builders.PDF
             #region Client info
             // Тут вставляю пустий параграф для контролю відступу від заголовку
             paragraph = section.AddParagraph();
-            paragraph.Format.SpaceBefore = "2.5cm";
+            paragraph.Format.SpaceBefore = "3.5cm";
             //paragraph.Style = "Quota";
 
 
@@ -502,7 +511,7 @@ namespace Builders.PDF
             row.Format.Alignment = ParagraphAlignment.Center;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
             row.Format.Font.Bold = true;
-            row.Shading.Color = MigraDoc.DocumentObjectModel.Colors.Silver;
+            row.Shading.Color = colorRowHeaderTable;
             row.Cells[0].Format.Font.Size = 8;
             row.Cells[0].AddParagraph("Please carefully read the details, expectations and liabilitie").Format.Alignment = ParagraphAlignment.Center;
             row.Cells[0].MergeRight = 1;
@@ -515,7 +524,7 @@ namespace Builders.PDF
             row.Format.Alignment = ParagraphAlignment.Left;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
             row.Format.Font.Bold = true;
-            row.Shading.Color = MigraDoc.DocumentObjectModel.Colors.Silver;
+            row.Shading.Color = colorRowHeaderTable;
             row.Cells[0].AddParagraph("GROUP").Format.Alignment = ParagraphAlignment.Center;
             row.Cells[1].AddParagraph("DESCRIPTION").Format.Alignment = ParagraphAlignment.Center;
             row.Cells[2].AddParagraph("QUANTITY").Format.Alignment = ParagraphAlignment.Center;
@@ -585,7 +594,7 @@ namespace Builders.PDF
             }
 
             row = table.AddRow();
-            row.Shading.Color = MigraDoc.DocumentObjectModel.Colors.Silver;
+            row.Shading.Color = colorRowHeaderTable;
             row[0].MergeRight = 4;
             countMaterialRow++;            
 
@@ -649,6 +658,7 @@ namespace Builders.PDF
 
             //table = frame.AddTable();
             section.AddPageBreak();
+            section.AddParagraph().AddLineBreak();            
             table = section.AddTable();
 
             table.Style = "Table";
@@ -676,7 +686,7 @@ namespace Builders.PDF
             row.Format.Alignment = ParagraphAlignment.Center;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
             row.Format.Font.Bold = true;
-            row.Shading.Color = MigraDoc.DocumentObjectModel.Colors.Silver;
+            row.Shading.Color = colorRowHeaderTable;
             row.Cells[3].Format.Font.Color = Colors.Red;
             row.Cells[3].AddParagraph("LABOUR").Format.Alignment = ParagraphAlignment.Center;
             row.Cells[3].MergeRight = 2;
@@ -686,7 +696,7 @@ namespace Builders.PDF
             row.Format.Alignment = ParagraphAlignment.Left;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
             row.Format.Font.Bold = true;
-            row.Shading.Color = MigraDoc.DocumentObjectModel.Colors.Silver;
+            row.Shading.Color = colorRowHeaderTable;
             row.Cells[0].AddParagraph("GROUP").Format.Alignment = ParagraphAlignment.Center;
             row.Cells[1].AddParagraph("ITEMS").Format.Alignment = ParagraphAlignment.Center;
             row.Cells[2].AddParagraph("DESCRIPTION").Format.Alignment = ParagraphAlignment.Center;
@@ -714,15 +724,11 @@ namespace Builders.PDF
             }
 
             row = table.AddRow();
-            row.Shading.Color = MigraDoc.DocumentObjectModel.Colors.Silver;
+            row.Shading.Color = colorRowHeaderTable;
             row[0].MergeRight = 5;
             countLabourRow++;
 
-            //for (int i = 40; i > labour.Count() + 1; i--)
-            //{
-            //    row = table.AddRow();
-            //    countLabourRow++;
-            //}
+            
 
             table.SetEdge(0, 0, 6, countLabourRow, Edge.Box, BorderStyle.Single, 0.75, MigraDoc.DocumentObjectModel.Color.Empty);
 
@@ -835,13 +841,20 @@ namespace Builders.PDF
             row.Format.Font.Bold = true;
             row.Cells[2].AddParagraph("REQUIRED DEPOSIT").Format.Alignment = ParagraphAlignment.Left;
             decimal deposit;
-            if (Quota.FinancingYesNo)
+            if (Quota.FinancingUser != 0m)
             {
-                deposit = decimal.Round((Quota.FinancingAmount * 0.08m) - Quota.ProjectTotal, 2);
+                deposit = Quota.FinancingUser;
             }
             else
             {
-                deposit = decimal.Round((Quota.LabourTotal * 0.25m) + Quota.MaterialTotal, 2);
+                if (Quota.FinancingYesNo)
+                {
+                    deposit = decimal.Round((Quota.FinancingAmount * 0.08m) - Quota.ProjectTotal, 2);
+                }
+                else
+                {
+                    deposit = decimal.Round((Quota.LabourTotal * 0.25m) + Quota.MaterialTotal, 2);
+                }
             }
             row.Cells[3].AddParagraph("$ " + deposit.ToString(format));
 
@@ -853,10 +866,7 @@ namespace Builders.PDF
 
             paragraph = section.AddParagraph();
             paragraph.Format.SpaceBefore = "2cm";
-            //frame = section.AddTextFrame();
-            //frame.Left = ShapePosition.Left;
-            ////frame.Top = "0.5cm";
-            //table = frame.AddTable();
+            
             table = section.AddTable();
             table.Style = "Table";
             table.Borders.Color = MigraDoc.DocumentObjectModel.Colors.Black;
@@ -881,7 +891,7 @@ namespace Builders.PDF
             row.Format.Alignment = ParagraphAlignment.Center;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
             row.Format.Font.Bold = true;
-            row.Shading.Color = MigraDoc.DocumentObjectModel.Colors.Silver;
+            row.Shading.Color = colorRowHeaderTable;
             row.Cells[0].AddParagraph("Payment");
             row.Cells[1].AddParagraph("Date paid");
             row.Cells[2].AddParagraph("Amount Paid");
