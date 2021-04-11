@@ -54,6 +54,11 @@ namespace Builders.PDF
         private List<Delivery> deliveries;
         private List<DeliveryMaterial> deliveryMaterials;
         private List<DIC_Supplier> suppliers;
+
+        private readonly Color colorLogo = Colors.Black;
+        private readonly Color colorTextLogo = Colors.White;
+        private readonly Color colorRowHeaderTable = Colors.Yellow;
+
         private readonly string format = "0.00";       
         private Document document;
         private User user;
@@ -115,11 +120,13 @@ namespace Builders.PDF
             {
                 Directory.CreateDirectory(folder + "\\Builders File");
             }
-            string filename = folder + @"\\Builders File\" + company + "_Delivery" + "-" + Quota.NumberQuota +
-                                                                     "-" + DateTime.Today.Day.ToString("00") +
-                                                                     "." + DateTime.Today.Month.ToString("00") +
-                                                                     "." + DateTime.Today.Year.ToString("0000") + ".pdf";
-            
+                                                                    
+            string filename = folder + @"\\Builders File\" + "DELIVERY-(" + Client.NumberClient +
+                                                                        "-" + Quota.NumberQuota +
+                                                                        ")-" + Client.PrimaryFullName +
+                                                                        "-" + ((company == "CMO") ? "CMO Flooring" : "Next Level Leveling") +
+                                                                        (string.IsNullOrWhiteSpace(Quota.JobDescription) ? "" : ("-" + Quota.JobDescription)) + ".pdf";
+
             pdfRenderer.PdfDocument.Save(filename);// сохраняем 
 
             
@@ -184,14 +191,25 @@ namespace Builders.PDF
 
             // Додаємо логотип в заголовок + інформацію про власника та розміщуємо під логотипом *******
             #region Heder logo
-            TextFrame frame = section.Headers.FirstPage.AddTextFrame();
-            frame.Width = "7.0cm";
-            frame.Left = ShapePosition.Left;
-            frame.RelativeHorizontal = RelativeHorizontal.Margin;
-            frame.Top = "1.0cm";
-            frame.RelativeVertical = RelativeVertical.Page;
 
-            Image image = frame.AddImage(@"User\Logo" + company + ".jpg");
+            Table tableLogo = section.Headers.FirstPage.AddTable();
+            tableLogo.Borders.Color = colorLogo;
+
+            Column columnLogo = tableLogo.AddColumn("9.6cm");
+            columnLogo.Format.Alignment = ParagraphAlignment.Center;
+            columnLogo = tableLogo.AddColumn("9.6cm");
+            columnLogo.Format.Alignment = ParagraphAlignment.Center;
+
+            Row rowLogo = tableLogo.AddRow();
+            //rowLogo.HeadingFormat = true;
+            rowLogo.Format.Alignment = ParagraphAlignment.Center;
+            rowLogo.VerticalAlignment = VerticalAlignment.Center;
+            rowLogo.Shading.Color = colorLogo;
+
+            Paragraph paragraphLogo = rowLogo.Cells[0].AddParagraph();
+            paragraphLogo.Format.Alignment = ParagraphAlignment.Center;
+
+            Image image = paragraphLogo.AddImage(@"User\Logo" + company + ".jpg");
             image.Height = "2.5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;
@@ -200,66 +218,69 @@ namespace Builders.PDF
             image.Left = ShapePosition.Center;
             image.WrapFormat.Style = WrapStyle.TopBottom;
 
-            Paragraph paragraph = frame.AddParagraph("Delivery time:   3pm - 5pm");
-            //paragraph.Format.Font.Name = "Times New Roman";
+            Paragraph paragraph = rowLogo.Cells[1].AddParagraph();
+            paragraph.AddFormattedText("Instructions for Drivers", TextFormat.Bold);
+            paragraph.Format.Font.Size = 15;
+            paragraph.Format.Font.Color = Colors.Red;
+            paragraph.Format.Alignment = ParagraphAlignment.Center;
+
+            rowLogo = tableLogo.AddRow();            
+            rowLogo.Format.Alignment = ParagraphAlignment.Center;
+            rowLogo.VerticalAlignment = VerticalAlignment.Center;
+            rowLogo.Shading.Color = colorLogo;
+
+            paragraph = rowLogo.Cells[0].AddParagraph("Delivery time:   3pm - 5pm");
             paragraph.Format.Alignment = ParagraphAlignment.Center;
             paragraph.AddLineBreak();
             paragraph.AddFormattedText("*expected delivery time to the client's house", TextFormat.Italic).Font.Size = 7;
-            //paragraph.Format.Font.Size = 7;
-            //paragraph.Format.SpaceAfter = 3;
-            #endregion
-            //*******************************************************************************************
+            paragraph.Format.Font.Color = colorTextLogo;
 
-            // Додаємо назву документу та заповнюємо дату, номер та номер квоти *************************
-            #region Heder data
-
-            //frame = section.AddTextFrame();
-            //frame.Left = ShapePosition.Right;            
-            //frame.Top = "1.0cm";
-
-            frame = section.Headers.FirstPage.AddTextFrame();
-            frame.Left = ShapePosition.Right;
-            frame.Width = "6.0cm";
-
-            paragraph = frame.AddParagraph();
-            paragraph.AddFormattedText("Instructions for Drivers", TextFormat.Bold);
-            paragraph.Format.Font.Size = 20;
-            paragraph.Format.Font.Color = Colors.Red;
-            paragraph.Format.Alignment = ParagraphAlignment.Center;
-            paragraph.AddLineBreak();
-            paragraph.AddLineBreak();
-
-            paragraph = frame.AddParagraph();
+            paragraph = rowLogo.Cells[1].AddParagraph();
             paragraph.Format.Font.Size = 10;
+
             paragraph.AddText("Date: ");
             paragraph.AddFormattedText(DateTime.Today.ToShortDateString(), TextFormat.Bold);
-            paragraph.AddLineBreak();            
+            paragraph.AddLineBreak();
             paragraph.AddText("Estimate: ");
             paragraph.AddFormattedText(Quota.NumberQuota, TextFormat.Bold);
+
+            paragraph.Format.Font.Color = colorTextLogo;
+            paragraph.AddLineBreak();
+            paragraph.AddLineBreak();
+
             #endregion
             //*******************************************************************************************
+
+
             // Додаємо логотип в заголовок + інформацію про власника та розміщуємо під логотипом *******
             #region Heder logo page 2            
-            frame = section.Headers.Primary.AddTextFrame();
-            frame.Width = "7.0cm";
-            frame.Left = ShapePosition.Left;
-            frame.RelativeHorizontal = RelativeHorizontal.Margin;
-            frame.Top = "1.0cm";
-            frame.RelativeVertical = RelativeVertical.Page;
+            Table tableLogoSecondary = section.Headers.Primary.AddTable();
+            tableLogoSecondary.Borders.Color = colorLogo;
 
-            image = frame.AddImage(@"User\Logo" + company + ".jpg");
-            image.Height = "2.5cm";
-            image.LockAspectRatio = true;
-            image.RelativeVertical = RelativeVertical.Line;
-            image.RelativeHorizontal = RelativeHorizontal.Margin;
-            image.Top = ShapePosition.Top;
-            image.Left = ShapePosition.Center;
-            image.WrapFormat.Style = WrapStyle.TopBottom;
+            Column columnLogoSecondary = tableLogoSecondary.AddColumn("9.6cm");
+            columnLogoSecondary.Format.Alignment = ParagraphAlignment.Center;
+            columnLogoSecondary = tableLogoSecondary.AddColumn("9.6cm");
+            columnLogoSecondary.Format.Alignment = ParagraphAlignment.Center;
 
+            Row rowLogoSecondary = tableLogoSecondary.AddRow();
+            rowLogoSecondary.Format.Alignment = ParagraphAlignment.Center;
+            rowLogoSecondary.VerticalAlignment = VerticalAlignment.Center;
+            rowLogoSecondary.Shading.Color = colorLogo;
 
+            Paragraph paragraphLogoSecondary = rowLogoSecondary.Cells[0].AddParagraph();
+            paragraphLogoSecondary.Format.Alignment = ParagraphAlignment.Center;
+
+            Image imageSecondary = paragraphLogoSecondary.AddImage(@"User\Logo" + company + ".jpg");
+            imageSecondary.Height = "2.5cm";
+            imageSecondary.LockAspectRatio = true;
+            imageSecondary.RelativeVertical = RelativeVertical.Line;
+            imageSecondary.RelativeHorizontal = RelativeHorizontal.Margin;
+            imageSecondary.Top = ShapePosition.Top;
+            imageSecondary.Left = ShapePosition.Center;
+            imageSecondary.WrapFormat.Style = WrapStyle.TopBottom;
             #endregion
             //*******************************************************************************************
-            
+
             // Додаємо таблицю з інформацією про вибраного клієнта ***************************************
             #region Client info
             // Тут вставляю пустий параграф для контролю відступу від заголовку
@@ -384,7 +405,7 @@ namespace Builders.PDF
             row.Format.Alignment = ParagraphAlignment.Left;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
             row.Format.Font.Bold = true;
-            row.Shading.Color = MigraDoc.DocumentObjectModel.Colors.Silver;
+            row.Shading.Color = colorRowHeaderTable;
             row.Cells[0].AddParagraph("Supplier").Format.Alignment = ParagraphAlignment.Center;
             row.Cells[1].AddParagraph("Address").Format.Alignment = ParagraphAlignment.Center;
             row.Cells[2].AddParagraph("Hours").Format.Alignment = ParagraphAlignment.Center;
