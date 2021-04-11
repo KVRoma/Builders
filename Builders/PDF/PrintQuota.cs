@@ -59,6 +59,7 @@ namespace Builders.PDF
         private readonly Color colorLogo = Colors.Black;
         private readonly Color colorTextLogo = Colors.White;
         private readonly Color colorRowHeaderTable = Colors.Yellow;
+        private readonly Color colorRowHeaderPayment = Colors.LightGreen;
 
         private readonly string format = "0.00";                
         private string[] file = new string[4];
@@ -895,7 +896,7 @@ namespace Builders.PDF
             row.Format.Alignment = ParagraphAlignment.Center;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
             row.Format.Font.Bold = true;
-            row.Shading.Color = colorRowHeaderTable;
+            row.Shading.Color = colorRowHeaderPayment;
             row.Cells[0].AddParagraph("Payment");
             row.Cells[1].AddParagraph("Date paid");
             row.Cells[2].AddParagraph("Amount Paid");            
