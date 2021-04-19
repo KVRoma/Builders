@@ -37,14 +37,17 @@ namespace Builders.PDF
             if (user?.Id == 1)
             {
                 company = "CMO";
+                colorLogo = Color.FromRgb(12, 25, 35);
             }
             else if (user?.Id == 2)
             {
                 company = "NL";
+                colorLogo = Colors.Black;
             }
             else 
             {
                 company = "";
+                colorLogo = Colors.Black;
             }
             
         }
@@ -56,10 +59,10 @@ namespace Builders.PDF
         private DIC_Supplier supplier;
         private List<DeliveryMaterial> deliveryMaterials;
 
-        private readonly Color colorLogo = Colors.Black;
+        private Color colorLogo;
         private readonly Color colorTextLogo = Colors.White;
-        private readonly Color colorRowHeaderTable = Colors.Yellow;
-        
+        private readonly Color colorRowHeaderTable = Color.FromRgb(27, 187, 200);
+
 
         private readonly string format = "0.00";
         private Document document;

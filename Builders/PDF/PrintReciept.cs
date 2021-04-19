@@ -32,14 +32,17 @@ namespace Builders.PDF
             if (user?.Id == 1)
             {
                 company = "CMO";
+                colorLogo = Color.FromRgb(12, 25, 35);
             }
             else if (user?.Id == 2)
             {
                 company = "NL";
+                colorLogo = Colors.Black;
             }
             else
             {
                 company = "";
+                colorLogo = Colors.Black;
             }
         }
 
@@ -54,9 +57,9 @@ namespace Builders.PDF
         private User user;
         private string company;
 
-        private readonly Color colorLogo = Colors.Black;
+        private Color colorLogo;
         private readonly Color colorTextLogo = Colors.White;
-        private readonly Color colorRowHeaderTable = Colors.Yellow;
+        private readonly Color colorRowHeaderTable = Color.FromRgb(27, 187, 200);
         private readonly Color colorRowHeaderPayment = Colors.LightGreen;
 
         public Reciept Reciept

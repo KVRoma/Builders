@@ -36,14 +36,17 @@ namespace Builders.PDF
             if (user?.Id == 1)
             {
                 company = "CMO";
+                colorLogo = Color.FromRgb(12, 25, 35);
             }
             else if (user?.Id == 2)
             {
                 company = "NL";
+                colorLogo = Colors.Black;
             }
             else
             {
                 company = "";
+                colorLogo = Colors.Black;
             }
         }
 
@@ -54,10 +57,11 @@ namespace Builders.PDF
         private IEnumerable<Payment> payments;
         private User user;
 
-        private readonly Color colorLogo = Colors.Black;
+        private Color colorLogo;
         private readonly Color colorTextLogo = Colors.White;
-        private readonly Color colorRowHeaderTable = Colors.Yellow;
+        private readonly Color colorRowHeaderTable = Color.FromRgb(27, 187, 200);
         private readonly Color colorRowHeaderPayment = Colors.LightGreen;
+        private readonly Color colorRowTotal = Colors.Yellow;
 
         private readonly string format = "0.00";
         private string[] file = new string[4];
@@ -484,12 +488,7 @@ namespace Builders.PDF
             table = section.AddTable();
             table.Style = "Table";
 
-            //frame = section.AddTextFrame();
-            //frame.Left = ShapePosition.Left;            
-            //frame.Top = "0.5cm";
-
-            //table = frame.AddTable();
-            //table.Style = "Table";
+            
             table.Borders.Color = MigraDoc.DocumentObjectModel.Colors.Black;
             table.Borders.Width = 0.25;
             table.Borders.Left.Width = 0.5;
@@ -512,13 +511,28 @@ namespace Builders.PDF
             row.Format.Alignment = ParagraphAlignment.Center;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
             row.Format.Font.Bold = true;
+            row.Shading.Color = colorRowTotal;
+            row.Cells[0].MergeRight = 4;
+            row.Cells[0].Format.Font.Size = 15;
+            row.Cells[0].Format.Font.Color = Colors.Red;
+            row.Cells[0].AddParagraph("MATERIAL").Format.Alignment = ParagraphAlignment.Center;
+
+            row = table.AddRow();
+            row.HeadingFormat = true;
+            row.Shading.Color = Colors.White;
+            row.Cells[0].MergeRight = 4;
+
+            row = table.AddRow();
+            row.HeadingFormat = true;
+            row.Format.Alignment = ParagraphAlignment.Center;
+            row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
+            row.Format.Font.Bold = true;
             row.Shading.Color = colorRowHeaderTable;
             row.Cells[0].Format.Font.Size = 8;
-            row.Cells[0].AddParagraph("Please carefully read the details, expectations and liabilitie").Format.Alignment = ParagraphAlignment.Center;
-            row.Cells[0].MergeRight = 1;
-            row.Cells[2].Format.Font.Color = Colors.Red;
-            row.Cells[2].AddParagraph("MATERIAL").Format.Alignment = ParagraphAlignment.Center;
-            row.Cells[2].MergeRight = 2;
+            row.Cells[0].Format.Font.Italic = true;
+            row.Cells[0].AddParagraph("Please carefully read the details, expectations and liability").Format.Alignment = ParagraphAlignment.Left;
+            row.Cells[0].MergeRight = 4;
+            
 
             row = table.AddRow();
             row.HeadingFormat = true;
@@ -533,7 +547,7 @@ namespace Builders.PDF
             row.Cells[4].AddParagraph("PRICE").Format.Alignment = ParagraphAlignment.Center;
 
             var material = MaterialQuotations.Where(m => m.Groupe == "FLOORING" || m.Groupe == "ACCESSORIES");
-            int countMaterialRow = 2;
+            int countMaterialRow = 4;
             foreach (var item in material)
             {
                 row = table.AddRow();
@@ -651,13 +665,6 @@ namespace Builders.PDF
 
             #region Quota Labour info
 
-
-            //frame = section.AddTextFrame();
-            //frame.Left = ShapePosition.Left;
-            //frame.Top = "0.5cm";
-
-
-            //table = frame.AddTable();
             section.AddPageBreak();
             section.AddParagraph().AddLineBreak();            
             table = section.AddTable();
@@ -687,10 +694,16 @@ namespace Builders.PDF
             row.Format.Alignment = ParagraphAlignment.Center;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
             row.Format.Font.Bold = true;
-            row.Shading.Color = colorRowHeaderTable;
-            row.Cells[3].Format.Font.Color = Colors.Red;
-            row.Cells[3].AddParagraph("LABOUR").Format.Alignment = ParagraphAlignment.Center;
-            row.Cells[3].MergeRight = 2;
+            row.Shading.Color = colorRowTotal;
+            row.Cells[0].Format.Font.Color = Colors.Red;
+            row.Cells[0].Format.Font.Size = 15;
+            row.Cells[0].AddParagraph("LABOUR").Format.Alignment = ParagraphAlignment.Center;
+            row.Cells[0].MergeRight = 5;
+
+            row = table.AddRow();
+            row.HeadingFormat = true;
+            row.Shading.Color = Colors.White;
+            row.Cells[0].MergeRight = 5;
 
             row = table.AddRow();
             row.HeadingFormat = true;
@@ -706,7 +719,7 @@ namespace Builders.PDF
             row.Cells[5].AddParagraph("PRICE").Format.Alignment = ParagraphAlignment.Center;
 
             var labour = MaterialQuotations.Where(m => m.Groupe != "FLOORING" && m.Groupe != "ACCESSORIES");
-            int countLabourRow = 2;
+            int countLabourRow = 3;
 
             foreach (var item in labour)
             {
@@ -830,17 +843,25 @@ namespace Builders.PDF
             row.Cells[3].AddParagraph("$ " + Quota.ProcessingFee.ToString(format));
 
             row = table.AddRow();
-            row.Format.Alignment = ParagraphAlignment.Right;
-            row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
-            row.Format.Font.Bold = true;
-            row.Cells[2].AddParagraph("GRAND TOTAL").Format.Alignment = ParagraphAlignment.Left;
-            row.Cells[3].AddParagraph("$ " + Quota.InvoiceGrandTotal.ToString(format));
+            row.Cells[0].MergeRight = 3;
 
             row = table.AddRow();
             row.Format.Alignment = ParagraphAlignment.Right;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
             row.Format.Font.Bold = true;
+            row.Cells[0].MergeRight = 1;
+            row.Cells[2].AddParagraph("GRAND TOTAL").Format.Alignment = ParagraphAlignment.Left;
+            row.Cells[2].Shading.Color = colorRowTotal;
+            row.Cells[3].AddParagraph("$ " + Quota.InvoiceGrandTotal.ToString(format));
+            row.Cells[3].Shading.Color = colorRowTotal;
+
+            row = table.AddRow();
+            row.Format.Alignment = ParagraphAlignment.Right;
+            row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
+            row.Format.Font.Bold = true;
+            row.Cells[0].MergeRight = 1;
             row.Cells[2].AddParagraph("REQUIRED DEPOSIT").Format.Alignment = ParagraphAlignment.Left;
+            row.Cells[2].Shading.Color = colorRowHeaderPayment;
             decimal deposit;
             if (Quota.FinancingUser != 0m)
             {
@@ -858,8 +879,9 @@ namespace Builders.PDF
                 }
             }
             row.Cells[3].AddParagraph("$ " + deposit.ToString(format));
+            row.Cells[3].Shading.Color = colorRowHeaderPayment;
 
-            table.SetEdge(0, 0, 4, 5, Edge.Box, BorderStyle.Single, 0.75, MigraDoc.DocumentObjectModel.Color.Empty);
+            table.SetEdge(0, 0, 4, 6, Edge.Box, BorderStyle.Single, 0.75, MigraDoc.DocumentObjectModel.Color.Empty);
             #endregion
 
             // Виводить таблицю з проведеними оплатами ***************************************************
