@@ -1601,7 +1601,7 @@ namespace Builders.ViewModels
                 if (select.PressButton)
                 {
                     Quotation quota = new Quotation()
-                    {
+                    {                        
                         ClientId = select.ClientSelect.Id,
                         NumberClient = select.ClientSelect.NumberClient,
                         FirstName = select.ClientSelect.PrimaryFirstName,
@@ -1622,6 +1622,8 @@ namespace Builders.ViewModels
                         MaterialDiscountYN = QuotationSelect.MaterialDiscountYN,
                         MaterialSubtotal = QuotationSelect.MaterialSubtotal,
 
+                        CompanyName = QuotationSelect.CompanyName,
+                        Color = QuotationSelect.Color
                     };
 
                     db.Quotations.Add(quota);
