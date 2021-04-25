@@ -209,6 +209,7 @@ namespace Builders.PDF
             section.PageSetup.LeftMargin = "1cm";
             section.PageSetup.RightMargin = "1cm";
             section.PageSetup.TopMargin = "3.5cm";
+            section.PageSetup.BottomMargin = "3.5cm";
             section.PageSetup.DifferentFirstPageHeaderFooter = true;
 
 
@@ -232,7 +233,7 @@ namespace Builders.PDF
             paragraphLogo.Format.Alignment = ParagraphAlignment.Center;
 
             Image image = paragraphLogo.AddImage(@"User\Logo" + company + ".jpg");
-            image.Height = "2.5cm";
+            image.Height = "5cm";
             image.LockAspectRatio = true;
             image.RelativeVertical = RelativeVertical.Line;
             image.RelativeHorizontal = RelativeHorizontal.Margin;
@@ -240,37 +241,41 @@ namespace Builders.PDF
             image.Left = ShapePosition.Center;
             image.WrapFormat.Style = WrapStyle.TopBottom;
 
-            Paragraph paragraph = rowLogo.Cells[1].AddParagraph();
-            paragraph.AddFormattedText("FINAL INVOICE", TextFormat.Bold);
-            paragraph.Format.Font.Size = 15;
-            paragraph.Format.Font.Color = Colors.Red;
-            paragraph.Format.Alignment = ParagraphAlignment.Center;
+            Paragraph paragraphLogoText = rowLogo.Cells[0].AddParagraph();
+            paragraphLogoText.Format.Alignment = ParagraphAlignment.Center;
+            paragraphLogoText.Format.Font.Size = 7;
+            paragraphLogoText.Format.SpaceAfter = 3;
+            paragraphLogoText.Format.Font.Color = colorTextLogo;
+            paragraphLogoText.AddText(user?.Name + Environment.NewLine + user?.Post);
+            rowLogo.Cells[0].MergeDown = 1;
+
+
+            rowLogo.Cells[1].VerticalAlignment = VerticalAlignment.Center;
+            Paragraph paragraphName = rowLogo.Cells[1].AddParagraph();
+            paragraphName.AddLineBreak();
+            paragraphName.AddFormattedText("FINAL INVOICE", TextFormat.Bold);
+            paragraphName.Format.Font.Size = 15;
+            paragraphName.Format.Font.Color = Colors.Red;
+            paragraphName.Format.Alignment = ParagraphAlignment.Center;
+            paragraphName.AddLineBreak();
+            paragraphName.AddLineBreak();
+
 
             rowLogo = tableLogo.AddRow();
-            //rowLogo.HeadingFormat = true;
             rowLogo.Format.Alignment = ParagraphAlignment.Center;
             rowLogo.VerticalAlignment = VerticalAlignment.Center;
             rowLogo.Shading.Color = colorLogo;
 
-            paragraph = rowLogo.Cells[0].AddParagraph(user?.Name + ", " + Environment.NewLine +
-                                          user?.Post + Environment.NewLine +
-                                          user?.Address + Environment.NewLine +
-                                          user?.Additional + Environment.NewLine +
-                                          user?.Phone + Environment.NewLine +
-                                          user?.Mail + Environment.NewLine +
-                                          user?.WebSite);
 
-
-            //paragraph.Format.Font.Name = "Times New Roman";
+            Paragraph paragraph = rowLogo.Cells[1].AddParagraph();
             paragraph.Format.Alignment = ParagraphAlignment.Center;
             paragraph.Format.Font.Size = 7;
             paragraph.Format.SpaceAfter = 3;
             paragraph.Format.Font.Color = colorTextLogo;
 
-            paragraph = rowLogo.Cells[1].AddParagraph();
             paragraph.Format.Font.Size = 10;
             paragraph.AddText("Date: ");
-            paragraph.AddFormattedText(Quota.QuotaDate.ToShortDateString(), TextFormat.Bold);
+            paragraph.AddFormattedText(Invoice.DateInvoice.ToShortDateString(), TextFormat.Bold);
             paragraph.AddLineBreak();
             paragraph.AddText("Client Number: ");
             paragraph.AddFormattedText(Client.NumberClient, TextFormat.Bold);
@@ -324,7 +329,55 @@ namespace Builders.PDF
             rowLogo.Cells[1].AddParagraph().AddLineBreak();
             #endregion
             //*******************************************************************************************
+            #region FooterLogo
+            Table tableFooter = section.Footers.FirstPage.AddTable();
+            tableLogo.Borders.Color = colorLogo;
 
+            Column columnFooterLogo = tableFooter.AddColumn("6.4cm");
+            columnFooterLogo.Format.Alignment = ParagraphAlignment.Center;
+            columnFooterLogo = tableFooter.AddColumn("6.4cm");
+            columnFooterLogo.Format.Alignment = ParagraphAlignment.Center;
+            columnFooterLogo = tableFooter.AddColumn("6.4cm");
+            columnFooterLogo.Format.Alignment = ParagraphAlignment.Center;
+
+            Row rowFooterLogo = tableFooter.AddRow();
+            rowFooterLogo.Format.Alignment = ParagraphAlignment.Center;
+            rowFooterLogo.VerticalAlignment = VerticalAlignment.Center;
+            rowFooterLogo.Shading.Color = Colors.White;
+            rowFooterLogo.Cells[0].MergeRight = 2;
+
+            Paragraph paragraphFooterText = rowFooterLogo.Cells[0].AddParagraph(("Please carefully read the details, expectations, and liabilities").ToUpper());
+            paragraphFooterText.Format.Font.Underline = MigraDoc.DocumentObjectModel.Underline.Single;
+            paragraphFooterText.Format.Font.Bold = true;
+            paragraphFooterText.Format.Font.Italic = true;
+            paragraphFooterText.Format.Alignment = ParagraphAlignment.Center;
+            paragraphFooterText.Format.Font.Color = Colors.Red;
+
+            rowFooterLogo = tableFooter.AddRow();
+            rowFooterLogo.Format.Alignment = ParagraphAlignment.Center;
+            rowFooterLogo.VerticalAlignment = VerticalAlignment.Center;
+            rowFooterLogo.Shading.Color = colorLogo;
+
+            Paragraph paragraphFooter = rowFooterLogo.Cells[0].AddParagraph("Address:" + Environment.NewLine + user?.Address + Environment.NewLine + user?.Phone);
+            paragraphFooter.Format.Alignment = ParagraphAlignment.Center;
+            paragraphFooter.Format.Font.Size = 7;
+            paragraphFooter.Format.SpaceAfter = 3;
+            paragraphFooter.Format.Font.Color = colorTextLogo;
+
+            paragraphFooter = rowFooterLogo.Cells[1].AddParagraph("Hours" + Environment.NewLine + user?.Additional);
+            paragraphFooter.Format.Alignment = ParagraphAlignment.Center;
+            paragraphFooter.Format.Font.Size = 7;
+            paragraphFooter.Format.SpaceAfter = 3;
+            paragraphFooter.Format.Font.Color = colorTextLogo;
+
+            paragraphFooter = rowFooterLogo.Cells[2].AddParagraph("Site:" + Environment.NewLine + user?.Mail + Environment.NewLine + user?.WebSite);
+            paragraphFooter.Format.Alignment = ParagraphAlignment.Center;
+            paragraphFooter.Format.Font.Size = 7;
+            paragraphFooter.Format.SpaceAfter = 3;
+            paragraphFooter.Format.Font.Color = colorTextLogo;
+
+            //table.SetEdge(0, 0, 6, Payments.Count() + 1, Edge.Box, BorderStyle.Single, 0.75, MigraDoc.DocumentObjectModel.Color.Empty);
+            #endregion
 
             // Додаємо логотип в заголовок + інформацію про власника та розміщуємо під логотипом *******
             #region Heder logo page 2            
@@ -356,7 +409,53 @@ namespace Builders.PDF
             #endregion
             //*******************************************************************************************
 
+            #region FooterLogo page 2
+            tableFooter = section.Footers.Primary.AddTable();
+            tableLogo.Borders.Color = colorLogo;
 
+            columnFooterLogo = tableFooter.AddColumn("6.4cm");
+            columnFooterLogo.Format.Alignment = ParagraphAlignment.Center;
+            columnFooterLogo = tableFooter.AddColumn("6.4cm");
+            columnFooterLogo.Format.Alignment = ParagraphAlignment.Center;
+            columnFooterLogo = tableFooter.AddColumn("6.4cm");
+            columnFooterLogo.Format.Alignment = ParagraphAlignment.Center;
+
+            rowFooterLogo = tableFooter.AddRow();
+            rowFooterLogo.Format.Alignment = ParagraphAlignment.Center;
+            rowFooterLogo.VerticalAlignment = VerticalAlignment.Center;
+            rowFooterLogo.Shading.Color = Colors.White;
+            rowFooterLogo.Cells[0].MergeRight = 2;
+
+            paragraphFooterText = rowFooterLogo.Cells[0].AddParagraph(("Please carefully read the details, expectations, and liabilities").ToUpper());
+            paragraphFooterText.Format.Font.Underline = MigraDoc.DocumentObjectModel.Underline.Single;
+            paragraphFooterText.Format.Font.Bold = true;
+            paragraphFooterText.Format.Font.Italic = true;
+            paragraphFooterText.Format.Alignment = ParagraphAlignment.Center;
+            paragraphFooterText.Format.Font.Color = Colors.Red;
+
+            rowFooterLogo = tableFooter.AddRow();
+            rowFooterLogo.Format.Alignment = ParagraphAlignment.Center;
+            rowFooterLogo.VerticalAlignment = VerticalAlignment.Center;
+            rowFooterLogo.Shading.Color = colorLogo;
+
+            paragraphFooter = rowFooterLogo.Cells[0].AddParagraph("Address:" + Environment.NewLine + user?.Address + Environment.NewLine + user?.Phone);
+            paragraphFooter.Format.Alignment = ParagraphAlignment.Center;
+            paragraphFooter.Format.Font.Size = 7;
+            paragraphFooter.Format.SpaceAfter = 3;
+            paragraphFooter.Format.Font.Color = colorTextLogo;
+
+            paragraphFooter = rowFooterLogo.Cells[1].AddParagraph("Hours" + Environment.NewLine + user?.Additional);
+            paragraphFooter.Format.Alignment = ParagraphAlignment.Center;
+            paragraphFooter.Format.Font.Size = 7;
+            paragraphFooter.Format.SpaceAfter = 3;
+            paragraphFooter.Format.Font.Color = colorTextLogo;
+
+            paragraphFooter = rowFooterLogo.Cells[2].AddParagraph("Site:" + Environment.NewLine + user?.Mail + Environment.NewLine + user?.WebSite);
+            paragraphFooter.Format.Alignment = ParagraphAlignment.Center;
+            paragraphFooter.Format.Font.Size = 7;
+            paragraphFooter.Format.SpaceAfter = 3;
+            paragraphFooter.Format.Font.Color = colorTextLogo;
+            #endregion
 
 
 
@@ -522,16 +621,16 @@ namespace Builders.PDF
             row.Shading.Color = Colors.White;
             row.Cells[0].MergeRight = 4;
 
-            row = table.AddRow();
-            row.HeadingFormat = true;
-            row.Format.Alignment = ParagraphAlignment.Center;
-            row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
-            row.Format.Font.Bold = true;
-            row.Shading.Color = colorRowHeaderTable;
-            row.Cells[0].Format.Font.Size = 8;
-            row.Cells[0].Format.Font.Italic = true;
-            row.Cells[0].AddParagraph("Please carefully read the details, expectations and liability").Format.Alignment = ParagraphAlignment.Left;
-            row.Cells[0].MergeRight = 4;
+            //row = table.AddRow();
+            //row.HeadingFormat = true;
+            //row.Format.Alignment = ParagraphAlignment.Center;
+            //row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
+            //row.Format.Font.Bold = true;
+            //row.Shading.Color = colorRowHeaderTable;
+            //row.Cells[0].Format.Font.Size = 8;
+            //row.Cells[0].Format.Font.Italic = true;
+            //row.Cells[0].AddParagraph("Please carefully read the details, expectations and liability").Format.Alignment = ParagraphAlignment.Left;
+            //row.Cells[0].MergeRight = 4;
             
 
             row = table.AddRow();
@@ -547,7 +646,7 @@ namespace Builders.PDF
             row.Cells[4].AddParagraph("PRICE").Format.Alignment = ParagraphAlignment.Center;
 
             var material = MaterialQuotations.Where(m => m.Groupe == "FLOORING" || m.Groupe == "ACCESSORIES");
-            int countMaterialRow = 4;
+            int countMaterialRow = 3;
             foreach (var item in material)
             {
                 row = table.AddRow();
@@ -793,8 +892,9 @@ namespace Builders.PDF
 
             #region Quota Total info
             paragraph = section.AddParagraph();
-            paragraph = section.AddParagraph();
-            //paragraph.Format.SpaceBefore = "2cm";
+            paragraph.AddLineBreak();
+            paragraph.Format.SpaceBefore = "0.5cm";
+            paragraph.Format.SpaceAfter = "0.5cm";
 
             table = section.AddTable();
             table.Style = "Table";

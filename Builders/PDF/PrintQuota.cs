@@ -206,8 +206,9 @@ namespace Builders.PDF
             section.PageSetup.LeftMargin = "1cm";
             section.PageSetup.RightMargin = "1cm";
             section.PageSetup.TopMargin = "3.5cm";
-            section.PageSetup.DifferentFirstPageHeaderFooter = true;
-
+            section.PageSetup.BottomMargin = "3.5cm";
+            section.PageSetup.DifferentFirstPageHeaderFooter = true;            
+            
 
 
             // Додаємо логотип в заголовок + інформацію про власника та розміщуємо під логотипом *******
@@ -763,12 +764,13 @@ namespace Builders.PDF
 
             #endregion
             //********************************************************************************************
-            
+
             #region Quota Labour info
-
-
             section.AddPageBreak();
-            section.AddParagraph().AddLineBreak();            
+
+            paragraph = section.AddParagraph();
+            paragraph.AddLineBreak();
+                        
             table = section.AddTable();
             
             table.Style = "Table";
@@ -899,9 +901,9 @@ namespace Builders.PDF
 
             #region Quota Total info
             paragraph = section.AddParagraph();
-            paragraph = section.AddParagraph();
-            //paragraph.Format.SpaceBefore = "2cm";
-
+            paragraph.AddLineBreak();            
+            paragraph.Format.SpaceBefore = "0.5cm";
+            paragraph.Format.SpaceAfter = "0.5cm";
             table = section.AddTable();
             table.Style = "Table";
                        
@@ -921,7 +923,8 @@ namespace Builders.PDF
             column.Format.Alignment = ParagraphAlignment.Center;
             
 
-            row = table.AddRow();            
+            row = table.AddRow();
+            row.HeadingFormat = false;
             row.Format.Alignment = ParagraphAlignment.Right;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
             row.Format.Font.Bold = true;                      
@@ -931,6 +934,7 @@ namespace Builders.PDF
             row.Cells[3].AddParagraph("$ " + Quota.ProjectTotal.ToString(format));
 
             row = table.AddRow();
+            row.HeadingFormat = false;
             row.Format.Alignment = ParagraphAlignment.Right;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
             row.Format.Font.Bold = true;
@@ -940,6 +944,7 @@ namespace Builders.PDF
             row.Cells[3].AddParagraph("$ " + Quota.FinancingFee.ToString(format));
 
             row = table.AddRow();
+            row.HeadingFormat = false;
             row.Format.Alignment = ParagraphAlignment.Right;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
             row.Format.Font.Bold = true;
@@ -949,9 +954,11 @@ namespace Builders.PDF
             row.Cells[3].AddParagraph("$ " + Quota.ProcessingFee.ToString(format));
 
             row = table.AddRow();
+            row.HeadingFormat = false;
             row.Cells[0].MergeRight = 3;           
 
             row = table.AddRow();
+            row.HeadingFormat = false;
             row.Format.Alignment = ParagraphAlignment.Right;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
             row.Format.Font.Bold = true;
@@ -963,6 +970,7 @@ namespace Builders.PDF
             
 
             row = table.AddRow();
+            row.HeadingFormat = false;
             row.Format.Alignment = ParagraphAlignment.Right;
             row.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
             row.Format.Font.Bold = true;
