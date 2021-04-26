@@ -147,8 +147,8 @@ namespace Builders.ViewModels
                         DIC_GroupeSelect = (MaterialQuotationSelect?.Groupe != null) ? DIC_Groupes?.FirstOrDefault(g => g?.NameGroupe == MaterialQuotationSelect?.Groupe) : null;
                         DIC_ItemSelect = (MaterialQuotationSelect?.Item != null) ? DIC_Items?.FirstOrDefault(i => i?.Name == MaterialQuotationSelect?.Item) : null;
                         DIC_DescriptionSelect = (MaterialQuotationSelect?.Description != null) ? DIC_Descriptions?.FirstOrDefault(d => d?.Name == MaterialQuotationSelect?.Description) : null;
-                        //Quantity = MaterialQuotationSelect?.Quantity ?? 0m;
-                        //Rate = MaterialQuotationSelect?.Rate ?? 0m;
+                        Quantity = MaterialQuotationSelect?.Quantity ?? 0m;
+                        Rate = MaterialQuotationSelect?.Rate ?? 0m;
                     }
                 }
             }
@@ -615,13 +615,13 @@ namespace Builders.ViewModels
                 QuotaId = QuotaSelect.Id;
                 IsEnableGenerator = true;
 
-                Rate = 0m;
-                Quantity = 0m;
+                //Rate = 0m;
+                //Quantity = 0m;
             }
             if (flagCreatQuota && QuotaSelect != null && DIC_GroupeSelect?.NameGroupe != null)
             {
 
-                var temp = MaterialQuotations; //db.MaterialQuotations.Where(f => f.QuotationId == QuotaSelect.Id);
+                var temp = MaterialQuotations; 
 
                 int flooring = (temp != null) ? (temp.Where(t => t.Groupe == "FLOORING").ToList().Select(t=>t.MaterialDetail).Distinct().Count()) : 0;
                 int accessories = (temp != null) ? (temp.Where(t => t.Groupe == "ACCESSORIES").ToList().Select(t => t.MaterialDetail).Distinct().Count()) : 0;
@@ -796,8 +796,8 @@ namespace Builders.ViewModels
                         MaterialQuotations = null;
                         MaterialQuotations = db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == QuotaSelect.Id);
                         MaterialQuotationSelect = material;
-                        Rate = 0m;
-                        Quantity = 0m;
+                        //Rate = 0m;
+                        //Quantity = 0m;
                     }
                 }
             }
@@ -947,8 +947,8 @@ namespace Builders.ViewModels
                         db.SaveChanges();
                         MaterialQuotationSelect = null;
                         MaterialQuotations = (QuotaSelect != null) ? (db.MaterialQuotations.Local.ToBindingList().Where(m => m.QuotationId == QuotaSelect.Id)) : null;
-                        Rate = 0m;
-                        Quantity = 0m;
+                        //Rate = 0m;
+                        //Quantity = 0m;
                     }
                 }
             }
