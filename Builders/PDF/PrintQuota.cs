@@ -239,12 +239,12 @@ namespace Builders.PDF
             image.Left = ShapePosition.Center;
             image.WrapFormat.Style = WrapStyle.TopBottom;
 
-            Paragraph paragraphLogoText = rowLogo.Cells[0].AddParagraph();
-            paragraphLogoText.Format.Alignment = ParagraphAlignment.Center;
-            paragraphLogoText.Format.Font.Size = 7;
-            paragraphLogoText.Format.SpaceAfter = 3;
-            paragraphLogoText.Format.Font.Color = colorTextLogo;
-            paragraphLogoText.AddText(user?.Name + Environment.NewLine + user?.Post);
+            //Paragraph paragraphLogoText = rowLogo.Cells[0].AddParagraph();
+            //paragraphLogoText.Format.Alignment = ParagraphAlignment.Center;
+            //paragraphLogoText.Format.Font.Size = 7;
+            //paragraphLogoText.Format.SpaceAfter = 3;
+            //paragraphLogoText.Format.Font.Color = colorTextLogo;
+            //paragraphLogoText.AddText(user?.Name + Environment.NewLine + user?.Post);
             rowLogo.Cells[0].MergeDown = 1;
 
 
